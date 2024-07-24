@@ -1,35 +1,55 @@
-# Template for Coq-Projects on Github
+<!---
+This file was generated from `meta.yml`, please do not edit manually.
+Follow the instructions on https://github.com/coq-community/templates to regenerate.
+--->
+# Inquisivite Logic
 
-This is a template for Github Coq-Projects.
+[![Docker CI][docker-action-shield]][docker-action-link]
+[![coqdoc][coqdoc-shield]][coqdoc-link]
 
-## Usage
+[docker-action-shield]: https://github.com/motrellin/inqlog/actions/workflows/docker-action.yml/badge.svg?branch=main
+[docker-action-link]: https://github.com/motrellin/inqlog/actions/workflows/docker-action.yml
 
-You can use this template by clicking on the "Use this template"-Button:
-![grafik](https://github.com/motrellin/comoproj/assets/105235679/450ab9bf-22ff-4961-9091-4959c8643471)
 
-Choose to "Create a new repository". You should choose to create a public repository in order to deploy to Github Pages which is a main advantage of this project. 
-Make sure to enable Github Pages for your project. (Source: Github Actions)
+[coqdoc-shield]: https://img.shields.io/badge/docs-coqdoc-blue.svg
+[coqdoc-link]: https://motrellin.github.io/inqlog/./docs/toc.html
 
-After that, clone your new repository and update the `meta.yml`. 
-You should ahve a look at the [`ref.yml`](https://github.com/coq-community/templates/blob/master/ref.yml) from Coq-Community.
 
-You must also update the following line in the `Makefile`:
+A formalization of inquisitive logic in Coq, based on the work of
+[Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
+
+
+## Meta
+
+- Author(s):
+  - Max Ole Elliger (initial)
+- License: [GNU General Public License v3.0 or later](LICENSE)
+- Compatible Coq versions: Developed for 8.19.0
+- Additional dependencies: none
+- Coq namespace: `InqLog`
+- Related publication(s): none
+
+## Building and installation instructions
+
+The easiest way to install the latest released version of Inquisivite Logic
+is via [OPAM](https://opam.ocaml.org/doc/Install.html):
+
+```shell
+opam repo add coq-released https://coq.inria.fr/opam/released
+opam install coq-inqlog
 ```
-COMPONENTS := theories:CoMoProj
-```
-It should match your choosen namespace.
 
-Now execute
-```
-./generate.sh
-git add .
-git commit
-git push
-```
-To generate meta information about your project.
+To instead build and install manually, do:
 
-## Licensing
+``` shell
+git clone --recurse-submodules https://github.com/motrellin/inqlog.git
+cd inqlog
+make all  # or make -j <number-of-cores-on-your-machine> all
+make install
+```
 
-Do not hesitate to use this template.
-Please note, that the [Makefile](Makefile) is licensed under GNU General Public License v3.0.
-It was first published at [Gitlab](https://gitlab.cs.fau.de/oc59yqul/template-coq/-/blob/main/Makefile?ref_type=heads)
+
+## Documentation
+
+This project tries to formalize inquisitive logic in Coq. The formalization
+is based on the work of [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).

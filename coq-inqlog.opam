@@ -1,0 +1,31 @@
+# This file was generated from `meta.yml`, please do not edit manually.
+# Follow the instructions on https://github.com/coq-community/templates to regenerate.
+
+opam-version: "2.0"
+maintainer: "ole.elliger@fau.de"
+version: "dev"
+
+homepage: "https://github.com/motrellin/inqlog"
+dev-repo: "git+https://github.com/motrellin/inqlog.git"
+bug-reports: "https://github.com/motrellin/inqlog/issues"
+doc: "https://motrellin.github.io/inqlog/"
+license: "GPL-3.0-or-later"
+
+synopsis: "A formalization of inquisitive logic"
+description: """
+A formalization of inquisitive logic in Coq, based on the work of
+[Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
+"""
+
+build: [make "-j%{jobs}%" "all"]
+install: [make "install"]
+depends: [
+  "coq" { "8.19" }
+]
+
+tags: [
+  "logpath:InqLog"
+]
+authors: [
+  "Max Ole Elliger <ole.elliger@fau.de>"
+]
