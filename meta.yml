@@ -22,6 +22,7 @@ action_appendix: |2-
         - name: Upload Artifact
           uses: actions/upload-artifact@v4
           with:
+            name: html-output
             path: public
         - name: Revert Coq user permissions
           # to avoid a warning at cleanup time
