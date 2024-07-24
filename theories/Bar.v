@@ -1,3 +1,3 @@
-From CoMoProj Require Export Foo.
+From InqLog Require Export Foo.
 
 Print foo.
