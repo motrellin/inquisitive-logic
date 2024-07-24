@@ -1,5 +1,5 @@
-fullname: Template for Coq-Projects on Github
-shortname: comoproj
+fullname: Inquisivite Logic
+shortname: inqlog
 branch: main
 organization: motrellin
 
@@ -55,10 +55,10 @@ action_appendix: |2-
 community: false
 coqdoc: true
 submodule: true #At least for coqdocjs
-synopsis: A dummy template for Github Coq-Projects
+synopsis: A formalization of inquisitive logic
 description: |
-  No special package. Just used to illustrate a possible template for 
-  Github Coq-Projects.
+  A formalization of inquisitive logic in Coq, based on the work of
+  [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
 
 #chat:
 
@@ -78,25 +78,20 @@ supported_coq_versions:
   text: Developed for 8.19.0
   opam: '{ "8.19" }'
 
-#namespace: CoMoTemplTest
+#dependencies:
+#  - description: Coq Equations
+#    opam:
+#      name: coq-equations
 
-dependencies:
-  - description: Coq Equations
-    opam:
-      name: coq-equations
-
-namespace: CoMoProj
+namespace: InqLog
 
 make_target: all
 
 documentation: |-
   ## Documentation
 
-  This project contains a template for Github Coq-Projects. It aims to combine
-  several helpful approaches:
-  - [Auto-Generating _CoqProject](https://gitlab.cs.fau.de/oc59yqul/template-coq)
-  - [Generic repository infrastructure](https://github.com/coq-community/templates)
-  - [CoqdocJS](https://github.com/coq-community/coqdocjs)
+  This project tries to formalize inquisitive logic in Coq. The formalization
+  is based on the work of [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
 
 #index_documentation:
 
