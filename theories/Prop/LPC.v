@@ -1,5 +1,5 @@
 From Coq Require Export Bool.
-From InqLog Require Export Support.
+From InqLog.Prop Require Export Models.
 
 Inductive lpc :=
   | atom : atoms -> lpc
