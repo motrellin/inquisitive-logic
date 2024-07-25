@@ -2,12 +2,11 @@ Definition atoms := nat.
 
 Class Model :=
   {
-    possible_worlds : Type;
-    some_world : possible_worlds;
-    truth_value : possible_worlds -> atoms -> bool
+    worlds : Type;
+    truth_value : worlds -> atoms -> bool
   }.
 
-Definition state `{Model} := possible_worlds -> bool.
+Definition state `{Model} := worlds -> bool.
 
 Definition substate `{Model} (t s : state) :=
   forall w,
