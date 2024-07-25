@@ -1,5 +1,5 @@
 From Coq Require Export Bool.
-From InqLog.Prop Require Export Models.
+From InqLog.Prop Require Export Formulas.
 
 Inductive lpc :=
   | atom : atoms -> lpc
@@ -7,36 +7,37 @@ Inductive lpc :=
   | conj : lpc -> lpc -> lpc
   | impl : lpc -> lpc -> lpc.
 
-Definition neg : lpc -> lpc :=
+Instance LPC : Formula :=
+  {|
+    form := lpc;
+    support := fun _ =>
+      lpc_rect
+      (fun f => state -> Prop)
+      (fun p s => forall w, s w = true -> truth_value w p = true)
+      (fun s => forall w, s w = false)
+      (fun f1 r1 f2 r2 s => r1 s /\ r2 s)
+      (fun f1 r1 f2 r2 s => forall t, substate t s -> r1 t -> r2 t)
+  |}.
+  
+Definition neg : form -> form :=
   fun f => 
   impl f bot.
-Definition top : lpc :=
+Definition top : form :=
   neg bot.
-Definition disj : lpc -> lpc -> lpc :=
+Definition disj : form -> form -> form :=
   fun f1 f2 =>
   neg (conj (neg f1) (neg f2)).
-Definition iff : lpc -> lpc -> lpc :=
+Definition iff : form -> form -> form :=
   fun f1 f2 =>
   conj (impl f1 f2) (impl f2 f1).
-
-Definition support `{Model} : lpc -> state -> Prop :=
-  lpc_rect
-  (fun f => state -> Prop)
-  (fun p s => forall w, s w = true -> truth_value w p = true)
-  (fun s => forall w, s w = false)
-  (fun f1 r1 f2 r2 s => r1 s /\ r2 s)
-  (fun f1 r1 f2 r2 s => forall t, substate t s -> r1 t -> r2 t).
 
 Section prop_3_1_4.
 
   Context `{Model}.
 
-  Proposition persistency : 
-    forall f t s,
-      substate t s ->
-      support f s ->
-      support f t.
+  Proposition persistency : persistency_property.
   Proof.
+    intro f.
     induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2].
     all: unfold substate.
     all: simpl.
@@ -60,10 +61,9 @@ Section prop_3_1_4.
       firstorder.
   Qed.
 
-  Proposition empty_state_property : 
-    forall f,
-      support f empty_state.
+  Proposition empty_support : empty_support_property.
   Proof.
+    intro f.
     induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2].
     all: unfold empty_state in *.
     all: simpl.
@@ -83,14 +83,6 @@ Section prop_3_1_4.
   Qed.
 
 End prop_3_1_4.
-
-Definition ruling_out `{Model} (s : state) (f : lpc) :=
-  ~ (
-    exists t,
-      substate t s /\
-      consistent t /\
-      support f t
-      ).
 
 Section prop_3_1_6.
 
