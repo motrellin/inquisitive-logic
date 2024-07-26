@@ -235,8 +235,9 @@ Section prop_3_1_7.
   Qed.
 
   Proposition satisfies_bot : 
-    ~ satisfies w bot.
+    satisfies w bot <-> False.
   Proof.
+    split; try contradiction.
     simpl.
     intros H1.
     specialize (H1 w).
