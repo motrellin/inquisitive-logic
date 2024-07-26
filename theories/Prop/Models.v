@@ -171,3 +171,39 @@ Proof.
     +
       contradiction.
 Qed.
+
+Module ex_Model_1.
+
+  Inductive worlds :=
+    | pq
+    | p
+    | q
+    | e.
+
+  Instance PQ : Model.
+  Proof.
+    unshelve econstructor.
+    -
+      exact worlds.
+    -
+      decide equality.
+    -
+      intros w a.
+      destruct a as [|[|a']] eqn:H1.
+      +
+        destruct w eqn:H2.
+        exact true.
+        exact true.
+        exact false.
+        exact false.
+      +
+        destruct w eqn:H2.
+        exact true.
+        exact false.
+        exact true.
+        exact false.
+      +
+        exact false.
+  Defined.
+
+End ex_Model_1.
