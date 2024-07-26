@@ -224,3 +224,71 @@ Section prop_3_1_6.
   Qed.
 
 End prop_3_1_6.
+
+Module ex_3_2_5.
+
+  Import ex_Model_1.
+
+  Let f1 := idisj (atom 0) (atom 1).
+  Let f2 := iquest (atom 0).
+
+  Let s1 : state :=
+    fun w =>
+    match w with
+    | pq => true
+    | q => true
+    | _ => false
+    end.
+
+  Let s2 : state :=
+    fun w =>
+    match w with
+    | pq => true
+    | p => true
+    | _ => false
+    end.
+
+  Let s3 : state :=
+    fun w =>
+    match w with
+    | q => true
+    | e => true
+    | _ => false
+    end.
+
+  Example support_f1_s1 : support f1 s1.
+  Proof.
+    unfold f1.
+    simpl.
+    right.
+    intros w H1.
+    destruct w; easy.
+  Qed.
+
+  Example support_f1_s2 : support f1 s2.
+  Proof.
+    left.
+    intros w H1.
+    destruct w; easy.
+  Qed.
+
+  Example support_f2_s2 : support f2 s2.
+  Proof.
+    left.
+    intros w H1.
+    destruct w; easy.
+  Qed.
+
+  Example support_f2_s3 : support f2 s3.
+  Proof.
+    unfold f2.
+    rewrite support_iquest.
+    right.
+    intros [t [H1 [H2 H3]]].
+    destruct H2 as [w H2].
+    specialize (H1 w H2).
+    specialize (H3 w H2).
+    destruct w; try easy.
+  Qed.
+
+End ex_3_2_5.
