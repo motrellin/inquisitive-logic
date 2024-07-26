@@ -294,4 +294,50 @@ Section prop_3_1_7.
           apply empty_support.
   Qed.
 
+  Proposition satisfies_neg : 
+    forall f,
+      satisfies w (neg f) <->
+      ~ satisfies w f.
+  Proof.
+    intros f.
+    unfold neg.
+    rewrite satisfies_impl.
+    pose proof satisfies_bot.
+    firstorder.
+  Qed.
+
+  Proposition satisfies_top : 
+    satisfies w top <-> True.
+  Proof.
+    firstorder.
+  Qed.
+
+  Proposition satisfies_disj : 
+    forall f1 f2,
+      satisfies w (disj f1 f2) <->
+      satisfies w f1 \/ satisfies w f2.
+  Proof.
+    intros f1 f2.
+    unfold disj.
+    rewrite satisfies_neg.
+    rewrite satisfies_conj.
+    rewrite satisfies_neg.
+    rewrite satisfies_neg.
+    firstorder. (* Missing: classical reasoning *)
+  Abort.
+
+  Proposition satisfies_iff : 
+    forall f1 f2,
+      satisfies w (iff f1 f2) <->
+      (satisfies w f1 -> satisfies w f2) /\
+      (satisfies w f2 -> satisfies w f1).
+  Proof.
+    intros f1 f2.
+    unfold iff.
+    rewrite satisfies_conj.
+    rewrite satisfies_impl.
+    rewrite satisfies_impl.
+    reflexivity.
+  Qed.
+
 End prop_3_1_7.
