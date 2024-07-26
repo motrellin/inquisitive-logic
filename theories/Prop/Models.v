@@ -116,3 +116,31 @@ Proof.
     +
       reflexivity.
 Qed.
+
+Lemma singleton_true `{Model} : 
+  forall w,
+    singleton w w = true.
+Proof.
+  intros w.
+  unfold singleton.
+  destruct (worlds_deceq w w).
+  -
+    reflexivity.
+  -
+    contradiction.
+Qed.
+
+Lemma singleton_false `{Model} : 
+  forall w w',
+    w <> w' ->
+    singleton w w' = false.
+Proof.
+  intros w w' H1.
+  unfold singleton.
+  destruct (worlds_deceq w' w).
+  -
+    subst w'.
+    contradiction.
+  -
+    reflexivity.
+Qed.
