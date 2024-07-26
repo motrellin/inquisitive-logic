@@ -20,6 +20,57 @@ Instance LPC : Formula :=
     form := lpc;
     support _ := lpc_support
   |}.
+
+Instance support_proper : 
+  forall `{Model} f, 
+    Proper (state_equiv ==> iff) (support f).
+Proof.
+  intros M f s1 s2 H1.
+  induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2].
+  all: simpl.
+  -
+    split.
+    +
+      intros H2 w H3.
+      apply H2.
+      rewrite H1.
+      exact H3.
+    +
+      intros H2 w H3.
+      apply H2.
+      rewrite <- H1.
+      exact H3.
+  -
+    split.
+    +
+      intros H2 w.
+      rewrite <- H1.
+      apply H2.
+    +
+      intros H2 w.
+      rewrite H1.
+      apply H2.
+  -
+    firstorder.
+  -
+    split.
+    +
+      intros H2 t H3 H4.
+      apply H2.
+      *
+        rewrite H1.
+        exact H3.
+      *
+        exact H4.
+    +
+      intros H2 t H3 H4.
+      apply H2.
+      *
+        rewrite <- H1.
+        exact H3.
+      *
+        exact H4.
+Qed.
   
 Definition neg : form -> form :=
   fun f => 
