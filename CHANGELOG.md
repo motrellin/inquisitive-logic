@@ -1,6 +1,13 @@
 # Changelog
 
 
+## (unreleased)
+
+### Changes
+
+* Excluded merge commits from CHANGELOG.md. [Max Ole Elliger]
+
+
 ## 1.1.1 (2024-07-26)
 
 ### New
