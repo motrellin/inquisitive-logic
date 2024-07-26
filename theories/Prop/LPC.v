@@ -20,15 +20,14 @@ Coercion lpc_to_lp : lpc >-> lp.
 Instance LPC : Formula :=
   {|
     form := lpc;
-    support _ := lp_support
+    support _ := support;
   |}.
 
 Instance support_proper `{Model} :
   forall f,
     Proper (state_equiv ==> Logic.iff) (support f).
 Proof.
-  intro.
-  exact LP.support_proper.
+  exact support_proper.
 Qed.
   
 Definition neg : form -> form :=
