@@ -343,3 +343,17 @@ Proof.
     intros [w1] [w2].
     apply truth_value_proper.
 Defined.
+
+Definition restricted_state `{Model} (s t : state) : @state (restricted_Model s).
+Proof.
+  unshelve econstructor.
+  -
+    intros [w].
+    apply t.
+    exact w.
+  -
+    intros [w1] [w2] H1.
+    simpl in *.
+    rewrite H1.
+    reflexivity.
+Defined.
