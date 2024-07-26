@@ -91,63 +91,6 @@ Definition iquest : form -> form :=
   fun f =>
   idisj f (neg f).
 
-Section prop_3_3_1.
-
-  Context `{Model}.
-
-  Proposition persistency : persistency_property.
-  Proof.
-    intro f.
-    induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
-    all: unfold substate.
-    all: simpl.
-    all: intros t s H1 H2.
-    -
-      auto.
-    -
-      subst.
-      unfold empty_state in H1.
-      intros w.
-      destruct (t w) eqn:H3.
-      +
-        apply H1 in H3.
-        rewrite H2 in H3.
-        discriminate.
-      +
-        reflexivity.
-    -
-      firstorder.
-    -
-      firstorder.
-    -
-      firstorder.
-  Qed.
-
-  Proposition empty_support : empty_support_property.
-  Proof.
-    intro f.
-    induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
-    all: unfold empty_state in *.
-    all: simpl.
-    -
-      discriminate.
-    -
-      reflexivity.
-    -
-      split; assumption.
-    -
-      intros t H1 H2.
-      eapply persistency.
-      +
-        exact H1.
-      +
-        exact IH2.
-    -
-      firstorder.
-  Qed.
-
-End prop_3_3_1.
-
 Section prop_3_1_6.
 
   Context `{Model}.
@@ -292,3 +235,60 @@ Module ex_3_2_5.
   Qed.
 
 End ex_3_2_5.
+
+Section prop_3_3_1.
+
+  Context `{Model}.
+
+  Proposition persistency : persistency_property.
+  Proof.
+    intro f.
+    induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
+    all: unfold substate.
+    all: simpl.
+    all: intros t s H1 H2.
+    -
+      auto.
+    -
+      subst.
+      unfold empty_state in H1.
+      intros w.
+      destruct (t w) eqn:H3.
+      +
+        apply H1 in H3.
+        rewrite H2 in H3.
+        discriminate.
+      +
+        reflexivity.
+    -
+      firstorder.
+    -
+      firstorder.
+    -
+      firstorder.
+  Qed.
+
+  Proposition empty_support : empty_support_property.
+  Proof.
+    intro f.
+    induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
+    all: unfold empty_state in *.
+    all: simpl.
+    -
+      discriminate.
+    -
+      reflexivity.
+    -
+      split; assumption.
+    -
+      intros t H1 H2.
+      eapply persistency.
+      +
+        exact H1.
+      +
+        exact IH2.
+    -
+      firstorder.
+  Qed.
+
+End prop_3_3_1.
