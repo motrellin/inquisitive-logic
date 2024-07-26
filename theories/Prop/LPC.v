@@ -200,3 +200,97 @@ Section prop_3_1_6.
   Admitted.
 
 End prop_3_1_6.
+
+Section prop_3_1_7.
+
+  Context `{Model}.
+  Variable w : worlds.
+
+  Proposition satisfies_atom : 
+    forall p,
+      satisfies w (atom p) <->
+      truth_value w p = true.
+  Proof.
+    intros p.
+    simpl.
+    split.
+    -
+      intros H1.
+      apply H1.
+      unfold singleton.
+      destruct (worlds_deceq w w).
+      +
+        reflexivity.
+      +
+        contradiction.
+    -
+      intros H1 w' H2.
+      unfold singleton in H2.
+      destruct (worlds_deceq w' w).
+      +
+        subst w'.
+        exact H1.
+      +
+        discriminate.
+  Qed.
+
+  Proposition satisfies_bot : 
+    ~ satisfies w bot.
+  Proof.
+    simpl.
+    intros H1.
+    specialize (H1 w).
+    unfold singleton in H1.
+    destruct (worlds_deceq w w).
+    -
+      discriminate.
+    -
+      contradiction.
+  Qed.
+
+  Proposition satisfies_conj : 
+    forall f1 f2,
+      satisfies w (conj f1 f2) <->
+      satisfies w f1 /\ satisfies w f2.
+  Proof.
+    firstorder.
+  Qed.
+
+  Proposition satisfies_impl : 
+    forall f1 f2,
+    satisfies w (impl f1 f2) <->
+    (satisfies w f1 -> satisfies w f2).
+  Proof.
+    intros f1 f2.
+    unfold satisfies at 1.
+    transitivity (
+      forall t, substate t (singleton w) -> support f1 t -> support f2 t
+    ).
+    -
+      firstorder.
+    -
+      split.
+      +
+        unfold satisfies.
+        intros H1 H2.
+        apply H1.
+        *
+          reflexivity.
+        *
+          exact H2.
+      +
+        intros H1 s H2 H3.
+        apply substate_singleton in H2.
+        unfold satisfies in H1.
+        destruct H2 as [H2|H2].
+        *
+          rewrite H2.
+          apply H1.
+          rewrite <- H2.
+          exact H3.
+        *
+          rewrite H2.
+          apply empty_support.
+  Qed.
+
+End prop_3_1_7.
