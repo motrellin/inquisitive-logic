@@ -357,3 +357,51 @@ Proof.
     rewrite H1.
     reflexivity.
 Defined.
+
+Section prop_3_3_3.
+  
+    Context `{M : Model}.
+  
+    Proposition locality : 
+      forall f s,
+        support f s <->
+        @support _ (restricted_Model s) f (restricted_state s s).
+    Proof.
+      induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
+      all: intros s.
+      -
+        simpl.
+        split.
+        +
+          intros H1 [w H2] H3.
+          auto.
+        +
+          intros H1 w H2.
+          specialize (H1 (exist _ w H2)).
+          auto.
+      -
+        simpl.
+        split.
+        +
+          intros H1 [w H2].
+          auto.
+        +
+          intros H1 w.
+          destruct (s w) eqn:H2.
+          *
+            specialize (H1 (exist _ w H2)).
+            simpl in H1.
+            congruence.
+          *
+            reflexivity.
+      -
+        simpl in *.
+        firstorder.
+      - (* TODO: Implication *)
+        admit.
+      -
+        simpl in *.
+        firstorder.
+    Admitted.
+  
+End prop_3_3_3.
