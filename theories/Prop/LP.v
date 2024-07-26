@@ -91,7 +91,7 @@ Definition iquest : form -> form :=
   fun f =>
   idisj f (neg f).
 
-Section prop_3_1_4.
+Section prop_3_3_1.
 
   Context `{Model}.
 
@@ -146,7 +146,7 @@ Section prop_3_1_4.
       firstorder.
   Qed.
 
-End prop_3_1_4.
+End prop_3_3_1.
 
 Section prop_3_1_6.
 
