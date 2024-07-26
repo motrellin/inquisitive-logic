@@ -109,26 +109,18 @@ Section prop_3_1_7.
       truth_value w p = true.
   Proof.
     intros p.
-    simpl.
+    unfold satisfies.
     split.
     -
       intros H1.
       apply H1.
-      unfold singleton.
-      destruct (worlds_deceq w w).
-      +
-        reflexivity.
-      +
-        contradiction.
+      apply singleton_true.
+      reflexivity.
     -
       intros H1 w' H2.
-      unfold singleton in H2.
-      destruct (worlds_deceq w' w).
-      +
-        subst w'.
-        exact H1.
-      +
-        discriminate.
+      apply singleton_true in H2.
+      rewrite <- H2.
+      exact H1.
   Qed.
 
   Proposition satisfies_bot : 
@@ -139,11 +131,12 @@ Section prop_3_1_7.
     intros H1.
     specialize (H1 w).
     unfold singleton in H1.
-    destruct (worlds_deceq w w).
+    destruct (worlds_deceq w w) as [H2|H2].
     -
       discriminate.
     -
-      contradiction.
+      contradict H2.
+      reflexivity.
   Qed.
 
   Proposition satisfies_conj : 
@@ -256,12 +249,11 @@ Section prop_3_1_8.
     induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2].
     all: intros s.
     -
-      simpl.
       split.
       +
         intros H1 w H2 w' H3.
-        rewrite <- singleton_true in H3.
-        subst w'.
+        apply singleton_true in H3.
+        rewrite <- H3 in *; clear H3 w'.
         auto.
       +
         intros H1 w H2.
@@ -270,13 +262,11 @@ Section prop_3_1_8.
         rewrite <- singleton_true.
         reflexivity.
     -
-      simpl.
       split.
       +
         intros H1 w H2 w'.
         rewrite <- singleton_false.
-        intro.
-        subst w'.
+        intros H3.
         congruence.
       +
         intros H1 w.
@@ -284,10 +274,13 @@ Section prop_3_1_8.
         *
           specialize (H1 w H2 w).
           rewrite <- singleton_false in H1.
-          contradiction.
+          contradict H1.
+          reflexivity.
         *
           reflexivity.
     -
+      specialize (IH1 s).
+      specialize (IH2 s).
       simpl.
       firstorder.
     -
@@ -318,19 +311,19 @@ Section prop_3_1_8.
         intros t H3 H4.
         apply substate_singleton in H3 as [H3|H3].
         *
-          rewrite H3 in *.
-          clear H3 t.
+          rewrite H3 in *; clear H3 t.
 
           apply H1.
           --
              intros w' H5.
              apply singleton_true in H5.
-             subst w'.
+             rewrite <- H5 in *; clear H5 w'.
              exact H2.
           --
              intros w' H5.
              apply singleton_true in H5.
-             subst w'.
+             red.
+             rewrite <- H5; clear H5 w'.
              exact H4.
         *
           rewrite H3 in *.
@@ -353,7 +346,8 @@ Section prop_3_1_8.
           apply IH1.
           intros w' H8.
           apply singleton_true in H8.
-          subst w'.
+          red.
+          rewrite <- H8 in *; clear H8 w'.
           exact H5.
   Qed.
         

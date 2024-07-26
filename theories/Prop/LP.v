@@ -175,29 +175,47 @@ Module ex_3_2_5.
   Let f1 := idisj (atom 0) (atom 1).
   Let f2 := iquest (atom 0).
 
-  Let s1 : state :=
-    fun w =>
-    match w with
-    | pq => true
-    | q => true
-    | _ => false
-    end.
+  Definition s1 : state. 
+  Proof.
+    refine
+    {|
+      state_fun := fun w => 
+                    match w with
+                    | pq => true
+                    | q => true
+                    | _ => false
+                    end
+    |}.
+    intros [] [] H1; easy.
+  Defined.
 
-  Let s2 : state :=
-    fun w =>
-    match w with
-    | pq => true
-    | p => true
-    | _ => false
-    end.
+  Definition s2 : state. 
+  Proof.
+    refine
+    {|
+      state_fun := fun w => 
+                    match w with
+                    | pq => true
+                    | p => true
+                    | _ => false
+                    end
+    |}.
+    intros [] [] H1; easy.
+  Defined.
 
-  Let s3 : state :=
-    fun w =>
-    match w with
-    | q => true
-    | e => true
-    | _ => false
-    end.
+  Definition s3 : state. 
+  Proof.
+    refine
+    {|
+      state_fun := fun w => 
+                    match w with
+                    | q => true
+                    | e => true
+                    | _ => false
+                    end
+    |}.
+    intros [] [] H1; easy.
+  Defined.
 
   Example support_f1_s1 : support f1 s1.
   Proof.
