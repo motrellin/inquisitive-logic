@@ -1,0 +1,79 @@
+# Changelog
+
+
+## 1.1.0 (2024-07-26)
+
+### New
+
+* Proved Proposition 3.18. [Max Ole Elliger]
+
+* Finished Proposition 3.17. [Max Ole Elliger]
+
+  Added missing props:
+  - `satisfies_neg`
+  - `satisfies_top`
+  - `satisfies_disj` (only stated, not proven because of missing classical
+    logic)
+  - `satisfies_iff`
+
+* Added `singleton_true` and `singleton_false` [Max Ole Elliger]
+
+* Proof of `substate_singleton` [Max Ole Elliger]
+
+* `support_proper` [Max Ole Elliger]
+
+* Some Instances. [Max Ole Elliger]
+
+  Defined `state_equiv`
+  Declared `state_equiv` as an `Equivalence`
+  Declared `Proper (state_equiv ==> state_equiv ==> iff) substate`
+  Declared `substate` as a reflexive relation
+
+* `satisfies`-relation for LPC. [Max Ole Elliger]
+
+  Added `worlds_deceq`
+  Added `singleton` states
+  Added `satisfies`
+
+### Changes
+
+* Restated `singleton_true` and `singleton_false` [Max Ole Elliger]
+
+* Extracted `lpc_support` [Max Ole Elliger]
+
+### Other
+
+* Merge pull request #1 from motrellin/truth-conditions. [Max Ole Elliger]
+
+  Truth conditions
+
+
+## 1.0.0 (2024-07-26)
+
+### New
+
+* Added theories/Support.v. [Max Ole Elliger]
+
+* Executed generate.sh initially. [Max Ole Elliger]
+
+### Changes
+
+* Updated the definition of states. [Max Ole Elliger]
+
+  states are now functions to bool instead of Prop.
+
+* Initialized meta.yml. [Max Ole Elliger]
+
+### Fix
+
+* Updated workflow. [Max Ole Elliger]
+
+  The workflow didn't name the artifact correct. This is now fixed
+
+* Updated Makefile for chosen namespace InqLog. [Max Ole Elliger]
+
+### Other
+
+* Initial commit. [Max Ole Elliger]
+
+
