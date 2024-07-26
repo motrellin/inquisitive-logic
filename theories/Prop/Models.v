@@ -103,6 +103,19 @@ Obligation 1.
     reflexivity.
 Defined.
 
+Instance singleton_proper : 
+  forall `{Model},
+    Proper (worlds_eq ==> state_equiv) singleton.
+Proof.
+  intros M w1 w2 H1 w'.
+  simpl.
+  destruct (worlds_deceq w' w1) as [H2|H2], (worlds_deceq w' w2) as [H3|H3].
+  reflexivity.
+  contradict H3; rewrite H2; rewrite H1; reflexivity.
+  contradict H2; rewrite H1; rewrite H3; reflexivity.
+  reflexivity.
+Qed.
+
 Lemma substate_singleton `{Model} : 
   forall s w,
     substate s (singleton w) ->
