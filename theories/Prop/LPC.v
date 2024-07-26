@@ -1,5 +1,5 @@
 From Coq Require Export Bool.
-From InqLog.Prop Require Export Formulas.
+From InqLog.Prop Require Export LP.
 
 Inductive lpc :=
   | atom : atoms -> lpc
@@ -7,69 +7,30 @@ Inductive lpc :=
   | conj : lpc -> lpc -> lpc
   | impl : lpc -> lpc -> lpc.
 
-Definition lpc_support `{Model} : lpc -> state -> Prop :=
+Definition lpc_to_lp : lpc -> lp :=
   lpc_rect
-  (fun f => state -> Prop)
-  (fun p s => forall w, s w = true -> truth_value w p = true)
-  (fun s => forall w, s w = false)
-  (fun f1 r1 f2 r2 s => r1 s /\ r2 s)
-  (fun f1 r1 f2 r2 s => forall t, substate t s -> r1 t -> r2 t).
+  (fun f => lp)
+  (fun p => LP.atom p)
+  (LP.bot)
+  (fun f1 r1 f2 r2 => LP.conj r1 r2)
+  (fun f1 r1 f2 r2 => LP.impl r1 r2).
+
+Coercion lpc_to_lp : lpc >-> lp.
 
 Instance LPC : Formula :=
   {|
     form := lpc;
-    support _ := lpc_support
+    support _ := lp_support
   |}.
 
+Print Instances Formula.
+
 Instance support_proper : 
-  forall `{Model} f, 
-    Proper (state_equiv ==> iff) (support f).
+  forall `{Model} (f : lpc),
+    Proper (state_equiv ==> Logic.iff) (support f).
 Proof.
-  intros M f s1 s2 H1.
-  induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2].
-  all: simpl.
-  -
-    split.
-    +
-      intros H2 w H3.
-      apply H2.
-      rewrite H1.
-      exact H3.
-    +
-      intros H2 w H3.
-      apply H2.
-      rewrite <- H1.
-      exact H3.
-  -
-    split.
-    +
-      intros H2 w.
-      rewrite <- H1.
-      apply H2.
-    +
-      intros H2 w.
-      rewrite H1.
-      apply H2.
-  -
-    firstorder.
-  -
-    split.
-    +
-      intros H2 t H3 H4.
-      apply H2.
-      *
-        rewrite H1.
-        exact H3.
-      *
-        exact H4.
-    +
-      intros H2 t H3 H4.
-      apply H2.
-      *
-        rewrite <- H1.
-        exact H3.
-      *
-        exact H4.
+  intro.
+  exact LP.support_proper.
 Qed.
   
 Definition neg : form -> form :=
@@ -90,49 +51,12 @@ Section prop_3_1_4.
 
   Proposition persistency : persistency_property.
   Proof.
-    intro f.
-    induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2].
-    all: unfold substate.
-    all: simpl.
-    all: intros t s H1 H2.
-    -
-      auto.
-    -
-      subst.
-      unfold empty_state in H1.
-      intros w.
-      destruct (t w) eqn:H3.
-      +
-        apply H1 in H3.
-        rewrite H2 in H3.
-        discriminate.
-      +
-        reflexivity.
-    -
-      firstorder.
-    -
-      firstorder.
+    exact LP.persistency.
   Qed.
 
   Proposition empty_support : empty_support_property.
   Proof.
-    intro f.
-    induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2].
-    all: unfold empty_state in *.
-    all: simpl.
-    -
-      discriminate.
-    -
-      reflexivity.
-    -
-      split; assumption.
-    -
-      intros t H1 H2.
-      eapply persistency.
-      +
-        exact H1.
-      +
-        exact IH2.
+    exact LP.empty_support.
   Qed.
 
 End prop_3_1_4.
@@ -146,36 +70,7 @@ Section prop_3_1_6.
       support (neg f) s <->
       ruling_out s f.
   Proof.
-    intros f s.
-    split.
-    -
-      intros H1.
-
-      red.
-      intros [t [H2 [H3 H4]]].
-
-      red in H3.
-      destruct H3 as [w H3].
-
-      simpl in H1.
-
-      specialize (H1 t H2 H4 w).
-      rewrite H1 in H3.
-      discriminate.
-    -
-      intros H1.
-
-      simpl.
-      intros t H2 H3 w.
-
-      red in H1.
-      assert (H4 : ~ consistent t).
-      {
-        firstorder.
-      }
-      unfold consistent in H4.
-      apply not_true_is_false.
-      firstorder.
+    exact LP.support_neg.
   Qed.
 
   Proposition support_disj :
@@ -188,7 +83,8 @@ Section prop_3_1_6.
           support f1 t /\
           support f2 t).
   Proof.
-  Admitted.
+    exact LP.support_disj.
+  Qed.
 
   Proposition support_iff :
     forall f1 f2 s,
@@ -197,7 +93,8 @@ Section prop_3_1_6.
         substate t s ->
         (support f1 t <-> support f2 t).
   Proof.
-  Admitted.
+    exact LP.support_iff.
+  Qed.
 
 End prop_3_1_6.
 
@@ -254,6 +151,7 @@ Section prop_3_1_7.
       satisfies w (conj f1 f2) <->
       satisfies w f1 /\ satisfies w f2.
   Proof.
+    simpl in *.
     firstorder.
   Qed.
 
@@ -268,6 +166,7 @@ Section prop_3_1_7.
       forall t, substate t (singleton w) -> support f1 t -> support f2 t
     ).
     -
+      simpl.
       firstorder.
     -
       split.
@@ -309,6 +208,7 @@ Section prop_3_1_7.
   Proposition satisfies_top : 
     satisfies w top <-> True.
   Proof.
+    simpl.
     firstorder.
   Qed.
 
@@ -388,6 +288,7 @@ Section prop_3_1_8.
         *
           reflexivity.
     -
+      simpl.
       firstorder.
     -
       transitivity (
