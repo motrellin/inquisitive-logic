@@ -118,29 +118,56 @@ Proof.
 Qed.
 
 Lemma singleton_true `{Model} : 
-  forall w,
-    singleton w w = true.
-Proof.
-  intros w.
-  unfold singleton.
-  destruct (worlds_deceq w w).
-  -
-    reflexivity.
-  -
-    contradiction.
-Qed.
-
-Lemma singleton_false `{Model} : 
   forall w w',
-    w <> w' ->
-    singleton w w' = false.
+    w = w' <->
+    singleton w w' = true.
 Proof.
-  intros w w' H1.
+  intros w w'.
   unfold singleton.
   destruct (worlds_deceq w' w).
   -
     subst w'.
-    contradiction.
+    split.
+    +
+      intros H1.
+      reflexivity.
+    +
+      intros H1.
+      reflexivity.
   -
-    reflexivity.
+    split.
+    +
+      intros H1.
+      subst.
+      contradiction.
+    +
+      intros H1.
+      discriminate.
+Qed.
+
+Lemma singleton_false `{Model} : 
+  forall w w',
+    w <> w' <->
+    singleton w w' = false.
+Proof.
+  intros w w'.
+  split.
+  -
+    intros H1.
+    unfold singleton.
+    destruct (worlds_deceq w' w).
+    +
+      subst w'.
+      contradiction.
+    +
+      reflexivity.
+  -
+    intros H1 H2.
+    subst w'.
+    unfold singleton in H1.
+    destruct (worlds_deceq w w).
+    +
+      discriminate.
+    +
+      contradiction.
 Qed.
