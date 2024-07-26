@@ -341,3 +341,119 @@ Section prop_3_1_7.
   Qed.
 
 End prop_3_1_7.
+
+Section prop_3_1_8.
+
+  Context `{Model}.
+
+  Proposition lpc_truth_conditional : 
+    forall f s,
+      support f s <->
+      forall w,
+        s w = true ->
+        satisfies w f.
+  Proof.
+    induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2].
+    all: intros s.
+    -
+      simpl.
+      split.
+      +
+        intros H1 w H2 w' H3.
+        rewrite <- singleton_true in H3.
+        subst w'.
+        auto.
+      +
+        intros H1 w H2.
+        specialize (H1 w H2 w).
+        apply H1.
+        rewrite <- singleton_true.
+        reflexivity.
+    -
+      simpl.
+      split.
+      +
+        intros H1 w H2 w'.
+        rewrite <- singleton_false.
+        intro.
+        subst w'.
+        congruence.
+      +
+        intros H1 w.
+        destruct (s w) eqn:H2.
+        *
+          specialize (H1 w H2 w).
+          rewrite <- singleton_false in H1.
+          contradiction.
+        *
+          reflexivity.
+    -
+      firstorder.
+    -
+      transitivity (
+        forall t, 
+          substate t s -> 
+          support f1 t -> 
+          support f2 t
+      ).
+      reflexivity.
+
+      transitivity (
+        forall t, 
+          substate t s -> 
+          (
+            forall w, 
+              t w = true -> 
+              satisfies w f1
+          ) -> 
+          support f2 t
+      ).
+      firstorder.
+
+      split.
+      +
+        intros H1 w H2.
+        simpl.
+        intros t H3 H4.
+        apply substate_singleton in H3 as [H3|H3].
+        *
+          rewrite H3 in *.
+          clear H3 t.
+
+          apply H1.
+          --
+             intros w' H5.
+             apply singleton_true in H5.
+             subst w'.
+             exact H2.
+          --
+             intros w' H5.
+             apply singleton_true in H5.
+             subst w'.
+             exact H4.
+        *
+          rewrite H3 in *.
+          clear H3 t.
+          apply empty_support.
+      +
+        intros H1 t H2 H3.
+
+        rewrite IH2.
+        intros w H4.
+        unfold satisfies.
+        apply H3 in H4 as H5.
+        apply H2 in H4 as H6.
+        apply H1 in H6 as H7.
+        simpl in H7.
+        apply H7.
+        *
+          reflexivity.
+        *
+          apply IH1.
+          intros w' H8.
+          apply singleton_true in H8.
+          subst w'.
+          exact H5.
+  Qed.
+        
+End prop_3_1_8.
