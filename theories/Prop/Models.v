@@ -70,3 +70,49 @@ Definition consistent `{Model} (s : state) : Prop :=
 
 Definition singleton `{Model} (w : worlds) : state :=
   fun w' => if worlds_deceq w' w then true else false.
+
+Lemma substate_singleton `{Model} : 
+  forall s w,
+    substate s (singleton w) ->
+    state_equiv s (singleton w) \/
+    state_equiv s empty_state.
+Proof.
+  intros s w H1.
+  destruct (s w) eqn:H2.
+  -
+    left.
+    intros w'.
+    unfold substate in H1.
+    unfold singleton in *.
+    destruct (s w') eqn:H3.
+    +
+      specialize (H1 w').
+      destruct (worlds_deceq w' w).
+      *
+        reflexivity.
+      *
+        symmetry.
+        auto.
+    +
+      destruct (worlds_deceq w' w).
+      *
+        subst w'.
+        congruence.
+      *
+        reflexivity.
+  -
+    right.
+    intros w'.
+    unfold substate, singleton in H1.
+    destruct (s w') eqn:H3.
+    +
+      specialize (H1 w' H3).
+      destruct (worlds_deceq w' w).
+      *
+        subst w'.
+        congruence.
+      *
+        discriminate.
+    +
+      reflexivity.
+Qed.
