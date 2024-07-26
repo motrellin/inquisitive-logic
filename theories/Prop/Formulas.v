@@ -29,4 +29,7 @@ Section properties.
         support f t
         ).
 
+  Definition satisfies `{Model} (w : worlds) (f : form) :=
+    support f (singleton w).
+
 End properties.

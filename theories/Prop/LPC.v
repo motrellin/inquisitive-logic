@@ -7,17 +7,70 @@ Inductive lpc :=
   | conj : lpc -> lpc -> lpc
   | impl : lpc -> lpc -> lpc.
 
+Definition lpc_support `{Model} : lpc -> state -> Prop :=
+  lpc_rect
+  (fun f => state -> Prop)
+  (fun p s => forall w, s w = true -> truth_value w p = true)
+  (fun s => forall w, s w = false)
+  (fun f1 r1 f2 r2 s => r1 s /\ r2 s)
+  (fun f1 r1 f2 r2 s => forall t, substate t s -> r1 t -> r2 t).
+
 Instance LPC : Formula :=
   {|
     form := lpc;
-    support := fun _ =>
-      lpc_rect
-      (fun f => state -> Prop)
-      (fun p s => forall w, s w = true -> truth_value w p = true)
-      (fun s => forall w, s w = false)
-      (fun f1 r1 f2 r2 s => r1 s /\ r2 s)
-      (fun f1 r1 f2 r2 s => forall t, substate t s -> r1 t -> r2 t)
+    support _ := lpc_support
   |}.
+
+Instance support_proper : 
+  forall `{Model} f, 
+    Proper (state_equiv ==> iff) (support f).
+Proof.
+  intros M f s1 s2 H1.
+  induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2].
+  all: simpl.
+  -
+    split.
+    +
+      intros H2 w H3.
+      apply H2.
+      rewrite H1.
+      exact H3.
+    +
+      intros H2 w H3.
+      apply H2.
+      rewrite <- H1.
+      exact H3.
+  -
+    split.
+    +
+      intros H2 w.
+      rewrite <- H1.
+      apply H2.
+    +
+      intros H2 w.
+      rewrite H1.
+      apply H2.
+  -
+    firstorder.
+  -
+    split.
+    +
+      intros H2 t H3 H4.
+      apply H2.
+      *
+        rewrite H1.
+        exact H3.
+      *
+        exact H4.
+    +
+      intros H2 t H3 H4.
+      apply H2.
+      *
+        rewrite <- H1.
+        exact H3.
+      *
+        exact H4.
+Qed.
   
 Definition neg : form -> form :=
   fun f => 
@@ -147,3 +200,260 @@ Section prop_3_1_6.
   Admitted.
 
 End prop_3_1_6.
+
+Section prop_3_1_7.
+
+  Context `{Model}.
+  Variable w : worlds.
+
+  Proposition satisfies_atom : 
+    forall p,
+      satisfies w (atom p) <->
+      truth_value w p = true.
+  Proof.
+    intros p.
+    simpl.
+    split.
+    -
+      intros H1.
+      apply H1.
+      unfold singleton.
+      destruct (worlds_deceq w w).
+      +
+        reflexivity.
+      +
+        contradiction.
+    -
+      intros H1 w' H2.
+      unfold singleton in H2.
+      destruct (worlds_deceq w' w).
+      +
+        subst w'.
+        exact H1.
+      +
+        discriminate.
+  Qed.
+
+  Proposition satisfies_bot : 
+    satisfies w bot <-> False.
+  Proof.
+    split; try contradiction.
+    simpl.
+    intros H1.
+    specialize (H1 w).
+    unfold singleton in H1.
+    destruct (worlds_deceq w w).
+    -
+      discriminate.
+    -
+      contradiction.
+  Qed.
+
+  Proposition satisfies_conj : 
+    forall f1 f2,
+      satisfies w (conj f1 f2) <->
+      satisfies w f1 /\ satisfies w f2.
+  Proof.
+    firstorder.
+  Qed.
+
+  Proposition satisfies_impl : 
+    forall f1 f2,
+    satisfies w (impl f1 f2) <->
+    (satisfies w f1 -> satisfies w f2).
+  Proof.
+    intros f1 f2.
+    unfold satisfies at 1.
+    transitivity (
+      forall t, substate t (singleton w) -> support f1 t -> support f2 t
+    ).
+    -
+      firstorder.
+    -
+      split.
+      +
+        unfold satisfies.
+        intros H1 H2.
+        apply H1.
+        *
+          reflexivity.
+        *
+          exact H2.
+      +
+        intros H1 s H2 H3.
+        apply substate_singleton in H2.
+        unfold satisfies in H1.
+        destruct H2 as [H2|H2].
+        *
+          rewrite H2.
+          apply H1.
+          rewrite <- H2.
+          exact H3.
+        *
+          rewrite H2.
+          apply empty_support.
+  Qed.
+
+  Proposition satisfies_neg : 
+    forall f,
+      satisfies w (neg f) <->
+      ~ satisfies w f.
+  Proof.
+    intros f.
+    unfold neg.
+    rewrite satisfies_impl.
+    pose proof satisfies_bot.
+    firstorder.
+  Qed.
+
+  Proposition satisfies_top : 
+    satisfies w top <-> True.
+  Proof.
+    firstorder.
+  Qed.
+
+  Proposition satisfies_disj : 
+    forall f1 f2,
+      satisfies w (disj f1 f2) <->
+      satisfies w f1 \/ satisfies w f2.
+  Proof.
+    intros f1 f2.
+    unfold disj.
+    rewrite satisfies_neg.
+    rewrite satisfies_conj.
+    rewrite satisfies_neg.
+    rewrite satisfies_neg.
+    firstorder. (* Missing: classical reasoning *)
+  Abort.
+
+  Proposition satisfies_iff : 
+    forall f1 f2,
+      satisfies w (iff f1 f2) <->
+      (satisfies w f1 -> satisfies w f2) /\
+      (satisfies w f2 -> satisfies w f1).
+  Proof.
+    intros f1 f2.
+    unfold iff.
+    rewrite satisfies_conj.
+    rewrite satisfies_impl.
+    rewrite satisfies_impl.
+    reflexivity.
+  Qed.
+
+End prop_3_1_7.
+
+Section prop_3_1_8.
+
+  Context `{Model}.
+
+  Proposition lpc_truth_conditional : 
+    forall f s,
+      support f s <->
+      forall w,
+        s w = true ->
+        satisfies w f.
+  Proof.
+    induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2].
+    all: intros s.
+    -
+      simpl.
+      split.
+      +
+        intros H1 w H2 w' H3.
+        rewrite <- singleton_true in H3.
+        subst w'.
+        auto.
+      +
+        intros H1 w H2.
+        specialize (H1 w H2 w).
+        apply H1.
+        rewrite <- singleton_true.
+        reflexivity.
+    -
+      simpl.
+      split.
+      +
+        intros H1 w H2 w'.
+        rewrite <- singleton_false.
+        intro.
+        subst w'.
+        congruence.
+      +
+        intros H1 w.
+        destruct (s w) eqn:H2.
+        *
+          specialize (H1 w H2 w).
+          rewrite <- singleton_false in H1.
+          contradiction.
+        *
+          reflexivity.
+    -
+      firstorder.
+    -
+      transitivity (
+        forall t, 
+          substate t s -> 
+          support f1 t -> 
+          support f2 t
+      ).
+      reflexivity.
+
+      transitivity (
+        forall t, 
+          substate t s -> 
+          (
+            forall w, 
+              t w = true -> 
+              satisfies w f1
+          ) -> 
+          support f2 t
+      ).
+      firstorder.
+
+      split.
+      +
+        intros H1 w H2.
+        simpl.
+        intros t H3 H4.
+        apply substate_singleton in H3 as [H3|H3].
+        *
+          rewrite H3 in *.
+          clear H3 t.
+
+          apply H1.
+          --
+             intros w' H5.
+             apply singleton_true in H5.
+             subst w'.
+             exact H2.
+          --
+             intros w' H5.
+             apply singleton_true in H5.
+             subst w'.
+             exact H4.
+        *
+          rewrite H3 in *.
+          clear H3 t.
+          apply empty_support.
+      +
+        intros H1 t H2 H3.
+
+        rewrite IH2.
+        intros w H4.
+        unfold satisfies.
+        apply H3 in H4 as H5.
+        apply H2 in H4 as H6.
+        apply H1 in H6 as H7.
+        simpl in H7.
+        apply H7.
+        *
+          reflexivity.
+        *
+          apply IH1.
+          intros w' H8.
+          apply singleton_true in H8.
+          subst w'.
+          exact H5.
+  Qed.
+        
+End prop_3_1_8.
