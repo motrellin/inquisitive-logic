@@ -53,3 +53,7 @@ make install
 
 This project tries to formalize inquisitive logic in Coq. The formalization
 is based on the work of [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
+
+### Contributing
+
+You can find information on how to contribute in the [CONTRIBUTING.md](.github/CONTRIBUTING.md) file.
