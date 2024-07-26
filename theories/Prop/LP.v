@@ -23,11 +23,11 @@ Instance LP : Formula :=
     support _ := lp_support
   |}.
 
-Instance support_proper : 
-  forall `{Model} f, 
+Instance support_proper `{Model} :
+  forall f,
     Proper (state_equiv ==> iff) (support f).
 Proof.
-  intros M f s1 s2 H1.
+  intros f s1 s2 H1.
   induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
   all: simpl.
   -

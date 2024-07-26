@@ -23,10 +23,8 @@ Instance LPC : Formula :=
     support _ := lp_support
   |}.
 
-Print Instances Formula.
-
-Instance support_proper : 
-  forall `{Model} (f : lpc),
+Instance support_proper `{Model} :
+  forall f,
     Proper (state_equiv ==> Logic.iff) (support f).
 Proof.
   intro.
