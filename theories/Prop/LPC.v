@@ -7,16 +7,18 @@ Inductive lpc :=
   | conj : lpc -> lpc -> lpc
   | impl : lpc -> lpc -> lpc.
 
+Definition lpc_support `{Model} : lpc -> state -> Prop :=
+  lpc_rect
+  (fun f => state -> Prop)
+  (fun p s => forall w, s w = true -> truth_value w p = true)
+  (fun s => forall w, s w = false)
+  (fun f1 r1 f2 r2 s => r1 s /\ r2 s)
+  (fun f1 r1 f2 r2 s => forall t, substate t s -> r1 t -> r2 t).
+
 Instance LPC : Formula :=
   {|
     form := lpc;
-    support := fun _ =>
-      lpc_rect
-      (fun f => state -> Prop)
-      (fun p s => forall w, s w = true -> truth_value w p = true)
-      (fun s => forall w, s w = false)
-      (fun f1 r1 f2 r2 s => r1 s /\ r2 s)
-      (fun f1 r1 f2 r2 s => forall t, substate t s -> r1 t -> r2 t)
+    support _ := lpc_support
   |}.
   
 Definition neg : form -> form :=
