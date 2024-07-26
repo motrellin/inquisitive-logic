@@ -1,1 +1,2 @@
 output_engine = mustache("markdown")
+include_merge = False

@@ -60,12 +60,6 @@
 
 * Extracted `lpc_support` [Max Ole Elliger]
 
-### Other
-
-* Merge pull request #1 from motrellin/truth-conditions. [Max Ole Elliger]
-
-  Truth conditions
-
 
 ## 1.0.0 (2024-07-26)
 
