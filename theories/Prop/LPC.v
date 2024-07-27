@@ -234,17 +234,12 @@ End prop_3_1_7.
 
 Section prop_3_1_8.
 
-  Context `{Model}.
-
   Proposition lpc_truth_conditional : 
-    forall f s,
-      support f s <->
-      forall w,
-        s w = true ->
-        satisfies w f.
+    forall f, 
+      truth_conditional f.
   Proof.
     induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2].
-    all: intros s.
+    all: intros M s.
     -
       split.
       +
@@ -276,8 +271,8 @@ Section prop_3_1_8.
         *
           reflexivity.
     -
-      specialize (IH1 s).
-      specialize (IH2 s).
+      specialize (IH1 M s).
+      specialize (IH2 M s).
       simpl.
       firstorder.
     -
@@ -329,7 +324,7 @@ Section prop_3_1_8.
       +
         intros H1 t H2 H3.
 
-        rewrite IH2.
+        rewrite (IH2 M).
         intros w H4.
         unfold satisfies.
         apply H3 in H4 as H5.
