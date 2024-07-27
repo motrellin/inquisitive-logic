@@ -10,19 +10,16 @@ Follow the instructions on https://github.com/coq-community/templates to regener
 [docker-action-shield]: https://github.com/motrellin/inqlog/actions/workflows/docker-action.yml/badge.svg?branch=main
 [docker-action-link]: https://github.com/motrellin/inqlog/actions/workflows/docker-action.yml
 
-
 [coqdoc-shield]: https://img.shields.io/badge/docs-coqdoc-blue.svg
 [coqdoc-link]: https://motrellin.github.io/inqlog/./docs/toc.html
-
 
 A formalization of inquisitive logic in Coq, based on the work of
 [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
 
-
 ## Meta
 
 - Author(s):
-  - Max Ole Elliger (initial)
+  + Max Ole Elliger (initial)
 - License: [GNU General Public License v3.0 or later](LICENSE)
 - Compatible Coq versions: Developed for 8.19.0
 - Additional dependencies: none
@@ -47,7 +44,6 @@ cd inqlog
 make all  # or make -j <number-of-cores-on-your-machine> all
 make install
 ```
-
 
 ## Documentation
 

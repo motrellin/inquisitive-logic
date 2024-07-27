@@ -64,7 +64,7 @@ Proof.
     rewrite <- H1.
     exact H4.
 Qed.
-  
+
 
 Instance substate_refl : forall `{Model}, Reflexive substate.
 Proof.
@@ -103,7 +103,7 @@ Obligation 1.
     reflexivity.
 Defined.
 
-Instance singleton_proper : 
+Instance singleton_proper :
   forall `{Model},
     Proper (worlds_eq ==> state_equiv) singleton.
 Proof.
@@ -116,7 +116,7 @@ Proof.
   reflexivity.
 Qed.
 
-Lemma substate_singleton `{Model} : 
+Lemma substate_singleton `{Model} :
   forall s w,
     substate s (singleton w) ->
     state_equiv s (singleton w) \/
@@ -165,7 +165,7 @@ Proof.
       reflexivity.
 Qed.
 
-Lemma singleton_true `{Model} : 
+Lemma singleton_true `{Model} :
   forall w w',
     worlds_eq w w' <->
     singleton w w' = true.
@@ -195,7 +195,7 @@ Proof.
       discriminate.
 Qed.
 
-Lemma singleton_false `{Model} : 
+Lemma singleton_false `{Model} :
   forall w w',
     (~ worlds_eq w w')  <->
     singleton w w' = false.

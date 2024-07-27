@@ -29,9 +29,9 @@ Instance support_proper `{Model} :
 Proof.
   exact support_proper.
 Qed.
-  
+
 Definition neg : form -> form :=
-  fun f => 
+  fun f =>
   impl f bot.
 Definition top : form :=
   neg bot.
@@ -62,7 +62,7 @@ Section prop_3_1_6.
 
   Context `{Model}.
 
-  Proposition support_neg : 
+  Proposition support_neg :
     forall f s,
       support (neg f) s <->
       ruling_out s f.
@@ -100,7 +100,7 @@ Section prop_3_1_7.
   Context `{Model}.
   Variable w : worlds.
 
-  Proposition satisfies_atom : 
+  Proposition satisfies_atom :
     forall p,
       satisfies w (atom p) <->
       truth_value w p = true.
@@ -108,13 +108,13 @@ Section prop_3_1_7.
     apply satisfies_atom.
   Qed.
 
-  Proposition satisfies_bot : 
+  Proposition satisfies_bot :
     satisfies w bot <-> False.
   Proof.
     apply satisfies_bot.
   Qed.
 
-  Proposition satisfies_conj : 
+  Proposition satisfies_conj :
     forall f1 f2,
       satisfies w (conj f1 f2) <->
       satisfies w f1 /\ satisfies w f2.
@@ -123,7 +123,7 @@ Section prop_3_1_7.
     apply satisfies_conj.
   Qed.
 
-  Proposition satisfies_impl : 
+  Proposition satisfies_impl :
     forall f1 f2,
     satisfies w (impl f1 f2) <->
     (satisfies w f1 -> satisfies w f2).
@@ -132,7 +132,7 @@ Section prop_3_1_7.
     apply satisfies_impl.
   Qed.
 
-  Proposition satisfies_neg : 
+  Proposition satisfies_neg :
     forall f,
       satisfies w (neg f) <->
       ~ satisfies w f.
@@ -141,13 +141,13 @@ Section prop_3_1_7.
     apply satisfies_neg.
   Qed.
 
-  Proposition satisfies_top : 
+  Proposition satisfies_top :
     satisfies w top <-> True.
   Proof.
     apply satisfies_top.
   Qed.
 
-  Proposition satisfies_disj : 
+  Proposition satisfies_disj :
     forall f1 f2,
       satisfies w (disj f1 f2) <->
       satisfies w f1 \/ satisfies w f2.
@@ -156,7 +156,7 @@ Section prop_3_1_7.
     Fail apply satisfies_disj. (* Missing: classical reasoning *)
   Abort.
 
-  Proposition satisfies_iff : 
+  Proposition satisfies_iff :
     forall f1 f2,
       satisfies w (iff f1 f2) <->
       (satisfies w f1 -> satisfies w f2) /\
@@ -170,8 +170,8 @@ End prop_3_1_7.
 
 Section prop_3_1_8.
 
-  Proposition lpc_truth_conditional : 
-    forall f, 
+  Proposition lpc_truth_conditional :
+    forall f,
       truth_conditional f.
   Proof.
     induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2].
@@ -213,21 +213,21 @@ Section prop_3_1_8.
       firstorder.
     -
       transitivity (
-        forall t, 
-          substate t s -> 
-          support f1 t -> 
+        forall t,
+          substate t s ->
+          support f1 t ->
           support f2 t
       ).
       reflexivity.
 
       transitivity (
-        forall t, 
-          substate t s -> 
+        forall t,
+          substate t s ->
           (
-            forall w, 
-              t w = true -> 
+            forall w,
+              t w = true ->
               satisfies w f1
-          ) -> 
+          ) ->
           support f2 t
       ).
       firstorder.
@@ -278,5 +278,5 @@ Section prop_3_1_8.
           rewrite <- H8 in *; clear H8 w'.
           exact H5.
   Qed.
-        
+
 End prop_3_1_8.
