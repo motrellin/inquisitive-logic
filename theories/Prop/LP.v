@@ -732,3 +732,32 @@ Definition classical : form -> form :=
   (fun f1 r1 f2 r2 => conj r1 r2)
   (fun f1 r1 f2 r2 => impl r1 r2)
   (fun f1 r1 f2 r2 => disj r1 r2).
+
+Section prop_3_4_3.
+
+  Context `{Model}.
+
+  Proposition classical_truth_set :
+    forall f w,
+      satisfies w f <->
+      satisfies w (classical f).
+  Proof.
+    intros f w.
+    induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
+    all: simpl classical.
+    -
+      reflexivity.
+    -
+      reflexivity.
+    -
+      do 2 rewrite satisfies_conj.
+      firstorder.
+    -
+      do 2 rewrite satisfies_impl.
+      firstorder.
+    -
+      rewrite satisfies_idisj.
+      Fail rewrite satisfies_disj.
+  Abort.
+
+End prop_3_4_3.
