@@ -142,7 +142,46 @@ Section prop_3_1_6.
           ruling_out t f1 /\
           ruling_out t f2).
   Proof.
-  Admitted.
+    intros f1 f2 s.
+    unfold disj.
+    rewrite support_neg.
+    split.
+    -
+      intros H1 [t [H2 [[w H3] [H4 H5]]]].
+
+      unfold ruling_out in H1.
+      apply H1.
+      exists t.
+      repeat split.
+      +
+        exact H2.
+      +
+        exists w.
+        exact H3.
+      +
+        rewrite support_neg.
+        exact H4.
+      +
+        rewrite support_neg.
+        exact H5.
+    -
+      intros H1.
+      red.
+      intros [t [H2 [[w H3] [H4 H5]]]].
+      rewrite support_neg in H4,H5.
+      apply H1.
+      exists t.
+      repeat split.
+      +
+        exact H2.
+      +
+        exists w.
+        exact H3.
+      +
+        exact H4.
+      +
+        exact H5.
+  Qed.
 
   Proposition support_iff :
     forall f1 f2 s,
