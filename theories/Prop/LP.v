@@ -190,7 +190,8 @@ Section prop_3_1_6.
         substate t s ->
         (support f1 t <-> support f2 t).
   Proof.
-  Admitted.
+    firstorder.
+  Qed.
 
   Lemma support_iquest : 
     forall f s,
