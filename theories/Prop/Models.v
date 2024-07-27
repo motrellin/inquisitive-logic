@@ -54,7 +54,7 @@ Proof.
     rewrite <- H1.
     exact H4.
 Qed.
-  
+
 
 Instance substate_refl : forall `{Model}, Reflexive substate.
 Proof.
@@ -71,7 +71,7 @@ Definition consistent `{Model} (s : state) : Prop :=
 Definition singleton `{Model} (w : worlds) : state :=
   fun w' => if worlds_deceq w' w then true else false.
 
-Lemma substate_singleton `{Model} : 
+Lemma substate_singleton `{Model} :
   forall s w,
     substate s (singleton w) ->
     state_equiv s (singleton w) \/
@@ -117,7 +117,7 @@ Proof.
       reflexivity.
 Qed.
 
-Lemma singleton_true `{Model} : 
+Lemma singleton_true `{Model} :
   forall w w',
     w = w' <->
     singleton w w' = true.
@@ -145,7 +145,7 @@ Proof.
       discriminate.
 Qed.
 
-Lemma singleton_false `{Model} : 
+Lemma singleton_false `{Model} :
   forall w w',
     w <> w' <->
     singleton w w' = false.

@@ -1,12 +1,10 @@
 # Changelog
 
-
 ## (unreleased)
 
 ### Changes
 
 * Excluded merge commits from CHANGELOG.md. [Max Ole Elliger]
-
 
 ## 1.1.1 (2024-07-26)
 
@@ -20,12 +18,12 @@
   [`gitchangelog`](https://github.com/vaab/gitchangelog).
 
   Commits updating the CHANGELOG should have the following style:
+
   ```
   chg: doc: Updated CHANGELOG.md !minor
 
   Further Information if needed...
   ```
-
 
 ## 1.1.0 (2024-07-26)
 
@@ -67,7 +65,6 @@
 
 * Extracted `lpc_support` [Max Ole Elliger]
 
-
 ## 1.0.0 (2024-07-26)
 
 ### New
@@ -95,5 +92,3 @@
 ### Other
 
 * Initial commit. [Max Ole Elliger]
-
-
