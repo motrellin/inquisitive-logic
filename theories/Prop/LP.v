@@ -720,3 +720,15 @@ Section prop_3_3_5.
   Qed.
 
 End prop_3_3_5.
+
+Definition statement (f : form) : Prop := truth_conditional f.
+Definition question (f : form) : Prop := ~ truth_conditional f.
+
+Definition classical : form -> form :=
+  lp_rec
+  (fun f => lp)
+  (fun p => atom p)
+  bot
+  (fun f1 r1 f2 r2 => conj r1 r2)
+  (fun f1 r1 f2 r2 => impl r1 r2)
+  (fun f1 r1 f2 r2 => disj r1 r2).
