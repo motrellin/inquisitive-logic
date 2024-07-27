@@ -139,8 +139,8 @@ Section prop_3_1_6.
         exists t,
           substate t s /\
           consistent t /\
-          support f1 t /\
-          support f2 t).
+          ruling_out t f1 /\
+          ruling_out t f2).
   Proof.
   Admitted.
 
