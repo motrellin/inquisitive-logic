@@ -23,7 +23,6 @@ Welcome to the Inquisivite Logic project website!
 A formalization of inquisitive logic in Coq, based on the work of
 [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
 
-
 This is an open source project, licensed under the GNU General Public License v3.0 or later.
 
 ## Get the code
@@ -36,7 +35,6 @@ The coqdoc presentation of the source files can be browsed [here](./docs/toc.htm
 
 Related publications, if any, are listed below.
 
-
 ## Help and contact
 
 - Report issues on [GitHub](https://github.com/motrellin/inqlog/issues)
@@ -44,6 +42,3 @@ Related publications, if any, are listed below.
 ## Authors and contributors
 
 - Max Ole Elliger (initial)
-
-
-
