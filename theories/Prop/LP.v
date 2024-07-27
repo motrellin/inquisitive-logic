@@ -75,9 +75,9 @@ Proof.
   -
     firstorder.
 Qed.
-  
+
 Definition neg : form -> form :=
-  fun f => 
+  fun f =>
   impl f bot.
 Definition top : form :=
   neg bot.
@@ -95,7 +95,7 @@ Section prop_3_1_6.
 
   Context `{Model}.
 
-  Proposition support_neg : 
+  Proposition support_neg :
     forall f s,
       support (neg f) s <->
       ruling_out s f.
@@ -193,7 +193,7 @@ Section prop_3_1_6.
     firstorder.
   Qed.
 
-  Lemma support_iquest : 
+  Lemma support_iquest :
     forall f s,
       support (iquest f) s <-> (support f s \/ ruling_out s f).
   Proof.
@@ -215,11 +215,11 @@ Module ex_3_2_5.
   Let f1 := idisj (atom 0) (atom 1).
   Let f2 := iquest (atom 0).
 
-  Definition s1 : state. 
+  Definition s1 : state.
   Proof.
     refine
     {|
-      state_fun := fun w => 
+      state_fun := fun w =>
                     match w with
                     | pq => true
                     | q => true
@@ -229,11 +229,11 @@ Module ex_3_2_5.
     intros [] [] H1; easy.
   Defined.
 
-  Definition s2 : state. 
+  Definition s2 : state.
   Proof.
     refine
     {|
-      state_fun := fun w => 
+      state_fun := fun w =>
                     match w with
                     | pq => true
                     | p => true
@@ -243,11 +243,11 @@ Module ex_3_2_5.
     intros [] [] H1; easy.
   Defined.
 
-  Definition s3 : state. 
+  Definition s3 : state.
   Proof.
     refine
     {|
-      state_fun := fun w => 
+      state_fun := fun w =>
                     match w with
                     | q => true
                     | e => true
@@ -356,7 +356,7 @@ Section prop_3_1_7.
   Context `{Model}.
   Variable w : worlds.
 
-  Proposition satisfies_atom : 
+  Proposition satisfies_atom :
     forall p,
       satisfies w (atom p) <->
       truth_value w p = true.
@@ -376,7 +376,7 @@ Section prop_3_1_7.
       exact H1.
   Qed.
 
-  Proposition satisfies_bot : 
+  Proposition satisfies_bot :
     satisfies w bot <-> False.
   Proof.
     split; try contradiction.
@@ -392,7 +392,7 @@ Section prop_3_1_7.
       reflexivity.
   Qed.
 
-  Proposition satisfies_conj : 
+  Proposition satisfies_conj :
     forall f1 f2,
       satisfies w (conj f1 f2) <->
       satisfies w f1 /\ satisfies w f2.
@@ -401,7 +401,7 @@ Section prop_3_1_7.
     firstorder.
   Qed.
 
-  Proposition satisfies_impl : 
+  Proposition satisfies_impl :
     forall f1 f2,
     satisfies w (impl f1 f2) <->
     (satisfies w f1 -> satisfies w f2).
@@ -439,7 +439,7 @@ Section prop_3_1_7.
           apply empty_support.
   Qed.
 
-  Proposition satisfies_neg : 
+  Proposition satisfies_neg :
     forall f,
       satisfies w (neg f) <->
       ~ satisfies w f.
@@ -451,14 +451,14 @@ Section prop_3_1_7.
     firstorder.
   Qed.
 
-  Proposition satisfies_top : 
+  Proposition satisfies_top :
     satisfies w top <-> True.
   Proof.
     simpl.
     firstorder.
   Qed.
 
-  Proposition satisfies_disj : 
+  Proposition satisfies_disj :
     forall f1 f2,
       satisfies w (disj f1 f2) <->
       satisfies w f1 \/ satisfies w f2.
@@ -472,7 +472,7 @@ Section prop_3_1_7.
     firstorder. (* Missing: classical reasoning *)
   Abort.
 
-  Proposition satisfies_iff : 
+  Proposition satisfies_iff :
     forall f1 f2,
       satisfies w (iff f1 f2) <->
       (satisfies w f1 -> satisfies w f2) /\
@@ -536,10 +536,10 @@ Proof.
 Defined.
 
 Section prop_3_3_3.
-  
+
     Context `{M : Model}.
-  
-    Proposition locality : 
+
+    Proposition locality :
       forall f s,
         support f s <->
         @support _ (restricted_Model s) f (restricted_state s s).
@@ -580,14 +580,14 @@ Section prop_3_3_3.
         simpl in *.
         firstorder.
     Admitted.
-  
+
 End prop_3_3_3.
 
 Section prop_3_3_4.
 
   Context `{Model}.
 
-  Proposition satisfies_idisj : 
+  Proposition satisfies_idisj :
     forall f1 f2 w,
       satisfies w (idisj f1 f2) <->
       satisfies w f1 \/ satisfies w f2.
@@ -601,7 +601,7 @@ Section prop_3_3_5.
 
   Context `{Model}.
 
-  Proposition prop_3_3_5 : 
+  Proposition prop_3_3_5 :
     forall f w,
       satisfies w f <->
       exists (s : state),
