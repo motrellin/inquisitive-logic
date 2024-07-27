@@ -105,35 +105,13 @@ Section prop_3_1_7.
       satisfies w (atom p) <->
       truth_value w p = true.
   Proof.
-    intros p.
-    unfold satisfies.
-    split.
-    -
-      intros H1.
-      apply H1.
-      apply singleton_true.
-      reflexivity.
-    -
-      intros H1 w' H2.
-      apply singleton_true in H2.
-      rewrite <- H2.
-      exact H1.
+    apply satisfies_atom.
   Qed.
 
   Proposition satisfies_bot : 
     satisfies w bot <-> False.
   Proof.
-    split; try contradiction.
-    simpl.
-    intros H1.
-    specialize (H1 w).
-    unfold singleton in H1.
-    destruct (worlds_deceq w w) as [H2|H2].
-    -
-      discriminate.
-    -
-      contradict H2.
-      reflexivity.
+    apply satisfies_bot.
   Qed.
 
   Proposition satisfies_conj : 
@@ -141,8 +119,8 @@ Section prop_3_1_7.
       satisfies w (conj f1 f2) <->
       satisfies w f1 /\ satisfies w f2.
   Proof.
-    simpl in *.
-    firstorder.
+    intros.
+    apply satisfies_conj.
   Qed.
 
   Proposition satisfies_impl : 
@@ -150,37 +128,8 @@ Section prop_3_1_7.
     satisfies w (impl f1 f2) <->
     (satisfies w f1 -> satisfies w f2).
   Proof.
-    intros f1 f2.
-    unfold satisfies at 1.
-    transitivity (
-      forall t, substate t (singleton w) -> support f1 t -> support f2 t
-    ).
-    -
-      simpl.
-      firstorder.
-    -
-      split.
-      +
-        unfold satisfies.
-        intros H1 H2.
-        apply H1.
-        *
-          reflexivity.
-        *
-          exact H2.
-      +
-        intros H1 s H2 H3.
-        apply substate_singleton in H2.
-        unfold satisfies in H1.
-        destruct H2 as [H2|H2].
-        *
-          rewrite H2.
-          apply H1.
-          rewrite <- H2.
-          exact H3.
-        *
-          rewrite H2.
-          apply empty_support.
+    intros.
+    apply satisfies_impl.
   Qed.
 
   Proposition satisfies_neg : 
@@ -188,18 +137,14 @@ Section prop_3_1_7.
       satisfies w (neg f) <->
       ~ satisfies w f.
   Proof.
-    intros f.
-    unfold neg.
-    rewrite satisfies_impl.
-    pose proof satisfies_bot.
-    firstorder.
+    intros.
+    apply satisfies_neg.
   Qed.
 
   Proposition satisfies_top : 
     satisfies w top <-> True.
   Proof.
-    simpl.
-    firstorder.
+    apply satisfies_top.
   Qed.
 
   Proposition satisfies_disj : 
@@ -207,13 +152,8 @@ Section prop_3_1_7.
       satisfies w (disj f1 f2) <->
       satisfies w f1 \/ satisfies w f2.
   Proof.
-    intros f1 f2.
-    unfold disj.
-    rewrite satisfies_neg.
-    rewrite satisfies_conj.
-    rewrite satisfies_neg.
-    rewrite satisfies_neg.
-    firstorder. (* Missing: classical reasoning *)
+    intros.
+    Fail apply satisfies_disj. (* Missing: classical reasoning *)
   Abort.
 
   Proposition satisfies_iff : 
@@ -222,12 +162,8 @@ Section prop_3_1_7.
       (satisfies w f1 -> satisfies w f2) /\
       (satisfies w f2 -> satisfies w f1).
   Proof.
-    intros f1 f2.
-    unfold iff.
-    rewrite satisfies_conj.
-    rewrite satisfies_impl.
-    rewrite satisfies_impl.
-    reflexivity.
+    intros.
+    apply satisfies_iff.
   Qed.
 
 End prop_3_1_7.

@@ -311,6 +311,143 @@ Section prop_3_3_1.
 
 End prop_3_3_1.
 
+Section prop_3_1_7.
+
+  Context `{Model}.
+  Variable w : worlds.
+
+  Proposition satisfies_atom : 
+    forall p,
+      satisfies w (atom p) <->
+      truth_value w p = true.
+  Proof.
+    intros p.
+    unfold satisfies.
+    split.
+    -
+      intros H1.
+      apply H1.
+      apply singleton_true.
+      reflexivity.
+    -
+      intros H1 w' H2.
+      apply singleton_true in H2.
+      rewrite <- H2.
+      exact H1.
+  Qed.
+
+  Proposition satisfies_bot : 
+    satisfies w bot <-> False.
+  Proof.
+    split; try contradiction.
+    simpl.
+    intros H1.
+    specialize (H1 w).
+    unfold singleton in H1.
+    destruct (worlds_deceq w w) as [H2|H2].
+    -
+      discriminate.
+    -
+      contradict H2.
+      reflexivity.
+  Qed.
+
+  Proposition satisfies_conj : 
+    forall f1 f2,
+      satisfies w (conj f1 f2) <->
+      satisfies w f1 /\ satisfies w f2.
+  Proof.
+    simpl in *.
+    firstorder.
+  Qed.
+
+  Proposition satisfies_impl : 
+    forall f1 f2,
+    satisfies w (impl f1 f2) <->
+    (satisfies w f1 -> satisfies w f2).
+  Proof.
+    intros f1 f2.
+    unfold satisfies at 1.
+    transitivity (
+      forall t, substate t (singleton w) -> support f1 t -> support f2 t
+    ).
+    -
+      simpl.
+      firstorder.
+    -
+      split.
+      +
+        unfold satisfies.
+        intros H1 H2.
+        apply H1.
+        *
+          reflexivity.
+        *
+          exact H2.
+      +
+        intros H1 s H2 H3.
+        apply substate_singleton in H2.
+        unfold satisfies in H1.
+        destruct H2 as [H2|H2].
+        *
+          rewrite H2.
+          apply H1.
+          rewrite <- H2.
+          exact H3.
+        *
+          rewrite H2.
+          apply empty_support.
+  Qed.
+
+  Proposition satisfies_neg : 
+    forall f,
+      satisfies w (neg f) <->
+      ~ satisfies w f.
+  Proof.
+    intros f.
+    unfold neg.
+    rewrite satisfies_impl.
+    pose proof satisfies_bot.
+    firstorder.
+  Qed.
+
+  Proposition satisfies_top : 
+    satisfies w top <-> True.
+  Proof.
+    simpl.
+    firstorder.
+  Qed.
+
+  Proposition satisfies_disj : 
+    forall f1 f2,
+      satisfies w (disj f1 f2) <->
+      satisfies w f1 \/ satisfies w f2.
+  Proof.
+    intros f1 f2.
+    unfold disj.
+    rewrite satisfies_neg.
+    rewrite satisfies_conj.
+    rewrite satisfies_neg.
+    rewrite satisfies_neg.
+    firstorder. (* Missing: classical reasoning *)
+  Abort.
+
+  Proposition satisfies_iff : 
+    forall f1 f2,
+      satisfies w (iff f1 f2) <->
+      (satisfies w f1 -> satisfies w f2) /\
+      (satisfies w f2 -> satisfies w f1).
+  Proof.
+    intros f1 f2.
+    unfold iff.
+    rewrite satisfies_conj.
+    rewrite satisfies_impl.
+    rewrite satisfies_impl.
+    reflexivity.
+  Qed.
+
+End prop_3_1_7.
+
 Definition restricted_Model `{Model} (s : state) : Model.
 Proof.
   unshelve econstructor.
