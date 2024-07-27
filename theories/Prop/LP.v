@@ -556,3 +556,167 @@ Section prop_3_3_4.
   Qed.
 
 End prop_3_3_4.
+
+Section prop_3_3_5.
+
+  Context `{Model}.
+
+  Proposition prop_3_3_5 : 
+    forall f w,
+      satisfies w f <->
+      exists (s : state),
+        s w = true /\
+        support f s.
+  Proof.
+    induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
+    all: intros w.
+    -
+      rewrite satisfies_atom.
+      split.
+      +
+        intros H1.
+        exists (singleton w).
+        split.
+        *
+          apply singleton_true.
+          reflexivity.
+        *
+          intros w' H2.
+          rewrite <- singleton_true in H2.
+          rewrite <- H2 in *; clear H2 w'.
+          exact H1.
+      +
+        firstorder.
+    -
+      rewrite satisfies_bot.
+      firstorder.
+      congruence.
+    -
+      specialize (IH1 w).
+      specialize (IH2 w).
+      rewrite satisfies_conj.
+      split.
+      +
+        intros [H1 H3].
+        apply IH1 in H1.
+        apply IH2 in H3.
+        destruct H1 as [s1 [H1 H2]].
+        destruct H3 as [s2 [H3 H4]].
+        clear IH1 IH2.
+        simpl in *.
+        unshelve eexists.
+        unshelve econstructor.
+        *
+          exact (fun w => s1 w && s2 w).
+        *
+          intros w1 w2 H5.
+          rewrite H5.
+          reflexivity.
+        *
+          repeat split.
+          --
+             simpl.
+             rewrite H1,H3.
+             reflexivity.
+          --
+             apply persistency with (s := s1).
+             ++
+                intros w' H5.
+                simpl in H5.
+                apply andb_prop in H5 as [H5 H6].
+                exact H5.
+             ++
+                exact H2.
+          --
+             apply persistency with (s := s2).
+             ++
+                intros w' H5.
+                simpl in H5.
+                apply andb_prop in H5 as [H5 H6].
+                exact H6.
+             ++
+                exact H4.
+      +
+        firstorder.
+    -
+      rewrite satisfies_impl.
+      simpl.
+      specialize (IH1 w).
+      specialize (IH2 w).
+      split.
+      +
+        intros H1.
+        exists (singleton w).
+        split.
+        *
+          apply singleton_true.
+          reflexivity.
+        *
+          intros t H2 H3.
+          apply substate_singleton in H2 as [H2|H2].
+          all: rewrite H2 in *; clear H2 t.
+          --
+             auto.
+          --
+             apply empty_support.
+      +
+        intros [s [H1 H2]] H3.
+        apply H2.
+        *
+          intros w' H4.
+          rewrite <- singleton_true in H4.
+          rewrite <- H4 in *; clear H4 w'.
+          exact H1.
+        *
+          exact H3.
+    -
+      rewrite satisfies_idisj.
+      specialize (IH1 w).
+      specialize (IH2 w).
+      simpl.
+      split.
+      +
+        intros [H1|H1].
+        *
+          apply IH1 in H1 as [s [H1 H2]].
+          exists s.
+          split.
+          --
+             exact H1.
+          --
+             left.
+             exact H2.
+        *
+          apply IH2 in H1 as [s [H1 H2]].
+          exists s.
+          split.
+          --
+             exact H1.
+          --
+             right.
+             exact H2.
+      +
+        intros [s [H1 [H2|H2]]].
+        *
+          left.
+          apply persistency with (s := s).
+          intros w' H3.
+          apply singleton_true in H3.
+          --
+             rewrite <- H3 in *; clear H3 w'.
+             exact H1.
+          --
+             exact H2.
+        *
+          right.
+          apply persistency with (s := s).
+          intros w' H3.
+          apply singleton_true in H3.
+          --
+             rewrite <- H3 in *; clear H3 w'.
+             exact H1.
+          --
+             exact H2.
+  Qed.
+
+End prop_3_3_5.
