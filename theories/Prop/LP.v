@@ -542,3 +542,17 @@ Section prop_3_3_3.
     Admitted.
   
 End prop_3_3_3.
+
+Section prop_3_3_4.
+
+  Context `{Model}.
+
+  Proposition satisfies_idisj : 
+    forall f1 f2 w,
+      satisfies w (idisj f1 f2) <->
+      satisfies w f1 \/ satisfies w f2.
+  Proof.
+    firstorder.
+  Qed.
+
+End prop_3_3_4.
