@@ -1,5 +1,63 @@
 # Changelog
 
+## inqlog-v0.2.0 (2024-07-29)
+
+### New
+
+* Proof of `support_iff` [Max Ole Elliger]
+
+* Proof of `support_disj` [Max Ole Elliger]
+
+* Classical variant of a formula. [Max Ole Elliger]
+
+  This also includes the definition of a statement and a question.
+
+* Added Proposition 3.3.5. [Max Ole Elliger]
+
+  This proposition relates the truth set of a formula to the supporting
+  states.
+
+* Proposition 3.3.4. [Max Ole Elliger]
+
+  This proposition claimes the truth conditions for `idisj`.
+
+* Added definition of `truth_conditional` [Max Ole Elliger]
+
+* Added `restricted_state` [Max Ole Elliger]
+
+* Added `restricted_Model` [Max Ole Elliger]
+
+* Added `singleton_proper` [Max Ole Elliger]
+
+* Added example 3.2.5. [Max Ole Elliger]
+
+* Added an example model `ex_Model_1` [Max Ole Elliger]
+
+  This model only cares about to atoms, namely
+  - `p` (represented by 0) and
+  - `q` (represented by 1).
+  It offers a world for every truth value combination of them, which are
+  simply called `pq`, `p`, `q` and `e`.
+
+### Changes
+
+* Moved section `prop_3_1_7` from LPC to LP. [Max Ole Elliger]
+
+* Updated section `prop_3_1_8` to use `truth_conditional` [Max Ole Elliger]
+
+* Added `worlds_eq` [Max Ole Elliger]
+
+  By this, many definitions had to be extended.
+  In addition, some proofs had to be adjusted.
+
+* Prop 3.1.4 to Prop 3.1.6 are proven only once. [Max Ole Elliger]
+
+  This was achieved by declaring LPC as a subclass of LP.
+
+### Fix
+
+* Corrected `support_disj` [Max Ole Elliger]
+
 ## inqlog-v0.1.0 (2024-07-29)
 
 ### New
