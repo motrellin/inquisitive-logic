@@ -1,2 +1,3 @@
 output_engine = mustache("markdown")
 include_merge = False
+tag_filter_regexp = r'^inqlog\-v[0-9]+\.[0-9]+(\.[0-9]+)?$'
