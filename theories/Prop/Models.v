@@ -5,11 +5,21 @@ Definition atoms := nat.
 Class Model :=
   {
     worlds : Type;
-    worlds_deceq : forall (w1 w2 : worlds), {w1 = w2} + {w1 <> w2};
-    truth_value : worlds -> atoms -> bool
+    worlds_eq : worlds -> worlds -> Prop;
+    worlds_eq_equiv :: Equivalence worlds_eq;
+    worlds_deceq : forall (w1 w2 : worlds), {worlds_eq w1 w2} + {~ worlds_eq w1 w2};
+    truth_value : worlds -> atoms -> bool;
+    truth_value_proper :: Proper (worlds_eq ==> eq ==> eq) truth_value
   }.
 
-Definition state `{Model} := worlds -> bool.
+Record state `{Model} :=
+  {
+    state_fun : worlds -> bool;
+    state_proper :: Proper (worlds_eq ==> eq) state_fun
+  }.
+
+Coercion state_fun : state >-> Funclass.
+
 Definition state_equiv `{Model} (s1 s2 : state) : Prop :=
   forall w, s1 w = s2 w.
 
@@ -62,14 +72,49 @@ Proof.
   assumption.
 Qed.
 
-Definition empty_state `{Model} : state := fun _ => false.
+Definition empty_state `{Model} : state :=
+  {|
+    state_fun := fun _ => false;
+    state_proper := fun _ _ _ => eq_refl
+ |}.
 
 Definition consistent `{Model} (s : state) : Prop :=
   exists w,
     s w = true.
 
-Definition singleton `{Model} (w : worlds) : state :=
-  fun w' => if worlds_deceq w' w then true else false.
+Program Definition singleton `{Model} (w : worlds) : state :=
+  {|
+    state_fun w' := if worlds_deceq w' w then true else false
+ |}.
+Obligation 1.
+  intros w1 w2 H1.
+  destruct (worlds_deceq w1 w) as [H2|H2], (worlds_deceq w2 w) as [H3|H3].
+  -
+    reflexivity.
+  -
+    contradict H3.
+    rewrite <- H1, <- H2.
+    reflexivity.
+  -
+    contradict H2.
+    rewrite H1, <- H3.
+    reflexivity.
+  -
+    reflexivity.
+Defined.
+
+Instance singleton_proper :
+  forall `{Model},
+    Proper (worlds_eq ==> state_equiv) singleton.
+Proof.
+  intros M w1 w2 H1 w'.
+  simpl.
+  destruct (worlds_deceq w' w1) as [H2|H2], (worlds_deceq w' w2) as [H3|H3].
+  reflexivity.
+  contradict H3; rewrite H2; rewrite H1; reflexivity.
+  contradict H2; rewrite H1; rewrite H3; reflexivity.
+  reflexivity.
+Qed.
 
 Lemma substate_singleton `{Model} :
   forall s w,
@@ -87,6 +132,7 @@ Proof.
     destruct (s w') eqn:H3.
     +
       specialize (H1 w').
+      simpl in *.
       destruct (worlds_deceq w' w).
       *
         reflexivity.
@@ -94,9 +140,10 @@ Proof.
         symmetry.
         auto.
     +
-      destruct (worlds_deceq w' w).
+      simpl in *.
+      destruct (worlds_deceq w' w) as [H4|H4].
       *
-        subst w'.
+        rewrite H4 in *; clear H4.
         congruence.
       *
         reflexivity.
@@ -107,9 +154,10 @@ Proof.
     destruct (s w') eqn:H3.
     +
       specialize (H1 w' H3).
-      destruct (worlds_deceq w' w).
+      simpl in H1.
+      destruct (worlds_deceq w' w) as [H4|H4].
       *
-        subst w'.
+        rewrite H4 in *; clear H4.
         congruence.
       *
         discriminate.
@@ -119,14 +167,15 @@ Qed.
 
 Lemma singleton_true `{Model} :
   forall w w',
-    w = w' <->
+    worlds_eq w w' <->
     singleton w w' = true.
 Proof.
   intros w w'.
   unfold singleton.
-  destruct (worlds_deceq w' w).
+  simpl.
+  destruct (worlds_deceq w' w) as [H1|H1].
   -
-    subst w'.
+    rewrite H1 in *; clear H1.
     split.
     +
       intros H1.
@@ -137,17 +186,18 @@ Proof.
   -
     split.
     +
-      intros H1.
+      intros H2.
       subst.
+      symmetry in H2.
       contradiction.
     +
-      intros H1.
+      intros H2.
       discriminate.
 Qed.
 
 Lemma singleton_false `{Model} :
   forall w w',
-    w <> w' <->
+    (~ worlds_eq w w')  <->
     singleton w w' = false.
 Proof.
   intros w w'.
@@ -155,19 +205,77 @@ Proof.
   -
     intros H1.
     unfold singleton.
-    destruct (worlds_deceq w' w).
+    simpl in *.
+    destruct (worlds_deceq w' w) as [H2|H2].
     +
-      subst w'.
-      contradiction.
+      rewrite H2 in *; clear H2.
+      contradict H1.
+      reflexivity.
     +
       reflexivity.
   -
     intros H1 H2.
-    subst w'.
+    rewrite <- H2 in *; clear H2.
     unfold singleton in H1.
-    destruct (worlds_deceq w w).
+    simpl in H1.
+    destruct (worlds_deceq w w) as [H2|H2].
     +
       discriminate.
     +
-      contradiction.
+      contradict H2.
+      reflexivity.
 Qed.
+
+Module ex_Model_1.
+
+  Inductive worlds :=
+    | pq
+    | p
+    | q
+    | e.
+
+  Scheme Boolean Equality for worlds.
+
+  Instance PQ : Model.
+  Proof.
+    unshelve econstructor.
+    -
+      exact worlds.
+    -
+      intros w1 w2.
+      apply is_true.
+      apply worlds_beq.
+      exact w1.
+      exact w2.
+    -
+      intros w a.
+      destruct a as [|[|a']] eqn:H1.
+      +
+        destruct w eqn:H2.
+        exact true.
+        exact true.
+        exact false.
+        exact false.
+      +
+        destruct w eqn:H2.
+        exact true.
+        exact false.
+        exact true.
+        exact false.
+      +
+        exact false.
+    -
+      constructor.
+      +
+        intros []; easy.
+      +
+        intros [] []; easy.
+      +
+        intros [] [] []; easy.
+    -
+      intros [] []; try (left; easy); try (right; easy).
+    -
+      intros [] [] H1 [|[|]] [|[|]] H2; easy.
+  Defined.
+
+End ex_Model_1.

@@ -32,4 +32,11 @@ Section properties.
   Definition satisfies `{Model} (w : worlds) (f : form) :=
     support f (singleton w).
 
+  Definition truth_conditional (f : form) :=
+    forall `(M : Model) (s : state),
+    support f s <->
+    forall w,
+      s w = true ->
+      satisfies w f.
+
 End properties.
