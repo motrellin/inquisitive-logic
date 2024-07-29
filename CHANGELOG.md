@@ -1,6 +1,6 @@
 # Changelog
 
-## (unreleased)
+## inqlog-v0.1.0 (2024-07-29)
 
 ### New
 
@@ -54,6 +54,12 @@
 * Executed generate.sh initially. [Max Ole Elliger]
 
 ### Changes
+
+* New tag design. [Max Ole Elliger]
+
+  - Removed old misleading tags
+  - Updated the [changelog](CHANGELOG.md) by this.
+  - Updated the version-tag-design.
 
 * Excluded merge commits from CHANGELOG.md. [Max Ole Elliger]
 
