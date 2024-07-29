@@ -2,12 +2,6 @@
 
 ## (unreleased)
 
-### Changes
-
-* Excluded merge commits from CHANGELOG.md. [Max Ole Elliger]
-
-## 1.1.1 (2024-07-26)
-
 ### New
 
 * Added information about CONTRIBUTING. [Max Ole Elliger]
@@ -24,10 +18,6 @@
 
   Further Information if needed...
   ```
-
-## 1.1.0 (2024-07-26)
-
-### New
 
 * Proved Proposition 3.18. [Max Ole Elliger]
 
@@ -59,21 +49,17 @@
   Added `singleton` states
   Added `satisfies`
 
-### Changes
-
-* Restated `singleton_true` and `singleton_false` [Max Ole Elliger]
-
-* Extracted `lpc_support` [Max Ole Elliger]
-
-## 1.0.0 (2024-07-26)
-
-### New
-
 * Added theories/Support.v. [Max Ole Elliger]
 
 * Executed generate.sh initially. [Max Ole Elliger]
 
 ### Changes
+
+* Excluded merge commits from CHANGELOG.md. [Max Ole Elliger]
+
+* Restated `singleton_true` and `singleton_false` [Max Ole Elliger]
+
+* Extracted `lpc_support` [Max Ole Elliger]
 
 * Updated the definition of states. [Max Ole Elliger]
 
