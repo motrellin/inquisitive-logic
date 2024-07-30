@@ -25,7 +25,7 @@ Instance LPC : Formula :=
 
 Instance support_proper `{Model} :
   forall f,
-    Proper (state_equiv ==> Logic.iff) (support f).
+    Proper (state_eq ==> Logic.iff) (support f).
 Proof.
   exact support_proper.
 Qed.

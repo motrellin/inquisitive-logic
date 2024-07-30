@@ -20,10 +20,10 @@ Record state `{Model} :=
 
 Coercion state_fun : state >-> Funclass.
 
-Definition state_equiv `{Model} (s1 s2 : state) : Prop :=
+Definition state_eq `{Model} (s1 s2 : state) : Prop :=
   forall w, s1 w = s2 w.
 
-Instance state_equiv_equiv : forall `{Model}, Equivalence state_equiv.
+Instance state_eq_equiv : forall `{Model}, Equivalence state_eq.
 Proof.
   split.
   -
@@ -46,10 +46,10 @@ Definition substate `{Model} (t s : state) :=
 
 #[export] Instance substate_proper :
   forall `{Model},
-    Proper (state_equiv ==> state_equiv ==> iff) substate.
+    Proper (state_eq ==> state_eq ==> iff) substate.
 Proof.
   intros M s1 s2 H1 t1 t2 H2.
-  unfold state_equiv, substate in *.
+  unfold state_eq, substate in *.
   split.
   -
     intros H3 w H4.
@@ -105,7 +105,7 @@ Defined.
 
 Instance singleton_proper :
   forall `{Model},
-    Proper (worlds_eq ==> state_equiv) singleton.
+    Proper (worlds_eq ==> state_eq) singleton.
 Proof.
   intros M w1 w2 H1 w'.
   simpl.
@@ -119,8 +119,8 @@ Qed.
 Lemma substate_singleton `{Model} :
   forall s w,
     substate s (singleton w) ->
-    state_equiv s (singleton w) \/
-    state_equiv s empty_state.
+    state_eq s (singleton w) \/
+    state_eq s empty_state.
 Proof.
   intros s w H1.
   destruct (s w) eqn:H2.
