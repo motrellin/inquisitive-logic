@@ -1,5 +1,34 @@
 # Changelog
 
+## inqlog-v0.3.0 (2024-07-30)
+
+### New
+
+* Added some documentation to Prop/Formulas. [Max Ole Elliger]
+
+* Documentation to theories/Prop/Models. [Max Ole Elliger]
+
+* Examples for (in)consistent states. [Max Ole Elliger]
+
+* Notation for `worlds_eq` and `state_eq` [Max Ole Elliger]
+
+### Changes
+
+* Updated some proofs to improve compile time. [Max Ole Elliger]
+
+  Some parts of the proof of locality were updated. Concrete, some uses of
+  `firstorder` were replaced.
+
+* Improvements to notation scopes. [Max Ole Elliger]
+
+  - New Notation: `|=`
+  - Different scopes for worlds and states.
+
+* Updated the first model example. [Max Ole Elliger]
+
+  Instead of using a defined world-set, we now use the function space
+  `bool -> bool`.
+
 ## inqlog-v0.2.0 (2024-07-29)
 
 ### New
