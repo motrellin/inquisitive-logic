@@ -12,16 +12,22 @@ Class Model :=
     truth_value_proper :: Proper (worlds_eq ==> eq ==> eq) truth_value
   }.
 
+Declare Scope model_scope.
+Open Scope model_scope.
+Infix "=W=" := worlds_eq (at level 70) : model_scope.
+
 Record state `{Model} :=
   {
     state_fun : worlds -> bool;
     state_proper :: Proper (worlds_eq ==> eq) state_fun
   }.
 
-Coercion state_fun : state >-> Funclass.
+Coercion state_fun : state >-> Funclass. (* Improve readability *)
 
 Definition state_eq `{Model} (s1 s2 : state) : Prop :=
   forall w, s1 w = s2 w.
+
+Infix "=S=" := state_eq (at level 70) : model_scope.
 
 Instance state_eq_equiv : forall `{Model}, Equivalence state_eq.
 Proof.
@@ -119,8 +125,8 @@ Qed.
 Lemma substate_singleton `{Model} :
   forall s w,
     substate s (singleton w) ->
-    state_eq s (singleton w) \/
-    state_eq s empty_state.
+    s =S= (singleton w) \/
+    s =S= empty_state.
 Proof.
   intros s w H1.
   destruct (s w) eqn:H2.
@@ -167,7 +173,7 @@ Qed.
 
 Lemma singleton_true `{Model} :
   forall w w',
-    worlds_eq w w' <->
+    w =W= w' <->
     singleton w w' = true.
 Proof.
   intros w w'.
