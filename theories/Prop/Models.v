@@ -1,6 +1,20 @@
 From Coq Require Export RelationClasses Morphisms Setoid.
 
+(** * Models
+
+   First of all, we need a fixed set of atoms. We abuse the type [nat] for this purpose.
+ *)
+
 Definition atoms := nat.
+
+(** Next, we define a type class [Model]. A model consists of the following components:
+
+   - A type [worlds] of possible worlds.
+   - A decidable equivalence relation [worlds_eq] on [worlds].
+   - A decidable equality [worlds_deceq] on [worlds].
+   - A function [truth_value] that assigns a truth value to each atom in each world.
+   - A proof that [truth_value] is compatible with [worlds_eq].
+ *)
 
 Class Model :=
   {
@@ -12,9 +26,18 @@ Class Model :=
     truth_value_proper :: Proper (worlds_eq ==> eq ==> eq) truth_value
   }.
 
+(** We declare a scope [model_scope] for the notations that we will introduce
+   later.
+ *)
+
 Declare Scope model_scope.
 Open Scope model_scope.
 Infix "=W=" := worlds_eq (at level 70) : model_scope.
+
+(** * Information States
+
+We call a function of type [worlds -> bool] an _information state_. We define a record type [state] that consists of such a function and a proof that this function is compatible with the equivalence relation [worlds_eq].
+ *)
 
 Record state `{Model} :=
   {
@@ -24,10 +47,18 @@ Record state `{Model} :=
 
 Coercion state_fun : state >-> Funclass. (* Improve readability *)
 
+(** ** State Equivalence
+
+Two states are _equal_ if they accept exactly the same worlds.
+ *)
+
 Definition state_eq `{Model} (s1 s2 : state) : Prop :=
   forall w, s1 w = s2 w.
 
 Infix "=S=" := state_eq (at level 70) : model_scope.
+
+(** [state_eq] is indeed an equivalence relation.
+ *)
 
 Instance state_eq_equiv : forall `{Model}, Equivalence state_eq.
 Proof.
@@ -45,10 +76,18 @@ Proof.
     reflexivity.
 Qed.
 
+(** ** Substates
+
+A state [t] is called a _substate_ of a state [s] if [s] accepts all worlds that [t] accepts.
+ *)
+
 Definition substate `{Model} (t s : state) :=
   forall w,
     t w = true ->
     s w = true.
+
+(** [substate] behaves well with respect to [state_eq].
+ *)
 
 #[export] Instance substate_proper :
   forall `{Model},
@@ -71,12 +110,20 @@ Proof.
     exact H4.
 Qed.
 
+(** [substate] is reflexive.
+ *)
 
 Instance substate_refl : forall `{Model}, Reflexive substate.
 Proof.
   intros M s w H1.
   assumption.
 Qed.
+
+(** ** Consistency
+
+We refer to a state as empty if it does not accept any world.
+   Such a state is called _inconsistent_. Otherwise, it is called _consistent_.
+ *)
 
 Definition empty_state `{Model} : state :=
   {|
@@ -94,6 +141,10 @@ Proof.
   intros [w H1].
   discriminate.
 Qed.
+
+(**
+The smallest consistent states are [singleton] states. A singleton state accepts exactly one world.
+ *)
 
 Program Definition singleton `{Model} (w : worlds) : state :=
   {|
@@ -116,6 +167,9 @@ Obligation 1.
     reflexivity.
 Defined.
 
+(** [singleton] behaves well with respect to [worlds_eq].
+ *)
+
 Instance singleton_proper :
   forall `{Model},
     Proper (worlds_eq ==> state_eq) singleton.
@@ -128,6 +182,10 @@ Proof.
   contradict H2; rewrite H1; rewrite H3; reflexivity.
   reflexivity.
 Qed.
+
+(** We want to characterize the substates of a singleton state. By set theory, a
+ set is a subset of a singleton set if and only if it is equal to the singleton set itself or the empty set.
+ *)
 
 Lemma substate_singleton `{Model} :
   forall s w,
@@ -238,6 +296,8 @@ Proof.
       contradict H2.
       reflexivity.
 Qed.
+
+(*+ Let's quickly check, whether the singleton state is consistent. +*)
 
 Example singleton_consistent `{Model} :
   forall w,
