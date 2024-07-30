@@ -559,13 +559,23 @@ Section prop_3_3_3.
           *
             reflexivity.
       -
+        (** For some reason, [firstorder] is very slow here... *)
         simpl in *.
-        firstorder.
+        specialize (IH1 s).
+        specialize (IH2 s).
+        destruct IH1 as [IH11 IH12].
+        destruct IH2 as [IH21 IH22].
+        split; intros [H1 H2]; split; auto.
       - (* TODO: Implication *)
         admit.
       -
+        (** Same here... *)
         simpl in *.
-        firstorder.
+        specialize (IH1 s).
+        specialize (IH2 s).
+        destruct IH1 as [IH11 IH12].
+        destruct IH2 as [IH21 IH22].
+        split; intros [|]; [left|right|left|right]; auto.
     Admitted.
 
 End prop_3_3_3.
