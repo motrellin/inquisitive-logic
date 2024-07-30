@@ -88,6 +88,13 @@ Definition consistent `{Model} (s : state) : Prop :=
   exists w,
     s w = true.
 
+Example empty_state_not_consistent `{Model} :
+  ~ consistent empty_state.
+Proof.
+  intros [w H1].
+  discriminate.
+Qed.
+
 Program Definition singleton `{Model} (w : worlds) : state :=
   {|
     state_fun w' := if worlds_deceq w' w then true else false
@@ -232,6 +239,15 @@ Proof.
       reflexivity.
 Qed.
 
+Example singleton_consistent `{Model} :
+  forall w,
+    consistent (singleton w).
+Proof.
+  intros w.
+  exists w.
+  apply singleton_true.
+  reflexivity.
+Qed.
 
 (** * Examples *)
 (** ** Example 1 *)
