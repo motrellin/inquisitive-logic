@@ -30,9 +30,11 @@ Class Model :=
    later.
  *)
 
-Declare Scope model_scope.
-Open Scope model_scope.
-Infix "=W=" := worlds_eq (at level 70) : model_scope.
+Declare Scope worlds_scope.
+Bind Scope worlds_scope with worlds.
+Open Scope worlds_scope.
+
+Infix "=W=" := worlds_eq (at level 70) : worlds_scope.
 
 (** * Information States
 
@@ -47,6 +49,10 @@ Record state `{Model} :=
 
 Coercion state_fun : state >-> Funclass. (* Improve readability *)
 
+Declare Scope state_scope.
+Bind Scope state_scope with state.
+Open Scope state_scope.
+
 (** ** State Equivalence
 
 Two states are _equal_ if they accept exactly the same worlds.
@@ -55,7 +61,7 @@ Two states are _equal_ if they accept exactly the same worlds.
 Definition state_eq `{Model} (s1 s2 : state) : Prop :=
   forall w, s1 w = s2 w.
 
-Infix "=S=" := state_eq (at level 70) : model_scope.
+Infix "=S=" := state_eq (at level 70) : state_scope.
 
 (** [state_eq] is indeed an equivalence relation.
  *)

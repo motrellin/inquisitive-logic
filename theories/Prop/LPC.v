@@ -64,7 +64,7 @@ Section prop_3_1_6.
 
   Proposition support_neg :
     forall f s,
-      support (neg f) s <->
+      s |= (neg f) <->
       ruling_out s f.
   Proof.
     exact LP.support_neg.
@@ -72,7 +72,7 @@ Section prop_3_1_6.
 
   Proposition support_disj :
     forall f1 f2 s,
-      support (disj f1 f2) s <->
+      s |= (disj f1 f2) <->
       ~ (
         exists t,
           substate t s /\
@@ -85,10 +85,10 @@ Section prop_3_1_6.
 
   Proposition support_iff :
     forall f1 f2 s,
-      support (iff f1 f2) s <->
+      s |= (iff f1 f2) <->
       forall t,
         substate t s ->
-        (support f1 t <-> support f2 t).
+        (t |= f1 <-> t |= f2).
   Proof.
     exact LP.support_iff.
   Qed.
@@ -215,8 +215,8 @@ Section prop_3_1_8.
       transitivity (
         forall t,
           substate t s ->
-          support f1 t ->
-          support f2 t
+          t |= f1 ->
+          t |= f2
       ).
       reflexivity.
 
@@ -228,7 +228,7 @@ Section prop_3_1_8.
               t w = true ->
               satisfies w f1
           ) ->
-          support f2 t
+          t |= f2
       ).
       firstorder.
 

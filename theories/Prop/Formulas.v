@@ -7,6 +7,8 @@ Class Formula :=
     support `{Model} : form -> state -> Prop
   }.
 
+Notation "s |= f" := (support f s) (at level 70) : state_scope.
+
 Section properties.
 
   Context `{Formula}.
@@ -14,27 +16,27 @@ Section properties.
   Definition persistency_property `{Model} :=
     forall f t s,
       substate t s ->
-      support f s ->
-      support f t.
+      s |= f ->
+      t |= f.
 
   Definition empty_support_property `{Model} :=
     forall f,
-      support f empty_state.
+      empty_state |= f.
 
   Definition ruling_out `{Model} (s : state) (f : form) :=
     ~ (
       exists t,
         substate t s /\
         consistent t /\
-        support f t
+        t |= f
         ).
 
   Definition satisfies `{Model} (w : worlds) (f : form) :=
-    support f (singleton w).
+    (singleton w) |= f.
 
   Definition truth_conditional (f : form) :=
     forall `(M : Model) (s : state),
-    support f s <->
+    s |= f <->
     forall w,
       s w = true ->
       satisfies w f.

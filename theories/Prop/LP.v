@@ -97,7 +97,7 @@ Section prop_3_1_6.
 
   Proposition support_neg :
     forall f s,
-      support (neg f) s <->
+      s |= (neg f) <->
       ruling_out s f.
   Proof.
     intros f s.
@@ -134,7 +134,7 @@ Section prop_3_1_6.
 
   Proposition support_disj :
     forall f1 f2 s,
-      support (disj f1 f2) s <->
+      s |= (disj f1 f2) <->
       ~ (
         exists t,
           substate t s /\
@@ -185,7 +185,7 @@ Section prop_3_1_6.
 
   Proposition support_iff :
     forall f1 f2 s,
-      support (iff f1 f2) s <->
+      s |= (iff f1 f2) <->
       forall t,
         substate t s ->
         (support f1 t <-> support f2 t).
@@ -195,7 +195,7 @@ Section prop_3_1_6.
 
   Lemma support_iquest :
     forall f s,
-      support (iquest f) s <-> (support f s \/ ruling_out s f).
+      s |= (iquest f) <-> (s |= f \/ ruling_out s f).
   Proof.
     intros f s.
     unfold iquest.
@@ -242,7 +242,7 @@ Module ex_3_2_5.
     intros w1 w2 H1; f_equal; auto.
   Defined.
 
-  Example support_f1_s1 : support f1 s1.
+  Example support_f1_s1 : s1 |= f1.
   Proof.
     unfold f1.
     simpl.
@@ -251,21 +251,21 @@ Module ex_3_2_5.
     destruct w; easy.
   Qed.
 
-  Example support_f1_s2 : support f1 s2.
+  Example support_f1_s2 : s2 |= f1.
   Proof.
     left.
     intros w H1.
     exact H1.
   Qed.
 
-  Example support_f2_s2 : support f2 s2.
+  Example support_f2_s2 : s2 |= f2.
   Proof.
     left.
     intros w H1.
     exact H1.
   Qed.
 
-  Example support_f2_s3 : support f2 s3.
+  Example support_f2_s3 : s3 |= f2.
   Proof.
     unfold f2.
     rewrite support_iquest.
@@ -528,7 +528,7 @@ Section prop_3_3_3.
 
     Proposition locality :
       forall f s,
-        support f s <->
+        s |= f <->
         @support _ (restricted_Model s) f (restricted_state s s).
     Proof.
       induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
@@ -593,7 +593,7 @@ Section prop_3_3_5.
       satisfies w f <->
       exists (s : state),
         s w = true /\
-        support f s.
+        s |= f.
   Proof.
     induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
     all: intros w.
