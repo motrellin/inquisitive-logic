@@ -219,42 +219,27 @@ Module ex_3_2_5.
   Proof.
     refine
     {|
-      state_fun := fun w =>
-                    match w with
-                    | pq => true
-                    | q => true
-                    | _ => false
-                    end
+      state_fun := fun w => w true
     |}.
-    intros [] [] H1; easy.
+    intros w1 w2; auto.
   Defined.
 
   Definition s2 : state.
   Proof.
     refine
     {|
-      state_fun := fun w =>
-                    match w with
-                    | pq => true
-                    | p => true
-                    | _ => false
-                    end
+      state_fun := fun w => w false
     |}.
-    intros [] [] H1; easy.
+    intros w1 w2; auto.
   Defined.
 
   Definition s3 : state.
   Proof.
     refine
     {|
-      state_fun := fun w =>
-                    match w with
-                    | q => true
-                    | e => true
-                    | _ => false
-                    end
+      state_fun := fun w => negb (w false)
     |}.
-    intros [] [] H1; easy.
+    intros w1 w2 H1; f_equal; auto.
   Defined.
 
   Example support_f1_s1 : support f1 s1.
@@ -270,14 +255,14 @@ Module ex_3_2_5.
   Proof.
     left.
     intros w H1.
-    destruct w; easy.
+    exact H1.
   Qed.
 
   Example support_f2_s2 : support f2 s2.
   Proof.
     left.
     intros w H1.
-    destruct w; easy.
+    exact H1.
   Qed.
 
   Example support_f2_s3 : support f2 s3.
@@ -289,7 +274,9 @@ Module ex_3_2_5.
     destruct H2 as [w H2].
     specialize (H1 w H2).
     specialize (H3 w H2).
-    destruct w; try easy.
+    simpl in *.
+    rewrite H3 in H1.
+    discriminate.
   Qed.
 
 End ex_3_2_5.

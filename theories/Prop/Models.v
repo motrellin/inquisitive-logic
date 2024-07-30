@@ -232,56 +232,62 @@ Proof.
       reflexivity.
 Qed.
 
+
+(** * Examples *)
+(** ** Example 1 *)
+
 Module ex_Model_1.
 
-  Inductive worlds :=
-    | pq
-    | p
-    | q
-    | e.
-
-  Scheme Boolean Equality for worlds.
+  (** We define a model with four possible worlds and two atoms. *)
 
   Instance PQ : Model.
   Proof.
     unshelve econstructor.
     -
-      exact worlds.
+      (** The type [bool -> bool] has exactly four inhabitants. *)
+      exact (bool -> bool).
     -
-      intros w1 w2.
-      apply is_true.
-      apply worlds_beq.
-      exact w1.
-      exact w2.
+      intros f g.
+      exact (forall b, f b = g b).
     -
-      intros w a.
+      (** Let's define the [truth_value] function. *)
+      intros f a.
+      (** The type of atoms is [nat], but we only need two atoms which can be
+         represented by [0] and [1]. Every other natural number is mapped to
+         [false]. *)
       destruct a as [|[|a']] eqn:H1.
       +
-        destruct w eqn:H2.
-        exact true.
-        exact true.
-        exact false.
+        apply f.
+        (** Let's encode the atom [0] as [false]. *)
         exact false.
       +
-        destruct w eqn:H2.
+        apply f.
+        (** Let's encode the atom [1] as [true]. *)
         exact true.
-        exact false.
-        exact true.
-        exact false.
       +
+        (** Every other atom is mapped to [false]. *)
         exact false.
     -
       constructor.
       +
-        intros []; easy.
+        congruence.
       +
-        intros [] []; easy.
+        congruence.
       +
-        intros [] [] []; easy.
+        congruence.
     -
-      intros [] []; try (left; easy); try (right; easy).
+      intros f g.
+      try (left; easy).
+      destruct
+        (f false) eqn:H1,
+        (f true) eqn:H2,
+        (g false) eqn:H3,
+        (g true) eqn:H4.
+      all: try (left; intros [|]; congruence).
+      all: right; congruence.
     -
-      intros [] [] H1 [|[|]] [|[|]] H2; easy.
+      intros f g H1 [|[|]] [|[|]] H2.
+      all: congruence.
   Defined.
 
 End ex_Model_1.
