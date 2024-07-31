@@ -435,10 +435,72 @@ Definition satisfies `{Model} (w : worlds) : form -> Prop :=
   (fun f1 r1 f2 r2 => r1 -> r2)
   (fun f1 r1 f2 r2 => r1 \/ r2).
 
+Definition satisfies' `{Model} (w: worlds) : form -> bool :=
+  form_rec
+  (fun _ => bool)
+  (fun p => truth_value w p)
+  false
+  (fun f1 r1 f2 r2 => r1 && r2)
+  (fun f1 r1 f2 r2 => implb r1 r2)
+  (fun f1 r1 f2 r2 => r1 || r2).
+
 Section prop_3_3_4.
 
   Context `{Model}.
   Variable w : worlds.
+
+  Theorem reflect_satisfies :
+    forall f,
+      reflect (satisfies w f) (satisfies' w f).
+  Proof.
+    induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
+    -
+      simpl.
+      destruct (truth_value w p).
+      all: constructor.
+      all: congruence.
+    -
+      constructor.
+      easy.
+    -
+      simpl.
+      destruct (satisfies' w f1) eqn:H1, (satisfies' w f2) eqn:H2.
+      all: inversion IH1.
+      all: inversion IH2.
+      all: try (left; easy).
+      all: try (right; easy).
+    -
+      simpl.
+      destruct (satisfies' w f1) eqn:H1, (satisfies' w f2) eqn:H2.
+      all: inversion IH1.
+      all: inversion IH2.
+      all: try (left; easy).
+      right; firstorder.
+    -
+      simpl.
+      destruct (satisfies' w f1) eqn:H1, (satisfies' w f2) eqn:H2.
+      all: inversion IH1.
+      all: inversion IH2.
+      +
+        left; left; assumption.
+      +
+        left; left; assumption.
+      +
+        left; right; assumption.
+      +
+        right.
+        intros [H4|H4].
+        all: contradiction.
+  Qed.
+
+  Corollary satisfies_dec :
+    forall f,
+      {satisfies w f} + {~ satisfies w f}.
+  Proof.
+    intros f.
+    eapply reflect_dec.
+    exact (reflect_satisfies f).
+  Qed.
 
   Theorem satisfies_singleton_support :
     forall f,
