@@ -429,6 +429,15 @@ End prop_3_3_3.
 Definition satisfies `{Model} (w : worlds) (f : form) :=
   (singleton w) |= f.
 
+Definition satisfies' `{Model} (w : worlds) : form -> Prop :=
+  form_rect
+  (fun _ => Prop)
+  (fun p => truth_value w p = true)
+  False
+  (fun f1 r1 f2 r2 => r1 /\ r2)
+  (fun f1 r1 f2 r2 => r1 -> r2)
+  (fun f1 r1 f2 r2 => r1 \/ r2).
+
 Section prop_3_1_7.
 
   Context `{Model}.
@@ -565,13 +574,38 @@ End prop_3_1_7.
 Section prop_3_3_4.
 
   Context `{Model}.
+  Variable w : worlds.
 
   Proposition satisfies_idisj :
-    forall f1 f2 w,
+    forall f1 f2,
       satisfies w (idisj f1 f2) <->
       satisfies w f1 \/ satisfies w f2.
   Proof.
     firstorder.
+  Qed.
+
+  Corollary satisfies_satisfies' :
+    forall f,
+      satisfies w f <-> satisfies' w f.
+  Proof.
+    induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
+    -
+      apply satisfies_atom.
+    -
+      apply satisfies_bot.
+    -
+      simpl.
+      rewrite <- IH1, <- IH2.
+      apply satisfies_conj.
+    -
+      simpl.
+      rewrite <- IH1, <- IH2.
+      apply satisfies_impl.
+    -
+
+      simpl.
+      rewrite <- IH1, <- IH2.
+      apply satisfies_idisj.
   Qed.
 
 End prop_3_3_4.
