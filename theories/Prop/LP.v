@@ -576,9 +576,9 @@ Section prop_3_3_4.
       satisfies w f1 \/ satisfies w f2.
   Proof.
     intros f1 f2.
-    firstorder. (* Missing: classical reasoning *)
-    (* TODO: Prove decidability of satisfies *)
-  Abort.
+    destruct (satisfies_dec f1) as [H1|H1], (satisfies_dec f2) as [H2|H2].
+    all: firstorder.
+  Qed.
 
   Proposition satisfies_iff :
     forall f1 f2,
