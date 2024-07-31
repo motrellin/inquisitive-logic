@@ -426,10 +426,7 @@ End prop_3_3_3.
 
 (** * Satisfaction *)
 
-Definition satisfies `{Model} (w : worlds) (f : form) :=
-  (singleton w) |= f.
-
-Definition satisfies' `{Model} (w : worlds) : form -> Prop :=
+Definition satisfies `{Model} (w : worlds) : form -> Prop :=
   form_rect
   (fun _ => Prop)
   (fun p => truth_value w p = true)
@@ -438,88 +435,63 @@ Definition satisfies' `{Model} (w : worlds) : form -> Prop :=
   (fun f1 r1 f2 r2 => r1 -> r2)
   (fun f1 r1 f2 r2 => r1 \/ r2).
 
-Section prop_3_1_7.
+Section prop_3_3_4.
 
   Context `{Model}.
   Variable w : worlds.
 
-  Proposition satisfies_atom :
-    forall p,
-      satisfies w (atom p) <->
-      truth_value w p = true.
+  Theorem satisfies_singleton_support :
+    forall f,
+      satisfies w f <->
+      (singleton w) |= f.
   Proof.
-    intros p.
-    unfold satisfies.
-    split.
+    induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
     -
+      split.
+      +
+        intros H1 w' H2.
+        apply singleton_true in H2.
+        rewrite <- H2 in *; clear H2.
+        exact H1.
+      +
+        intros H1.
+        apply H1.
+        apply singleton_true.
+        reflexivity.
+    -
+      split; try contradiction.
+      simpl.
       intros H1.
+      specialize (H1 w).
+      apply singleton_false in H1.
       apply H1.
-      apply singleton_true.
       reflexivity.
     -
-      intros H1 w' H2.
-      apply singleton_true in H2.
-      rewrite <- H2.
-      exact H1.
-  Qed.
-
-  Proposition satisfies_bot :
-    satisfies w bot <-> False.
-  Proof.
-    split; try contradiction.
-    simpl.
-    intros H1.
-    specialize (H1 w).
-    apply singleton_false in H1.
-    apply H1.
-    reflexivity.
-  Qed.
-
-  Proposition satisfies_conj :
-    forall f1 f2,
-      satisfies w (conj f1 f2) <->
-      satisfies w f1 /\ satisfies w f2.
-  Proof.
-    simpl in *.
-    firstorder.
-  Qed.
-
-  Proposition satisfies_impl :
-    forall f1 f2,
-    satisfies w (impl f1 f2) <->
-    (satisfies w f1 -> satisfies w f2).
-  Proof.
-    intros f1 f2.
-    unfold satisfies at 1.
-    transitivity (
-      forall t, substate t (singleton w) -> support f1 t -> support f2 t
-    ).
-    -
-      simpl.
       firstorder.
     -
       split.
       +
-        unfold satisfies.
+        intros H1 w' H2 H3.
+        apply substate_singleton in H2 as [H2|H2].
+        all: rewrite H2 in *; clear H2.
+        *
+          apply IH2.
+          apply H1.
+          apply IH1.
+          exact H3.
+        *
+          apply empty_support.
+      +
         intros H1 H2.
+        apply IH2.
         apply H1.
         *
           reflexivity.
         *
+          apply IH1.
           exact H2.
-      +
-        intros H1 s H2 H3.
-        apply substate_singleton in H2.
-        unfold satisfies in H1.
-        destruct H2 as [H2|H2].
-        *
-          rewrite H2.
-          apply H1.
-          rewrite <- H2.
-          exact H3.
-        *
-          rewrite H2.
-          apply empty_support.
+    -
+      firstorder.
   Qed.
 
   Proposition satisfies_neg :
@@ -527,17 +499,12 @@ Section prop_3_1_7.
       satisfies w (neg f) <->
       ~ satisfies w f.
   Proof.
-    intros f.
-    unfold neg.
-    rewrite satisfies_impl.
-    pose proof satisfies_bot.
     firstorder.
   Qed.
 
   Proposition satisfies_top :
     satisfies w top <-> True.
   Proof.
-    simpl.
     firstorder.
   Qed.
 
@@ -547,12 +514,8 @@ Section prop_3_1_7.
       satisfies w f1 \/ satisfies w f2.
   Proof.
     intros f1 f2.
-    unfold disj.
-    rewrite satisfies_neg.
-    rewrite satisfies_conj.
-    rewrite satisfies_neg.
-    rewrite satisfies_neg.
     firstorder. (* Missing: classical reasoning *)
+    (* TODO: Prove decidability of satisfies *)
   Abort.
 
   Proposition satisfies_iff :
@@ -561,51 +524,7 @@ Section prop_3_1_7.
       (satisfies w f1 -> satisfies w f2) /\
       (satisfies w f2 -> satisfies w f1).
   Proof.
-    intros f1 f2.
-    unfold iff.
-    rewrite satisfies_conj.
-    rewrite satisfies_impl.
-    rewrite satisfies_impl.
-    reflexivity.
-  Qed.
-
-End prop_3_1_7.
-
-Section prop_3_3_4.
-
-  Context `{Model}.
-  Variable w : worlds.
-
-  Proposition satisfies_idisj :
-    forall f1 f2,
-      satisfies w (idisj f1 f2) <->
-      satisfies w f1 \/ satisfies w f2.
-  Proof.
     firstorder.
-  Qed.
-
-  Corollary satisfies_satisfies' :
-    forall f,
-      satisfies w f <-> satisfies' w f.
-  Proof.
-    induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
-    -
-      apply satisfies_atom.
-    -
-      apply satisfies_bot.
-    -
-      simpl.
-      rewrite <- IH1, <- IH2.
-      apply satisfies_conj.
-    -
-      simpl.
-      rewrite <- IH1, <- IH2.
-      apply satisfies_impl.
-    -
-
-      simpl.
-      rewrite <- IH1, <- IH2.
-      apply satisfies_idisj.
   Qed.
 
 End prop_3_3_4.
@@ -631,52 +550,39 @@ Section prop_3_3_5.
         apply singleton_true.
         reflexivity.
       +
+        rewrite satisfies_singleton_support in H1.
         exact H1.
     -
       induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
       all: intros [s [H1 H2]].
       +
-        rewrite satisfies_atom.
-        auto.
+        apply H2.
+        exact H1.
       +
         congruence.
       +
-        rewrite satisfies_conj.
         firstorder.
       +
-        rewrite satisfies_impl.
         intros H3.
-        apply H2.
+        apply IH2.
+        exists (singleton w).
+        split.
         *
-          intros w' H4.
-          rewrite <- singleton_true in H4.
-          rewrite <- H4 in *; clear H4 w'.
-          exact H1.
+          apply singleton_true.
+          reflexivity.
         *
-          exact H3.
+          simpl in H2.
+          apply H2.
+          --
+             intros w' H4.
+             apply singleton_true in H4.
+             rewrite <- H4 in *; clear H4 w'.
+             exact H1.
+          --
+             apply satisfies_singleton_support.
+             exact H3.
       +
-        rewrite satisfies_idisj.
-        destruct H2 as [H2|H2].
-        *
-          left.
-          apply persistency with (s := s).
-          intros w' H3.
-          apply singleton_true in H3.
-          --
-             rewrite <- H3 in *; clear H3 w'.
-             exact H1.
-          --
-             exact H2.
-        *
-          right.
-          apply persistency with (s := s).
-          intros w' H3.
-          apply singleton_true in H3.
-          --
-             rewrite <- H3 in *; clear H3 w'.
-             exact H1.
-          --
-             exact H2.
+        firstorder.
   Qed.
 
 End prop_3_3_5.
@@ -719,13 +625,10 @@ Section prop_3_4_3.
     -
       reflexivity.
     -
-      do 2 rewrite satisfies_conj.
       firstorder.
     -
-      do 2 rewrite satisfies_impl.
       firstorder.
     -
-      rewrite satisfies_idisj.
       Fail rewrite satisfies_disj.
   Abort.
 
