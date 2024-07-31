@@ -370,13 +370,9 @@ Section prop_3_1_7.
     simpl.
     intros H1.
     specialize (H1 w).
-    unfold singleton in H1.
-    destruct (worlds_deceq w w) as [H2|H2].
-    -
-      discriminate.
-    -
-      contradict H2.
-      reflexivity.
+    apply singleton_false in H1.
+    apply H1.
+    reflexivity.
   Qed.
 
   Proposition satisfies_conj :
