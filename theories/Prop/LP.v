@@ -1,15 +1,15 @@
 From Coq Require Export Bool.
-From InqLog.Prop Require Export Formulas.
+From InqLog.Prop Require Export Models.
 
-Inductive lp :=
-  | atom : atoms -> lp
-  | bot : lp
-  | conj : lp -> lp -> lp
-  | impl : lp -> lp -> lp
-  | idisj : lp -> lp -> lp.
+Inductive form :=
+  | atom : atoms -> form
+  | bot : form
+  | conj : form -> form -> form
+  | impl : form -> form -> form
+  | idisj : form -> form -> form.
 
-Definition lp_support `{Model} : lp -> state -> Prop :=
-  lp_rect
+Definition support `{Model} : form -> state -> Prop :=
+  form_rect
   (fun f => state -> Prop)
   (fun p s => forall w, s w = true -> truth_value w p = true)
   (fun s => forall w, s w = false)
@@ -17,11 +17,7 @@ Definition lp_support `{Model} : lp -> state -> Prop :=
   (fun f1 r1 f2 r2 s => forall t, substate t s -> r1 t -> r2 t)
   (fun f1 r1 f2 r2 s => r1 s \/ r2 s).
 
-Instance LP : Formula :=
-  {|
-    form := lp;
-    support _ := lp_support
-  |}.
+Notation "s |= f" := (support f s) (at level 70) : state_scope.
 
 Instance support_proper `{Model} :
   forall f,
@@ -90,6 +86,14 @@ Definition iff : form -> form -> form :=
 Definition iquest : form -> form :=
   fun f =>
   idisj f (neg f).
+
+Definition ruling_out `{Model} (s : state) (f : form) :=
+  ~ (
+    exists t,
+      substate t s /\
+      consistent t /\
+      t |= f
+      ).
 
 Section prop_3_1_6.
 
@@ -285,7 +289,11 @@ Section prop_3_3_1.
 
   Context `{Model}.
 
-  Proposition persistency : persistency_property.
+  Proposition persistency :
+    forall f t s,
+      substate t s ->
+      s |= f ->
+      t |= f.
   Proof.
     intro f.
     induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
@@ -313,7 +321,9 @@ Section prop_3_3_1.
       firstorder.
   Qed.
 
-  Proposition empty_support : empty_support_property.
+  Proposition empty_support :
+    forall f,
+      empty_state |= f.
   Proof.
     intro f.
     induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
@@ -337,6 +347,9 @@ Section prop_3_3_1.
   Qed.
 
 End prop_3_3_1.
+
+Definition satisfies `{Model} (w : worlds) (f : form) :=
+  (singleton w) |= f.
 
 Section prop_3_1_7.
 
@@ -525,7 +538,7 @@ Section prop_3_3_3.
     Proposition locality :
       forall f s,
         s |= f <->
-        @support _ (restricted_Model s) f (restricted_state s s).
+        @support (restricted_Model s) f (restricted_state s s).
     Proof.
       induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
       all: intros s.
@@ -689,7 +702,7 @@ Section prop_3_3_5.
           apply substate_singleton in H2 as [H2|H2].
           all: rewrite H2 in *; clear H2 t.
           --
-             auto.
+             apply H1; exact H3.
           --
              apply empty_support.
       +
@@ -754,12 +767,19 @@ Section prop_3_3_5.
 
 End prop_3_3_5.
 
+Definition truth_conditional (f : form) :=
+  forall `(M : Model) (s : state),
+  s |= f <->
+  forall w,
+    s w = true ->
+    satisfies w f.
+
 Definition statement (f : form) : Prop := truth_conditional f.
 Definition question (f : form) : Prop := ~ truth_conditional f.
 
 Definition classical : form -> form :=
-  lp_rec
-  (fun f => lp)
+  form_rec
+  (fun f => form)
   (fun p => atom p)
   bot
   (fun f1 r1 f2 r2 => conj r1 r2)
