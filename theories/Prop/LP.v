@@ -691,7 +691,8 @@ Section prop_3_4_3.
     -
       firstorder.
     -
-      Fail rewrite satisfies_disj.
-  Abort.
+      rewrite satisfies_disj.
+      firstorder.
+  Qed.
 
 End prop_3_4_3.
