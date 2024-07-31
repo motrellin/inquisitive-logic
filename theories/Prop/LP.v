@@ -1,12 +1,33 @@
 From Coq Require Export Bool.
 From InqLog.Prop Require Export Models.
 
+(** * Syntax *)
+
 Inductive form :=
   | atom : atoms -> form
   | bot : form
   | conj : form -> form -> form
   | impl : form -> form -> form
   | idisj : form -> form -> form.
+
+(** ** Derived connectives *)
+
+Definition neg : form -> form :=
+  fun f =>
+  impl f bot.
+Definition top : form :=
+  neg bot.
+Definition disj : form -> form -> form :=
+  fun f1 f2 =>
+  neg (conj (neg f1) (neg f2)).
+Definition iff : form -> form -> form :=
+  fun f1 f2 =>
+  conj (impl f1 f2) (impl f2 f1).
+Definition iquest : form -> form :=
+  fun f =>
+  idisj f (neg f).
+
+(** * Support semantics *)
 
 Definition support `{Model} : form -> state -> Prop :=
   form_rect
@@ -21,7 +42,7 @@ Notation "s |= f" := (support f s) (at level 70) : state_scope.
 
 Instance support_proper `{Model} :
   forall f,
-    Proper (state_eq ==> iff) (support f).
+    Proper (state_eq ==> Logic.iff) (support f).
 Proof.
   intros f s1 s2 H1.
   induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
@@ -72,20 +93,7 @@ Proof.
     firstorder.
 Qed.
 
-Definition neg : form -> form :=
-  fun f =>
-  impl f bot.
-Definition top : form :=
-  neg bot.
-Definition disj : form -> form -> form :=
-  fun f1 f2 =>
-  neg (conj (neg f1) (neg f2)).
-Definition iff : form -> form -> form :=
-  fun f1 f2 =>
-  conj (impl f1 f2) (impl f2 f1).
-Definition iquest : form -> form :=
-  fun f =>
-  idisj f (neg f).
+(** ** Support for derived connectives *)
 
 Definition ruling_out `{Model} (s : state) (f : form) :=
   ~ (
@@ -212,6 +220,8 @@ Section prop_3_1_6.
 
 End prop_3_1_6.
 
+(** ** A small example *)
+
 Module ex_3_2_5.
 
   Import ex_Model_1.
@@ -285,9 +295,13 @@ Module ex_3_2_5.
 
 End ex_3_2_5.
 
+(** ** Properties of [support] *)
+
 Section prop_3_3_1.
 
   Context `{Model}.
+
+  (** *** Persistency *)
 
   Proposition persistency :
     forall f t s,
@@ -321,6 +335,8 @@ Section prop_3_3_1.
       firstorder.
   Qed.
 
+  (** *** Empty support *)
+
   Proposition empty_support :
     forall f,
       empty_state |= f.
@@ -347,6 +363,68 @@ Section prop_3_3_1.
   Qed.
 
 End prop_3_3_1.
+
+Section prop_3_3_3.
+
+    Context `{M : Model}.
+
+    (** *** Locality *)
+
+    Proposition locality :
+      forall f s,
+        s |= f <->
+        @support (restricted_Model s) f (restricted_state s s).
+    Proof.
+      induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
+      all: intros s.
+      -
+        simpl.
+        split.
+        +
+          intros H1 [w H2] H3.
+          auto.
+        +
+          intros H1 w H2.
+          specialize (H1 (exist _ w H2)).
+          auto.
+      -
+        simpl.
+        split.
+        +
+          intros H1 [w H2].
+          auto.
+        +
+          intros H1 w.
+          destruct (s w) eqn:H2.
+          *
+            specialize (H1 (exist _ w H2)).
+            simpl in H1.
+            congruence.
+          *
+            reflexivity.
+      -
+        (** For some reason, [firstorder] is very slow here... *)
+        simpl in *.
+        specialize (IH1 s).
+        specialize (IH2 s).
+        destruct IH1 as [IH11 IH12].
+        destruct IH2 as [IH21 IH22].
+        split; intros [H1 H2]; split; auto.
+      - (* TODO: Implication *)
+        admit.
+      -
+        (** Same here... *)
+        simpl in *.
+        specialize (IH1 s).
+        specialize (IH2 s).
+        destruct IH1 as [IH11 IH12].
+        destruct IH2 as [IH21 IH22].
+        split; intros [|]; [left|right|left|right]; auto.
+    Admitted.
+
+End prop_3_3_3.
+
+(** * Satisfaction *)
 
 Definition satisfies `{Model} (w : worlds) (f : form) :=
   (singleton w) |= f.
@@ -483,111 +561,6 @@ Section prop_3_1_7.
   Qed.
 
 End prop_3_1_7.
-
-Definition restricted_Model `{Model} (s : state) : Model.
-Proof.
-  unshelve econstructor.
-  -
-    exact {w : worlds | s w = true}.
-  -
-    intros [w1] [w2].
-    apply worlds_eq.
-    exact w1.
-    exact w2.
-  -
-    intros [w] a.
-    apply truth_value.
-    exact w.
-    exact a.
-  -
-    split.
-    +
-      intros []; easy.
-    +
-      intros [] []; easy.
-    +
-      intros [w1] [w2] [w3] H1 H2.
-      rewrite H1; exact H2.
-  -
-    intros [w1] [w2].
-    apply worlds_deceq.
-  -
-    simpl.
-    intros [w1] [w2].
-    apply truth_value_proper.
-Defined.
-
-Definition restricted_state `{Model} (s t : state) : @state (restricted_Model s).
-Proof.
-  unshelve econstructor.
-  -
-    intros [w].
-    apply t.
-    exact w.
-  -
-    intros [w1] [w2] H1.
-    simpl in *.
-    rewrite H1.
-    reflexivity.
-Defined.
-
-Section prop_3_3_3.
-
-    Context `{M : Model}.
-
-    Proposition locality :
-      forall f s,
-        s |= f <->
-        @support (restricted_Model s) f (restricted_state s s).
-    Proof.
-      induction f as [p| |f1 IH1 f2 IH2|f1 IH1 f2 IH2|f1 IH1 f2 IH2].
-      all: intros s.
-      -
-        simpl.
-        split.
-        +
-          intros H1 [w H2] H3.
-          auto.
-        +
-          intros H1 w H2.
-          specialize (H1 (exist _ w H2)).
-          auto.
-      -
-        simpl.
-        split.
-        +
-          intros H1 [w H2].
-          auto.
-        +
-          intros H1 w.
-          destruct (s w) eqn:H2.
-          *
-            specialize (H1 (exist _ w H2)).
-            simpl in H1.
-            congruence.
-          *
-            reflexivity.
-      -
-        (** For some reason, [firstorder] is very slow here... *)
-        simpl in *.
-        specialize (IH1 s).
-        specialize (IH2 s).
-        destruct IH1 as [IH11 IH12].
-        destruct IH2 as [IH21 IH22].
-        split; intros [H1 H2]; split; auto.
-      - (* TODO: Implication *)
-        admit.
-      -
-        (** Same here... *)
-        simpl in *.
-        specialize (IH1 s).
-        specialize (IH2 s).
-        destruct IH1 as [IH11 IH12].
-        destruct IH2 as [IH21 IH22].
-        split; intros [|]; [left|right|left|right]; auto.
-    Admitted.
-
-End prop_3_3_3.
 
 Section prop_3_3_4.
 
@@ -766,6 +739,8 @@ Section prop_3_3_5.
   Qed.
 
 End prop_3_3_5.
+
+(** * Truth-Conditionality *)
 
 Definition truth_conditional (f : form) :=
   forall `(M : Model) (s : state),
