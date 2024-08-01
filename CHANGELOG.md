@@ -1,5 +1,42 @@
 # Changelog
 
+## inqlog-v0.4.0 (2024-07-31)
+
+### New
+
+* Proved `classical_truth_set` [Max Ole Elliger]
+
+* Proved `satisfies_disj` [Max Ole Elliger]
+
+  This was possible thanks to the decidability of `satisfies`.
+
+* Proved the decidability of `satisfies` [Max Ole Elliger]
+
+  This was done via reflection.
+
+* Defined `satisfies'` [Max Ole Elliger]
+
+  The alternative definition of satisfaction is defined directly without
+  states.
+
+### Changes
+
+* Redefined `satisfies` [Max Ole Elliger]
+
+  `satisfies` is now defined directly via recursion. The original
+  definition is now covered by the Theorem `satisfies_singleton_support`.
+
+* Simplified proof of prop_3_3_5. [Max Ole Elliger]
+
+* Some reordering and coqdoc-sectioning. [Max Ole Elliger]
+
+  - Restricted models are now located in InqLog.Prop.Models
+  - Some further reordering in InqLog.Prop.LP
+
+* Removed theories/Prop/Formulas.v and /LPC.v. [Max Ole Elliger]
+
+* Simplified the proof of `satisfies_bot` by use of `singleton_false` [Max Ole Elliger]
+
 ## inqlog-v0.3.0 (2024-07-30)
 
 ### New
