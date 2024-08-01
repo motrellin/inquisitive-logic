@@ -1,11 +1,15 @@
 From Coq Require Export List.
 From InqLog.Prop Require Export LP.
 
-Fixpoint list_func {X Y} (xs : list X) (ys : list Y) : list (list (X*Y)) :=
-  match xs with
-  | nil => nil
-  | x :: nil => map (fun y => (x,y) :: nil) ys
-  | x :: xs' =>
+Definition list_func {X Y} : list X -> list Y -> list (list (X*Y)) :=
+  list_rect
+  _
+  (fun ys => nil) (* Base Case *)
+  (fun x xs' r1 => (* Recursive Case *)
+    list_rect
+    _
+    (map (fun y => (x,y) :: nil))
+    (fun _ _ _ ys =>
       flat_map
       (
         fun f =>
@@ -16,15 +20,16 @@ Fixpoint list_func {X Y} (xs : list X) (ys : list Y) : list (list (X*Y)) :=
         )
         ys
       )
-      (list_func xs' ys)
-  end.
+      (r1 ys)
+    )
+    xs'
+  ).
 
 Compute (list_func (1 :: 2 :: nil) (3 :: 4 :: nil)).
 Compute length (list_func (1 :: 2 :: 3 :: nil) (4 :: 5 :: 6 :: nil)).
 
-
 Definition resolution : form -> list form :=
-  form_rect
+  form_rec
   _
   (fun a => (atom a) :: nil)
   (bot :: nil)
