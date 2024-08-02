@@ -591,6 +591,48 @@ Section prop_3_3_4.
 
 End prop_3_3_4.
 
+Corollary reflect_satisfies_eq `{Model} :
+  forall w1 w2 f1 f2,
+    (satisfies' w1 f1 = satisfies' w2 f2) <->
+    (satisfies w1 f1 <-> satisfies w2 f2).
+Proof.
+  intros w1 w2 f1 f2.
+  pose proof (reflect_satisfies w1 f1) as H1.
+  pose proof (reflect_satisfies w2 f2) as H2.
+  inversion H1; subst; inversion H2; subst; firstorder; easy.
+Qed.
+
+Instance satisfies_proper `{Model} : Proper (worlds_eq ==> eq ==> Logic.iff) satisfies.
+Proof.
+  intros w1 w2 H1 f1 f2 H2.
+  do 2 rewrite satisfies_singleton_support.
+  rewrite H1, H2.
+  reflexivity.
+Qed.
+
+Instance satisfies'_proper `{Model} : Proper (worlds_eq ==> eq ==> eq) satisfies'.
+Proof.
+  intros w1 w2 H1 f1 f2 H2.
+  apply reflect_satisfies_eq.
+  apply satisfies_proper; assumption.
+Qed.
+
+Definition truth_set `{Model} (f : form) : state.
+Proof.
+  unshelve econstructor.
+  -
+    intros w.
+    apply satisfies'.
+    +
+      exact w.
+    +
+      exact f.
+  -
+    intros w1 w2 H1.
+    rewrite H1.
+    reflexivity.
+Defined.
+
 Section prop_3_3_5.
 
   Context `{Model}.
