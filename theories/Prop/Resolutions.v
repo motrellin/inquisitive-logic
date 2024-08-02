@@ -39,24 +39,19 @@ Definition list_func {X Y} : list X -> list Y -> list (list (X*Y)) :=
 Compute (list_func (1 :: 2 :: nil) (3 :: 4 :: nil)).
 Compute length (list_func (1 :: 2 :: 3 :: nil) (4 :: 5 :: 6 :: nil)).
 
+Definition resolution_impl_helper : list (form*form) -> form :=
+  list_rect
+  _
+  top
+  (fun ff _ R => conj (impl (fst ff) (snd ff)) R).
+
 Definition resolution : form -> list form :=
   form_rec
   _
   (fun a => (atom a) :: nil)
   (bot :: nil)
   (fun f1 r1 f2 r2 => flat_map (fun x => map (fun y => conj x y) r2) r1)
-  (fun f1 r1 f2 r2 =>
-    map
-    (
-      fun f =>
-      list_rect
-      _
-      top
-      (fun x _ rest => conj (impl (fst x) (snd x)) rest)
-      f
-    )
-    (list_func r1 r2)
-  )
+  (fun f1 r1 f2 r2 => map resolution_impl_helper (list_func r1 r2))
   (fun f1 r1 f2 r2 => r1 ++ r2).
 
 Compute (resolution (iquest (atom 0))).
