@@ -138,7 +138,91 @@ Proof.
         exists r2.
         split; assumption.
   -
-    admit.
+    split.
+    +
+      intros H1.
+      assert (H2 : forall r1, In r1 (resolution f1) -> exists r2, In r2 (resolution f2) /\ s |= impl r1 r2).
+      {
+        intros r1 H2.
+        remember (intersection_state s (truth_set r1)) as cap eqn:H3.
+        assert (H4 : cap |= r1).
+        {
+          (* TODO
+             Proof Sketch:
+             - Since [r1] is a resolution, it must be truth-conditional.
+             - A truth-conditional formula should be satisfied at any substate of its truth set.
+           *)
+          admit.
+        }
+        assert (H5 : cap |= f1).
+        {
+          apply IH1.
+          exists r1.
+          split; assumption.
+        }
+        assert (H6 : cap |= f2).
+        {
+          simpl in H1.
+          apply H1.
+          -
+            admit.
+          -
+            exact H5.
+        }
+        apply IH2 in H6 as [r2 [H6 H7]].
+        exists r2.
+        split.
+        -
+          exact H7.
+        -
+          (* TODO Use Prop 2.5.2 *)
+          admit.
+      }
+      assert (H3 :
+        exists (f : {r1 : form | In r1 (resolution f1)} -> {r2 : form | In r2 (resolution f2)}),
+          forall x,
+            s |= impl (proj1_sig x) (proj1_sig (f x))).
+      {
+        (* TODO Some Coq specific stuff *)
+        admit.
+      }
+      destruct H3 as [f H3].
+      (* TODO More Coq Stuff *)
+      admit.
+    +
+      intros [r [H1 H2]].
+      simpl in H2.
+      apply in_map_iff in H2 as [ffs [H2 H3]].
+      intros t H4 H5.
+      apply IH1 in H5 as [r1 [H5 H6]].
+      assert (H7 : exists r2, In (r1,r2) ffs).
+      {
+        (* TODO This holds, as ffs represents a funktion. In fact, Coq stuff *)
+        admit.
+      }
+      destruct H7 as [r2 H7].
+      assert (H8 : s |= impl r1 r2).
+      {
+        (* TODO Coq stuff *)
+        admit.
+      }
+      assert (H9 : t |= r2).
+      {
+        simpl in H8.
+        apply H8.
+        -
+          exact H4.
+        -
+          exact H5.
+      }
+      apply IH2.
+      exists r2.
+      split.
+      *
+        exact H9.
+      *
+        (* TODO This should follow by the definition of ffs. *)
+        admit.
   -
     split.
     +
