@@ -45,6 +45,28 @@ Definition resolution_impl_helper : list (form*form) -> form :=
   top
   (fun ff _ R => conj (impl (fst ff) (snd ff)) R).
 
+Lemma resolution_impl_helper_lemma_1 `{Model} (s : state) :
+  forall ffs f1 f2,
+    In (f1,f2) ffs ->
+    s |= (resolution_impl_helper ffs) ->
+    s |= impl f1 f2.
+Proof.
+  intros ffs f1 f2 H1 H2.
+  induction ffs as [|[g1 g2] ffs' IH].
+  -
+    contradiction.
+  -
+    destruct H2 as [H2 H3].
+    destruct H1 as [H1|H1].
+    +
+      injection H1; intros ? ?; subst g1 g2; clear H1.
+      simpl fst in H2.
+      simpl snd in H2.
+      exact H2.
+    +
+      auto.
+Qed.
+
 Definition resolution : form -> list form :=
   form_rec
   _
@@ -209,8 +231,12 @@ Proof.
       destruct H7 as [r2 H7].
       assert (H8 : s |= impl r1 r2).
       {
-        (* TODO Coq stuff *)
-        admit.
+        apply resolution_impl_helper_lemma_1 with (ffs := ffs).
+        -
+          exact H7.
+        -
+          subst r.
+          exact H1.
       }
       assert (H9 : t |= r2).
       {
