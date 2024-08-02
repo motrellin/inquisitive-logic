@@ -478,8 +478,37 @@ We want to characterize the substates of a singleton state. By set theory, a
 </div>
 
 <div class="doc">
-<a id="lab6"></a><h1 class="section">Examples</h1>
-<a id="lab7"></a><h2 class="section">Example 1</h2>
+<a id="lab6"></a><h2 class="section">State constructions</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="intersection_state" class="idref" href="#intersection_state"><span class="id" title="definition">intersection_state</span></a> `{<a id="H:45" class="idref" href="#H:45"><span class="id" title="binder">Model</span></a>} (<a id="s1:46" class="idref" href="#s1:46"><span class="id" title="binder">s1</span></a> <a id="s2:47" class="idref" href="#s2:47"><span class="id" title="binder">s2</span></a> : <a class="idref" href="InqLog.Prop.Models.html#state"><span class="id" title="record">state</span></a>) : <a class="idref" href="InqLog.Prop.Models.html#state"><span class="id" title="record">state</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">unshelve</span> <span class="id" title="tactic">econstructor</span>.<br/>
+&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#andb"><span class="id" title="definition">andb</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">s1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">w</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">s2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">w</span>.<br/>
+&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w1</span> <span class="id" title="var">w2</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab7"></a><h1 class="section">Examples</h1>
+<a id="lab8"></a><h2 class="section">Example 1</h2>
 
 </div>
 <div class="code">
@@ -509,7 +538,7 @@ The type <span class="inlinecode"><a class="idref" href="http://coq.inria.fr/doc
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>).<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="keyword">forall</span> <a id="b:45" class="idref" href="#b:45"><span class="id" title="binder"><span id="b:46" class="id">b</span></span></a>, <span class="id" title="var">f</span> <a class="idref" href="InqLog.Prop.Models.html#b:45"><span class="id" title="variable">b</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">g</span> <a class="idref" href="InqLog.Prop.Models.html#b:45"><span class="id" title="variable">b</span></a>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="keyword">forall</span> <a id="b:48" class="idref" href="#b:48"><span class="id" title="binder"><span id="b:49" class="id">b</span></span></a>, <span class="id" title="var">f</span> <a class="idref" href="InqLog.Prop.Models.html#b:48"><span class="id" title="variable">b</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">g</span> <a class="idref" href="InqLog.Prop.Models.html#b:48"><span class="id" title="variable">b</span></a>).<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
 
@@ -583,17 +612,17 @@ Every other atom is mapped to <span class="inlinecode"><a class="idref" href="ht
 </div>
 
 <div class="doc">
-<a id="lab8"></a><h1 class="section">Restricting a <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#Model"><span class="id" title="record">Model</span></a></span> to a <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#state"><span class="id" title="record">state</span></a></span></h1>
+<a id="lab9"></a><h1 class="section">Restricting a <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#Model"><span class="id" title="record">Model</span></a></span> to a <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#state"><span class="id" title="record">state</span></a></span></h1>
 
 </div>
 <div class="code">
 
 <br/>
-<span class="id" title="keyword">Definition</span> <a id="restricted_Model" class="idref" href="#restricted_Model"><span class="id" title="definition">restricted_Model</span></a> `{<a id="H:47" class="idref" href="#H:47"><span class="id" title="binder">Model</span></a>} (<a id="s:48" class="idref" href="#s:48"><span class="id" title="binder">s</span></a> : <a class="idref" href="InqLog.Prop.Models.html#state"><span class="id" title="record">state</span></a>) : <a class="idref" href="InqLog.Prop.Models.html#Model"><span class="id" title="class">Model</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a id="restricted_Model" class="idref" href="#restricted_Model"><span class="id" title="definition">restricted_Model</span></a> `{<a id="H:50" class="idref" href="#H:50"><span class="id" title="binder">Model</span></a>} (<a id="s:51" class="idref" href="#s:51"><span class="id" title="binder">s</span></a> : <a class="idref" href="InqLog.Prop.Models.html#state"><span class="id" title="record">state</span></a>) : <a class="idref" href="InqLog.Prop.Models.html#Model"><span class="id" title="class">Model</span></a>.<br/>
 <span class="id" title="keyword">Proof</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="var">unshelve</span> <span class="id" title="tactic">econstructor</span>.<br/>
 &nbsp;&nbsp;-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Specif.html#6556914db359db999889decec6a4a562"><span class="id" title="notation">{</span></a><a id="w:49" class="idref" href="#w:49"><span class="id" title="binder"><span id="w:50" class="id">w</span></span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Specif.html#6556914db359db999889decec6a4a562"><span class="id" title="notation">:</span></a> <a class="idref" href="InqLog.Prop.Models.html#worlds"><span class="id" title="method">worlds</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Specif.html#6556914db359db999889decec6a4a562"><span class="id" title="notation">|</span></a> <span class="id" title="var">s</span> <a class="idref" href="InqLog.Prop.Models.html#w:49"><span class="id" title="variable">w</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Specif.html#6556914db359db999889decec6a4a562"><span class="id" title="notation">}</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Specif.html#6556914db359db999889decec6a4a562"><span class="id" title="notation">{</span></a><a id="w:52" class="idref" href="#w:52"><span class="id" title="binder"><span id="w:53" class="id">w</span></span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Specif.html#6556914db359db999889decec6a4a562"><span class="id" title="notation">:</span></a> <a class="idref" href="InqLog.Prop.Models.html#worlds"><span class="id" title="method">worlds</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Specif.html#6556914db359db999889decec6a4a562"><span class="id" title="notation">|</span></a> <span class="id" title="var">s</span> <a class="idref" href="InqLog.Prop.Models.html#w:52"><span class="id" title="variable">w</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Specif.html#6556914db359db999889decec6a4a562"><span class="id" title="notation">}</span></a>.<br/>
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">w1</span>] [<span class="id" title="var">w2</span>].<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.Prop.Models.html#worlds_eq"><span class="id" title="method">worlds_eq</span></a>.<br/>
@@ -623,7 +652,7 @@ Every other atom is mapped to <span class="inlinecode"><a class="idref" href="ht
 <span class="id" title="keyword">Defined</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Definition</span> <a id="restricted_state" class="idref" href="#restricted_state"><span class="id" title="definition">restricted_state</span></a> `{<a id="H:51" class="idref" href="#H:51"><span class="id" title="binder">Model</span></a>} (<a id="s:52" class="idref" href="#s:52"><span class="id" title="binder">s</span></a> <a id="t:53" class="idref" href="#t:53"><span class="id" title="binder">t</span></a> : <a class="idref" href="InqLog.Prop.Models.html#state"><span class="id" title="record">state</span></a>) : @<a class="idref" href="InqLog.Prop.Models.html#state"><span class="id" title="record">state</span></a> (<a class="idref" href="InqLog.Prop.Models.html#restricted_Model"><span class="id" title="definition">restricted_Model</span></a> <a class="idref" href="InqLog.Prop.Models.html#s:52"><span class="id" title="variable">s</span></a>).<br/>
+<span class="id" title="keyword">Definition</span> <a id="restricted_state" class="idref" href="#restricted_state"><span class="id" title="definition">restricted_state</span></a> `{<a id="H:54" class="idref" href="#H:54"><span class="id" title="binder">Model</span></a>} (<a id="s:55" class="idref" href="#s:55"><span class="id" title="binder">s</span></a> <a id="t:56" class="idref" href="#t:56"><span class="id" title="binder">t</span></a> : <a class="idref" href="InqLog.Prop.Models.html#state"><span class="id" title="record">state</span></a>) : @<a class="idref" href="InqLog.Prop.Models.html#state"><span class="id" title="record">state</span></a> (<a class="idref" href="InqLog.Prop.Models.html#restricted_Model"><span class="id" title="definition">restricted_Model</span></a> <a class="idref" href="InqLog.Prop.Models.html#s:55"><span class="id" title="variable">s</span></a>).<br/>
 <span class="id" title="keyword">Proof</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="var">unshelve</span> <span class="id" title="tactic">econstructor</span>.<br/>
 &nbsp;&nbsp;-<br/>
