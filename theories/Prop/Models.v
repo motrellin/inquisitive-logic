@@ -315,6 +315,27 @@ Proof.
   reflexivity.
 Qed.
 
+(** ** State constructions *)
+
+Definition intersection_state `{Model} (s1 s2 : state) : state.
+Proof.
+  unshelve econstructor.
+  -
+    intros w.
+    apply andb.
+    +
+      apply s1.
+      exact w.
+    +
+      apply s2.
+      exact w.
+  -
+    intros w1 w2 H1.
+    simpl.
+    rewrite H1.
+    reflexivity.
+Defined.
+
 (** * Examples *)
 (** ** Example 1 *)
 
