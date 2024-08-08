@@ -29,6 +29,41 @@ Proof.
       auto.
 Qed.
 
+Lemma resolution_impl_helper_lemma_2 `{Model} (s : state) :
+  forall ffs,
+    (forall f1 f2, In (f1,f2) ffs -> s |= impl f1 f2) ->
+    s |= resolution_impl_helper ffs.
+Proof.
+  induction ffs as [|[f1 f2] ffs' IH].
+  all: intros H1.
+  -
+    simpl.
+    intros t H2 H3 w.
+    apply H3.
+  -
+    simpl in *.
+    split.
+    +
+      intros t H2 H3.
+      eapply H1.
+      *
+        left; reflexivity.
+      *
+        exact H2.
+      *
+        exact H3.
+    +
+      apply IH.
+      intros f3 f4 H2 t H3 H4.
+      eapply H1.
+      *
+        right; exact H2.
+      *
+        exact H3.
+      *
+        exact H4.
+Qed.
+
 Definition resolution : form -> list form :=
   form_rec
   _
