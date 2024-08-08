@@ -166,92 +166,64 @@ Proof.
     split.
     +
       intros H1.
-      assert (H2 : forall r1, In r1 (resolution f1) -> exists r2, In r2 (resolution f2) /\ s |= impl r1 r2).
+      assert (H2 :
+        exists (ffs : list (form*form)),
+          (forall r1 r2, In (r1,r2) ffs -> In r1 (resolution f1) /\ In r2 (resolution f2)) /\
+          (forall r1 r2, In (r1,r2) ffs -> s |= impl r1 r2) /\
+          (In ffs (list_func (resolution f1) (resolution f2)))
+      ).
       {
-        intros r1 H2.
-        remember (intersection_state s (truth_set r1)) as cap eqn:H3.
-        assert (H4 : cap |= r1).
-        {
-          (* TODO
-             Proof Sketch:
-             - Since [r1] is a resolution, it must be truth-conditional.
-             - A truth-conditional formula should be satisfied at any substate of its truth set.
-           *)
-          admit.
-        }
-        assert (H5 : cap |= f1).
-        {
-          apply IH1.
-          exists r1.
-          split; assumption.
-        }
-        assert (H6 : cap |= f2).
-        {
-          simpl in H1.
-          apply H1.
-          -
-            admit.
-          -
-            exact H5.
-        }
-        apply IH2 in H6 as [r2 [H6 H7]].
-        exists r2.
-        split.
-        -
-          exact H7.
-        -
-          (* TODO Use Prop 2.5.2 *)
-          admit.
-      }
-      assert (H3 :
-        exists (f : {r1 : form | In r1 (resolution f1)} -> {r2 : form | In r2 (resolution f2)}),
-          forall x,
-            s |= impl (proj1_sig x) (proj1_sig (f x))).
-      {
-        (* TODO Some Coq specific stuff *)
         admit.
       }
-      destruct H3 as [f H3].
-      (* TODO More Coq Stuff *)
-      admit.
+      destruct H2 as [ffs [H2 [H3 H4]]].
+      apply resolution_impl_helper_lemma_2 in H3.
+      exists (resolution_impl_helper ffs).
+      split.
+      *
+        exact H3.
+      *
+        simpl.
+        apply in_map_iff.
+        exists ffs.
+        split.
+        --
+           reflexivity.
+        --
+           exact H4.
     +
       intros [r [H1 H2]].
       simpl in H2.
       apply in_map_iff in H2 as [ffs [H2 H3]].
+      subst r.
+
       intros t H4 H5.
       apply IH1 in H5 as [r1 [H5 H6]].
-      assert (H7 : exists r2, In (r1,r2) ffs).
+      assert (H7 : exists r2, In (r1,r2) ffs /\ In r2 (resolution f2)).
       {
-        (* TODO This holds, as ffs represents a funktion. In fact, Coq stuff *)
         admit.
       }
-      destruct H7 as [r2 H7].
-      assert (H8 : s |= impl r1 r2).
-      {
-        apply resolution_impl_helper_lemma_1 with (ffs := ffs).
-        -
-          exact H7.
-        -
-          subst r.
-          exact H1.
-      }
-      assert (H9 : t |= r2).
-      {
-        simpl in H8.
-        apply H8.
-        -
-          exact H4.
-        -
-          exact H5.
-      }
+      destruct H7 as [r2 [H7 H8]].
+
       apply IH2.
       exists r2.
       split.
       *
-        exact H9.
+        apply resolution_impl_helper_lemma_1 with (s := t) in H7.
+        --
+           simpl in H7.
+           apply H7.
+           ++
+              reflexivity.
+           ++
+              exact H5.
+        --
+           eapply persistency.
+           ++
+              exact H4.
+           ++
+              exact H1.
       *
-        (* TODO This should follow by the definition of ffs. *)
-        admit.
+        exact H8.
   -
     split.
     +
