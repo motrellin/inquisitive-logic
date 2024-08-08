@@ -32,8 +32,8 @@ End list_func_helper.
 Definition list_func {X Y} : list X -> list Y -> list (list (X*Y)) :=
   list_rect
   _
-  (fun ys => nil) (* Base Case *)
-  list_func_helper (* Recursive Case *).
+  (fun ys => nil)
+  list_func_helper.
 
 Compute (list_func (1 :: 2 :: nil) (3 :: 4 :: nil)).
 Compute length (list_func (1 :: 2 :: 3 :: nil) (4 :: 5 :: 6 :: nil)).
