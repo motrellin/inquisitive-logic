@@ -168,19 +168,18 @@ Proof.
       intros H1.
       assert (H2 :
         exists (ffs : list (form*form)),
-          (forall r1 r2, In (r1,r2) ffs -> In r1 (resolution f1) /\ In r2 (resolution f2)) /\
           (forall r1 r2, In (r1,r2) ffs -> s |= impl r1 r2) /\
           (In ffs (list_func (resolution f1) (resolution f2)))
       ).
       {
         admit.
       }
-      destruct H2 as [ffs [H2 [H3 H4]]].
-      apply resolution_impl_helper_lemma_2 in H3.
+      destruct H2 as [ffs [H2 H3]].
+      apply resolution_impl_helper_lemma_2 in H2.
       exists (resolution_impl_helper ffs).
       split.
       *
-        exact H3.
+        exact H2.
       *
         simpl.
         apply in_map_iff.
@@ -189,7 +188,7 @@ Proof.
         --
            reflexivity.
         --
-           exact H4.
+           exact H3.
     +
       intros [r [H1 H2]].
       simpl in H2.
@@ -198,9 +197,11 @@ Proof.
 
       intros t H4 H5.
       apply IH1 in H5 as [r1 [H5 H6]].
-      assert (H7 : exists r2, In (r1,r2) ffs /\ In r2 (resolution f2)).
+      assert (H7 : exists r2, In r2 (resolution f2) /\ In (r1,r2) ffs).
       {
-        admit.
+        eapply list_func_left_total.
+        exact H3.
+        exact H6.
       }
       destruct H7 as [r2 [H7 H8]].
 
@@ -208,10 +209,10 @@ Proof.
       exists r2.
       split.
       *
-        apply resolution_impl_helper_lemma_1 with (s := t) in H7.
+        apply resolution_impl_helper_lemma_1 with (s := t) in H8.
         --
-           simpl in H7.
-           apply H7.
+           simpl in H8.
+           apply H8.
            ++
               reflexivity.
            ++
@@ -223,7 +224,7 @@ Proof.
            ++
               exact H1.
       *
-        exact H8.
+        exact H7.
   -
     split.
     +
