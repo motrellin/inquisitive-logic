@@ -103,6 +103,24 @@ Definition ruling_out `{Model} (s : state) (f : form) :=
       t |= f
       ).
 
+Fact ruling_out_not_support `{Model} :
+  forall s f,
+    consistent s ->
+    ruling_out s f ->
+    ~ (s |= f).
+Proof.
+  intros s f H1 H2 H3.
+  apply H2.
+  exists s.
+  repeat split.
+  -
+    reflexivity.
+  -
+    exact H1.
+  -
+    exact H3.
+Qed.
+
 Section prop_3_1_6.
 
   Context `{Model}.
