@@ -227,3 +227,91 @@ Proof.
               exact H3.
               exact H4.
 Qed.
+
+Definition func_to_list_func {X Y} :
+  forall (xs : list X),
+    forall (ys : list Y) (f : {x : X | In x xs} -> {y : Y | In y ys}),
+      list (X*Y).
+Proof.
+  refine (
+    list_rect
+    (fun xs =>
+      forall (ys : list Y) (f : {x : X | In x xs} -> {y : Y | In y ys}),
+        list (X*Y))
+    _
+    _
+  ).
+  -
+    intros ys f.
+    exact nil.
+  -
+    intros x xs' R ys f.
+    apply cons.
+    +
+      split.
+      *
+        exact x.
+      *
+        apply f.
+        exists x.
+        left.
+        reflexivity.
+    +
+      eapply R.
+      intros [x' H3].
+      apply f.
+      exists x'.
+      right.
+      exact H3.
+Defined.
+
+Theorem func_to_list_func_correct {X Y} :
+  forall
+    (xs : list X)
+    (ys : list Y)
+    (f : {x : X | In x xs} -> {y : Y | In y ys}),
+      In (func_to_list_func xs ys f) (list_func xs ys).
+Proof.
+  induction xs as [|x xs' IH].
+  -
+    left.
+    reflexivity.
+  -
+    all: intros ys f.
+    simpl in *.
+    destruct (f (exist (fun x0 : X => x = x0 \/ In x0 xs') x (or_introl eq_refl))) as [y H3].
+
+    destruct ys as [|y' ys'].
+    +
+      simpl in *.
+      contradiction.
+    +
+      simpl in *.
+      apply in_flat_map.
+      simpl in *.
+      destruct H3 as [H3|H3].
+      *
+        subst y'.
+
+        eexists.
+        split.
+        --
+           apply IH.
+        --
+           left.
+           reflexivity.
+      *
+        eexists.
+        split.
+        --
+           apply IH.
+        --
+           right.
+           apply in_map_iff.
+           eexists.
+           split.
+           ++
+              reflexivity.
+           ++
+              exact H3.
+Qed.
