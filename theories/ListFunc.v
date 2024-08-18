@@ -126,3 +126,9 @@ Proof.
         --
            firstorder.
 Qed.
+
+Definition unique {X} : list X -> Prop :=
+  list_rect
+  _
+  True
+  (fun x xs' R => (~ In x xs') /\ R).
