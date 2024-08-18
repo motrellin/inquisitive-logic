@@ -9,7 +9,12 @@ Definition list_func {X Y} : list X -> list Y -> list (list (X*Y)) :=
     _
     nil
     (fun y ys' _ =>
-      flat_map (fun xys => map (fun y => (x,y) :: xys) (y :: ys')) (R (y :: ys'))
+      flat_map
+      (
+        fun xys =>
+        map (fun y => (x,y) :: xys) (y :: ys')
+      )
+      (R (y :: ys'))
     )
   ).
 
