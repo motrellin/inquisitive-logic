@@ -132,3 +132,98 @@ Definition unique {X} : list X -> Prop :=
   _
   True
   (fun x xs' R => (~ In x xs') /\ R).
+
+Theorem list_func_right_unique {X Y} :
+  forall (xs : list X) (ys : list Y),
+    unique xs ->
+    forall xys,
+      In xys (list_func xs ys) ->
+      forall x y1 y2,
+        In (x,y1) xys ->
+        In (x,y2) xys ->
+        y1 = y2.
+Proof.
+  induction xs as [|x xs' IH].
+  all: intros ys H1 xys H2 x' y1 y2 H3 H4.
+  -
+    simpl in *.
+    destruct H2 as [H2|H2].
+    +
+      subst xys.
+      contradiction.
+    +
+      contradiction.
+  -
+    simpl in *.
+    destruct H1 as [H11 H12].
+    destruct ys as [|y ys'].
+    +
+      simpl in *.
+      contradiction.
+    +
+      simpl in *.
+      apply in_flat_map in H2 as [xys' [H21 H22]].
+      simpl in *.
+      destruct H22 as [H22|H22].
+      *
+        subst xys.
+        simpl in *.
+        destruct H3 as [H3|H3].
+        --
+           injection H3; intros; subst x' y1; clear H3.
+           simpl in *.
+           destruct H4 as [H4|H4].
+           ++
+              injection H4; intros; subst y2; clear H4.
+              reflexivity.
+           ++
+              eapply list_func_in in H4 as [H4 H5].
+              contradict H11.
+              exact H4.
+              exact H21.
+        --
+           destruct H4 as [H4|H4].
+           ++
+              injection H4; intros; subst x' y2; clear H4.
+              eapply list_func_in in H3 as [H3 H4].
+              contradict H11.
+              exact H3.
+              exact H21.
+           ++
+              eapply IH.
+              exact H12.
+              exact H21.
+              exact H3.
+              exact H4.
+      *
+        apply in_map_iff in H22 as [y3 [H22 H23]].
+        subst xys.
+        simpl in *.
+        destruct H3 as [H3|H3].
+        --
+           injection H3; intros; subst x' y1; clear H3.
+           simpl in *.
+           destruct H4 as [H4|H4].
+           ++
+              injection H4; intros; subst y2; clear H4.
+              reflexivity.
+           ++
+              eapply list_func_in in H4 as [H4 H5].
+              contradict H11.
+              exact H4.
+              exact H21.
+        --
+           destruct H4 as [H4|H4].
+           ++
+              injection H4; intros; subst x' y2; clear H4.
+              eapply list_func_in in H3 as [H3 H4].
+              contradict H11.
+              exact H3.
+              exact H21.
+           ++
+              eapply IH.
+              exact H12.
+              exact H21.
+              exact H3.
+              exact H4.
+Qed.
