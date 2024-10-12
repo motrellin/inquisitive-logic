@@ -109,3 +109,7 @@ Class Model `{Signature} :=
         forall (w w' : World),
           FInterpretation w f = FInterpretation w' f
   }.
+
+(* (Variable) Assignments *)
+
+Definition assignment `{Model} : Type := var -> Individual.
