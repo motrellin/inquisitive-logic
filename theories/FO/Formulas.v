@@ -1,4 +1,5 @@
 From Autosubst Require Export Autosubst.
+From Coq Require Import Bool.
 
 (* Signatures *)
 
@@ -127,3 +128,9 @@ Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
       in
       FInterpretation w f args
   end.
+
+Definition state `{Model} : Type := World -> bool.
+
+Definition substate `{Model} (t s : state) : Prop :=
+  forall w,
+    t w = true -> s w = true.
