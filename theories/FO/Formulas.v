@@ -131,6 +131,8 @@ Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
 
 Definition state `{Model} : Type := World -> bool.
 
+Definition empty_state `{Model} : state := fun _ => false.
+
 Definition substate `{Model} (t s : state) : Prop :=
   forall w,
     t w = true -> s w = true.
@@ -229,3 +231,42 @@ Proof.
     exact H3.
     exact H2.
 Qed.
+
+Theorem empty_state_property `{Model} :
+  forall (a : assignment) (phi : form),
+    support phi empty_state a.
+Proof.
+  intros a phi.
+  revert a.
+
+  induction phi as
+  [p args
+  |?
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1
+  |phi1 IH1].
+  all: intros a.
+  all: unfold empty_state in *.
+  all: simpl in *.
+  -
+    discriminate.
+  -
+    reflexivity.
+  -
+    intros t H1 H2.
+    unfold substate in H1.
+    enough (forall w, t w = false).
+    admit. (* TODO Define state equivalence *)
+    admit. (* TODO Should be easy to derive, just have a look on the prop-chapter *)
+  -
+    firstorder.
+  -
+    firstorder.
+  -
+    firstorder.
+  -
+    firstorder.
+    exact Individual_inh.
+Admitted.
