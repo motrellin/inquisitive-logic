@@ -113,3 +113,17 @@ Class Model `{Signature} :=
 (* (Variable) Assignments *)
 
 Definition assignment `{Model} : Type := var -> Individual.
+
+Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
+  match t with
+  | Var v =>
+      fun _ g =>
+      g v
+  | Func f ari =>
+      fun w g =>
+      let args :=
+        fun arg =>
+        referent (ari arg) w g
+      in
+      FInterpretation w f args
+  end.
