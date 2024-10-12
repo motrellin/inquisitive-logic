@@ -69,3 +69,18 @@ Proof. derive. Qed.
 
 Instance SubstLemmas_form `{Signature} : SubstLemmas form.
 Proof. derive. Qed.
+
+(* Other defined connectives *)
+
+Section defined_connectives.
+
+  Context `{Signature}.
+
+  Definition Neg (f : form) := Impl f (Bot 0).
+  Definition Top := Neg (Bot 0).
+  Definition Disj (f1 f2 : form) := Neg (Conj (Neg f1) (Neg f2)).
+  Definition Iff (f1 f2 : form) := Conj (Impl f1 f2) (Impl f2 f1).
+  Definition Exists (f : form) := Forall (Neg f).
+  Definition Iquest (f : form) := Idisj f (Neg f).
+
+End defined_connectives.
