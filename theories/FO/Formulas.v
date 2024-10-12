@@ -1,5 +1,5 @@
 From Autosubst Require Export Autosubst.
-From Coq Require Import Bool.
+From Coq Require Import Bool Nat.
 
 (* Signatures *)
 
@@ -134,3 +134,49 @@ Definition state `{Model} : Type := World -> bool.
 Definition substate `{Model} (t s : state) : Prop :=
   forall w,
     t w = true -> s w = true.
+
+Fixpoint support `{Model} (phi : form) : state -> assignment -> Prop :=
+  match phi with
+  | Pred p ari =>
+      fun s a =>
+      forall (w : World),
+        s w = true ->
+        let args :=
+          fun arg =>
+          referent (ari arg) w a
+        in
+        PInterpretation w p args
+
+  | Bot _ =>
+      fun s a =>
+      forall (w : World),
+        s w = false
+
+  | Impl phi1 phi2 =>
+      fun s a =>
+      forall (t : state),
+        substate t s ->
+        support phi1 t a ->
+        support phi2 t a
+
+  | Conj phi1 phi2 =>
+      fun s a =>
+      support phi1 s a /\
+      support phi2 s a
+
+  | Idisj phi1 phi2 =>
+      fun s a =>
+      support phi1 s a \/
+      support phi2 s a
+
+  | Forall phi1 =>
+      fun s a =>
+      forall (i : Individual),
+        support phi1 s (i .: a)
+
+  | Iexists phi1 =>
+      fun s a =>
+      exists (i : Individual),
+        support phi1 s (i .: a)
+
+  end.
