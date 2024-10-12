@@ -84,3 +84,28 @@ Section defined_connectives.
   Definition Iquest (f : form) := Idisj f (Neg f).
 
 End defined_connectives.
+
+(* Models *)
+
+Class Model `{Signature} :=
+  {
+    World : Type;
+    Individual : Type;
+    Individual_inh : Individual;
+
+    PInterpretation :
+      forall (w : World) (p : PSymb),
+        (PAri p -> Individual) ->
+        Prop;
+
+    FInterpretation :
+      forall (w : World) (f : FSymb),
+        (FAri f -> Individual) ->
+        Individual;
+
+    rigidity :
+      forall (f : FSymb),
+        rigid f = true ->
+        forall (w w' : World),
+          FInterpretation w f = FInterpretation w' f
+  }.
