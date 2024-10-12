@@ -180,3 +180,52 @@ Fixpoint support `{Model} (phi : form) : state -> assignment -> Prop :=
         support phi1 s (i .: a)
 
   end.
+
+Theorem persistency `{Model} :
+  forall s t a phi,
+    support phi s a ->
+    substate t s ->
+    support phi t a.
+Proof.
+  intros s t a phi.
+  revert s t a.
+  induction phi as
+  [p args
+  |?
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1
+  |phi1 IH1].
+
+  all: intros s t a H1 H2.
+  all: simpl in *.
+  -
+    firstorder.
+  -
+    intros w.
+    unfold substate in H2.
+    specialize (H1 w).
+    specialize (H2 w).
+    destruct (t w).
+    +
+      rewrite H2 in H1.
+      discriminate.
+      reflexivity.
+    +
+      reflexivity.
+  -
+    firstorder.
+  -
+    firstorder.
+  -
+    firstorder.
+  -
+    firstorder.
+  -
+    destruct H1 as [i H1].
+    eapply IH1 in H1 as H3.
+    eexists.
+    exact H3.
+    exact H2.
+Qed.
