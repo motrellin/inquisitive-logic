@@ -67,11 +67,11 @@ Section defined_connectives.
 
   Context `{Signature}.
 
-  Definition Neg (f : form) := Impl f (Bot 0).
+  Definition Neg (phi : form) := Impl phi (Bot 0).
   Definition Top := Neg (Bot 0).
-  Definition Disj (f1 f2 : form) := Neg (Conj (Neg f1) (Neg f2)).
-  Definition Iff (f1 f2 : form) := Conj (Impl f1 f2) (Impl f2 f1).
-  Definition Exists (f : form) := Forall (Neg f).
-  Definition Iquest (f : form) := Idisj f (Neg f).
+  Definition Disj (phi1 phi2 : form) := Neg (Conj (Neg phi1) (Neg phi2)).
+  Definition Iff (phi1 phi2 : form) := Conj (Impl phi1 phi2) (Impl phi2 phi1).
+  Definition Exists (phi : form) := Forall (Neg phi).
+  Definition Iquest (phi : form) := Idisj phi (Neg phi).
 
 End defined_connectives.
