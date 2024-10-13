@@ -361,8 +361,16 @@ Proof.
     specialize (IH2 a).
     rewrite <- H3 in IH2.
     exact IH2.
+
     intros w.
-    admit. (* TODO Should be easy to derive, just have a look on the prop-chapter *)
+    specialize (H1 w).
+    destruct (t w).
+    +
+      unfold empty_state in H1.
+      specialize (H1 eq_refl).
+      discriminate.
+    +
+      reflexivity.
   -
     firstorder.
   -
@@ -372,4 +380,4 @@ Proof.
   -
     firstorder.
     exact Individual_inh.
-Admitted.
+Qed.
