@@ -29,7 +29,7 @@ Inductive form `{Signature} :=
   | Pred : forall (p : PSymb), (PAri p -> term) -> form
 
   (* propositional connectives *)
-  | Bot (v : var) : form
+  | Bot : var -> form
   | Impl : form -> form -> form
   | Conj : form -> form -> form
   | Idisj : form -> form -> form
