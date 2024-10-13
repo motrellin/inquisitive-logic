@@ -1,0 +1,51 @@
+From InqLog.FO Require Export Models.
+
+From Coq Require Export Morphisms Setoid.
+
+Definition state `{Model} : Type := World -> bool.
+
+Definition state_eq `{Model} : relation state :=
+  fun s t =>
+  forall w,
+    s w = t w.
+
+Instance state_eq_Equiv `{Model} : Equivalence state_eq.
+Proof.
+  split.
+  -
+    intros s w.
+    reflexivity.
+  -
+    intros s t H1 w.
+    rewrite H1.
+    reflexivity.
+  -
+    intros s t u H1 H2 w.
+    rewrite H1.
+    rewrite H2.
+    reflexivity.
+Qed.
+
+Definition empty_state `{Model} : state := fun _ => false.
+
+Definition substate `{Model} (t s : state) : Prop :=
+  forall w,
+    t w = true -> s w = true.
+
+Instance substate_Proper `{Model} : Proper (state_eq ==> state_eq ==> iff) substate.
+Proof.
+  intros s1 s2 H1 t1 t2 H2.
+  unfold substate.
+  unfold state_eq in *.
+  firstorder.
+  -
+    rewrite <- H2.
+    apply H3.
+    rewrite H1.
+    exact H4.
+  -
+    rewrite H2.
+    apply H3.
+    rewrite <- H1.
+    exact H4.
+Qed.
