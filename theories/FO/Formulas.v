@@ -349,7 +349,6 @@ Proof.
   |phi1 IH1
   |phi1 IH1].
   all: intros a.
-  all: unfold empty_state in *.
   all: simpl in *.
   -
     discriminate.
@@ -358,8 +357,11 @@ Proof.
   -
     intros t H1 H2.
     unfold substate in H1.
-    enough (forall w, t w = false).
-    admit. (* TODO Define state equivalence *)
+    enough (state_eq t empty_state).
+    specialize (IH2 a).
+    rewrite <- H3 in IH2.
+    exact IH2.
+    intros w.
     admit. (* TODO Should be easy to derive, just have a look on the prop-chapter *)
   -
     firstorder.
