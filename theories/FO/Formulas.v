@@ -1,5 +1,5 @@
 From Autosubst Require Export Autosubst.
-From Coq Require Import Bool Nat Relations RelationClasses Morphisms Setoid FunctionalExtensionality.
+From Coq Require Export Morphisms Setoid.
 
 (* Signatures *)
 
