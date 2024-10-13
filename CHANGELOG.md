@@ -1,5 +1,17 @@
 # Changelog
 
+## inqlog-v0.5.1 (2024-10-13)
+
+### Changes
+
+* Splitted file in multiple ones. [Max Ole Elliger]
+
+* Cleaned up imports in FO/Formulas.v. [Max Ole Elliger]
+
+### Fix
+
+* Added Autosubst as dependency for CI. [Max Ole Elliger]
+
 ## inqlog-v0.5.0 (2024-10-13)
 
 ### New
