@@ -21,6 +21,7 @@ build: [make "-j%{jobs}%" "all"]
 install: [make "install"]
 depends: [
   "coq" { "8.19" }
+  "coq-autosubst"
 ]
 
 tags: [
