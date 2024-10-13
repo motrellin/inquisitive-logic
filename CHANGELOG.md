@@ -1,5 +1,80 @@
 # Changelog
 
+## inqlog-v0.5.0 (2024-10-13)
+
+### New
+
+* Finished the proof of the empty state property. [Max Ole Elliger]
+
+* Stated `state_eq` [Max Ole Elliger]
+
+  This includes
+  - definition of `state_eq`
+  - declaration of `state_eq` as an equivalence
+  - declaration of `state_eq` as a congruence with respect to substate,
+    support
+
+* Proved persistency for FO. [Max Ole Elliger]
+
+* Defined the support relation. [Max Ole Elliger]
+
+* Defined states. [Max Ole Elliger]
+
+* Defined the referent of a term. [Max Ole Elliger]
+
+* Defined variable assignments. [Max Ole Elliger]
+
+* Defined Models. [Max Ole Elliger]
+
+  Models for first-order inquisitive logic are now defined.
+
+  Possible improvements:
+  - Add some documentation
+  - Add some nice notation
+
+* Defined more connectives. [Max Ole Elliger]
+
+  The following connectives are now defined:
+  - `Neg`
+  - `Top`
+  - `Disj`
+  - `Exists`
+  - `Iquest`
+
+  Possible improvements:
+  - Add some nice notation
+
+* Autosubst for FO-formulas. [Max Ole Elliger]
+
+  Autosubst provides support for binding signatures. To use it, our
+  signature had to be updated: The `Bot`-operator now needs a variable as
+  argument which isn't used further.
+
+  Possible improvements:
+  - Find a workaround to ignore this useless argument for `Bot`.
+  - Improve documentation about the use of Autosubst.
+
+* Basic syntax for first-order formulas. [Max Ole Elliger]
+
+  Standard generic first-order signatures are used to provide a generic
+  framework. A boolean predicate `rigid` was added to indicate which
+  function symbols shall we rigid amoung all worlds in some model (which
+  have to be defined later).
+
+  Possible improvements:
+  - Add Equality
+  - Add some documentation
+  - Add some nice notation
+
+* Added a helpful fact about `ruling_out` [Max Ole Elliger]
+
+  This fact points out, that if a consistent state rules out a formula, it
+  can't support it.
+
+* Defined the truth set of a formula. [Max Ole Elliger]
+
+* Added intersection states. [Max Ole Elliger]
+
 ## inqlog-v0.4.0 (2024-07-31)
 
 ### New
