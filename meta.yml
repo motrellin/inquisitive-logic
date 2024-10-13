@@ -79,10 +79,10 @@ supported_coq_versions:
   text: Developed for 8.19.0
   opam: '{ "8.19" }'
 
-#dependencies:
-#  - description: Coq Equations
-#    opam:
-#      name: coq-equations
+dependencies:
+  - description: Autosubst
+    opam:
+      name: coq-autosubst
 
 namespace: InqLog
 
