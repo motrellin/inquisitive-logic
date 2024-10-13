@@ -51,7 +51,7 @@
 </div>
 
 <div class="doc">
-Next, we define a type class <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#Model"><span class="id" title="record">Model</span></a></span>. A model consists of the following components:
+Next, we define a type class <span class="inlinecode"><a class="idref" href="InqLog.FO.Models.html#Model"><span class="id" title="record">Model</span></a></span>. A model consists of the following components:
 
 <div class="paragraph"> </div>
 
@@ -114,7 +114,7 @@ We declare a scope <span class="inlinecode"><span class="id" title="var">model_s
 
 <div class="paragraph"> </div>
 
-We call a function of type <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#worlds"><span class="id" title="projection">worlds</span></a></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a></span> an <i>information state</i>. We define a record type <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#state"><span class="id" title="record">state</span></a></span> that consists of such a function and a proof that this function is compatible with the equivalence relation <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#worlds_eq"><span class="id" title="projection">worlds_eq</span></a></span>.
+We call a function of type <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#worlds"><span class="id" title="projection">worlds</span></a></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a></span> an <i>information state</i>. We define a record type <span class="inlinecode"><a class="idref" href="InqLog.FO.States.html#state"><span class="id" title="definition">state</span></a></span> that consists of such a function and a proof that this function is compatible with the equivalence relation <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#worlds_eq"><span class="id" title="projection">worlds_eq</span></a></span>.
  
 </div>
 <div class="code">
@@ -159,7 +159,7 @@ Two states are <i>equal</i> if they accept exactly the same worlds.
 </div>
 
 <div class="doc">
-<span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#state_eq"><span class="id" title="definition">state_eq</span></a></span> is indeed an equivalence relation.
+<span class="inlinecode"><a class="idref" href="InqLog.FO.States.html#state_eq"><span class="id" title="definition">state_eq</span></a></span> is indeed an equivalence relation.
  
 </div>
 <div class="code">
@@ -205,7 +205,7 @@ A state <span class="inlinecode"><span class="id" title="var">t</span></span> is
 </div>
 
 <div class="doc">
-<span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#substate"><span class="id" title="definition">substate</span></a></span> behaves well with respect to <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#state_eq"><span class="id" title="definition">state_eq</span></a></span>.
+<span class="inlinecode"><a class="idref" href="InqLog.FO.States.html#substate"><span class="id" title="definition">substate</span></a></span> behaves well with respect to <span class="inlinecode"><a class="idref" href="InqLog.FO.States.html#state_eq"><span class="id" title="definition">state_eq</span></a></span>.
  
 </div>
 <div class="code">
@@ -236,7 +236,7 @@ A state <span class="inlinecode"><span class="id" title="var">t</span></span> is
 </div>
 
 <div class="doc">
-<span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#substate"><span class="id" title="definition">substate</span></a></span> is reflexive.
+<span class="inlinecode"><a class="idref" href="InqLog.FO.States.html#substate"><span class="id" title="definition">substate</span></a></span> is reflexive.
  
 </div>
 <div class="code">
@@ -612,7 +612,7 @@ Every other atom is mapped to <span class="inlinecode"><a class="idref" href="ht
 </div>
 
 <div class="doc">
-<a id="lab9"></a><h1 class="section">Restricting a <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#Model"><span class="id" title="record">Model</span></a></span> to a <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#state"><span class="id" title="record">state</span></a></span></h1>
+<a id="lab9"></a><h1 class="section">Restricting a <span class="inlinecode"><a class="idref" href="InqLog.FO.Models.html#Model"><span class="id" title="record">Model</span></a></span> to a <span class="inlinecode"><a class="idref" href="InqLog.FO.States.html#state"><span class="id" title="definition">state</span></a></span></h1>
 
 </div>
 <div class="code">

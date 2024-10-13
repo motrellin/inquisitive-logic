@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">InqLog.FO.Models</h1>
+
+<div class="code">
+<span class="id" title="keyword">From</span> <span class="id" title="var">InqLog.FO</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="InqLog.FO.Signatures.html#"><span class="id" title="library">Signatures</span></a>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Models&nbsp;*)</span><br/>
+
+<br/>
+<span class="id" title="keyword">Class</span> <a id="Model" class="idref" href="#Model"><span class="id" title="record">Model</span></a> `{<a id="H:1" class="idref" href="#H:1"><span class="id" title="binder">Signature</span></a>} :=<br/>
+&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="World" class="idref" href="#World"><span class="id" title="projection">World</span></a> : <span class="id" title="keyword">Type</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="Individual" class="idref" href="#Individual"><span class="id" title="projection">Individual</span></a> : <span class="id" title="keyword">Type</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="Individual_inh" class="idref" href="#Individual_inh"><span class="id" title="projection">Individual_inh</span></a> : <a class="idref" href="InqLog.FO.Models.html#Individual:4"><span class="id" title="method">Individual</span></a>;<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="PInterpretation" class="idref" href="#PInterpretation"><span class="id" title="projection">PInterpretation</span></a> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> (<a id="w:6" class="idref" href="#w:6"><span class="id" title="binder">w</span></a> : <a class="idref" href="InqLog.FO.Models.html#World:3"><span class="id" title="method">World</span></a>) (<a id="p:7" class="idref" href="#p:7"><span class="id" title="binder">p</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#PSymb"><span class="id" title="method">PSymb</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Signatures.html#PAri"><span class="id" title="method">PAri</span></a> <a class="idref" href="InqLog.FO.Models.html#p:7"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Models.html#Individual:4"><span class="id" title="method">Individual</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Prop</span>;<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="FInterpretation" class="idref" href="#FInterpretation"><span class="id" title="projection">FInterpretation</span></a> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> (<a id="w:9" class="idref" href="#w:9"><span class="id" title="binder">w</span></a> : <a class="idref" href="InqLog.FO.Models.html#World:3"><span class="id" title="method">World</span></a>) (<a id="f:10" class="idref" href="#f:10"><span class="id" title="binder">f</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#FSymb"><span class="id" title="method">FSymb</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Signatures.html#FAri"><span class="id" title="method">FAri</span></a> <a class="idref" href="InqLog.FO.Models.html#f:10"><span class="id" title="variable">f</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Models.html#Individual:4"><span class="id" title="method">Individual</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Models.html#Individual:4"><span class="id" title="method">Individual</span></a>;<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="rigidity" class="idref" href="#rigidity"><span class="id" title="projection">rigidity</span></a> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> (<a id="f:12" class="idref" href="#f:12"><span class="id" title="binder">f</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#FSymb"><span class="id" title="method">FSymb</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#rigid"><span class="id" title="method">rigid</span></a> <a class="idref" href="InqLog.FO.Models.html#f:12"><span class="id" title="variable">f</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> (<a id="w:13" class="idref" href="#w:13"><span class="id" title="binder">w</span></a> <a id="w':14" class="idref" href="#w':14"><span class="id" title="binder">w'</span></a> : <a class="idref" href="InqLog.FO.Models.html#World:3"><span class="id" title="method">World</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Models.html#FInterpretation:11"><span class="id" title="method">FInterpretation</span></a> <a class="idref" href="InqLog.FO.Models.html#w:13"><span class="id" title="variable">w</span></a> <a class="idref" href="InqLog.FO.Models.html#f:12"><span class="id" title="variable">f</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="InqLog.FO.Models.html#FInterpretation:11"><span class="id" title="method">FInterpretation</span></a> <a class="idref" href="InqLog.FO.Models.html#w':14"><span class="id" title="variable">w'</span></a> <a class="idref" href="InqLog.FO.Models.html#f:12"><span class="id" title="variable">f</span></a><br/>
+&nbsp;&nbsp;}.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/coq-community/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

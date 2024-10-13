@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">InqLog.FO.Syntax</h1>
+
+<div class="code">
+<span class="id" title="keyword">From</span> <span class="id" title="var">InqLog.FO</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="InqLog.FO.Signatures.html#"><span class="id" title="library">Signatures</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">From</span> <span class="id" title="var">Autosubst</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="library">Autosubst</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Definition&nbsp;of&nbsp;terms&nbsp;*)</span><br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a id="term" class="idref" href="#term"><span class="id" title="definition, inductive"><span id="term_rect" class="id"><span id="term_ind" class="id"><span id="term_rec" class="id"><span id="term_sind" class="id">term</span></span></span></span></span></a> `{<a id="H:1" class="idref" href="#H:1"><span class="id" title="binder">Signature</span></a>} :=<br/>
+&nbsp;&nbsp;| <a id="Var" class="idref" href="#Var"><span class="id" title="constructor">Var</span></a> : <span class="id" title="definition">var</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#term:2"><span class="id" title="inductive">term</span></a><br/>
+&nbsp;&nbsp;| <a id="Func" class="idref" href="#Func"><span class="id" title="constructor">Func</span></a> : <span class="id" title="keyword">forall</span> (<a id="f:4" class="idref" href="#f:4"><span class="id" title="binder">f</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#FSymb"><span class="id" title="method">FSymb</span></a>), <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Signatures.html#FAri"><span class="id" title="method">FAri</span></a> <a class="idref" href="InqLog.FO.Syntax.html#f:4"><span class="id" title="variable">f</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#term:2"><span class="id" title="inductive">term</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#term:2"><span class="id" title="inductive">term</span></a>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Autosubst-stuff&nbsp;about&nbsp;terms&nbsp;*)</span><br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="Ids_term" class="idref" href="#Ids_term"><span class="id" title="instance">Ids_term</span></a> `{<a id="H:5" class="idref" href="#H:5"><span class="id" title="binder">Signature</span></a>} : <span class="id" title="class">Ids</span> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">derive</span>. <span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="Rename_term" class="idref" href="#Rename_term"><span class="id" title="instance">Rename_term</span></a> `{<a id="H:6" class="idref" href="#H:6"><span class="id" title="binder">Signature</span></a>} : <span class="id" title="class">Rename</span> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">derive</span>. <span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="Subst_term" class="idref" href="#Subst_term"><span class="id" title="instance">Subst_term</span></a> `{<a id="H:7" class="idref" href="#H:7"><span class="id" title="binder">Signature</span></a>} : <span class="id" title="class">Subst</span> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">derive</span>. <span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="SubstLemmas_term" class="idref" href="#SubstLemmas_term"><span class="id" title="instance">SubstLemmas_term</span></a> `{<a id="H:8" class="idref" href="#H:8"><span class="id" title="binder">Signature</span></a>} : <span class="id" title="class">SubstLemmas</span> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">derive</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;syntax&nbsp;of&nbsp;first-order&nbsp;formulas&nbsp;including&nbsp;inquisitive&nbsp;operators&nbsp;*)</span><br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a id="form" class="idref" href="#form"><span class="id" title="definition, inductive"><span id="form_rect" class="id"><span id="form_ind" class="id"><span id="form_rec" class="id"><span id="form_sind" class="id">form</span></span></span></span></span></a> `{<a id="H:9" class="idref" href="#H:9"><span class="id" title="binder">Signature</span></a>} :=<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;predicate&nbsp;symbols&nbsp;*)</span><br/>
+&nbsp;&nbsp;| <a id="Pred" class="idref" href="#Pred"><span class="id" title="constructor">Pred</span></a> : <span class="id" title="keyword">forall</span> (<a id="p:12" class="idref" href="#p:12"><span class="id" title="binder">p</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#PSymb"><span class="id" title="method">PSymb</span></a>), <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Signatures.html#PAri"><span class="id" title="method">PAri</span></a> <a class="idref" href="InqLog.FO.Syntax.html#p:12"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a><br/>
+<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;propositional&nbsp;connectives&nbsp;*)</span><br/>
+&nbsp;&nbsp;| <a id="Bot" class="idref" href="#Bot"><span class="id" title="constructor">Bot</span></a> (<a id="v:13" class="idref" href="#v:13"><span class="id" title="binder">v</span></a> : <span class="id" title="definition">var</span>) : <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a><br/>
+&nbsp;&nbsp;| <a id="Impl" class="idref" href="#Impl"><span class="id" title="constructor">Impl</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a><br/>
+&nbsp;&nbsp;| <a id="Conj" class="idref" href="#Conj"><span class="id" title="constructor">Conj</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a><br/>
+&nbsp;&nbsp;| <a id="Idisj" class="idref" href="#Idisj"><span class="id" title="constructor">Idisj</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a><br/>
+<br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;first-order&nbsp;connectives&nbsp;*)</span><br/>
+&nbsp;&nbsp;| <a id="Forall" class="idref" href="#Forall"><span class="id" title="constructor">Forall</span></a> : <span class="id" title="notation">{</span><span class="id" title="notation">bind</span> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a> <span class="id" title="notation">in</span> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a><span class="id" title="notation">}</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a><br/>
+&nbsp;&nbsp;| <a id="Iexists" class="idref" href="#Iexists"><span class="id" title="constructor">Iexists</span></a> : <span class="id" title="notation">{</span><span class="id" title="notation">bind</span> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a> <span class="id" title="notation">in</span> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a><span class="id" title="notation">}</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Autosubst-stuff&nbsp;about&nbsp;formulas&nbsp;*)</span><br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="HSubst_form" class="idref" href="#HSubst_form"><span class="id" title="instance">HSubst_form</span></a> `{<a id="H:14" class="idref" href="#H:14"><span class="id" title="binder">Signature</span></a>} : <span class="id" title="class">HSubst</span> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">derive</span>. <span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="Ids_form" class="idref" href="#Ids_form"><span class="id" title="instance">Ids_form</span></a> `{<a id="H:15" class="idref" href="#H:15"><span class="id" title="binder">Signature</span></a>} : <span class="id" title="class">Ids</span> <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">derive</span>. <span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="Rename_form" class="idref" href="#Rename_form"><span class="id" title="instance">Rename_form</span></a> `{<a id="H:16" class="idref" href="#H:16"><span class="id" title="binder">Signature</span></a>} : <span class="id" title="class">Rename</span> <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">derive</span>. <span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="Subst_form" class="idref" href="#Subst_form"><span class="id" title="instance">Subst_form</span></a> `{<a id="H:17" class="idref" href="#H:17"><span class="id" title="binder">Signature</span></a>} : <span class="id" title="class">Subst</span> <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">derive</span>. <span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="HSubstLemmas_form" class="idref" href="#HSubstLemmas_form"><span class="id" title="instance">HSubstLemmas_form</span></a> `{<a id="H:18" class="idref" href="#H:18"><span class="id" title="binder">Signature</span></a>} : <span class="id" title="class">HSubstLemmas</span> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">derive</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="SubstHSubstComp_term_form" class="idref" href="#SubstHSubstComp_term_form"><span class="id" title="instance">SubstHSubstComp_term_form</span></a> `{<a id="H:19" class="idref" href="#H:19"><span class="id" title="binder">Signature</span></a>} : <span class="id" title="class">SubstHSubstComp</span> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">derive</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="SubstLemmas_form" class="idref" href="#SubstLemmas_form"><span class="id" title="instance">SubstLemmas_form</span></a> `{<a id="H:20" class="idref" href="#H:20"><span class="id" title="binder">Signature</span></a>} : <span class="id" title="class">SubstLemmas</span> <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">derive</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Other&nbsp;defined&nbsp;connectives&nbsp;*)</span><br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="defined_connectives" class="idref" href="#defined_connectives"><span class="id" title="section">defined_connectives</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<a id="H:21" class="idref" href="#H:21"><span class="id" title="binder">Signature</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="Neg" class="idref" href="#Neg"><span class="id" title="definition">Neg</span></a> (<a id="f:22" class="idref" href="#f:22"><span class="id" title="binder">f</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>) := <a class="idref" href="InqLog.FO.Syntax.html#Impl"><span class="id" title="constructor">Impl</span></a> <a class="idref" href="InqLog.FO.Syntax.html#f:22"><span class="id" title="variable">f</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Bot"><span class="id" title="constructor">Bot</span></a> 0).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="Top" class="idref" href="#Top"><span class="id" title="definition">Top</span></a> := <a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Bot"><span class="id" title="constructor">Bot</span></a> 0).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="Disj" class="idref" href="#Disj"><span class="id" title="definition">Disj</span></a> (<a id="f1:23" class="idref" href="#f1:23"><span class="id" title="binder">f1</span></a> <a id="f2:24" class="idref" href="#f2:24"><span class="id" title="binder">f2</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>) := <a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Conj"><span class="id" title="constructor">Conj</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> <a class="idref" href="InqLog.FO.Syntax.html#f1:23"><span class="id" title="variable">f1</span></a>) (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> <a class="idref" href="InqLog.FO.Syntax.html#f2:24"><span class="id" title="variable">f2</span></a>)).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="Iff" class="idref" href="#Iff"><span class="id" title="definition">Iff</span></a> (<a id="f1:25" class="idref" href="#f1:25"><span class="id" title="binder">f1</span></a> <a id="f2:26" class="idref" href="#f2:26"><span class="id" title="binder">f2</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>) := <a class="idref" href="InqLog.FO.Syntax.html#Conj"><span class="id" title="constructor">Conj</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Impl"><span class="id" title="constructor">Impl</span></a> <a class="idref" href="InqLog.FO.Syntax.html#f1:25"><span class="id" title="variable">f1</span></a> <a class="idref" href="InqLog.FO.Syntax.html#f2:26"><span class="id" title="variable">f2</span></a>) (<a class="idref" href="InqLog.FO.Syntax.html#Impl"><span class="id" title="constructor">Impl</span></a> <a class="idref" href="InqLog.FO.Syntax.html#f2:26"><span class="id" title="variable">f2</span></a> <a class="idref" href="InqLog.FO.Syntax.html#f1:25"><span class="id" title="variable">f1</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="Exists" class="idref" href="#Exists"><span class="id" title="definition">Exists</span></a> (<a id="f:27" class="idref" href="#f:27"><span class="id" title="binder">f</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>) := <a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> <a class="idref" href="InqLog.FO.Syntax.html#f:27"><span class="id" title="variable">f</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="Iquest" class="idref" href="#Iquest"><span class="id" title="definition">Iquest</span></a> (<a id="f:28" class="idref" href="#f:28"><span class="id" title="binder">f</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>) := <a class="idref" href="InqLog.FO.Syntax.html#Idisj"><span class="id" title="constructor">Idisj</span></a> <a class="idref" href="InqLog.FO.Syntax.html#f:28"><span class="id" title="variable">f</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> <a class="idref" href="InqLog.FO.Syntax.html#f:28"><span class="id" title="variable">f</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="InqLog.FO.Syntax.html#defined_connectives"><span class="id" title="section">defined_connectives</span></a>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/coq-community/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>
