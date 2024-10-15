@@ -71,7 +71,7 @@ Section defined_connectives.
   Definition Top := Neg (Bot 0).
   Definition Disj (phi1 phi2 : form) := Neg (Conj (Neg phi1) (Neg phi2)).
   Definition Iff (phi1 phi2 : form) := Conj (Impl phi1 phi2) (Impl phi2 phi1).
-  Definition Exists (phi : form) := Forall (Neg phi).
+  Definition Exists (phi : form) := Neg (Forall (Neg phi)).
   Definition Iquest (phi : form) := Idisj phi (Neg phi).
 
 End defined_connectives.
