@@ -34,6 +34,28 @@ Definition singleton `{Model} (w : World) : state :=
   then true
   else false.
 
+Proposition singleton_true `{Model} :
+  forall w w',
+    singleton w w' = true <->
+    w' = w.
+Proof.
+  intros w w'.
+  unfold singleton.
+  destruct (World_deceq w' w) as [H1|H1].
+  all: easy.
+Qed.
+
+Proposition singleton_false `{Model} :
+  forall w w',
+    singleton w w' = false <->
+    w' <> w.
+Proof.
+  intros w w'.
+  unfold singleton.
+  destruct (World_deceq w' w) as [H1|H1].
+  all: easy.
+Qed.
+
 Definition substate `{Model} (t s : state) : Prop :=
   forall w,
     t w = true -> s w = true.
