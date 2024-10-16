@@ -32,6 +32,19 @@ Definition substate `{Model} (t s : state) : Prop :=
   forall w,
     t w = true -> s w = true.
 
+Instance substate_PreOrder `{Model} : PreOrder substate.
+Proof.
+  constructor.
+  -
+    intros s w H1.
+    exact H1.
+  -
+    intros s1 s2 s3 H1 H2 w H3.
+    apply H2.
+    apply H1.
+    exact H3.
+Qed.
+
 Instance substate_Proper `{Model} : Proper (state_eq ==> state_eq ==> iff) substate.
 Proof.
   intros s1 s2 H1 t1 t2 H2.
