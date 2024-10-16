@@ -1,5 +1,11 @@
 # Changelog
 
+## inqlog-v0.5.2 (2024-10-16)
+
+### Fix
+
+* Fixed the definition of Forall. [Max Ole Elliger]
+
 ## inqlog-v0.5.1 (2024-10-13)
 
 ### Changes
