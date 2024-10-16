@@ -28,6 +28,12 @@ Qed.
 
 Definition empty_state `{Model} : state := fun _ => false.
 
+Definition singleton `{Model} (w : World) : state :=
+  fun w' =>
+  if World_deceq w' w
+  then true
+  else false.
+
 Definition substate `{Model} (t s : state) : Prop :=
   forall w,
     t w = true -> s w = true.
