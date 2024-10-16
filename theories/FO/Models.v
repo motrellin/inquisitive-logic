@@ -5,6 +5,9 @@ From InqLog.FO Require Export Signatures.
 Class Model `{Signature} :=
   {
     World : Type;
+    World_deceq :
+      forall (w w' : World),
+      {w = w'} + {w <> w'};
     Individual : Type;
     Individual_inh : Individual;
 
