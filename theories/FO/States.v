@@ -90,3 +90,41 @@ Proof.
     rewrite <- H1.
     exact H4.
 Qed.
+
+Lemma substate_singleton `{Model} :
+  forall w t,
+    substate t (singleton w) ->
+    (
+      state_eq t empty_state \/
+      state_eq t (singleton w)
+    ).
+Proof.
+  intros w t H1.
+  unfold substate in H1.
+  unfold empty_state.
+  unfold state_eq.
+  destruct (t w) eqn:H2.
+  -
+    right.
+    intros w'.
+    destruct (t w') eqn:H3.
+    +
+      symmetry.
+      auto.
+    +
+      symmetry.
+      apply singleton_false.
+      intros H4.
+      subst w'.
+      congruence.
+  -
+    left.
+    intros w'.
+    destruct (t w') eqn:H3.
+    +
+      apply H1 in H3 as H4.
+      apply singleton_true in H4.
+      congruence.
+    +
+      reflexivity.
+Qed.
