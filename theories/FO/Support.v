@@ -222,3 +222,93 @@ Proof.
     firstorder.
     exact Individual_inh.
 Qed.
+
+Definition ruling_out `{Model} (s : state) (phi : form) (a : assignment) :=
+  ~ exists t,
+    consistent t /\
+    substate t s /\
+    support phi t a.
+
+Proposition support_Neg `{Model} :
+  forall phi s a,
+    support (Neg phi) s a <->
+    ruling_out s phi a.
+Proof.
+  simpl.
+  intros phi s a.
+  split.
+  -
+    intros H1 [t [[w H2] [H3 H4]]].
+    enough (t w = false). congruence.
+    apply H1.
+    exact H3.
+    exact H4.
+  -
+    intros H1 t H2 H3 w.
+    destruct (t w) eqn:H5.
+    +
+      exfalso.
+      eapply H1.
+      exists t.
+      repeat split.
+      *
+        exists w.
+        exact H5.
+      *
+        exact H2.
+      *
+        exact H3.
+    +
+      reflexivity.
+Qed.
+
+Proposition support_Top `{Model} :
+  forall s a,
+    support Top s a.
+Proof.
+  intros s a.
+  unfold Top.
+  rewrite support_Neg.
+  intros [t [[w H1] [H2 H3]]].
+  specialize (H3 w).
+  congruence.
+Qed.
+
+Proposition support_Disj `{Model} :
+  forall phi1 phi2 s a,
+  support (Disj phi1 phi2) s a <->
+  ~ exists t,
+    consistent t /\
+    substate t s /\
+    ruling_out t phi1 a /\
+    ruling_out t phi2 a.
+Proof.
+  intros phi1 phi2 s a.
+  unfold Disj.
+  split.
+  -
+    intros H1.
+    rewrite support_Neg in H1.
+    intros [t [H2 [H3 [H4 H5]]]].
+    apply H1.
+    exists t.
+    repeat split; try rewrite support_Neg; assumption.
+  -
+    intros H1.
+    rewrite support_Neg.
+    intros [t [H2 [H3 [H4 H5]]]].
+    apply H1.
+    exists t.
+    repeat split; try rewrite <- support_Neg; assumption.
+Qed.
+
+Proposition support_Iff `{Model} :
+  forall phi1 phi2 s a,
+    support (Iff phi1 phi2) s a <->
+    forall t,
+      substate t s ->
+      support phi1 t a <->
+      support phi2 t a.
+Proof.
+  firstorder.
+Qed.
