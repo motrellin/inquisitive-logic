@@ -56,6 +56,28 @@ Proof.
   all: easy.
 Qed.
 
+Definition consistent `{Model} (s : state) : Prop := exists w, s w = true.
+
+Fact singleton_consistent `{Model} :
+  forall w,
+    consistent (singleton w).
+Proof.
+  intros w.
+  exists w.
+  apply singleton_true.
+  reflexivity.
+Qed.
+
+Fact empty_state_not_consistent `{Model} :
+  forall s,
+    state_eq s empty_state ->
+    ~ consistent s.
+Proof.
+  intros s H1 [w H2].
+  rewrite H1 in H2.
+  discriminate.
+Qed.
+
 Definition substate `{Model} : relation state :=
   fun t s =>
   forall w,
