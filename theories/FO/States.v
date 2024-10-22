@@ -56,7 +56,8 @@ Proof.
   all: easy.
 Qed.
 
-Definition substate `{Model} (t s : state) : Prop :=
+Definition substate `{Model} : relation state :=
+  fun t s =>
   forall w,
     t w = true -> s w = true.
 
