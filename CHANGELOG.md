@@ -1,5 +1,43 @@
 # Changelog
 
+## (unreleased)
+
+### New
+
+* Support-properties for defined connectives. [Max Ole Elliger]
+
+  The following propositions are proven:
+  - `support_Neg`
+  - `support_Top`
+  - `support_Disj`
+  - `support_Iff`
+
+  This includes the definition of a state ruling out a formula.
+
+* Defined consistent states. [Max Ole Elliger]
+
+  A state is called consistent, if it contains at least one world. It
+  follows immediately that every singleton is consistent. Conversly, the
+  empty state is inconsistent.
+
+* Characterized the substates of a singleton. [Max Ole Elliger]
+
+* Some properties of singleton. [Max Ole Elliger]
+
+  Proved `singleton_true` and `singleton_false` to use singleton states
+  more efficiently.
+
+* Defined singleton states. [Max Ole Elliger]
+
+* Added decidable equality to the type of Worlds. [Max Ole Elliger]
+
+  Using this, one can define singleton states. Another way would be to
+  change the type of states to `World -> Prop`.
+
+* Proved substate as a PreOrder. [Max Ole Elliger]
+
+  substate is indeed reflexive and transitive
+
 ## inqlog-v0.5.2 (2024-10-16)
 
 ### Fix
