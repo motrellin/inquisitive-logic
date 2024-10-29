@@ -16,12 +16,14 @@ Class Model `{Signature} :=
         {i = i'} + {i <> i'};
 
     PInterpretation :
-      forall (w : World) (p : PSymb),
+      World ->
+      forall (p : PSymb),
         (PAri p -> Individual) ->
         Prop;
 
     FInterpretation :
-      forall (w : World) (f : FSymb),
+      World ->
+      forall (f : FSymb),
         (FAri f -> Individual) ->
         Individual;
 
