@@ -20,15 +20,11 @@ Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
 
 Fixpoint support `{Model} (phi : form) : state -> assignment -> Prop :=
   match phi with
-  | Pred p ari =>
+  | Pred p args =>
       fun s a =>
       forall (w : World),
         s w = true ->
-        let args :=
-          fun arg =>
-          referent (ari arg) w a
-        in
-        PInterpretation w p args = true
+        PInterpretation w p (fun arg => referent (args arg) w a) = true
 
   | Bot _ =>
       fun s a =>
