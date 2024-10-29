@@ -28,7 +28,7 @@ Fixpoint support `{Model} (phi : form) : state -> assignment -> Prop :=
           fun arg =>
           referent (ari arg) w a
         in
-        PInterpretation w p args
+        PInterpretation w p args = true
 
   | Bot _ =>
       fun s a =>

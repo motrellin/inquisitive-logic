@@ -19,7 +19,7 @@ Class Model `{Signature} :=
       World ->
       forall (p : PSymb),
         (PAri p -> Individual) ->
-        Prop;
+        bool;
 
     FInterpretation :
       World ->
