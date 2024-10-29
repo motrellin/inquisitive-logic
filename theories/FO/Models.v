@@ -8,6 +8,7 @@ Class Model `{Signature} :=
     World_deceq :
       forall (w w' : World),
       {w = w'} + {w <> w'};
+
     Individual : Type;
     Individual_inh : Individual;
 
