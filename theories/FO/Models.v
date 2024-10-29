@@ -11,6 +11,9 @@ Class Model `{Signature} :=
 
     Individual : Type;
     Individual_inh : Individual;
+    Individual_deceq :
+      forall (i i' : Individual),
+        {i = i'} + {i <> i'};
 
     PInterpretation :
       forall (w : World) (p : PSymb),
