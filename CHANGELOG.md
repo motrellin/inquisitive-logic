@@ -1,8 +1,21 @@
 # Changelog
 
-## (unreleased)
+## inqlog-v0.6.0 (2024-11-02)
 
 ### New
+
+* Started working on Casari. [Max Ole Elliger]
+
+  - Defined a signature with exact one predicate (of arity 1) and no
+    function symbols.
+  - Provided a proof of double negated atomic Casari in Coq's `Prop`.
+  - Defined the Casari Scheme as a `form`ula in our syntax.
+  - Proved, that Casari Scheme with double negated atoms holds in every
+    world.
+
+* Proved Lemma `support_dne_Pred` [Max Ole Elliger]
+
+* Decidable equality for individuals. [Max Ole Elliger]
 
 * Support-properties for defined connectives. [Max Ole Elliger]
 
@@ -37,6 +50,10 @@
 * Proved substate as a PreOrder. [Max Ole Elliger]
 
   substate is indeed reflexive and transitive
+
+### Changes
+
+* `PInterpretation` now evaluates to bool. [Max Ole Elliger]
 
 ## inqlog-v0.5.2 (2024-10-16)
 
