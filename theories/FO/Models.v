@@ -8,16 +8,22 @@ Class Model `{Signature} :=
     World_deceq :
       forall (w w' : World),
       {w = w'} + {w <> w'};
+
     Individual : Type;
     Individual_inh : Individual;
+    Individual_deceq :
+      forall (i i' : Individual),
+        {i = i'} + {i <> i'};
 
     PInterpretation :
-      forall (w : World) (p : PSymb),
+      World ->
+      forall (p : PSymb),
         (PAri p -> Individual) ->
-        Prop;
+        bool;
 
     FInterpretation :
-      forall (w : World) (f : FSymb),
+      World ->
+      forall (f : FSymb),
         (FAri f -> Individual) ->
         Individual;
 

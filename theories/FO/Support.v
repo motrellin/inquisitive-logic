@@ -20,15 +20,11 @@ Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
 
 Fixpoint support `{Model} (phi : form) : state -> assignment -> Prop :=
   match phi with
-  | Pred p ari =>
+  | Pred p args =>
       fun s a =>
       forall (w : World),
         s w = true ->
-        let args :=
-          fun arg =>
-          referent (ari arg) w a
-        in
-        PInterpretation w p args
+        PInterpretation w p (fun arg => referent (args arg) w a) = true
 
   | Bot _ =>
       fun s a =>
@@ -311,4 +307,46 @@ Proposition support_Iff `{Model} :
       support phi2 t a.
 Proof.
   firstorder.
+Qed.
+
+Lemma support_dne_Pred `{Model} :
+  forall p args s a,
+    support (Impl (Neg (Neg (Pred p args))) (Pred p args)) s a.
+Proof.
+  intros p args s1 a s2 H1 H2 w1 H3.
+
+  destruct (
+    PInterpretation w1 p (fun arg : PAri p => referent (args arg) w1 a)
+  ) eqn:H4.
+  -
+    reflexivity.
+  -
+    rewrite support_Neg in H2.
+    exfalso.
+    apply H2.
+    exists (singleton w1).
+    repeat split.
+    +
+      exists w1.
+      apply singleton_true.
+      reflexivity.
+    +
+      intros w2 H5.
+      apply singleton_true in H5.
+      congruence.
+    +
+      rewrite support_Neg.
+      intros [s3 [[w2 H5] [H6 H7]]].
+      apply substate_singleton in H6 as [H6|H6].
+      all: rewrite H6 in *; clear H6.
+      *
+        discriminate.
+      *
+        apply singleton_true in H5.
+        subst w2.
+        simpl in H7.
+        rewrite H7 in H4.
+        discriminate.
+        apply singleton_true.
+        reflexivity.
 Qed.
