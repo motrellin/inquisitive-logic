@@ -75,3 +75,28 @@ Section defined_connectives.
   Definition Iquest (phi : form) := Idisj phi (Neg phi).
 
 End defined_connectives.
+
+Fixpoint classical_variant `{Signature} (phi : form) : form :=
+  match phi with
+  | Pred p ari =>
+      Pred p ari
+
+  | Bot v =>
+      Bot v
+
+  | Impl phi1 phi2 =>
+      Impl (classical_variant phi1) (classical_variant phi2)
+
+  | Conj phi1 phi2 =>
+      Conj (classical_variant phi1) (classical_variant phi2)
+
+  | Idisj phi1 phi2 =>
+      Disj (classical_variant phi1) (classical_variant phi2)
+
+  | Forall phi1 =>
+      Forall (classical_variant phi1)
+
+  | Iexists phi1 =>
+      Exists (classical_variant phi1)
+
+  end.
