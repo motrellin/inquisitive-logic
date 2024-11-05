@@ -76,6 +76,31 @@ Section defined_connectives.
 
 End defined_connectives.
 
+Fixpoint classic `{Signature} (phi : form) : bool :=
+  match phi with
+  | Pred p ari =>
+      true
+
+  | Bot v =>
+      true
+
+  | Impl phi1 phi2 =>
+      classic phi1 && classic phi2
+
+  | Conj phi1 phi2 =>
+      classic phi1 && classic phi2
+
+  | Idisj phi1 phi2 =>
+      false
+
+  | Forall phi1 =>
+      classic phi1
+
+  | Iexists phi1 =>
+      false
+
+  end.
+
 Fixpoint classical_variant `{Signature} (phi : form) : form :=
   match phi with
   | Pred p ari =>
@@ -100,3 +125,21 @@ Fixpoint classical_variant `{Signature} (phi : form) : form :=
       Exists (classical_variant phi1)
 
   end.
+
+Proposition classical_variant_is_classic `{Signature} :
+  forall phi,
+    classic (classical_variant phi) = true.
+Proof.
+  induction phi as
+  [p args
+  |?
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1
+  |phi1 IH1].
+  all: simpl.
+  all: try rewrite IH1.
+  all: try rewrite IH2.
+  all: reflexivity.
+Qed.
