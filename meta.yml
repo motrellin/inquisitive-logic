@@ -38,9 +38,9 @@ maintainers:
   - name: Max Ole Elliger
     nickname: motrellin
 
-#license: TODO
-  #fullname: GNU General Public License v3.0 or later
-  #identifier: GPL-3.0-or-later
+license:
+  fullname: 'BSD 3-Clause "New" or "Revised" License'
+  identifier: BSD-3-Clause
 
 supported_coq_versions:
   text: Developed for 9.0

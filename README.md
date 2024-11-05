@@ -23,6 +23,7 @@ We also provide some examples (`examples/`) in order to demonstrate the implemen
 
 - Author(s):
   + Max Ole Elliger (initial)
+- License: [BSD 3-Clause "New" or "Revised" License](LICENSE)
 - Compatible Rocq/Coq versions: Developed for 9.0
 - Additional dependencies:
   + Autosubst

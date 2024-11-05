@@ -26,6 +26,8 @@ The theory is located under `theories/`.
 Some concrete instances of type classes (e.g. signatures) are located under `instances/`.
 We also provide some examples (`examples/`) in order to demonstrate the implemented theory.
 
+This is an open source project, licensed under the BSD 3-Clause "New" or "Revised" License.
+
 ## Get the code
 
 The current stable release of Inquisitive Logic can be [downloaded from GitHub](https://github.com/motrellin/inquisitive-logic/releases).

@@ -9,7 +9,7 @@ homepage: "https://github.com/motrellin/inquisitive-logic"
 dev-repo: "git+https://github.com/motrellin/inquisitive-logic.git"
 bug-reports: "https://github.com/motrellin/inquisitive-logic/issues"
 doc: "https://motrellin.github.io/inquisitive-logic/"
-
+license: "BSD-3-Clause"
 
 synopsis: "A Formalization of Inquisitive Logic"
 description: """
