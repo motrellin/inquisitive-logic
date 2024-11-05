@@ -1,5 +1,7 @@
 From InqLog.FO Require Export Support.
 
+From Coq Require Import Bool.
+
 Definition truth `{Model} (phi : form) (w : World) (a : assignment) : Prop :=
   support phi (singleton w) a.
 
@@ -319,3 +321,118 @@ Proof.
     firstorder.
 Qed.
 
+Definition truth_conditional `{S : Signature} (phi : form) : Prop :=
+  forall `(M : @Model S) (s : state) (a : assignment),
+    support phi s a <->
+    forall w,
+      s w = true ->
+      truth phi w a.
+
+Proposition classic_truth_conditional `{S : Signature} :
+  forall phi,
+    classic phi = true ->
+    truth_conditional phi.
+Proof.
+  induction phi as
+  [p args
+  |?
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1
+  |phi1 IH1].
+  all: simpl in *.
+  -
+    intros _ M s a.
+    split.
+    +
+      intros H1 w1 H2.
+      rewrite truth_Pred.
+      auto.
+    +
+      intros H1 w1 H2.
+      rewrite <- truth_Pred.
+      auto.
+  -
+    intros _ M s a.
+    split.
+    +
+      congruence.
+    +
+      intros H1 w1.
+      specialize (H1 w1).
+      destruct (s w1).
+      *
+        rewrite truth_Bot in H1.
+        easy.
+      *
+        reflexivity.
+  -
+    intros H1 M s a.
+    apply andb_true_iff in H1 as [H1 H2].
+    specialize (IH1 H1).
+    specialize (IH2 H2).
+    split.
+    +
+      intros H3 w1 H4.
+      rewrite truth_Impl.
+      intros H5.
+      apply IH2.
+      intros w2 H6.
+      apply singleton_true in H6.
+      subst w2.
+      simpl in H3.
+      apply H3.
+      *
+        intros w2 H7.
+        apply singleton_true in H7.
+        subst w2.
+        exact H4.
+      *
+        exact H5.
+    +
+      intros H3 t H4 H5.
+      apply IH2.
+      intros w1 H6.
+      specialize (H3 w1).
+      rewrite truth_Impl in H3.
+      apply H3.
+      *
+        apply H4.
+        exact H6.
+      *
+        eapply IH1 in H5.
+        --
+           exact H5.
+        --
+           exact H6.
+  -
+    intros H1 M s a.
+    apply andb_true_iff in H1 as [H1 H2].
+    specialize (IH1 H1 M s a).
+    specialize (IH2 H2 M s a).
+    firstorder using truth_Conj.
+  -
+    discriminate.
+  -
+    intros H1 M s a.
+    specialize (IH1 H1 M s).
+    split.
+    +
+      intros H2 w1 H3.
+      rewrite truth_Forall.
+      intros i1.
+      apply IH1.
+      *
+        exact (H2 i1).
+      *
+        exact H3.
+    +
+      intros H2 i1.
+      apply IH1.
+      intros w1 H3.
+      apply H2.
+      exact H3.
+  -
+    discriminate.
+Qed.
