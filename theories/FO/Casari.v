@@ -56,6 +56,18 @@ Definition Casari (phi : var -> form) : form :=
     Forall (phi 0)
   ).
 
+Theorem Casari_truth_conditional :
+  forall phi,
+    (forall x, classic (phi x) = true) ->
+    truth_conditional (Casari phi).
+Proof.
+  intros phi H1.
+  apply classic_truth_conditional.
+  simpl.
+  rewrite H1.
+  reflexivity.
+Qed.
+
 Definition CasariDNA : form :=
   Casari (fun x => Neg (Neg (Pred' (Var x)))).
 
