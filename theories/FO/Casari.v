@@ -143,3 +143,16 @@ Proof.
   -
     reflexivity.
 Qed.
+
+Corollary support_CasariDNA `{@Model signature} :
+  forall s a,
+    support CasariDNA s a.
+Proof.
+  intros s a.
+  apply Casari_truth_conditional.
+  -
+    reflexivity.
+  -
+    intros w H1.
+    apply truth_CasariDNA.
+Qed.
