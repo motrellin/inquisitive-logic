@@ -1,4 +1,4 @@
-From InqLog Require Export Support.
+From InqLog Require Export Truth.
 
 Instance signature : Signature :=
   {|
@@ -64,7 +64,7 @@ Definition CasariAtomic : form :=
 
 Theorem truth_CasariDNA `{@Model signature} :
   forall w a,
-    support CasariDNA (singleton w) a.
+    truth CasariDNA w a.
 Proof.
   intros w1 a.
 
