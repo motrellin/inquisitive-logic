@@ -1,5 +1,44 @@
 # Changelog
 
+## inqlog-v0.7.0 (2024-11-14)
+
+### New
+
+* Proved `support_valid_CasariAtomic` [Max Ole Elliger]
+
+* Defined support consequence and validity. [Max Ole Elliger]
+
+  This involves some useful lemmas and renamings of existing theorems.
+
+  In addition, I defined a formula called `DNE`, for double negation
+  elimination.
+
+* Proved support_CasariDNA. [Max Ole Elliger]
+
+* Proved Casari_truth_conditional. [Max Ole Elliger]
+
+* Defined Truth-Conditionality. [Max Ole Elliger]
+
+  Furthermore, it has been proven that classic formulas are indeed
+  truth-conditional.
+
+* Defined classic formulas. [Max Ole Elliger]
+
+  Classic Formulas are formulas without inquisitive disjunction or
+  inquisitive existency quantifiers. It can be proven, that any classical
+  variant of a formula is indeed classical.
+
+* Introduced `truth` and classical formulas. [Max Ole Elliger]
+
+  Truth is defined as support at singleton states. I implemented a
+  subclass of Models (`TDModel`), where truth becomes decidable. By this,
+  it can be proven, that any formula and its classical variant are
+  truth-equivalent.
+
+### Changes
+
+* Used the `FO/Truth` for `truth_CasariDNA` [Max Ole Elliger]
+
 ## inqlog-v0.6.0 (2024-11-02)
 
 ### New
