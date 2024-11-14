@@ -155,3 +155,43 @@ Proof.
     intros w H1.
     apply truth_CasariDNA.
 Qed.
+
+Theorem support_conseq_CasariDNA_CasariAtomic :
+  support_conseq CasariDNA CasariAtomic.
+Proof.
+  unfold CasariDNA.
+  unfold CasariAtomic.
+  unfold Casari.
+
+  apply support_conseq_Impl.
+  apply support_conseq_Forall.
+  apply support_conseq_Impl.
+  apply support_conseq_Impl.
+
+  firstorder.
+
+  apply support_conseq_Forall.
+
+  apply support_valid_Impl_conseq.
+  intros *.
+  apply support_valid_DNE_Pred.
+
+  apply support_conseq_Forall.
+
+  firstorder.
+
+  apply support_conseq_Forall.
+  apply support_valid_Impl_conseq.
+  intros *.
+  apply support_valid_DNE_Pred.
+Qed.
+
+Corollary support_valid_CasariAtomic :
+  support_valid CasariAtomic.
+Proof.
+  eapply support_valid_conseq_valid.
+  -
+    exact support_valid_CasariDNA.
+  -
+    exact support_conseq_CasariDNA_CasariAtomic.
+Qed.
