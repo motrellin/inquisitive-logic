@@ -309,11 +309,96 @@ Proof.
   firstorder.
 Qed.
 
-Lemma support_dne_Pred `{Model} :
-  forall p args s a,
-    support (Impl (Neg (Neg (Pred p args))) (Pred p args)) s a.
+Definition support_conseq `{S : Signature} : relation form :=
+  fun phi psi =>
+  forall `(M : @Model S) s a,
+    support phi s a ->
+    support psi s a.
+
+Instance support_conseq_Preorder `{Signature} :
+  PreOrder support_conseq.
 Proof.
-  intros p args s1 a s2 H1 H2 w1 H3.
+  firstorder.
+Qed.
+
+Lemma support_conseq_Impl `{Signature} :
+  forall phi1 phi2 psi1 psi2,
+    support_conseq phi1 phi2 ->
+    support_conseq psi1 psi2 ->
+    support_conseq (Impl phi2 psi1) (Impl phi1 psi2).
+Proof.
+  firstorder.
+Qed.
+
+Lemma support_conseq_Conj `{Signature} :
+  forall phi1 phi2 psi1 psi2,
+    support_conseq phi1 phi2 ->
+    support_conseq psi1 psi2 ->
+    support_conseq (Conj phi1 psi1) (Conj phi2 psi2).
+Proof.
+  firstorder.
+Qed.
+
+Lemma support_conseq_Idisj `{Signature} :
+  forall phi1 phi2 psi1 psi2,
+    support_conseq phi1 phi2 ->
+    support_conseq psi1 psi2 ->
+    support_conseq (Idisj phi1 psi1) (Idisj phi2 psi2).
+Proof.
+  firstorder.
+Qed.
+
+Lemma support_conseq_Forall `{Signature} :
+  forall phi1 phi2,
+    support_conseq phi1 phi2 ->
+    support_conseq (Forall phi1) (Forall phi2).
+Proof.
+  firstorder.
+Qed.
+
+Lemma support_conseq_Iexists `{Signature} :
+  forall phi1 phi2,
+    support_conseq phi1 phi2 ->
+    support_conseq (Iexists phi1) (Iexists phi2).
+Proof.
+  intros * H1 M s a H2.
+  simpl support in *.
+  destruct H2 as [i H2].
+  exists i.
+  auto.
+Qed.
+
+Definition support_valid `{S : Signature} (phi : form) : Prop :=
+  forall `(M : @Model S) s a,
+    support phi s a.
+
+Remark support_valid_conseq_valid `{Signature} :
+  forall phi psi,
+    support_valid phi ->
+    support_conseq phi psi ->
+    support_valid psi.
+Proof.
+  firstorder.
+Qed.
+
+Remark support_valid_Impl_conseq `{S : Signature} :
+  forall phi psi,
+    support_valid (Impl phi psi) ->
+    support_conseq phi psi.
+Proof.
+  intros phi psi H1 M s a H2.
+  eapply H1.
+  -
+    reflexivity.
+  -
+    exact H2.
+Qed.
+
+Lemma support_valid_DNE_Pred `{Signature} :
+  forall p args,
+    support_valid (DNE (Pred p args)).
+Proof.
+  intros p args M s1 a s2 H1 H2 w1 H3.
 
   destruct (
     PInterpretation w1 p (fun arg : PAri p => referent (args arg) w1 a)

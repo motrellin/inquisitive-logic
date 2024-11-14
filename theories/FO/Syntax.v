@@ -76,6 +76,8 @@ Section defined_connectives.
 
 End defined_connectives.
 
+Definition DNE `{Signature} (phi : form) : form := Impl (Neg (Neg phi)) phi.
+
 Fixpoint classic `{Signature} (phi : form) : bool :=
   match phi with
   | Pred p ari =>
