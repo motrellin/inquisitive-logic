@@ -11,13 +11,9 @@ Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
   | Var v =>
       fun _ g =>
       g v
-  | Func f ari =>
+  | Func f args =>
       fun w g =>
-      let args :=
-        fun arg =>
-        referent (ari arg) w g
-      in
-      FInterpretation w f args
+      FInterpretation w f (fun arg => referent (args arg) w g)
   end.
 
 Fixpoint support `{Model} (phi : form) : state -> assignment -> Prop :=
