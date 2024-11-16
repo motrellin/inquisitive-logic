@@ -64,17 +64,8 @@ Proof.
 Qed.
 
 (** * Consistent states *)
-Definition consistent `{Model} (s : state) : Prop := exists w, s w = true.
 
-Fact singleton_consistent `{Model} :
-  forall w,
-    consistent (singleton w).
-Proof.
-  intros w.
-  exists w.
-  apply singleton_true.
-  reflexivity.
-Qed.
+Definition consistent `{Model} (s : state) : Prop := exists w, s w = true.
 
 Fact empty_state_not_consistent `{Model} :
   forall s,
@@ -84,6 +75,16 @@ Proof.
   intros s H1 [w H2].
   rewrite H1 in H2.
   discriminate.
+Qed.
+
+Fact singleton_consistent `{Model} :
+  forall w,
+    consistent (singleton w).
+Proof.
+  intros w.
+  exists w.
+  apply singleton_true.
+  reflexivity.
 Qed.
 
 (** * Substates *)
