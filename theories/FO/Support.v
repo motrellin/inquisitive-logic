@@ -121,7 +121,7 @@ Qed.
 
 (** ** Basic properties *)
 
-Theorem persistency `{Model} :
+Proposition persistency `{Model} :
   forall s t a phi,
     support phi s a ->
     substate t s ->
@@ -170,7 +170,7 @@ Proof.
     exact H2.
 Qed.
 
-Theorem empty_state_property `{Model} :
+Proposition empty_state_property `{Model} :
   forall (a : assignment) (phi : form),
     support phi empty_state a.
 Proof.

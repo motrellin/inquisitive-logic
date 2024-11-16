@@ -78,7 +78,7 @@ End defined_connectives.
 
 (** ** Example formulas *)
 
-Definition DNE `{Signature} (phi : form) : form := Impl (Neg (Neg phi)) phi.
+Example DNE `{Signature} (phi : form) : form := Impl (Neg (Neg phi)) phi.
 
 (** ** Classic formulas *)
 
