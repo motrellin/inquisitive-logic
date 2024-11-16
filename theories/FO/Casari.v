@@ -1,5 +1,7 @@
 From InqLog Require Export Truth.
 
+(** * Example signature *)
+
 Instance signature : Signature :=
   {|
     PSymb := unit;
@@ -31,6 +33,8 @@ Proof.
 Qed.
 
 Print Assumptions CasariProp.
+
+(** * Casari Scheme *)
 
 Definition Casari (phi : var -> form) : form :=
   Impl
@@ -67,6 +71,8 @@ Proof.
   rewrite H1.
   reflexivity.
 Qed.
+
+(** * Some Casari instances *)
 
 Definition CasariDNA : form :=
   Casari (fun x => Neg (Neg (Pred' (Var x)))).

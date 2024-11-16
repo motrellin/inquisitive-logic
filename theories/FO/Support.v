@@ -1,6 +1,8 @@
 From InqLog.FO Require Export Syntax States.
 
-(* (Variable) Assignments *)
+(** * (Variable) Assignments *)
+
+(** * Support satisfaction *)
 
 Definition assignment `{Model} : Type := var -> Individual.
 
@@ -121,6 +123,8 @@ Proof.
     firstorder.
 Qed.
 
+(** ** Basic properties *)
+
 Theorem persistency `{Model} :
   forall s t a phi,
     support phi s a ->
@@ -219,11 +223,15 @@ Proof.
     exact Individual_inh.
 Qed.
 
+(** ** Ruling out a formula *)
+
 Definition ruling_out `{Model} (s : state) (phi : form) (a : assignment) :=
   ~ exists t,
     consistent t /\
     substate t s /\
     support phi t a.
+
+(** ** Support conditions for defined connectives *)
 
 Proposition support_Neg `{Model} :
   forall phi s a,
@@ -309,6 +317,8 @@ Proof.
   firstorder.
 Qed.
 
+(** * Support consequence *)
+
 Definition support_conseq `{S : Signature} : relation form :=
   fun phi psi =>
   forall `(M : @Model S) s a,
@@ -367,6 +377,8 @@ Proof.
   exists i.
   auto.
 Qed.
+
+(** * Support valid formulas *)
 
 Definition support_valid `{S : Signature} (phi : form) : Prop :=
   forall `(M : @Model S) s a,

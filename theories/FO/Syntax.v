@@ -2,7 +2,7 @@ From InqLog.FO Require Export Signatures.
 
 From Autosubst Require Export Autosubst.
 
-(* Definition of terms *)
+(** * Terms *)
 
 Inductive term `{Signature} :=
   | Var : var -> term
@@ -22,7 +22,7 @@ Proof. derive. Defined.
 Instance SubstLemmas_term `{Signature} : SubstLemmas term.
 Proof. derive. Qed.
 
-(* syntax of first-order formulas including inquisitive operators *)
+(** * Formulas *)
 
 Inductive form `{Signature} :=
   (* predicate symbols *)
@@ -61,7 +61,7 @@ Proof. derive. Qed.
 Instance SubstLemmas_form `{Signature} : SubstLemmas form.
 Proof. derive. Qed.
 
-(* Other defined connectives *)
+(** ** Defined connectives *)
 
 Section defined_connectives.
 
@@ -76,7 +76,11 @@ Section defined_connectives.
 
 End defined_connectives.
 
+(** ** Example formulas *)
+
 Definition DNE `{Signature} (phi : form) : form := Impl (Neg (Neg phi)) phi.
+
+(** ** Classic formulas *)
 
 Fixpoint classic `{Signature} (phi : form) : bool :=
   match phi with

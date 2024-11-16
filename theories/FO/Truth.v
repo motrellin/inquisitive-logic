@@ -2,8 +2,12 @@ From InqLog.FO Require Export Support.
 
 From Coq Require Import Bool.
 
+(** * Truth satisfaction *)
+
 Definition truth `{Model} (phi : form) (w : World) (a : assignment) : Prop :=
   support phi (singleton w) a.
+
+(** * Truth decidable models *)
 
 (* TODO: Investigate, if/how these axioms can be simplified: *)
 Class TDModel `{Model} :=
@@ -121,6 +125,9 @@ Proof.
     all: firstorder.
 Qed.
 
+(** * Truth satisfaction rules *)
+(** ** Truth satisfaction rules for basic connectives *)
+
 Proposition truth_Pred `{Model} :
   forall p args w a,
     truth (Pred p args) w a <->
@@ -223,7 +230,7 @@ Proof.
   firstorder.
 Qed.
 
-(* Defined Connectives *)
+(** ** Truth satisfaction for defined connectives *)
 
 Proposition truth_Neg `{Model} :
   forall phi w a,
@@ -285,6 +292,8 @@ Proof.
     rewrite truth_Neg in H2.
     contradiction.
 Qed.
+
+(** * Truth-conditional formulas *)
 
 Proposition truth_classical_variant `{M : TDModel} :
   forall phi w a,

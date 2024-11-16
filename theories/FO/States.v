@@ -2,6 +2,8 @@ From InqLog.FO Require Export Models.
 
 From Coq Require Export Morphisms Setoid.
 
+(** * Basic definitions *)
+
 Definition state `{Model} : Type := World -> bool.
 
 Definition state_eq `{Model} : relation state :=
@@ -26,7 +28,12 @@ Proof.
     reflexivity.
 Qed.
 
+(** * Example states *)
+(** ** The empty state *)
+
 Definition empty_state `{Model} : state := fun _ => false.
+
+(** ** Singleton states *)
 
 Definition singleton `{Model} (w : World) : state :=
   fun w' =>
@@ -56,6 +63,7 @@ Proof.
   all: easy.
 Qed.
 
+(** * Consistent states *)
 Definition consistent `{Model} (s : state) : Prop := exists w, s w = true.
 
 Fact singleton_consistent `{Model} :
@@ -77,6 +85,8 @@ Proof.
   rewrite H1 in H2.
   discriminate.
 Qed.
+
+(** * Substates *)
 
 Definition substate `{Model} : relation state :=
   fun t s =>
