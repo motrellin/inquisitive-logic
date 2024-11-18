@@ -1,5 +1,8 @@
 From InqLog Require Export Truth.
 
+From Coq Require Import Nat Bool Lia PeanoNat.
+Import PeanoNat.Nat.
+
 (** * Casari Scheme *)
 
 Definition Casari `{Signature} (phi : var -> form) : form :=
@@ -200,3 +203,181 @@ Module Casari_with_atoms.
   Qed.
 
 End Casari_with_atoms.
+
+Module Casari_fails.
+
+  Instance signature : Signature :=
+    {|
+      PSymb := unit;
+      PAri := fun p => match p with tt => bool end;
+      FSymb := Empty_set;
+      FAri := fun f => match f with end;
+      rigid := fun _ => true
+    |}.
+
+  Definition Pred' (l r : term) :=
+    Pred tt (fun arg => if arg then l else r).
+
+  Definition IES (x : var) : form := Iexists (Pred' (Var (x+1)) (Var 0)).
+
+  Definition CasariIES := Casari IES.
+
+  Definition rel (w m j : nat) : bool :=
+    (
+      even m &&
+      (0 <? m) &&
+      (m =? j)
+    ) ||
+    (
+      even m &&
+      negb (j =? w) &&
+      (
+        odd j ||
+        (m <? j)
+      )
+    ).
+
+  Obligation Tactic :=
+    try decide equality;
+    try contradiction.
+
+  Program Instance M : Model :=
+    {|
+      World := nat;
+      Individual := nat;
+      Individual_inh := 42;
+      PInterpretation :=
+        fun w p =>
+        match p with
+        | tt =>
+            fun args =>
+            rel w (args true) (args false)
+        end
+    |}.
+
+  Lemma claim_1 :
+    forall s m,
+      support (IES (2 * (m + 1))) s id.
+  Proof.
+    intros s m.
+    exists (2 * (m + 1)).
+    intros w H1.
+    asimpl.
+    unfold rel.
+    asimpl.
+
+    enough (eq1 : m + m = 0 + 2 * m).
+    rewrite eq1.
+    rewrite even_add_mul_2.
+    rewrite eqb_refl.
+    reflexivity.
+    lia.
+  Qed.
+
+  Lemma claim_2 :
+    forall (s : state) m n,
+      s (2 * n + 1) = false ->
+      support (IES (2 * m)) s id.
+  Proof.
+    intros s m n H1.
+    exists (2 * n + 1).
+    intros w H2.
+    asimpl in *.
+    unfold rel.
+    asimpl in *.
+    assert (eq1 : forall m, m + m = 0 + 2 * m). lia.
+    rewrite eq1.
+    rewrite even_add_mul_2.
+    asimpl.
+    destruct (m + m =? S (n + n)) eqn:eq2.
+    -
+      apply eqb_eq in eq2.
+      rewrite eq2.
+      reflexivity.
+    -
+      apply eqb_neq in eq2.
+      rewrite andb_false_r.
+      asimpl.
+      destruct w as [|w'].
+      +
+        asimpl.
+        destruct (odd (S (n + n))) eqn:eq3.
+        *
+          reflexivity.
+        *
+          rewrite eq1 in eq3.
+          rewrite odd_succ in eq3.
+          rewrite even_add_mul_2 in eq3.
+          discriminate.
+      +
+        asimpl.
+        destruct (n + n =? w') eqn:eq3.
+        *
+          apply eqb_eq in eq3.
+          congruence.
+        *
+          asimpl.
+          destruct (odd (S (n + n))) eqn:eq4.
+          --
+             reflexivity.
+          --
+             rewrite eq1 in eq4.
+             rewrite odd_succ in eq4.
+             rewrite even_add_mul_2 in eq4.
+             discriminate.
+  Qed.
+
+  Lemma claim_3 :
+    forall (s : state) m n,
+      s (2 * n) = false ->
+      n > m ->
+      support (IES (2 * m)) s id.
+  Proof.
+    intros s m n H1 H2.
+    exists (2 * n).
+    intros w H3.
+    asimpl in *.
+    unfold rel.
+    asimpl in *.
+    assert (eq1 : forall m, m + m = 0 + 2 * m). lia.
+    rewrite eq1.
+    rewrite even_add_mul_2.
+    asimpl.
+    destruct (m =? n) eqn:eq2.
+    -
+      apply eqb_eq in eq2.
+      subst m.
+      lia.
+    -
+      apply eqb_neq in eq2.
+      assert (eq3 : m + m <> n + n). lia.
+      apply eqb_neq in eq3; rewrite eq3; apply eqb_neq in eq3.
+      rewrite andb_false_r.
+      asimpl.
+      destruct (n + n =? w) eqn:eq4.
+      +
+        apply eqb_eq in eq4.
+        congruence.
+      +
+        apply eqb_neq in eq4.
+        asimpl.
+        assert (H4 : even (n + n) = true).
+        {
+          rewrite eq1.
+          apply even_add_mul_2.
+        }
+        unfold odd.
+        rewrite H4.
+        asimpl.
+
+        destruct n as [|n'].
+        *
+          asimpl in *.
+          lia.
+        *
+          asimpl in *.
+          apply leb_le.
+          lia.
+  Qed.
+
+End Casari_fails.
