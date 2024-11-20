@@ -34,8 +34,26 @@
 <span class="id" title="keyword">From</span> <span class="id" title="var">Coq</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Bool.Bool.html#"><span class="id" title="library">Bool</span></a>.<br/>
 
 <br/>
+</div>
+
+<div class="doc">
+<a id="lab39"></a><h1 class="section">Truth satisfaction</h1>
+
+</div>
+<div class="code">
+
+<br/>
 <span class="id" title="keyword">Definition</span> <a id="truth" class="idref" href="#truth"><span class="id" title="definition">truth</span></a> `{<a id="H0:2" class="idref" href="#H0:2"><span class="id" title="binder">Model</span></a>} (<a id="phi:3" class="idref" href="#phi:3"><span class="id" title="binder">phi</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>) (<a id="w:4" class="idref" href="#w:4"><span class="id" title="binder">w</span></a> : <a class="idref" href="InqLog.FO.Models.html#World"><span class="id" title="method">World</span></a>) (<a id="a:5" class="idref" href="#a:5"><span class="id" title="binder">a</span></a> : <a class="idref" href="InqLog.FO.Support.html#assignment"><span class="id" title="definition">assignment</span></a>) : <span class="id" title="keyword">Prop</span> :=<br/>
 &nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#support"><span class="id" title="definition">support</span></a> <a class="idref" href="InqLog.FO.Truth.html#phi:3"><span class="id" title="variable">phi</span></a> (<a class="idref" href="InqLog.FO.States.html#singleton"><span class="id" title="definition">singleton</span></a> <a class="idref" href="InqLog.FO.Truth.html#w:4"><span class="id" title="variable">w</span></a>) <a class="idref" href="InqLog.FO.Truth.html#a:5"><span class="id" title="variable">a</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab40"></a><h1 class="section">Truth decidable models</h1>
+
+</div>
+<div class="code">
 
 <br/>
 <span class="comment">(*&nbsp;TODO:&nbsp;Investigate,&nbsp;if/how&nbsp;these&nbsp;axioms&nbsp;can&nbsp;be&nbsp;simplified:&nbsp;*)</span><br/>
@@ -158,6 +176,16 @@
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
+</div>
+
+<div class="doc">
+<a id="lab41"></a><h1 class="section">Truth satisfaction rules</h1>
+<a id="lab42"></a><h2 class="section">Truth satisfaction rules for basic connectives</h2>
+
+</div>
+<div class="code">
+
+<br/>
 <span class="id" title="keyword">Proposition</span> <a id="truth_Pred" class="idref" href="#truth_Pred"><span class="id" title="lemma">truth_Pred</span></a> `{<a id="H0:38" class="idref" href="#H0:38"><span class="id" title="binder">Model</span></a>} :<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="p:39" class="idref" href="#p:39"><span class="id" title="binder">p</span></a> <a id="args:40" class="idref" href="#args:40"><span class="id" title="binder">args</span></a> <a id="w:41" class="idref" href="#w:41"><span class="id" title="binder">w</span></a> <a id="a:42" class="idref" href="#a:42"><span class="id" title="binder">a</span></a>,<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Truth.html#truth"><span class="id" title="definition">truth</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Pred"><span class="id" title="constructor">Pred</span></a> <a class="idref" href="InqLog.FO.Truth.html#p:39"><span class="id" title="variable">p</span></a> <a class="idref" href="InqLog.FO.Truth.html#args:40"><span class="id" title="variable">args</span></a>) <a class="idref" href="InqLog.FO.Truth.html#w:41"><span class="id" title="variable">w</span></a> <a class="idref" href="InqLog.FO.Truth.html#a:42"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'&lt;-&gt;'_x"><span class="id" title="notation">&lt;-&gt;</span></a><br/>
@@ -267,7 +295,13 @@
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-<span class="comment">(*&nbsp;Defined&nbsp;Connectives&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab43"></a><h2 class="section">Truth satisfaction for defined connectives</h2>
+
+</div>
+<div class="code">
 
 <br/>
 <span class="id" title="keyword">Proposition</span> <a id="truth_Neg" class="idref" href="#truth_Neg"><span class="id" title="lemma">truth_Neg</span></a> `{<a id="H0:80" class="idref" href="#H0:80"><span class="id" title="binder">Model</span></a>} :<br/>
@@ -333,6 +367,15 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Truth.html#truth_Neg"><span class="id" title="lemma">truth_Neg</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H2</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">contradiction</span>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab44"></a><h1 class="section">Truth-conditional formulas</h1>
+
+</div>
+<div class="code">
 
 <br/>
 <span class="id" title="keyword">Proposition</span> <a id="truth_classical_variant" class="idref" href="#truth_classical_variant"><span class="id" title="lemma">truth_classical_variant</span></a> `{<a id="M:102" class="idref" href="#M:102"><span class="id" title="binder">M</span></a> : <a class="idref" href="InqLog.FO.Truth.html#TDModel"><span class="id" title="class">TDModel</span></a>} :<br/>

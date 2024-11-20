@@ -31,43 +31,16 @@
 <span class="id" title="keyword">From</span> <span class="id" title="var">InqLog</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="InqLog.FO.Truth.html#"><span class="id" title="library">Truth</span></a>.<br/>
 
 <br/>
-<span class="id" title="keyword">Instance</span> <a id="signature" class="idref" href="#signature"><span class="id" title="instance">signature</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#Signature"><span class="id" title="class">Signature</span></a> :=<br/>
-&nbsp;&nbsp;{|<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PSymb"><span class="id" title="method">PSymb</span></a> := <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PAri"><span class="id" title="method">PAri</span></a> := <span class="id" title="keyword">fun</span> <a id="p:1" class="idref" href="#p:1"><span class="id" title="binder">p</span></a> =&gt; <span class="id" title="keyword">match</span> <a class="idref" href="InqLog.FO.Casari.html#p:1"><span class="id" title="variable">p</span></a> <span class="id" title="keyword">with</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#tt"><span class="id" title="constructor">tt</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a> <span class="id" title="keyword">end</span>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#FSymb"><span class="id" title="method">FSymb</span></a> := <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#Empty_set"><span class="id" title="inductive">Empty_set</span></a>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#FAri"><span class="id" title="method">FAri</span></a> := <span class="id" title="keyword">fun</span> <a id="f:3" class="idref" href="#f:3"><span class="id" title="binder">f</span></a> =&gt; <span class="id" title="keyword">match</span> <a class="idref" href="InqLog.FO.Casari.html#f:3"><span class="id" title="variable">f</span></a> <span class="id" title="keyword">with</span> <span class="id" title="keyword">end</span>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#rigid"><span class="id" title="method">rigid</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
-&nbsp;&nbsp;|}.<br/>
+</div>
+
+<div class="doc">
+<a id="lab45"></a><h1 class="section">Casari Scheme</h1>
+
+</div>
+<div class="code">
 
 <br/>
-<span class="id" title="keyword">Definition</span> <a id="Pred'" class="idref" href="#Pred'"><span class="id" title="definition">Pred'</span></a> (<a id="t:5" class="idref" href="#t:5"><span class="id" title="binder">t</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a>) := <a class="idref" href="InqLog.FO.Syntax.html#Pred"><span class="id" title="constructor">Pred</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#tt"><span class="id" title="constructor">tt</span></a> (<span class="id" title="keyword">fun</span> <a id="arg:6" class="idref" href="#arg:6"><span class="id" title="binder">arg</span></a> =&gt; <a class="idref" href="InqLog.FO.Casari.html#t:5"><span class="id" title="variable">t</span></a>).<br/>
-
-<br/>
-<span class="id" title="keyword">Theorem</span> <a id="CasariProp" class="idref" href="#CasariProp"><span class="id" title="lemma">CasariProp</span></a> (<a id="P:7" class="idref" href="#P:7"><span class="id" title="binder">P</span></a> : <span class="id" title="definition">var</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Prop</span>) :<br/>
-&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="x:8" class="idref" href="#x:8"><span class="id" title="binder">x</span></a>,<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Casari.html#P:7"><span class="id" title="variable">P</span></a> <a class="idref" href="InqLog.FO.Casari.html#x:8"><span class="id" title="variable">x</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><span class="id" title="keyword">forall</span> <a id="x:9" class="idref" href="#x:9"><span class="id" title="binder">x</span></a>, <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">~</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.Casari.html#P:7"><span class="id" title="variable">P</span></a> <a class="idref" href="InqLog.FO.Casari.html#x:9"><span class="id" title="variable">x</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><span class="id" title="keyword">forall</span> <a id="x:10" class="idref" href="#x:10"><span class="id" title="binder">x</span></a>, <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">~</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.Casari.html#P:7"><span class="id" title="variable">P</span></a> <a class="idref" href="InqLog.FO.Casari.html#x:10"><span class="id" title="variable">x</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a><br/>
-&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a><br/>
-&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
-&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="x:11" class="idref" href="#x:11"><span class="id" title="binder">x</span></a>, <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">~</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.Casari.html#P:7"><span class="id" title="variable">P</span></a> <a class="idref" href="InqLog.FO.Casari.html#x:11"><span class="id" title="variable">x</span></a><br/>
-&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a>.<br/>
-<span class="id" title="keyword">Proof</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">firstorder</span>.<br/>
-<span class="id" title="keyword">Qed</span>.<br/>
-
-<br/>
-<span class="id" title="keyword">Print</span> <span class="id" title="keyword">Assumptions</span> <a class="idref" href="InqLog.FO.Casari.html#CasariProp"><span class="id" title="lemma">CasariProp</span></a>.<br/>
-
-<br/>
-<span class="id" title="keyword">Definition</span> <a id="Casari" class="idref" href="#Casari"><span class="id" title="definition">Casari</span></a> (<a id="phi:12" class="idref" href="#phi:12"><span class="id" title="binder">phi</span></a> : <span class="id" title="definition">var</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>) : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a> :=<br/>
+<span class="id" title="keyword">Definition</span> <a id="Casari" class="idref" href="#Casari"><span class="id" title="definition">Casari</span></a> `{<a id="H:1" class="idref" href="#H:1"><span class="id" title="binder">Signature</span></a>} (<a id="phi:2" class="idref" href="#phi:2"><span class="id" title="binder">phi</span></a> : <span class="id" title="definition">var</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>) : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a> :=<br/>
 &nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Impl"><span class="id" title="constructor">Impl</span></a><br/>
 &nbsp;&nbsp;(<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a><br/>
@@ -76,26 +49,26 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Impl"><span class="id" title="constructor">Impl</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Casari.html#phi:12"><span class="id" title="variable">phi</span></a> 0<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Casari.html#phi:2"><span class="id" title="variable">phi</span></a> 0<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> (<a class="idref" href="InqLog.FO.Casari.html#phi:12"><span class="id" title="variable">phi</span></a> 0)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> (<a class="idref" href="InqLog.FO.Casari.html#phi:2"><span class="id" title="variable">phi</span></a> 0)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> (<a class="idref" href="InqLog.FO.Casari.html#phi:12"><span class="id" title="variable">phi</span></a> 0)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> (<a class="idref" href="InqLog.FO.Casari.html#phi:2"><span class="id" title="variable">phi</span></a> 0)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;)<br/>
 &nbsp;&nbsp;)<br/>
 &nbsp;&nbsp;(<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> (<a class="idref" href="InqLog.FO.Casari.html#phi:12"><span class="id" title="variable">phi</span></a> 0)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> (<a class="idref" href="InqLog.FO.Casari.html#phi:2"><span class="id" title="variable">phi</span></a> 0)<br/>
 &nbsp;&nbsp;).<br/>
 
 <br/>
-<span class="id" title="keyword">Theorem</span> <a id="Casari_truth_conditional" class="idref" href="#Casari_truth_conditional"><span class="id" title="lemma">Casari_truth_conditional</span></a> :<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="phi:13" class="idref" href="#phi:13"><span class="id" title="binder">phi</span></a>,<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><span class="id" title="keyword">forall</span> <a id="x:14" class="idref" href="#x:14"><span class="id" title="binder">x</span></a>, <a class="idref" href="InqLog.FO.Syntax.html#classic"><span class="id" title="definition">classic</span></a> (<a class="idref" href="InqLog.FO.Casari.html#phi:13"><span class="id" title="variable">phi</span></a> <a class="idref" href="InqLog.FO.Casari.html#x:14"><span class="id" title="variable">x</span></a>) <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Truth.html#truth_conditional"><span class="id" title="definition">truth_conditional</span></a> (<a class="idref" href="InqLog.FO.Casari.html#Casari"><span class="id" title="definition">Casari</span></a> <a class="idref" href="InqLog.FO.Casari.html#phi:13"><span class="id" title="variable">phi</span></a>).<br/>
+<span class="id" title="keyword">Lemma</span> <a id="Casari_truth_conditional" class="idref" href="#Casari_truth_conditional"><span class="id" title="lemma">Casari_truth_conditional</span></a> `{<a id="H:3" class="idref" href="#H:3"><span class="id" title="binder">Signature</span></a>} :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="phi:4" class="idref" href="#phi:4"><span class="id" title="binder">phi</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><span class="id" title="keyword">forall</span> <a id="x:5" class="idref" href="#x:5"><span class="id" title="binder">x</span></a>, <a class="idref" href="InqLog.FO.Syntax.html#classic"><span class="id" title="definition">classic</span></a> (<a class="idref" href="InqLog.FO.Casari.html#phi:4"><span class="id" title="variable">phi</span></a> <a class="idref" href="InqLog.FO.Casari.html#x:5"><span class="id" title="variable">x</span></a>) <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Truth.html#truth_conditional"><span class="id" title="definition">truth_conditional</span></a> (<a class="idref" href="InqLog.FO.Casari.html#Casari"><span class="id" title="definition">Casari</span></a> <a class="idref" href="InqLog.FO.Casari.html#phi:4"><span class="id" title="variable">phi</span></a>).<br/>
 <span class="id" title="keyword">Proof</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">phi</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Truth.html#classic_truth_conditional"><span class="id" title="lemma">classic_truth_conditional</span></a>.<br/>
@@ -105,158 +78,206 @@
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Definition</span> <a id="CasariDNA" class="idref" href="#CasariDNA"><span class="id" title="definition">CasariDNA</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a> :=<br/>
-&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Casari.html#Casari"><span class="id" title="definition">Casari</span></a> (<span class="id" title="keyword">fun</span> <a id="x:15" class="idref" href="#x:15"><span class="id" title="binder">x</span></a> =&gt; <a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> (<a class="idref" href="InqLog.FO.Casari.html#Pred'"><span class="id" title="definition">Pred'</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Var"><span class="id" title="constructor">Var</span></a> <a class="idref" href="InqLog.FO.Casari.html#x:15"><span class="id" title="variable">x</span></a>)))).<br/>
+</div>
+
+<div class="doc">
+<a id="lab46"></a><h1 class="section">Some Casari Instances with atomic predicates</h1>
+
+</div>
+<div class="code">
 
 <br/>
-<span class="id" title="keyword">Definition</span> <a id="CasariAtomic" class="idref" href="#CasariAtomic"><span class="id" title="definition">CasariAtomic</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a> :=<br/>
-&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Casari.html#Casari"><span class="id" title="definition">Casari</span></a> (<span class="id" title="keyword">fun</span> <a id="x:16" class="idref" href="#x:16"><span class="id" title="binder">x</span></a> =&gt; <a class="idref" href="InqLog.FO.Casari.html#Pred'"><span class="id" title="definition">Pred'</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Var"><span class="id" title="constructor">Var</span></a> <a class="idref" href="InqLog.FO.Casari.html#x:16"><span class="id" title="variable">x</span></a>)).<br/>
+<span class="id" title="keyword">Module</span> <a id="Casari_with_atoms" class="idref" href="#Casari_with_atoms"><span class="id" title="module">Casari_with_atoms</span></a>.<br/>
 
 <br/>
-<span class="id" title="keyword">Theorem</span> <a id="truth_CasariDNA" class="idref" href="#truth_CasariDNA"><span class="id" title="lemma">truth_CasariDNA</span></a> `{<a id="H:17" class="idref" href="#H:17"><span class="id" title="binder">@</span></a><a id="H:17" class="idref" href="#H:17"><span class="id" title="binder">Model</span></a> <a id="H:17" class="idref" href="#H:17"><span class="id" title="binder">signature</span></a>} :<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="w:18" class="idref" href="#w:18"><span class="id" title="binder">w</span></a> <a id="a:19" class="idref" href="#a:19"><span class="id" title="binder">a</span></a>,<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Truth.html#truth"><span class="id" title="definition">truth</span></a> <a class="idref" href="InqLog.FO.Casari.html#CasariDNA"><span class="id" title="definition">CasariDNA</span></a> <a class="idref" href="InqLog.FO.Casari.html#w:18"><span class="id" title="variable">w</span></a> <a class="idref" href="InqLog.FO.Casari.html#a:19"><span class="id" title="variable">a</span></a>.<br/>
-<span class="id" title="keyword">Proof</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w1</span> <span class="id" title="var">a</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Instance</span> <a id="Casari_with_atoms.signature" class="idref" href="#Casari_with_atoms.signature"><span class="id" title="instance">signature</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#Signature"><span class="id" title="class">Signature</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PSymb"><span class="id" title="method">PSymb</span></a> := <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PAri"><span class="id" title="method">PAri</span></a> := <span class="id" title="keyword">fun</span> <a id="p:6" class="idref" href="#p:6"><span class="id" title="binder">p</span></a> =&gt; <span class="id" title="keyword">match</span> <a class="idref" href="InqLog.FO.Casari.html#p:6"><span class="id" title="variable">p</span></a> <span class="id" title="keyword">with</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#tt"><span class="id" title="constructor">tt</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a> <span class="id" title="keyword">end</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#FSymb"><span class="id" title="method">FSymb</span></a> := <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#Empty_set"><span class="id" title="inductive">Empty_set</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#FAri"><span class="id" title="method">FAri</span></a> := <span class="id" title="keyword">fun</span> <a id="f:8" class="idref" href="#f:8"><span class="id" title="binder">f</span></a> =&gt; <span class="id" title="keyword">match</span> <a class="idref" href="InqLog.FO.Casari.html#f:8"><span class="id" title="variable">f</span></a> <span class="id" title="keyword">with</span> <span class="id" title="keyword">end</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#rigid"><span class="id" title="method">rigid</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">s2</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="Casari_with_atoms.Pred'" class="idref" href="#Casari_with_atoms.Pred'"><span class="id" title="definition">Pred'</span></a> (<a id="t:10" class="idref" href="#t:10"><span class="id" title="binder">t</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a>) := <a class="idref" href="InqLog.FO.Syntax.html#Pred"><span class="id" title="constructor">Pred</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#tt"><span class="id" title="constructor">tt</span></a> (<span class="id" title="keyword">fun</span> <a id="arg:11" class="idref" href="#arg:11"><span class="id" title="binder">arg</span></a> =&gt; <a class="idref" href="InqLog.FO.Casari.html#t:10"><span class="id" title="variable">t</span></a>).<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#substate_singleton"><span class="id" title="lemma">substate_singleton</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">H1</span>|<span class="id" title="var">H1</span>]; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span> <span class="id" title="tactic">in</span> *; <span class="id" title="tactic">clear</span> <span class="id" title="var">s2</span> <span class="id" title="var">H1</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#empty_state_property"><span class="id" title="lemma">empty_state_property</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="Casari_with_atoms.CasariDNA" class="idref" href="#Casari_with_atoms.CasariDNA"><span class="id" title="definition">CasariDNA</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Casari.html#Casari"><span class="id" title="definition">Casari</span></a> (<span class="id" title="keyword">fun</span> <a id="x:12" class="idref" href="#x:12"><span class="id" title="binder">x</span></a> =&gt; <a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> (<a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms.Pred'"><span class="id" title="definition">Pred'</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Var"><span class="id" title="constructor">Var</span></a> <a class="idref" href="InqLog.FO.Casari.html#x:12"><span class="id" title="variable">x</span></a>)))).<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">i1</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Support.html#support_Neg"><span class="id" title="lemma">support_Neg</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">s3</span> [[<span class="id" title="var">w2</span> <span class="id" title="var">H3</span>] [<span class="id" title="var">H4</span> <span class="id" title="var">H5</span>]]].<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="Casari_with_atoms.CasariAtomic" class="idref" href="#Casari_with_atoms.CasariAtomic"><span class="id" title="definition">CasariAtomic</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Casari.html#Casari"><span class="id" title="definition">Casari</span></a> (<span class="id" title="keyword">fun</span> <a id="x:13" class="idref" href="#x:13"><span class="id" title="binder">x</span></a> =&gt; <a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms.Pred'"><span class="id" title="definition">Pred'</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Var"><span class="id" title="constructor">Var</span></a> <a class="idref" href="InqLog.FO.Casari.html#x:13"><span class="id" title="variable">x</span></a>)).<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="var">enough</span> (<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">exists</span></a> <a id="s:20" class="idref" href="#s:20"><span class="id" title="binder"><span id="s:21" class="id">s</span></span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#support"><span class="id" title="definition">support</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> (<a class="idref" href="InqLog.FO.Casari.html#Pred'"><span class="id" title="definition">Pred'</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Var"><span class="id" title="constructor">Var</span></a> 0))))) <a class="idref" href="InqLog.FO.Casari.html#s:20"><span class="id" title="variable">s</span></a> (<span class="id" title="var">i1</span> <span class="id" title="notation">.:</span> <span class="id" title="var">a</span>) <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">/\</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.States.html#substate"><span class="id" title="definition">substate</span></a> <span class="id" title="var">s3</span> <a class="idref" href="InqLog.FO.Casari.html#s:20"><span class="id" title="variable">s</span></a><br/>
-&nbsp;&nbsp;) <span class="id" title="keyword">as</span> [<span class="id" title="var">s4</span> [<span class="id" title="var">H6</span> <span class="id" title="var">H7</span>]].<br/>
-&nbsp;&nbsp;{<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">H6</span> <span class="id" title="var">i1</span>). <span class="id" title="tactic">fold</span> <a class="idref" href="InqLog.FO.Support.html#support"><span class="id" title="definition">support</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H6</span>.<br/>
-
-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Support.html#support_Neg"><span class="id" title="lemma">support_Neg</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H6</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H6</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">s3</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Remark</span> <a id="Casari_with_atoms.CasariDNA_Prop" class="idref" href="#Casari_with_atoms.CasariDNA_Prop"><span class="id" title="lemma">CasariDNA_Prop</span></a> (<a id="P:14" class="idref" href="#P:14"><span class="id" title="binder">P</span></a> : <span class="id" title="definition">var</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Prop</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="x:15" class="idref" href="#x:15"><span class="id" title="binder">x</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Casari.html#P:14"><span class="id" title="variable">P</span></a> <a class="idref" href="InqLog.FO.Casari.html#x:15"><span class="id" title="variable">x</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><span class="id" title="keyword">forall</span> <a id="x:16" class="idref" href="#x:16"><span class="id" title="binder">x</span></a>, <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">~</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.Casari.html#P:14"><span class="id" title="variable">P</span></a> <a class="idref" href="InqLog.FO.Casari.html#x:16"><span class="id" title="variable">x</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><span class="id" title="keyword">forall</span> <a id="x:17" class="idref" href="#x:17"><span class="id" title="binder">x</span></a>, <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">~</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.Casari.html#P:14"><span class="id" title="variable">P</span></a> <a class="idref" href="InqLog.FO.Casari.html#x:17"><span class="id" title="variable">x</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="x:18" class="idref" href="#x:18"><span class="id" title="binder">x</span></a>, <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">~</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.Casari.html#P:14"><span class="id" title="variable">P</span></a> <a class="idref" href="InqLog.FO.Casari.html#x:18"><span class="id" title="variable">x</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">firstorder</span>.<br/>
-&nbsp;&nbsp;}<br/>
-<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">H2</span> <span class="id" title="var">i1</span>). <span class="id" title="tactic">fold</span> <a class="idref" href="InqLog.FO.Support.html#support"><span class="id" title="definition">support</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H2</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="var">remember</span> (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> (<a class="idref" href="InqLog.FO.Casari.html#Pred'"><span class="id" title="definition">Pred'</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Var"><span class="id" title="constructor">Var</span></a> 0)))) <span class="id" title="keyword">as</span> <span class="id" title="var">phi1</span> <span class="id" title="var">eqn</span>:<span class="id" title="var">eq1</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="var">remember</span> (<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> <span class="id" title="var">phi1</span>) <span class="id" title="keyword">as</span> <span class="id" title="var">phi2</span> <span class="id" title="var">eqn</span>:<span class="id" title="var">eq2</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="var">remember</span> (<a class="idref" href="InqLog.FO.Syntax.html#Impl"><span class="id" title="constructor">Impl</span></a> <span class="id" title="var">phi1</span> <span class="id" title="var">phi2</span>) <span class="id" title="keyword">as</span> <span class="id" title="var">phi3</span> <span class="id" title="var">eqn</span>:<span class="id" title="var">eq3</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">eexists</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a id="Casari_with_atoms.truth_CasariDNA" class="idref" href="#Casari_with_atoms.truth_CasariDNA"><span class="id" title="lemma">truth_CasariDNA</span></a> `{<a id="H:19" class="idref" href="#H:19"><span class="id" title="binder">@</span></a><a id="H:19" class="idref" href="#H:19"><span class="id" title="binder">Model</span></a> <a id="H:19" class="idref" href="#H:19"><span class="id" title="binder">signature</span></a>} :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="w:20" class="idref" href="#w:20"><span class="id" title="binder">w</span></a> <a id="a:21" class="idref" href="#a:21"><span class="id" title="binder">a</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Truth.html#truth"><span class="id" title="definition">truth</span></a> <a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms.CasariDNA"><span class="id" title="definition">CasariDNA</span></a> <a class="idref" href="InqLog.FO.Casari.html#w:20"><span class="id" title="variable">w</span></a> <a class="idref" href="InqLog.FO.Casari.html#a:21"><span class="id" title="variable">a</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w1</span> <span class="id" title="var">a</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H2</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">H4</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">s2</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">fold</span> <a class="idref" href="InqLog.FO.Support.html#support"><span class="id" title="definition">support</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">subst</span> <span class="id" title="var">phi3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#substate_singleton"><span class="id" title="lemma">substate_singleton</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">H1</span>|<span class="id" title="var">H1</span>]; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span> <span class="id" title="tactic">in</span> *; <span class="id" title="tactic">clear</span> <span class="id" title="var">s2</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#empty_state_property"><span class="id" title="lemma">empty_state_property</span></a>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#substate_singleton"><span class="id" title="lemma">substate_singleton</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H4</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">H4</span>|<span class="id" title="var">H4</span>]; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H4</span> <span class="id" title="tactic">in</span> *; <span class="id" title="tactic">clear</span> <span class="id" title="var">s3</span> <span class="id" title="var">H4</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#empty_state_property"><span class="id" title="lemma">empty_state_property</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">i1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Support.html#support_Neg"><span class="id" title="lemma">support_Neg</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">s3</span> [[<span class="id" title="var">w2</span> <span class="id" title="var">H3</span>] [<span class="id" title="var">H4</span> <span class="id" title="var">H5</span>]]].<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">s4</span> <span class="id" title="var">H6</span> <span class="id" title="var">H7</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">enough</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">exists</span></a> <a id="s:22" class="idref" href="#s:22"><span class="id" title="binder"><span id="s:23" class="id">s</span></span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#support"><span class="id" title="definition">support</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> (<a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms.Pred'"><span class="id" title="definition">Pred'</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Var"><span class="id" title="constructor">Var</span></a> 0))))) <a class="idref" href="InqLog.FO.Casari.html#s:22"><span class="id" title="variable">s</span></a> (<span class="id" title="var">i1</span> <span class="id" title="notation">.:</span> <span class="id" title="var">a</span>) <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">/\</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.States.html#substate"><span class="id" title="definition">substate</span></a> <span class="id" title="var">s3</span> <a class="idref" href="InqLog.FO.Casari.html#s:22"><span class="id" title="variable">s</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;) <span class="id" title="keyword">as</span> [<span class="id" title="var">s4</span> [<span class="id" title="var">H6</span> <span class="id" title="var">H7</span>]].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">H6</span> <span class="id" title="var">i1</span>). <span class="id" title="tactic">fold</span> <a class="idref" href="InqLog.FO.Support.html#support"><span class="id" title="definition">support</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H6</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#substate_singleton"><span class="id" title="lemma">substate_singleton</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H6</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">H6</span>|<span class="id" title="var">H6</span>]; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H6</span> <span class="id" title="tactic">in</span> *; <span class="id" title="tactic">clear</span> <span class="id" title="var">s4</span> <span class="id" title="var">H6</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#empty_state_property"><span class="id" title="lemma">empty_state_property</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Support.html#support_Neg"><span class="id" title="lemma">support_Neg</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H6</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H6</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">s3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">firstorder</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">H2</span> <span class="id" title="var">i1</span>). <span class="id" title="tactic">fold</span> <a class="idref" href="InqLog.FO.Support.html#support"><span class="id" title="definition">support</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">remember</span> (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> (<a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms.Pred'"><span class="id" title="definition">Pred'</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Var"><span class="id" title="constructor">Var</span></a> 0)))) <span class="id" title="keyword">as</span> <span class="id" title="var">phi1</span> <span class="id" title="var">eqn</span>:<span class="id" title="var">eq1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">remember</span> (<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> <span class="id" title="var">phi1</span>) <span class="id" title="keyword">as</span> <span class="id" title="var">phi2</span> <span class="id" title="var">eqn</span>:<span class="id" title="var">eq2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">remember</span> (<a class="idref" href="InqLog.FO.Syntax.html#Impl"><span class="id" title="constructor">Impl</span></a> <span class="id" title="var">phi1</span> <span class="id" title="var">phi2</span>) <span class="id" title="keyword">as</span> <span class="id" title="var">phi3</span> <span class="id" title="var">eqn</span>:<span class="id" title="var">eq3</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="var">exfalso</span>.<br/>
-
-<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">eq1</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H7</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Support.html#support_Neg"><span class="id" title="lemma">support_Neg</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H7</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H7</span>.<br/>
-
-<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">eexists</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>.<br/>
-&nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eexists</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H3</span>.<br/>
-&nbsp;&nbsp;-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
-&nbsp;&nbsp;-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H5</span>.<br/>
-&nbsp;&nbsp;-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
-<span class="id" title="keyword">Qed</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Corollary</span> <a id="support_valid_CasariDNA" class="idref" href="#support_valid_CasariDNA"><span class="id" title="lemma">support_valid_CasariDNA</span></a> :<br/>
-&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#support_valid"><span class="id" title="definition">support_valid</span></a> <a class="idref" href="InqLog.FO.Casari.html#CasariDNA"><span class="id" title="definition">CasariDNA</span></a>.<br/>
-<span class="id" title="keyword">Proof</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> <span class="id" title="var">a</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Casari.html#Casari_truth_conditional"><span class="id" title="lemma">Casari_truth_conditional</span></a>.<br/>
-&nbsp;&nbsp;-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
-&nbsp;&nbsp;-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span> <span class="id" title="var">H1</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Casari.html#truth_CasariDNA"><span class="id" title="lemma">truth_CasariDNA</span></a>.<br/>
-<span class="id" title="keyword">Qed</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H2</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">H4</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Theorem</span> <a id="support_conseq_CasariDNA_CasariAtomic" class="idref" href="#support_conseq_CasariDNA_CasariAtomic"><span class="id" title="lemma">support_conseq_CasariDNA_CasariAtomic</span></a> :<br/>
-&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#support_conseq"><span class="id" title="definition">support_conseq</span></a> <a class="idref" href="InqLog.FO.Casari.html#CasariDNA"><span class="id" title="definition">CasariDNA</span></a> <a class="idref" href="InqLog.FO.Casari.html#CasariAtomic"><span class="id" title="definition">CasariAtomic</span></a>.<br/>
-<span class="id" title="keyword">Proof</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="InqLog.FO.Casari.html#CasariDNA"><span class="id" title="definition">CasariDNA</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="InqLog.FO.Casari.html#CasariAtomic"><span class="id" title="definition">CasariAtomic</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="InqLog.FO.Casari.html#Casari"><span class="id" title="definition">Casari</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">fold</span> <a class="idref" href="InqLog.FO.Support.html#support"><span class="id" title="definition">support</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">subst</span> <span class="id" title="var">phi3</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_conseq_Impl"><span class="id" title="lemma">support_conseq_Impl</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_conseq_Forall"><span class="id" title="lemma">support_conseq_Forall</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_conseq_Impl"><span class="id" title="lemma">support_conseq_Impl</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_conseq_Impl"><span class="id" title="lemma">support_conseq_Impl</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#substate_singleton"><span class="id" title="lemma">substate_singleton</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H4</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">H4</span>|<span class="id" title="var">H4</span>]; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H4</span> <span class="id" title="tactic">in</span> *; <span class="id" title="tactic">clear</span> <span class="id" title="var">s3</span> <span class="id" title="var">H4</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#empty_state_property"><span class="id" title="lemma">empty_state_property</span></a>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">firstorder</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">s4</span> <span class="id" title="var">H6</span> <span class="id" title="var">H7</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_conseq_Forall"><span class="id" title="lemma">support_conseq_Forall</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#substate_singleton"><span class="id" title="lemma">substate_singleton</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H6</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">H6</span>|<span class="id" title="var">H6</span>]; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H6</span> <span class="id" title="tactic">in</span> *; <span class="id" title="tactic">clear</span> <span class="id" title="var">s4</span> <span class="id" title="var">H6</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#empty_state_property"><span class="id" title="lemma">empty_state_property</span></a>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_valid_Impl_conseq"><span class="id" title="lemma">support_valid_Impl_conseq</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">intros</span> *.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_valid_DNE_Pred"><span class="id" title="lemma">support_valid_DNE_Pred</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">exfalso</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_conseq_Forall"><span class="id" title="lemma">support_conseq_Forall</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">eq1</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H7</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Support.html#support_Neg"><span class="id" title="lemma">support_Neg</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H7</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H7</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">firstorder</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eexists</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eexists</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H5</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_conseq_Forall"><span class="id" title="lemma">support_conseq_Forall</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_valid_Impl_conseq"><span class="id" title="lemma">support_valid_Impl_conseq</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">intros</span> *.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_valid_DNE_Pred"><span class="id" title="lemma">support_valid_DNE_Pred</span></a>.<br/>
-<span class="id" title="keyword">Qed</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Corollary</span> <a id="Casari_with_atoms.support_valid_CasariDNA" class="idref" href="#Casari_with_atoms.support_valid_CasariDNA"><span class="id" title="lemma">support_valid_CasariDNA</span></a> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#support_valid"><span class="id" title="definition">support_valid</span></a> <a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms.CasariDNA"><span class="id" title="definition">CasariDNA</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> <span class="id" title="var">a</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Casari.html#Casari_truth_conditional"><span class="id" title="lemma">Casari_truth_conditional</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms.truth_CasariDNA"><span class="id" title="lemma">truth_CasariDNA</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Corollary</span> <a id="support_valid_CasariAtomic" class="idref" href="#support_valid_CasariAtomic"><span class="id" title="lemma">support_valid_CasariAtomic</span></a> :<br/>
-&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#support_valid"><span class="id" title="definition">support_valid</span></a> <a class="idref" href="InqLog.FO.Casari.html#CasariAtomic"><span class="id" title="definition">CasariAtomic</span></a>.<br/>
-<span class="id" title="keyword">Proof</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Support.html#support_valid_conseq_valid"><span class="id" title="lemma">support_valid_conseq_valid</span></a>.<br/>
-&nbsp;&nbsp;-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="InqLog.FO.Casari.html#support_valid_CasariDNA"><span class="id" title="lemma">support_valid_CasariDNA</span></a>.<br/>
-&nbsp;&nbsp;-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="InqLog.FO.Casari.html#support_conseq_CasariDNA_CasariAtomic"><span class="id" title="lemma">support_conseq_CasariDNA_CasariAtomic</span></a>.<br/>
-<span class="id" title="keyword">Qed</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a id="Casari_with_atoms.support_conseq_CasariDNA_CasariAtomic" class="idref" href="#Casari_with_atoms.support_conseq_CasariDNA_CasariAtomic"><span class="id" title="lemma">support_conseq_CasariDNA_CasariAtomic</span></a> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#support_conseq"><span class="id" title="definition">support_conseq</span></a> <a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms.CasariDNA"><span class="id" title="definition">CasariDNA</span></a> <a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms.CasariAtomic"><span class="id" title="definition">CasariAtomic</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms.CasariDNA"><span class="id" title="definition">CasariDNA</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms.CasariAtomic"><span class="id" title="definition">CasariAtomic</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="InqLog.FO.Casari.html#Casari"><span class="id" title="definition">Casari</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_conseq_Impl"><span class="id" title="lemma">support_conseq_Impl</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_conseq_Forall"><span class="id" title="lemma">support_conseq_Forall</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_conseq_Impl"><span class="id" title="lemma">support_conseq_Impl</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_conseq_Impl"><span class="id" title="lemma">support_conseq_Impl</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">firstorder</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_conseq_Forall"><span class="id" title="lemma">support_conseq_Forall</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_valid_Impl_conseq"><span class="id" title="lemma">support_valid_Impl_conseq</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_valid_DNE_Pred"><span class="id" title="lemma">support_valid_DNE_Pred</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_conseq_Forall"><span class="id" title="lemma">support_conseq_Forall</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">firstorder</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_conseq_Forall"><span class="id" title="lemma">support_conseq_Forall</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_valid_Impl_conseq"><span class="id" title="lemma">support_valid_Impl_conseq</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#support_valid_DNE_Pred"><span class="id" title="lemma">support_valid_DNE_Pred</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Corollary</span> <a id="Casari_with_atoms.support_valid_CasariAtomic" class="idref" href="#Casari_with_atoms.support_valid_CasariAtomic"><span class="id" title="lemma">support_valid_CasariAtomic</span></a> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#support_valid"><span class="id" title="definition">support_valid</span></a> <a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms.CasariAtomic"><span class="id" title="definition">CasariAtomic</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Support.html#support_valid_conseq_valid"><span class="id" title="lemma">support_valid_conseq_valid</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms.support_valid_CasariDNA"><span class="id" title="lemma">support_valid_CasariDNA</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms.support_conseq_CasariDNA_CasariAtomic"><span class="id" title="lemma">support_conseq_CasariDNA_CasariAtomic</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="InqLog.FO.Casari.html#Casari_with_atoms"><span class="id" title="module">Casari_with_atoms</span></a>.<br/>
 </div>
 </div>
 <div id="footer">
