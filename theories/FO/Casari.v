@@ -94,7 +94,7 @@ Module Casari_with_atoms.
 
     enough (
       exists s,
-        support <{forall ~~(Pred' (Var 0))}> s (i1 .: a) /\
+        (s, (i1 .: a) |= <{forall ~~(Pred' (Var 0))}>) /\
         substate s3 s
     ) as [s4 [H6 H7]].
     {

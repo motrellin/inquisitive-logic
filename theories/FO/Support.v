@@ -58,7 +58,15 @@ Fixpoint support `{Model} (phi : form) : state -> assignment -> Prop :=
 
   end.
 
-Instance support_Proper `{Model} :
+Notation "M , s , a |= phi" := (@support _ M phi s a)
+    (at level 95)
+    : form_scope.
+
+Notation "s , a |= phi" := (support phi s a)
+    (at level 95)
+    : form_scope.
+
+Instance support_Proper `{M : Model} :
   forall phi,
     Proper (state_eq ==> eq ==> iff) (support phi).
 Proof.
@@ -123,9 +131,9 @@ Qed.
 
 Proposition persistency `{Model} :
   forall s t a phi,
-    support phi s a ->
+  s, a |= phi ->
     substate t s ->
-    support phi t a.
+    t, a |= phi.
 Proof.
   intros s t a phi.
   revert s t a.
@@ -172,7 +180,7 @@ Qed.
 
 Proposition empty_state_property `{Model} :
   forall (a : assignment) (phi : form),
-    support phi empty_state a.
+    empty_state, a |= phi.
 Proof.
   intros a phi.
   revert a.
@@ -225,14 +233,22 @@ Definition ruling_out `{Model} (s : state) (phi : form) (a : assignment) :=
   ~ exists t,
     consistent t /\
     substate t s /\
-    support phi t a.
+    (t, a |= phi).
+
+Notation "M , s , a _||_ phi" := (@ruling_out _ M s phi a)
+  (at level 95)
+  : form_scope.
+
+Notation "s , a _||_ phi" := (ruling_out s phi a)
+  (at level 95)
+  : form_scope.
 
 (** ** Support conditions for defined connectives *)
 
 Proposition support_Neg `{Model} :
   forall phi s a,
-    support <{~ phi}> s a <->
-    ruling_out s phi a.
+    s, a |= <{~ phi}> <->
+    (s, a _||_ phi).
 Proof.
   simpl.
   intros phi s a.
@@ -264,7 +280,7 @@ Qed.
 
 Proposition support_Top `{Model} :
   forall s a,
-    support <{Top}> s a.
+    s, a |= <{Top}>.
 Proof.
   intros s a.
   unfold Top.
@@ -276,12 +292,12 @@ Qed.
 
 Proposition support_Disj `{Model} :
   forall phi1 phi2 s a,
-  support <{phi1 \/ phi2}> s a <->
-  ~ exists t,
-    consistent t /\
-    substate t s /\
-    ruling_out t phi1 a /\
-    ruling_out t phi2 a.
+    s, a |= <{phi1 \/ phi2}> <->
+    ~ exists t,
+      consistent t /\
+      substate t s /\
+      (t, a _||_ phi1) /\
+      (t, a _||_ phi2).
 Proof.
   intros phi1 phi2 s a.
   unfold Disj.
@@ -304,11 +320,11 @@ Qed.
 
 Proposition support_Iff `{Model} :
   forall phi1 phi2 s a,
-    support <{phi1 <-> phi2}> s a <->
+    s, a |= <{phi1 <-> phi2}> <->
     forall t,
       substate t s ->
-      support phi1 t a <->
-      support phi2 t a.
+      t,a |= phi1 <->
+      (t,a |= phi2).
 Proof.
   firstorder.
 Qed.
@@ -318,8 +334,8 @@ Qed.
 Definition support_conseq `{S : Signature} : relation form :=
   fun phi psi =>
   forall `(M : @Model S) s a,
-    support phi s a ->
-    support psi s a.
+    s, a |= phi ->
+    s, a |= psi.
 
 Instance support_conseq_Preorder `{Signature} :
   PreOrder support_conseq.
@@ -378,7 +394,7 @@ Qed.
 
 Definition support_valid `{S : Signature} (phi : form) : Prop :=
   forall `(M : @Model S) s a,
-    support phi s a.
+    s, a |= phi.
 
 Remark support_valid_conseq_valid `{Signature} :
   forall phi psi,

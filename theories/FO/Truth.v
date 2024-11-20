@@ -5,7 +5,7 @@ From Coq Require Import Bool.
 (** * Truth satisfaction *)
 
 Definition truth `{Model} (phi : form) (w : World) (a : assignment) : Prop :=
-  support phi (singleton w) a.
+  (singleton w), a |= phi.
 
 (** * Truth decidable models *)
 
@@ -107,9 +107,9 @@ Proof.
     specialize (IH1 w).
     assert (H1 :
       forall i,
-        {support phi1 (singleton w) (i .: a)} +
-        {~ support phi1 (singleton w) (i .: a)}
-    ). firstorder. clear IH1.
+        {truth phi1 w (i .: a)} +
+        {~ truth phi1 w (i .: a)}
+    ). unfold truth. firstorder. clear IH1.
 
     destruct (current_ax_1 phi1 w a).
     all: firstorder.
@@ -117,9 +117,9 @@ Proof.
     specialize (IH1 w).
     assert (H1 :
       forall i,
-        {support phi1 (singleton w) (i .: a)} +
-        {~ support phi1 (singleton w) (i .: a)}
-    ). firstorder. clear IH1.
+        {truth phi1 w (i .: a)} +
+        {~ truth phi1 w (i .: a)}
+    ). unfold truth. firstorder. clear IH1.
 
     destruct (current_ax_2 phi1 w a) as [H2|H2].
     all: firstorder.
@@ -324,7 +324,7 @@ Qed.
 
 Definition truth_conditional `{S : Signature} (phi : form) : Prop :=
   forall `(M : @Model S) (s : state) (a : assignment),
-    support phi s a <->
+    s, a |= phi <->
     forall w,
       s w = true ->
       truth phi w a.
