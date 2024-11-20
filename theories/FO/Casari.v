@@ -380,4 +380,45 @@ Module Casari_fails.
           lia.
   Qed.
 
+  Fact even_add : forall n, even (n + n) = true.
+  Proof.
+    intro n.
+    assert (H1 : n + n = 0 + 2 * n). lia.
+    rewrite H1.
+    rewrite even_add_mul_2.
+    reflexivity.
+  Qed.
+
+  Lemma claim_4 :
+    forall (s : state) m,
+      (
+        forall w,
+          odd w = true ->
+          s w = true
+      ) ->
+      (
+        forall w,
+          even w = true ->
+          2 * m <? w = true ->
+          s w = true
+      ) ->
+      ~ support (IES (2 * m)) s id.
+  Proof.
+    intros s m H1 H2 H3.
+    assert (H4 : forall w j, rel w (m + m) j = true -> s j = true).
+    {
+      admit.
+    }
+
+    destruct H3 as [i H3].
+    asimpl in H3.
+
+    assert (H5 : rel i (m + m) i = false).
+    {
+      admit.
+    }
+    rewrite H3 in H5. discriminate.
+  Admitted.
+
+
 End Casari_fails.
