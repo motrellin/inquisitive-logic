@@ -218,7 +218,8 @@ Module Casari_fails.
   Definition Pred' (l r : term) :=
     Pred tt (fun arg => if arg then l else r).
 
-  Definition IES (x : var) : form := Iexists (Pred' (Var (x+1)) (Var 0)).
+  Definition IES (x : var) : form :=
+    <{iexists (Pred' (Var (x+1)) (Var 0))}>.
 
   Definition CasariIES := Casari IES.
 
@@ -257,7 +258,7 @@ Module Casari_fails.
 
   Lemma claim_1 :
     forall s m,
-      support (IES (2 * (m + 1))) s id.
+      s, id |= <{IES (2 * (m + 1))}>.
   Proof.
     intros s m.
     exists (2 * (m + 1)).
@@ -277,7 +278,7 @@ Module Casari_fails.
   Lemma claim_2 :
     forall (s : state) m n,
       s (2 * n + 1) = false ->
-      support (IES (2 * m)) s id.
+      s, id |= <{IES (2 * m)}>.
   Proof.
     intros s m n H1.
     exists (2 * n + 1).
@@ -331,7 +332,7 @@ Module Casari_fails.
     forall (s : state) m n,
       s (2 * n) = false ->
       n > m ->
-      support (IES (2 * m)) s id.
+      s, id |= <{IES (2 * m)}>.
   Proof.
     intros s m n H1 H2.
     exists (2 * n).
@@ -402,7 +403,7 @@ Module Casari_fails.
           2 * m <? w = true ->
           s w = true
       ) ->
-      ~ support (IES (2 * m)) s id.
+      ~ (s, id |= <{IES (2 * m)}>).
   Proof.
     intros s m H1 H2 H3.
     assert (H4 : forall w j, rel w (m + m) j = true -> s j = true).
