@@ -38,6 +38,48 @@ Inductive form `{Signature} :=
   | Forall : {bind term in form} -> form
   | Iexists : {bind term in form} -> form.
 
+Declare Custom Entry form.
+Declare Scope form_scope.
+
+Notation "<{ phi }>" := phi
+  (at level 0, phi custom form at level 99)
+  : form_scope.
+Notation "( x )" := x
+  (in custom form, x at level 99)
+  : form_scope.
+Notation "x" := x
+  (in custom form at level 0, x constr at level 0)
+  : form_scope.
+Notation "f x .. y" := (.. (f x) .. y)
+  (in custom form at level 0,
+  only parsing,
+  f constr at level 0,
+  x constr at level 9,
+  y constr at level 9)
+  : form_scope.
+
+Notation "phi -> psi" := (Impl phi psi)
+  (in custom form at level 70, right associativity)
+  : form_scope.
+
+Notation "phi /\ psi" := (Conj phi psi)
+  (in custom form at level 60, right associativity)
+  : form_scope.
+
+Notation "phi \\/ psi" := (Idisj phi psi)
+  (in custom form at level 65, right associativity)
+  : form_scope.
+
+Notation "'forall' phi" := (Forall phi)
+  (in custom form at level 85, right associativity)
+  : form_scope.
+
+Notation "'iexists' phi" := (Iexists phi)
+  (in custom form at level 90, right associativity)
+  : form_scope.
+
+Open Scope form_scope.
+
 (* Autosubst-stuff about formulas *)
 
 Instance HSubst_form `{Signature} : HSubst term form.
@@ -63,22 +105,48 @@ Proof. derive. Qed.
 
 (** ** Defined connectives *)
 
-Section defined_connectives.
+Definition Neg `{Signature} (phi : form) :=
+  <{ phi -> (Bot 0) }>.
 
-  Context `{Signature}.
+Notation "~ phi" := (Neg phi)
+  (in custom form at level 55, right associativity)
+  : form_scope.
 
-  Definition Neg (phi : form) := Impl phi (Bot 0).
-  Definition Top := Neg (Bot 0).
-  Definition Disj (phi1 phi2 : form) := Neg (Conj (Neg phi1) (Neg phi2)).
-  Definition Iff (phi1 phi2 : form) := Conj (Impl phi1 phi2) (Impl phi2 phi1).
-  Definition Exists (phi : form) := Neg (Forall (Neg phi)).
-  Definition Iquest (phi : form) := Idisj phi (Neg phi).
+Definition Top `{Signature} :=
+  <{~ (Bot 0)}>.
 
-End defined_connectives.
+Definition Disj `{Signature} (phi1 phi2 : form) :=
+  <{ ~ (~ phi1 /\ ~ phi2) }>.
+
+Notation "phi \/ psi" := (Disj phi psi)
+  (in custom form at level 66, right associativity)
+  : form_scope.
+
+Definition Iff `{Signature} (phi1 phi2 : form) :=
+  <{ (phi1 -> phi2) /\ (phi2 -> phi1) }>.
+
+Notation "phi <-> psi" := (Iff phi psi)
+  (in custom form at level 85, right associativity)
+  : form_scope.
+
+Definition Exists `{Signature} (phi : form) :=
+  <{ ~ forall (~ phi) }>.
+
+Notation "'exists' phi" := (Exists phi)
+  (in custom form at level 91, right associativity)
+  : form_scope.
+
+Definition Iquest `{Signature} (phi : form) :=
+  <{ phi \\/ ~ phi }>.
+
+Notation "? phi" := (Iquest phi)
+  (in custom form at level 56, right associativity)
+  : form_scope.
 
 (** ** Example formulas *)
 
-Example DNE `{Signature} (phi : form) : form := Impl (Neg (Neg phi)) phi.
+Example DNE `{Signature} (phi : form) : form :=
+  <{ (~ (~ phi)) -> phi }>.
 
 (** ** Classic formulas *)
 

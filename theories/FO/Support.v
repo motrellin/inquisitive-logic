@@ -231,7 +231,7 @@ Definition ruling_out `{Model} (s : state) (phi : form) (a : assignment) :=
 
 Proposition support_Neg `{Model} :
   forall phi s a,
-    support (Neg phi) s a <->
+    support <{~ phi}> s a <->
     ruling_out s phi a.
 Proof.
   simpl.
@@ -264,7 +264,7 @@ Qed.
 
 Proposition support_Top `{Model} :
   forall s a,
-    support Top s a.
+    support <{Top}> s a.
 Proof.
   intros s a.
   unfold Top.
@@ -276,7 +276,7 @@ Qed.
 
 Proposition support_Disj `{Model} :
   forall phi1 phi2 s a,
-  support (Disj phi1 phi2) s a <->
+  support <{phi1 \/ phi2}> s a <->
   ~ exists t,
     consistent t /\
     substate t s /\
@@ -304,7 +304,7 @@ Qed.
 
 Proposition support_Iff `{Model} :
   forall phi1 phi2 s a,
-    support (Iff phi1 phi2) s a <->
+    support <{phi1 <-> phi2}> s a <->
     forall t,
       substate t s ->
       support phi1 t a <->
@@ -331,7 +331,7 @@ Lemma support_conseq_Impl `{Signature} :
   forall phi1 phi2 psi1 psi2,
     support_conseq phi1 phi2 ->
     support_conseq psi1 psi2 ->
-    support_conseq (Impl phi2 psi1) (Impl phi1 psi2).
+    support_conseq <{phi2 -> psi1}> <{phi1 -> psi2}>.
 Proof.
   firstorder.
 Qed.
@@ -340,7 +340,7 @@ Lemma support_conseq_Conj `{Signature} :
   forall phi1 phi2 psi1 psi2,
     support_conseq phi1 phi2 ->
     support_conseq psi1 psi2 ->
-    support_conseq (Conj phi1 psi1) (Conj phi2 psi2).
+    support_conseq <{phi1 /\ psi1}> <{phi2 /\ psi2}>.
 Proof.
   firstorder.
 Qed.
@@ -349,7 +349,7 @@ Lemma support_conseq_Idisj `{Signature} :
   forall phi1 phi2 psi1 psi2,
     support_conseq phi1 phi2 ->
     support_conseq psi1 psi2 ->
-    support_conseq (Idisj phi1 psi1) (Idisj phi2 psi2).
+    support_conseq <{phi1 \\/ psi1}> <{phi2 \\/ psi2}>.
 Proof.
   firstorder.
 Qed.
@@ -357,7 +357,7 @@ Qed.
 Lemma support_conseq_Forall `{Signature} :
   forall phi1 phi2,
     support_conseq phi1 phi2 ->
-    support_conseq (Forall phi1) (Forall phi2).
+    support_conseq <{forall phi1}> <{forall phi2}>.
 Proof.
   firstorder.
 Qed.
@@ -365,7 +365,7 @@ Qed.
 Lemma support_conseq_Iexists `{Signature} :
   forall phi1 phi2,
     support_conseq phi1 phi2 ->
-    support_conseq (Iexists phi1) (Iexists phi2).
+    support_conseq <{iexists phi1}> <{iexists phi2}>.
 Proof.
   intros * H1 M s a H2.
   simpl support in *.
@@ -391,7 +391,7 @@ Qed.
 
 Remark support_valid_Impl_conseq `{S : Signature} :
   forall phi psi,
-    support_valid (Impl phi psi) ->
+    support_valid <{phi -> psi}> ->
     support_conseq phi psi.
 Proof.
   intros phi psi H1 M s a H2.
@@ -404,7 +404,7 @@ Qed.
 
 Lemma support_valid_DNE_Pred `{Signature} :
   forall p args,
-    support_valid (DNE (Pred p args)).
+    support_valid <{DNE (Pred p args)}>.
 Proof.
   intros p args M s1 a s2 H1 H2 w1 H3.
 

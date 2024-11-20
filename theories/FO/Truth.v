@@ -130,7 +130,7 @@ Qed.
 
 Proposition truth_Pred `{Model} :
   forall p args w a,
-    truth (Pred p args) w a <->
+    truth <{Pred p args}> w a <->
     PInterpretation w p (fun arg => referent (args arg) w a) = true.
 Proof.
   intros p ari w a.
@@ -153,7 +153,7 @@ Qed.
 
 Proposition truth_Bot `{Model} :
   forall v w a,
-    (truth (Bot v) w a) <-> False.
+    (truth <{Bot v}> w a) <-> False.
 Proof.
   intros ? w a.
   firstorder.
@@ -166,31 +166,24 @@ Qed.
 
 Proposition truth_Conj `{Model} :
   forall phi1 phi2 w a,
-    truth (Conj phi1 phi2) w a <->
-    (
-      truth phi1 w a /\
-      truth phi2 w a
-    ).
+    truth <{phi1 /\ phi2}> w a <->
+    truth phi1 w a /\ truth phi2 w a.
 Proof.
   firstorder.
 Qed.
 
 Proposition truth_Idisj `{Model} :
   forall phi1 phi2 w a,
-    truth (Idisj phi1 phi2) w a <->
-    truth phi1 w a \/
-    truth phi2 w a.
+    truth <{phi1 \\/ phi2}> w a <->
+    truth phi1 w a \/ truth phi2 w a.
 Proof.
   firstorder.
 Qed.
 
 Proposition truth_Impl `{Model} :
   forall phi1 phi2 w a,
-  truth (Impl phi1 phi2) w a <->
-  (
-    truth phi1 w a ->
-    truth phi2 w a
-  ).
+  truth <{phi1 -> phi2}> w a <->
+  (truth phi1 w a -> truth phi2 w a).
 Proof.
   intros phi1 phi2 w a.
   unfold truth.
@@ -214,7 +207,7 @@ Qed.
 
 Proposition truth_Forall `{Model} :
   forall phi w a,
-    truth (Forall phi) w a <->
+    truth <{forall phi}> w a <->
     forall i,
       truth phi w (i .: a).
 Proof.
@@ -223,7 +216,7 @@ Qed.
 
 Proposition truth_Iexists `{Model} :
   forall phi w a,
-    truth (Iexists phi) w a <->
+    truth <{iexists phi}> w a <->
     exists i,
       truth phi w (i .: a).
 Proof.
@@ -234,7 +227,7 @@ Qed.
 
 Proposition truth_Neg `{Model} :
   forall phi w a,
-    truth (Neg phi) w a <->
+    truth <{~ phi}> w a <->
     ~ truth phi w a.
 Proof.
   intros phi w a.
@@ -246,9 +239,8 @@ Qed.
 
 Proposition truth_Disj `{M : TDModel} :
   forall phi1 phi2 w a,
-    truth (Disj phi1 phi2) w a <->
-    truth phi1 w a \/
-    truth phi2 w a.
+    truth <{phi1 \/ phi2}> w a <->
+    truth phi1 w a \/ truth phi2 w a.
 Proof.
   intros phi1 phi2 w a.
   unfold Disj.
@@ -262,7 +254,7 @@ Qed.
 
 Proposition truth_Exists `{M : TDModel} :
   forall phi w a,
-    truth (Exists phi) w a <->
+    truth <{exists phi}> w a <->
     exists i,
       truth phi w (i .: a).
 Proof.

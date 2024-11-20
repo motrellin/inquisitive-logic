@@ -3,28 +3,27 @@ From InqLog Require Export Truth.
 (** * Casari Scheme *)
 
 Definition Casari `{Signature} (phi : var -> form) : form :=
-  Impl
-  (
-    Forall
+  <{
     (
-      Impl
+      forall
       (
-        Impl
         (
-          phi 0
-        )
+          (
+            phi 0
+          ) ->
+          (
+            forall (phi 0)
+          )
+        ) ->
         (
-          Forall (phi 0)
+          forall (phi 0)
         )
       )
-      (
-        Forall (phi 0)
-      )
+    ) ->
+    (
+      forall (phi 0)
     )
-  )
-  (
-    Forall (phi 0)
-  ).
+  }>.
 
 Lemma Casari_truth_conditional `{Signature} :
   forall phi,
@@ -95,7 +94,7 @@ Module Casari_with_atoms.
 
     enough (
       exists s,
-        support (Forall (Neg (Neg (Pred' (Var 0))))) s (i1 .: a) /\
+        support <{forall ~~(Pred' (Var 0))}> s (i1 .: a) /\
         substate s3 s
     ) as [s4 [H6 H7]].
     {
@@ -108,9 +107,9 @@ Module Casari_with_atoms.
     }
 
     specialize (H2 i1). fold support in H2.
-    remember (Neg (Neg (Pred' (Var 0)))) as phi1 eqn:eq1.
-    remember (Forall phi1) as phi2 eqn:eq2.
-    remember (Impl phi1 phi2) as phi3 eqn:eq3.
+    remember <{~~(Pred' (Var 0))}> as phi1 eqn:eq1.
+    remember <{forall phi1}> as phi2 eqn:eq2.
+    remember <{phi1 -> phi2}> as phi3 eqn:eq3.
 
 
     eexists.
