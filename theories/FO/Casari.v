@@ -355,7 +355,37 @@ Module Casari_fails.
     intros s m H1 H2 H3.
     assert (H4 : forall w j, rel w (m + m) j = true -> s j = true).
     {
-      admit.
+      intros w j H4.
+      unfold rel in H4.
+
+      unfold odd in H4.
+      rewrite even_add in H4.
+      asimpl in H4.
+      destruct (j =? w) eqn:H5.
+      -
+        apply eqb_eq in H5.
+        subst j.
+        discriminate.
+      -
+        destruct (even j) eqn:H6.
+        +
+          asimpl in H4.
+          destruct j as [|j'].
+          *
+            discriminate.
+          *
+            apply H2.
+            --
+               exact H6.
+            --
+               asimpl.
+               assumption.
+        +
+          asimpl in H4.
+          apply H1.
+          unfold odd.
+          rewrite H6.
+          reflexivity.
     }
 
     destruct H3 as [i H3].
@@ -363,10 +393,19 @@ Module Casari_fails.
 
     assert (H5 : rel i (m + m) i = false).
     {
-      admit.
+      unfold rel.
+      unfold odd.
+      rewrite even_add.
+      rewrite eqb_refl.
+      reflexivity.
     }
-    rewrite H3 in H5. discriminate.
-  Admitted.
 
+    rewrite H3 in H5. discriminate.
+
+    eapply H4.
+    apply H3.
+    apply H1.
+    exact odd_1.
+  Qed.
 
 End Casari_fails.
