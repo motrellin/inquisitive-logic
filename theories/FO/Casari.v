@@ -237,7 +237,7 @@ Module Casari_fails.
       )
     ).
 
-  Obligation Tactic :=
+  Local Obligation Tactic :=
     try decide equality;
     try contradiction.
 
