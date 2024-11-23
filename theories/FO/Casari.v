@@ -225,8 +225,7 @@ Module Casari_fails.
 
   Definition rel (w m j : nat) : bool :=
     (
-      even m &&
-      (0 <? m) &&
+      odd m &&
       (m =? j)
     ) ||
     (
@@ -256,23 +255,31 @@ Module Casari_fails.
         end
     |}.
 
+  Fact even_add : forall n, even (n + n) = true.
+  Proof.
+    intro n.
+    assert (H1 : n + n = 0 + 2 * n). lia.
+    rewrite H1.
+    rewrite even_add_mul_2.
+    reflexivity.
+  Qed.
+
   Lemma claim_1 :
     forall s m,
-      s, id |= <{IES (2 * (m + 1))}>.
+      s, id |= <{IES (2 * m + 1)}>.
   Proof.
     intros s m.
-    exists (2 * (m + 1)).
+    exists (2 * m + 1).
     intros w H1.
     asimpl.
     unfold rel.
-    asimpl.
 
-    enough (eq1 : m + m = 0 + 2 * m).
-    rewrite eq1.
-    rewrite even_add_mul_2.
+    rewrite odd_succ.
+    rewrite even_add.
     rewrite eqb_refl.
+    rewrite even_succ.
+    unfold odd; rewrite even_add.
     reflexivity.
-    lia.
   Qed.
 
   Lemma claim_2 :
@@ -285,47 +292,21 @@ Module Casari_fails.
     intros w H2.
     asimpl in *.
     unfold rel.
-    asimpl in *.
-    assert (eq1 : forall m, m + m = 0 + 2 * m). lia.
-    rewrite eq1.
-    rewrite even_add_mul_2.
+    rewrite odd_succ.
+    unfold odd.
+    rewrite even_add.
+    rewrite even_add.
     asimpl.
-    destruct (m + m =? S (n + n)) eqn:eq2.
+    destruct w as [|w'].
     -
-      apply eqb_eq in eq2.
-      rewrite eq2.
       reflexivity.
     -
-      apply eqb_neq in eq2.
-      rewrite andb_false_r.
-      asimpl.
-      destruct w as [|w'].
+      destruct (n + n =? w') eqn:H3.
       +
-        asimpl.
-        destruct (odd (S (n + n))) eqn:eq3.
-        *
-          reflexivity.
-        *
-          rewrite eq1 in eq3.
-          rewrite odd_succ in eq3.
-          rewrite even_add_mul_2 in eq3.
-          discriminate.
+        apply eqb_eq in H3.
+        congruence.
       +
-        asimpl.
-        destruct (n + n =? w') eqn:eq3.
-        *
-          apply eqb_eq in eq3.
-          congruence.
-        *
-          asimpl.
-          destruct (odd (S (n + n))) eqn:eq4.
-          --
-             reflexivity.
-          --
-             rewrite eq1 in eq4.
-             rewrite odd_succ in eq4.
-             rewrite even_add_mul_2 in eq4.
-             discriminate.
+        reflexivity.
   Qed.
 
   Lemma claim_3 :
@@ -339,55 +320,21 @@ Module Casari_fails.
     intros w H3.
     asimpl in *.
     unfold rel.
-    asimpl in *.
-    assert (eq1 : forall m, m + m = 0 + 2 * m). lia.
-    rewrite eq1.
-    rewrite even_add_mul_2.
+    unfold odd.
+    do 2 rewrite even_add.
     asimpl.
-    destruct (m =? n) eqn:eq2.
+    destruct (n + n =? w) eqn:H4.
     -
-      apply eqb_eq in eq2.
-      subst m.
-      lia.
+      apply eqb_eq in H4.
+      congruence.
     -
-      apply eqb_neq in eq2.
-      assert (eq3 : m + m <> n + n). lia.
-      apply eqb_neq in eq3; rewrite eq3; apply eqb_neq in eq3.
-      rewrite andb_false_r.
-      asimpl.
-      destruct (n + n =? w) eqn:eq4.
+      destruct n as [|n'].
       +
-        apply eqb_eq in eq4.
-        congruence.
+        lia.
       +
-        apply eqb_neq in eq4.
         asimpl.
-        assert (H4 : even (n + n) = true).
-        {
-          rewrite eq1.
-          apply even_add_mul_2.
-        }
-        unfold odd.
-        rewrite H4.
-        asimpl.
-
-        destruct n as [|n'].
-        *
-          asimpl in *.
-          lia.
-        *
-          asimpl in *.
-          apply leb_le.
-          lia.
-  Qed.
-
-  Fact even_add : forall n, even (n + n) = true.
-  Proof.
-    intro n.
-    assert (H1 : n + n = 0 + 2 * n). lia.
-    rewrite H1.
-    rewrite even_add_mul_2.
-    reflexivity.
+        apply leb_le.
+        lia.
   Qed.
 
   Lemma claim_4 :
