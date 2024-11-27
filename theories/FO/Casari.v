@@ -270,7 +270,9 @@ Module Casari_fails.
       s, a |= <{IES (2 * m + 1)}>.
   Proof.
     intros s a m H1.
+
     exists (2 * m + 1).
+
     intros w H2.
     asimpl in *.
     unfold rel.
@@ -291,15 +293,17 @@ Module Casari_fails.
       s, a |= <{IES (2 * m)}>.
   Proof.
     intros s a m n H1 H2.
+
     exists (2 * n + 1).
+
     intros w H3.
     asimpl in *.
     unfold rel.
+
     rewrite H2.
     rewrite odd_succ.
     unfold odd.
-    rewrite even_add.
-    rewrite even_add.
+    do 2 rewrite even_add.
     asimpl.
     destruct w as [|w'].
     -
@@ -321,13 +325,15 @@ Module Casari_fails.
       s, a |= <{IES (2 * m)}>.
   Proof.
     intros s a m n H1 H2 H3.
+
     exists (2 * n).
+
     intros w H4.
     asimpl in *.
     unfold rel.
-    unfold odd.
 
     rewrite H3.
+    unfold odd.
     do 2 rewrite even_add.
     asimpl.
     destruct (n + n =? w) eqn:H5.
@@ -361,6 +367,7 @@ Module Casari_fails.
       ~ (s, a |= <{IES (2 * m)}>).
   Proof.
     intros s a m H1 H2 H3 H4.
+
     assert (H5 : forall w j, rel w (m + m) j = true -> s j = true).
     {
       intros w j H5.
@@ -368,7 +375,7 @@ Module Casari_fails.
 
       unfold odd in H5.
       rewrite even_add in H5.
-      asimpl in H4.
+      asimpl in H5.
       destruct (j =? w) eqn:H6.
       -
         apply eqb_eq in H6.
@@ -389,7 +396,6 @@ Module Casari_fails.
                asimpl.
                assumption.
         +
-          asimpl in H5.
           apply H1.
           unfold odd.
           rewrite H7.
