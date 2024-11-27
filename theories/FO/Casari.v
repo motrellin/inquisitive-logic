@@ -265,15 +265,17 @@ Module Casari_fails.
   Qed.
 
   Lemma claim_1 :
-    forall s m,
-      s, id |= <{IES (2 * m + 1)}>.
+    forall s a m,
+      a (2 * m + 1) = 2 * m + 1 ->
+      s, a |= <{IES (2 * m + 1)}>.
   Proof.
-    intros s m.
+    intros s a m H1.
     exists (2 * m + 1).
-    intros w H1.
-    asimpl.
+    intros w H2.
+    asimpl in *.
     unfold rel.
 
+    rewrite H1.
     rewrite odd_succ.
     rewrite even_add.
     rewrite eqb_refl.
@@ -283,15 +285,17 @@ Module Casari_fails.
   Qed.
 
   Lemma claim_2 :
-    forall (s : state) m n,
+    forall (s : state) a m n,
       s (2 * n + 1) = false ->
-      s, id |= <{IES (2 * m)}>.
+      a (2 * m) = 2 * m ->
+      s, a |= <{IES (2 * m)}>.
   Proof.
-    intros s m n H1.
+    intros s a m n H1 H2.
     exists (2 * n + 1).
-    intros w H2.
+    intros w H3.
     asimpl in *.
     unfold rel.
+    rewrite H2.
     rewrite odd_succ.
     unfold odd.
     rewrite even_add.
@@ -301,31 +305,34 @@ Module Casari_fails.
     -
       reflexivity.
     -
-      destruct (n + n =? w') eqn:H3.
+      destruct (n + n =? w') eqn:H4.
       +
-        apply eqb_eq in H3.
+        apply eqb_eq in H4.
         congruence.
       +
         reflexivity.
   Qed.
 
   Lemma claim_3 :
-    forall (s : state) m n,
+    forall (s : state) a m n,
       s (2 * n) = false ->
       n > m ->
-      s, id |= <{IES (2 * m)}>.
+      a (2 * m) = 2 * m ->
+      s, a |= <{IES (2 * m)}>.
   Proof.
-    intros s m n H1 H2.
+    intros s a m n H1 H2 H3.
     exists (2 * n).
-    intros w H3.
+    intros w H4.
     asimpl in *.
     unfold rel.
     unfold odd.
+
+    rewrite H3.
     do 2 rewrite even_add.
     asimpl.
-    destruct (n + n =? w) eqn:H4.
+    destruct (n + n =? w) eqn:H5.
     -
-      apply eqb_eq in H4.
+      apply eqb_eq in H5.
       congruence.
     -
       destruct n as [|n'].
@@ -338,7 +345,7 @@ Module Casari_fails.
   Qed.
 
   Lemma claim_4 :
-    forall (s : state) m,
+    forall (s : state) a m,
       (
         forall w,
           odd w = true ->
@@ -350,48 +357,49 @@ Module Casari_fails.
           2 * m <? w = true ->
           s w = true
       ) ->
-      ~ (s, id |= <{IES (2 * m)}>).
+      a (2 * m) = 2 * m ->
+      ~ (s, a |= <{IES (2 * m)}>).
   Proof.
-    intros s m H1 H2 H3.
-    assert (H4 : forall w j, rel w (m + m) j = true -> s j = true).
+    intros s a m H1 H2 H3 H4.
+    assert (H5 : forall w j, rel w (m + m) j = true -> s j = true).
     {
-      intros w j H4.
-      unfold rel in H4.
+      intros w j H5.
+      unfold rel in H5.
 
-      unfold odd in H4.
-      rewrite even_add in H4.
+      unfold odd in H5.
+      rewrite even_add in H5.
       asimpl in H4.
-      destruct (j =? w) eqn:H5.
+      destruct (j =? w) eqn:H6.
       -
-        apply eqb_eq in H5.
+        apply eqb_eq in H6.
         subst j.
         discriminate.
       -
-        destruct (even j) eqn:H6.
+        destruct (even j) eqn:H7.
         +
-          asimpl in H4.
+          asimpl in H5.
           destruct j as [|j'].
           *
             discriminate.
           *
             apply H2.
             --
-               exact H6.
+               exact H7.
             --
                asimpl.
                assumption.
         +
-          asimpl in H4.
+          asimpl in H5.
           apply H1.
           unfold odd.
-          rewrite H6.
+          rewrite H7.
           reflexivity.
     }
 
-    destruct H3 as [i H3].
-    asimpl in H3.
+    destruct H4 as [i H4].
+    asimpl in H4.
 
-    assert (H5 : rel i (m + m) i = false).
+    assert (H6 : rel i (m + m) i = false).
     {
       unfold rel.
       unfold odd.
@@ -400,10 +408,12 @@ Module Casari_fails.
       reflexivity.
     }
 
-    rewrite H3 in H5. discriminate.
+    asimpl in H3.
+    rewrite H3 in H4.
+    rewrite H4 in H6. discriminate.
 
-    eapply H4.
-    apply H3.
+    eapply H5.
+    apply H4.
     apply H1.
     exact odd_1.
   Qed.
