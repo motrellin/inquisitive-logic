@@ -265,11 +265,11 @@ Module Casari_fails.
   Qed.
 
   Lemma claim_1 :
-    forall s a m,
-      a (2 * m + 1) = 2 * m + 1 ->
-      s, a |= <{IES (2 * m + 1)}>.
+    forall s a m x,
+      a x = 2 * m + 1 ->
+      s, a |= <{IES x}>.
   Proof.
-    intros s a m H1.
+    intros s a m x H1.
 
     exists (2 * m + 1).
 
@@ -287,12 +287,12 @@ Module Casari_fails.
   Qed.
 
   Lemma claim_2 :
-    forall (s : state) a m n,
+    forall (s : state) a m n x,
       s (2 * n + 1) = false ->
-      a (2 * m) = 2 * m ->
-      s, a |= <{IES (2 * m)}>.
+      a x = 2 * m ->
+      s, a |= <{IES x}>.
   Proof.
-    intros s a m n H1 H2.
+    intros s a m n x H1 H2.
 
     exists (2 * n + 1).
 
@@ -318,13 +318,13 @@ Module Casari_fails.
   Qed.
 
   Lemma claim_3 :
-    forall (s : state) a m n,
+    forall (s : state) a m n x,
       s (2 * n) = false ->
       n > m ->
-      a (2 * m) = 2 * m ->
-      s, a |= <{IES (2 * m)}>.
+      a x = 2 * m ->
+      s, a |= <{IES x}>.
   Proof.
-    intros s a m n H1 H2 H3.
+    intros s a m n x H1 H2 H3.
 
     exists (2 * n).
 
@@ -351,7 +351,7 @@ Module Casari_fails.
   Qed.
 
   Lemma claim_4 :
-    forall (s : state) a m,
+    forall (s : state) a m x,
       (
         forall w,
           odd w = true ->
@@ -363,10 +363,10 @@ Module Casari_fails.
           2 * m <? w = true ->
           s w = true
       ) ->
-      a (2 * m) = 2 * m ->
-      ~ (s, a |= <{IES (2 * m)}>).
+      a x = 2 * m ->
+      ~ (s, a |= <{IES x}>).
   Proof.
-    intros s a m H1 H2 H3 H4.
+    intros s a m x H1 H2 H3 H4.
 
     assert (H5 : forall w j, rel w (m + m) j = true -> s j = true).
     {
