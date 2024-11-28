@@ -265,80 +265,74 @@ Module Casari_fails.
   Qed.
 
   Lemma claim_1 :
-    forall s a m x,
-      a x = 2 * m + 1 ->
+    forall (s : state) (a : assignment) (x : var),
+      odd (a x) = true ->
       s, a |= <{IES x}>.
   Proof.
-    intros s a m x H1.
+    intros s a x H1.
 
-    exists (2 * m + 1).
+    exists (a x).
 
     intros w H2.
     asimpl in *.
     unfold rel.
 
     rewrite H1.
-    rewrite odd_succ.
-    rewrite even_add.
     rewrite eqb_refl.
-    rewrite even_succ.
-    unfold odd; rewrite even_add.
     reflexivity.
   Qed.
 
   Lemma claim_2 :
-    forall (s : state) a m n x,
-      s (2 * n + 1) = false ->
-      a x = 2 * m ->
+    forall (s : state) (a : assignment) (x : var) (n : nat),
+      even (a x) = true ->
+      odd n = true ->
+      s n = false ->
       s, a |= <{IES x}>.
   Proof.
-    intros s a m n x H1 H2.
+    intros s a x n H1 H2 H3.
 
-    exists (2 * n + 1).
-
-    intros w H3.
-    asimpl in *.
-    unfold rel.
-
-    rewrite H2.
-    rewrite odd_succ.
-    unfold odd.
-    do 2 rewrite even_add.
-    asimpl.
-    destruct w as [|w'].
-    -
-      reflexivity.
-    -
-      destruct (n + n =? w') eqn:H4.
-      +
-        apply eqb_eq in H4.
-        congruence.
-      +
-        reflexivity.
-  Qed.
-
-  Lemma claim_3 :
-    forall (s : state) a m n x,
-      s (2 * n) = false ->
-      n > m ->
-      a x = 2 * m ->
-      s, a |= <{IES x}>.
-  Proof.
-    intros s a m n x H1 H2 H3.
-
-    exists (2 * n).
+    exists n.
 
     intros w H4.
     asimpl in *.
     unfold rel.
 
-    rewrite H3.
+    rewrite H2.
     unfold odd.
-    do 2 rewrite even_add.
+    rewrite H1.
     asimpl.
-    destruct (n + n =? w) eqn:H5.
+    destruct (n =? w) eqn:H5.
     -
       apply eqb_eq in H5.
+      congruence.
+    -
+      simpl.
+      reflexivity.
+  Qed.
+
+  Lemma claim_3 :
+    forall (s : state) (a : assignment) (x : var) (n : nat),
+      even (a x) = true ->
+      even n = true ->
+      s n = false ->
+      n > a x ->
+      s, a |= <{IES x}>.
+  Proof.
+    intros s a x n H1 H2 H3 H4.
+
+    exists n.
+
+    intros w H5.
+    asimpl in *.
+    unfold rel.
+
+    unfold odd.
+    rewrite H1.
+    rewrite H2.
+    asimpl.
+    destruct (n =? w) eqn:H6.
+    -
+      apply eqb_eq in H6.
       congruence.
     -
       destruct n as [|n'].
@@ -351,7 +345,8 @@ Module Casari_fails.
   Qed.
 
   Lemma claim_4 :
-    forall (s : state) a m x,
+    forall (s : state) (a : assignment) (x : var),
+      even (a x) = true ->
       (
         forall w,
           odd w = true ->
@@ -360,21 +355,20 @@ Module Casari_fails.
       (
         forall w,
           even w = true ->
-          2 * m <? w = true ->
+          a x <? w = true ->
           s w = true
       ) ->
-      a x = 2 * m ->
       ~ (s, a |= <{IES x}>).
   Proof.
-    intros s a m x H1 H2 H3 H4.
+    intros s a x H1 H2 H3 H4.
 
-    assert (H5 : forall w j, rel w (m + m) j = true -> s j = true).
+    assert (H5 : forall w j, rel w (a x) j = true -> s j = true).
     {
       intros w j H5.
       unfold rel in H5.
 
       unfold odd in H5.
-      rewrite even_add in H5.
+      rewrite H1 in H5.
       asimpl in H5.
       destruct (j =? w) eqn:H6.
       -
@@ -389,14 +383,14 @@ Module Casari_fails.
           *
             discriminate.
           *
-            apply H2.
+            apply H3.
             --
                exact H7.
             --
                asimpl.
                assumption.
         +
-          apply H1.
+          apply H2.
           unfold odd.
           rewrite H7.
           reflexivity.
@@ -405,22 +399,21 @@ Module Casari_fails.
     destruct H4 as [i H4].
     asimpl in H4.
 
-    assert (H6 : rel i (m + m) i = false).
+    assert (H6 : rel i (a x) i = false).
     {
       unfold rel.
+
       unfold odd.
-      rewrite even_add.
+      rewrite H1.
       rewrite eqb_refl.
       reflexivity.
     }
 
-    asimpl in H3.
-    rewrite H3 in H4.
     rewrite H4 in H6. discriminate.
 
     eapply H5.
     apply H4.
-    apply H1.
+    apply H2.
     exact odd_1.
   Qed.
 
