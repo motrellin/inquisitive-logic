@@ -462,4 +462,124 @@ Module Casari_fails.
       repeat split; try assumption.
       eauto using substate_contrapos.
   Qed.
+
+  Proposition support_Forall_IES :
+    forall (s : state) (a : assignment),
+      E s ->
+      s, a |= <{ forall (IES 0) }>.
+
+  (* It seems like this direction could be sufficient for the first. For the
+   * conclusion at the end of the proof, it should be enough to show, that there
+   * exists a counterexample s.t. not every state supports <{ forall (IES 0) }>.
+   * Edit: No, it isn't enough.
+   *)
+  Proof.
+    intros s a H1 i.
+    destruct (even i) eqn:H2.
+    -
+      destruct H1 as [H1|H1].
+      +
+        eapply claim_2.
+        *
+          exact H2.
+        *
+          exact odd_1.
+        *
+          apply H1.
+          exact odd_1.
+      +
+        destruct (H1 i) as [e [H3 [H4 H5]]].
+        apply ltb_lt in H5.
+        eapply claim_3.
+        *
+          exact H2.
+        *
+          exact H3.
+        *
+          exact H4.
+        *
+          simpl.
+          lia.
+    -
+      eapply claim_1.
+      unfold odd.
+      simpl.
+      rewrite H2.
+      reflexivity.
+  Qed.
+
+  Proposition support_Forall_IES_other_direction :
+    forall (s : state) (a : assignment),
+      s, a |= <{ forall (IES 0) }> ->
+      E s.
+  Proof.
+    intros s a H1.
+    asimpl in H1.
+    red.
+    (* This doesn't look nice. Let's admit this for now. *)
+  Admitted.
+
+  (* What about this (classically equivalent) proposition? *)
+
+  Proposition support_Forall_IES_other_direction' :
+    forall (s : state) (a : assignment) (n1 n2 : nat),
+      odd n1 = true ->
+      s n1 = true ->
+      (forall e,
+        odd e = true \/
+        s e = true \/
+        e <=? n2 = true
+      ) ->
+      ~ (s, a |= <{ forall (IES 0) }>).
+  Proof.
+    intros s a n1 n2 H1 H2 H3 H4.
+
+    remember (IES 0) as phi.
+    simpl in H4.
+    subst phi.
+
+    specialize (H4 n1).
+    asimpl in H4.
+    destruct H4 as [i H4].
+  Abort.
+
+  Local Definition counter_state : state :=
+    fun w =>
+    if even w
+    then 0 <? w
+    else true.
+
+  Example not_support_Forall_IES :
+    forall (a : assignment),
+      ~ (counter_state, a |= <{forall IES 0}>).
+  Proof.
+    intros a H1.
+
+    remember (IES 0) as phi.
+    simpl in H1.
+    subst phi.
+
+    eapply claim_4 with (s := counter_state) (a := 0 .: a) (x := 0).
+    -
+      reflexivity.
+    -
+      intros w H2.
+
+      unfold counter_state.
+      unfold odd in H2.
+
+      destruct (even w) eqn:H3.
+      +
+        discriminate.
+      +
+        reflexivity.
+    -
+      intros w H2 H3.
+
+      unfold counter_state.
+      rewrite H2.
+      exact H3.
+    -
+      apply H1.
+  Qed.
 End Casari_fails.
