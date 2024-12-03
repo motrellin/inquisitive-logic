@@ -94,6 +94,18 @@ Definition substate `{Model} : relation state :=
   forall w,
     t w = true -> s w = true.
 
+Lemma substate_contrapos `{Model} :
+  forall s t w,
+    substate t s ->
+    s w = false ->
+    t w = false.
+Proof.
+  intros s t w H1 H2.
+  destruct (t w) eqn:H3; try reflexivity.
+  apply H1 in H3.
+  congruence.
+Qed.
+
 Instance substate_PreOrder `{Model} : PreOrder substate.
 Proof.
   constructor.
