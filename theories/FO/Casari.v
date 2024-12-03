@@ -255,6 +255,18 @@ Module Casari_fails.
       discriminate.
   Qed.
 
+  Lemma rel_2 :
+    forall w m,
+      even m = true ->
+      rel w m w = false.
+  Proof.
+    intros w m H1.
+    unfold rel.
+    rewrite H1.
+    rewrite eqb_refl.
+    reflexivity.
+  Qed.
+
   Local Obligation Tactic :=
     try decide equality;
     try contradiction.
@@ -346,50 +358,55 @@ Module Casari_fails.
       reflexivity.
   Qed.
 
+  Definition contains_all_odds (s : state) : Prop :=
+    forall w,
+      even w = false ->
+      s w = true.
+
+  Definition contains_all_even_greater_than (m : nat) (s : state) : Prop :=
+    forall w,
+      even w = true ->
+      m <? w = true ->
+      s w = true.
+
+  Lemma claim_4_helper :
+    forall (s : state) (m : nat),
+      even m = true ->
+      contains_all_odds s ->
+      contains_all_even_greater_than m s ->
+      forall w j,
+        rel w m j = true ->
+        s j = true.
+  Proof.
+    intros s m H1 H2 H3.
+    intros w j H5.
+    unfold rel in H5.
+
+    rewrite H1 in H5.
+    simpl in H5.
+    destruct (j =? w) eqn:H6.
+    -
+      discriminate.
+    -
+      destruct (even j) eqn:H7.
+      all: auto.
+  Qed.
+
   Lemma claim_4 :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = true ->
-      (
-        forall w,
-          even w = false ->
-          s w = true
-      ) ->
-      (
-        forall w,
-          even w = true ->
-          a x <? w = true ->
-          s w = true
-      ) ->
+      contains_all_odds s ->
+      contains_all_even_greater_than (a x) s ->
       ~ (s, a |= <{IES x}>).
   Proof.
     intros s a x H1 H2 H3 H4.
 
-    assert (H5 : forall w j, rel w (a x) j = true -> s j = true).
-    {
-      intros w j H5.
-      unfold rel in H5.
-
-      rewrite H1 in H5.
-      simpl in H5.
-      destruct (j =? w) eqn:H6.
-      -
-        discriminate.
-      -
-        destruct (even j) eqn:H7.
-        all: auto.
-    }
+    pose proof (claim_4_helper _ _ H1 H2 H3) as H5.
 
     destruct H4 as [i H4].
     asimpl in H4.
 
-    assert (H6 : rel i (a x) i = false).
-    {
-      unfold rel.
-
-      rewrite H1.
-      rewrite eqb_refl.
-      reflexivity.
-    }
+    pose proof (rel_2 i _ H1) as H6.
 
     rewrite H4 in H6. discriminate.
 
@@ -399,20 +416,43 @@ Module Casari_fails.
     reflexivity.
   Qed.
 
-  Local Definition E : state -> Prop :=
-    fun s =>
-    (
-      forall n,
-        even n = false ->
-        s n = false
-    ) \/
-    (
-      forall n,
-        exists e,
-          even e = true /\
-          s e = false /\
-          n <? e = true
-    ).
+  Definition contains_no_odd (s : state) : Prop :=
+    forall w,
+      even w = false ->
+      s w = false.
+
+  Lemma substate_contains_no_odd :
+    forall s t,
+      substate t s ->
+      contains_no_odd s ->
+      contains_no_odd t.
+  Proof.
+    intros s t H1 H2 w H3.
+    eauto using substate_contrapos.
+  Qed.
+
+  Definition contains_inf_evens (s : state) : Prop :=
+    forall n,
+      exists e,
+        even e = true /\
+        s e = false /\
+        n <? e = true.
+
+  Lemma substate_contains_inf_evens :
+    forall s t,
+      substate t s ->
+      contains_inf_evens s ->
+      contains_inf_evens t.
+  Proof.
+    intros s t H1 H2 n.
+    destruct (H2 n) as [e [H3 [H4 H5]]].
+    exists e.
+    eauto using substate_contrapos.
+  Qed.
+
+  Local Definition E (s : state) : Prop :=
+    contains_no_odd s \/
+    contains_inf_evens s.
 
   Lemma substate_E :
     forall s t,
@@ -423,14 +463,10 @@ Module Casari_fails.
     intros s t H1 [H2|H2].
     -
       left.
-      eauto using substate_contrapos.
+      eauto using substate_contains_no_odd.
     -
       right.
-      intros n.
-      destruct (H2 n) as [e [H3 [H4 H5]]].
-      exists e.
-      repeat split; try assumption.
-      eauto using substate_contrapos.
+      eauto using substate_contains_inf_evens.
   Qed.
 
   Proposition support_Forall_IES :
