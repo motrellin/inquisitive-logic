@@ -305,8 +305,8 @@ Module Casari_fails.
 
     exists n.
 
+    asimpl.
     intros w H4.
-    asimpl in *.
     unfold rel.
 
     rewrite H2.
