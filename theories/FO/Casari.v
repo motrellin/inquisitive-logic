@@ -225,21 +225,21 @@ Module Casari_fails.
 
   Definition rel (w m j : nat) : bool :=
     (
-      odd m &&
+      negb (even m) &&
       (m =? j)
     ) ||
     (
       even m &&
       negb (j =? w) &&
       (
-        odd j ||
+        negb (even j) ||
         (m <? j)
       )
     ).
 
   Lemma rel_odd :
     forall w m j,
-      odd m = true ->
+      even m = false ->
       rel w m j = true ->
       j = m.
   Proof.
@@ -251,10 +251,7 @@ Module Casari_fails.
       apply eqb_eq in H3.
       congruence.
     -
-      apply andb_true_iff in H2 as [H2 _].
-      apply andb_true_iff in H2 as [H2 _].
-      unfold odd in H1.
-      rewrite H2 in H1.
+      rewrite H1 in H2.
       discriminate.
   Qed.
 
@@ -278,7 +275,7 @@ Module Casari_fails.
 
   Lemma claim_1 :
     forall (s : state) (a : assignment) (x : var),
-      odd (a x) = true ->
+      even (a x) = false ->
       s, a |= <{IES x}>.
   Proof.
     intros s a x H1.
@@ -286,7 +283,7 @@ Module Casari_fails.
     exists (a x).
 
     intros w H2.
-    asimpl in *.
+    asimpl.
     unfold rel.
 
     rewrite H1.
@@ -297,7 +294,7 @@ Module Casari_fails.
   Lemma claim_2 :
     forall (s : state) (a : assignment) (x : var) (n : nat),
       even (a x) = true ->
-      odd n = true ->
+      even n = false ->
       s n = false ->
       s, a |= <{IES x}>.
   Proof.
@@ -310,7 +307,6 @@ Module Casari_fails.
     unfold rel.
 
     rewrite H2.
-    unfold odd.
     rewrite H1.
     asimpl.
     destruct (n =? w) eqn:H5.
@@ -318,7 +314,6 @@ Module Casari_fails.
       apply eqb_eq in H5.
       congruence.
     -
-      simpl.
       reflexivity.
   Qed.
 
@@ -338,22 +333,17 @@ Module Casari_fails.
     asimpl in *.
     unfold rel.
 
-    unfold odd.
     rewrite H1.
     rewrite H2.
-    asimpl.
+    simpl.
     destruct (n =? w) eqn:H6.
     -
       apply eqb_eq in H6.
       congruence.
     -
-      destruct n as [|n'].
-      +
-        lia.
-      +
-        asimpl.
-        apply leb_le.
-        lia.
+      apply ltb_lt in H4.
+      rewrite H4.
+      reflexivity.
   Qed.
 
   Lemma claim_4 :
@@ -361,7 +351,7 @@ Module Casari_fails.
       even (a x) = true ->
       (
         forall w,
-          odd w = true ->
+          even w = false ->
           s w = true
       ) ->
       (
@@ -379,33 +369,14 @@ Module Casari_fails.
       intros w j H5.
       unfold rel in H5.
 
-      unfold odd in H5.
       rewrite H1 in H5.
-      asimpl in H5.
+      simpl in H5.
       destruct (j =? w) eqn:H6.
       -
-        apply eqb_eq in H6.
-        subst j.
         discriminate.
       -
         destruct (even j) eqn:H7.
-        +
-          asimpl in H5.
-          destruct j as [|j'].
-          *
-            discriminate.
-          *
-            apply H3.
-            --
-               exact H7.
-            --
-               asimpl.
-               assumption.
-        +
-          apply H2.
-          unfold odd.
-          rewrite H7.
-          reflexivity.
+        all: auto.
     }
 
     destruct H4 as [i H4].
@@ -415,7 +386,6 @@ Module Casari_fails.
     {
       unfold rel.
 
-      unfold odd.
       rewrite H1.
       rewrite eqb_refl.
       reflexivity.
@@ -423,17 +393,17 @@ Module Casari_fails.
 
     rewrite H4 in H6. discriminate.
 
-    eapply H5.
+    apply H5 with (w := 1).
     apply H4.
     apply H2.
-    exact odd_1.
+    reflexivity.
   Qed.
 
   Local Definition E : state -> Prop :=
     fun s =>
     (
       forall n,
-        odd n = true ->
+        even n = false ->
         s n = false
     ) \/
     (
@@ -479,14 +449,14 @@ Module Casari_fails.
     -
       destruct H1 as [H1|H1].
       +
-        eapply claim_2.
+        apply claim_2 with (n := 1).
         *
           exact H2.
         *
-          exact odd_1.
+          reflexivity.
         *
           apply H1.
-          exact odd_1.
+          reflexivity.
       +
         destruct (H1 i) as [e [H3 [H4 H5]]].
         apply ltb_lt in H5.
@@ -502,10 +472,7 @@ Module Casari_fails.
           lia.
     -
       eapply claim_1.
-      unfold odd.
-      simpl.
-      rewrite H2.
-      reflexivity.
+      exact H2.
   Qed.
 
   Proposition support_Forall_IES_other_direction :
@@ -523,10 +490,10 @@ Module Casari_fails.
 
   Proposition support_Forall_IES_other_direction' :
     forall (s : state) (a : assignment) (n1 n2 : nat),
-      odd n1 = true ->
+      even n1 = false ->
       s n1 = true ->
       (forall e,
-        odd e = true \/
+        even e = false \/
         s e = true \/
         e <=? n2 = true
       ) ->
@@ -566,13 +533,8 @@ Module Casari_fails.
       intros w H2.
 
       unfold counter_state.
-      unfold odd in H2.
-
-      destruct (even w) eqn:H3.
-      +
-        discriminate.
-      +
-        reflexivity.
+      rewrite H2.
+      reflexivity.
     -
       intros w H2 H3.
 
@@ -585,7 +547,7 @@ Module Casari_fails.
 
   Proposition support_odd_IES_Forall_IES :
     forall (s : state) (a : assignment) (x : var),
-      odd (a x) = true ->
+      even (a x) = false ->
       E s ->
       s, a |= <{IES x -> forall IES 0}>.
   Proof.
@@ -597,7 +559,7 @@ Module Casari_fails.
 
   Proposition support_odd_IES_Forall_IES_other_direction :
     forall (s : state) (a : assignment) (x : var),
-      odd (a x) = true ->
+      even (a x) = false ->
       s, a |= <{IES x -> forall IES 0}> ->
       E s.
   Proof.
@@ -615,7 +577,7 @@ Module Casari_fails.
 
   Proposition support_odd_CasariIES_ant :
     forall (s : state) (a : assignment) (x : var),
-      odd (a x) = true ->
+      even (a x) = false ->
       s, a |= <{(IES x -> forall IES 0) -> forall IES 0}>.
   Proof.
     intros s a x H1.
@@ -629,7 +591,7 @@ Module Casari_fails.
         s : state
         a : assignment
         x : var
-        H1 : odd (a x) = true
+        H1 : even (a x) = true
         t : state
         H2 : substate t s
         H3 : t, a |= <{ (IES x) -> (forall (IES 0)) }>
