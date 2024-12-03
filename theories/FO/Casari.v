@@ -5,28 +5,17 @@ Import PeanoNat.Nat.
 
 (** * Casari Scheme *)
 
+Definition CasariSuc `{Signature} (phi : var -> form) : form :=
+  <{ forall (phi 0) }>.
+
+Definition CasariImpl `{Signature} (phi : var -> form) (x : var) : form :=
+  <{phi x -> CasariSuc phi}>.
+
+Definition CasariAnt `{Signature} (phi : var -> form) : form :=
+  <{ forall CasariImpl phi 0 -> CasariSuc phi }>.
+
 Definition Casari `{Signature} (phi : var -> form) : form :=
-  <{
-    (
-      forall
-      (
-        (
-          (
-            phi 0
-          ) ->
-          (
-            forall (phi 0)
-          )
-        ) ->
-        (
-          forall (phi 0)
-        )
-      )
-    ) ->
-    (
-      forall (phi 0)
-    )
-  }>.
+  <{ CasariAnt phi -> CasariSuc phi }>.
 
 Lemma Casari_truth_conditional `{Signature} :
   forall phi,
@@ -86,68 +75,39 @@ Module Casari_with_atoms.
   Proof.
     intros w1 a.
 
-    intros s2 H1 H2.
+    unfold CasariDNA, Casari.
 
-    apply substate_singleton in H1 as [H1|H1]; rewrite H1 in *; clear s2 H1.
-    now apply empty_state_property.
+    rewrite truth_Impl.
+    intros H1.
 
-    intros i1.
-    rewrite support_Neg.
-    intros [s3 [[w2 H3] [H4 H5]]].
+    unfold CasariSuc.
 
-    enough (
-      exists s,
-        (s, (i1 .: a) |= <{forall ~~(Pred' (Var 0))}>) /\
-        substate s3 s
-    ) as [s4 [H6 H7]].
+    rewrite truth_Forall.
+    intros i.
+
+    rewrite truth_Neg.
+    intros H2.
+
+    enough (H3 : truth <{ forall ~ ~ Pred' (Var 0)}> w1 a).
     {
-      specialize (H6 i1). fold support in H6.
-
-      rewrite support_Neg in H6.
-      apply H6.
-      exists s3.
-      firstorder.
+      rewrite truth_Forall in H3.
+      specialize (H3 i).
+      rewrite truth_Neg in H3.
+      contradiction.
     }
 
-    specialize (H2 i1). fold support in H2.
-    remember <{~~(Pred' (Var 0))}> as phi1 eqn:eq1.
-    remember <{forall phi1}> as phi2 eqn:eq2.
-    remember <{phi1 -> phi2}> as phi3 eqn:eq3.
+    unfold CasariAnt in H1.
+    rewrite truth_Forall in H1.
+    specialize (H1 i).
+    rewrite truth_Impl in H1.
+    apply H1.
 
+    unfold CasariImpl.
+    rewrite truth_Impl.
+    intros H3.
 
-    eexists.
-    split.
-
-    apply H2. exact H4.
-
-    fold support.
-    subst phi3.
-
-    apply substate_singleton in H4 as [H4|H4]; rewrite H4 in *; clear s3 H4.
-    now apply empty_state_property.
-
-    intros s4 H6 H7.
-
-    apply substate_singleton in H6 as [H6|H6]; rewrite H6 in *; clear s4 H6.
-    now apply empty_state_property.
-
-    exfalso.
-
-    rewrite eq1 in H7.
-    rewrite support_Neg in H7.
-    apply H7.
-
-    eexists.
-    repeat split.
-    -
-      eexists.
-      exact H3.
-    -
-      reflexivity.
-    -
-      exact H5.
-    -
-      reflexivity.
+    rewrite truth_Neg in H3.
+    contradiction.
   Qed.
 
   Corollary support_valid_CasariDNA :
@@ -537,9 +497,7 @@ Module Casari_fails.
   Proof.
     intros s a n1 n2 H1 H2 H3 H4.
 
-    remember (IES 0) as phi.
-    simpl in H4.
-    subst phi.
+    rewrite support_Forall in H4.
 
     specialize (H4 n1).
     asimpl in H4.
@@ -558,9 +516,7 @@ Module Casari_fails.
   Proof.
     intros a H1.
 
-    remember (IES 0) as phi.
-    simpl in H1.
-    subst phi.
+    rewrite support_Forall in H1.
 
     eapply claim_4 with (s := counter_state) (a := 0 .: a) (x := 0).
     -
@@ -601,7 +557,7 @@ Module Casari_fails.
   Proof.
     intros s a x H1 H2.
     eapply support_Forall_IES_other_direction.
-    remember (<{forall IES 0}>) as phi.
+    rewrite support_Impl in H2.
     apply H2.
     -
       reflexivity.
