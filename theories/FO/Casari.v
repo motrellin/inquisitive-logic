@@ -582,4 +582,67 @@ Module Casari_fails.
     -
       apply H1.
   Qed.
+
+  Proposition support_odd_IES_Forall_IES :
+    forall (s : state) (a : assignment) (x : var),
+      odd (a x) = true ->
+      E s ->
+      s, a |= <{IES x -> forall IES 0}>.
+  Proof.
+    intros s a x H1 H2.
+    intros t H3 H4.
+
+    eauto using support_Forall_IES, substate_E.
+  Qed.
+
+  Proposition support_odd_IES_Forall_IES_other_direction :
+    forall (s : state) (a : assignment) (x : var),
+      odd (a x) = true ->
+      s, a |= <{IES x -> forall IES 0}> ->
+      E s.
+  Proof.
+    intros s a x H1 H2.
+    eapply support_Forall_IES_other_direction.
+    remember (<{forall IES 0}>) as phi.
+    apply H2.
+    -
+      reflexivity.
+    -
+      fold support.
+      apply claim_1.
+      exact H1.
+  Qed.
+
+  Proposition support_odd_CasariIES_ant :
+    forall (s : state) (a : assignment) (x : var),
+      odd (a x) = true ->
+      s, a |= <{(IES x -> forall IES 0) -> forall IES 0}>.
+  Proof.
+    intros s a x H1.
+
+    intros t H2 H3.
+
+    apply support_Forall_IES.
+    (*
+       Here we see, why we need the other direction... TODO
+
+        s : state
+        a : assignment
+        x : var
+        H1 : odd (a x) = true
+        t : state
+        H2 : substate t s
+        H3 : t, a |= <{ (IES x) -> (forall (IES 0)) }>
+
+        ========================= (1 / 1)
+
+        E t
+     *)
+    eapply support_odd_IES_Forall_IES_other_direction.
+    -
+      exact H1.
+    -
+      exact H3.
+  Qed.
+
 End Casari_fails.
