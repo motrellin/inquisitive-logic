@@ -237,6 +237,27 @@ Module Casari_fails.
       )
     ).
 
+  Lemma rel_odd :
+    forall w m j,
+      odd m = true ->
+      rel w m j = true ->
+      j = m.
+  Proof.
+    intros w m j H1 H2.
+    unfold rel in H2.
+    apply orb_true_iff in H2 as [H2|H2].
+    -
+      apply andb_true_iff in H2 as [H2 H3].
+      apply eqb_eq in H3.
+      congruence.
+    -
+      apply andb_true_iff in H2 as [H2 _].
+      apply andb_true_iff in H2 as [H2 _].
+      unfold odd in H1.
+      rewrite H2 in H1.
+      discriminate.
+  Qed.
+
   Local Obligation Tactic :=
     try decide equality;
     try contradiction.
