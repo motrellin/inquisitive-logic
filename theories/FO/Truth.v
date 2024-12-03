@@ -101,28 +101,62 @@ Proof.
   -
     specialize (IH1 w a).
     specialize (IH2 w a).
-    firstorder.
+    destruct IH1 as [IH1|IH1].
+    +
+      left; left; assumption.
+    +
+      destruct IH2 as [IH2|IH2].
+      *
+        left; right; assumption.
+      *
+        right.
+        firstorder.
   -
-    simpl.
     specialize (IH1 w).
     assert (H1 :
       forall i,
         {truth phi1 w (i .: a)} +
         {~ truth phi1 w (i .: a)}
-    ). unfold truth. firstorder. clear IH1.
+    ).
+    {
+      intros i.
+      specialize (IH1 (i .: a)).
+      exact IH1.
+    }
 
-    destruct (current_ax_1 phi1 w a).
-    all: firstorder.
+    destruct (current_ax_1 phi1 w a) as [H2|H2].
+    +
+      left; exact H2.
+    +
+      right.
+      intros H3.
+      destruct H2 as [i H2].
+      apply H2.
+      apply H3.
   -
     specialize (IH1 w).
     assert (H1 :
       forall i,
         {truth phi1 w (i .: a)} +
         {~ truth phi1 w (i .: a)}
-    ). unfold truth. firstorder. clear IH1.
+    ).
+    {
+      intros i.
+      specialize (IH1 (i .: a)).
+      exact IH1.
+    }
 
     destruct (current_ax_2 phi1 w a) as [H2|H2].
-    all: firstorder.
+    +
+      right.
+      intros [i H3].
+      eapply H2.
+      exact H3.
+    +
+      left.
+      destruct H2 as [i H2].
+      exists i.
+      exact H2.
 Qed.
 
 (** * Truth satisfaction rules *)
@@ -249,7 +283,30 @@ Proof.
   do 2 rewrite truth_Neg.
   pose proof (truth_decidable phi1 w a) as H1.
   pose proof (truth_decidable phi2 w a) as H2.
-  firstorder.
+
+  destruct H1 as [H1|H1].
+  -
+    split.
+    +
+      intros H3.
+      left.
+      exact H1.
+    +
+      intros H3 [H4 H5].
+      contradiction.
+  -
+    destruct H2 as [H2|H2].
+    +
+      split.
+      *
+        intros H3.
+        right.
+        exact H2.
+      *
+        intros H3 [H4 H5].
+        contradiction.
+    +
+      firstorder.
 Qed.
 
 Proposition truth_Exists `{M : TDModel} :
@@ -309,17 +366,39 @@ Proof.
     do 2 rewrite truth_Impl.
     firstorder.
   -
+    specialize (IH1 w a).
+    specialize (IH2 w a).
     firstorder.
   -
     rewrite truth_Idisj.
     rewrite truth_Disj.
-    firstorder.
+    rewrite IH1, IH2.
+    reflexivity.
   -
-    firstorder.
+    rewrite truth_Forall.
+    split.
+    +
+      intros H1 i.
+      apply IH1.
+      apply H1.
+    +
+      intros H1 i.
+      apply IH1.
+      apply H1.
   -
     rewrite truth_Iexists.
     rewrite truth_Exists.
-    firstorder.
+    split.
+    +
+      intros [i H1].
+      exists i.
+      apply IH1.
+      exact H1.
+    +
+      intros [i H1].
+      exists i.
+      apply IH1.
+      exact H1.
 Qed.
 
 Definition truth_conditional `{S : Signature} (phi : form) : Prop :=
@@ -412,7 +491,13 @@ Proof.
     apply andb_true_iff in H1 as [H1 H2].
     specialize (IH1 H1 M s a).
     specialize (IH2 H2 M s a).
-    firstorder using truth_Conj.
+    split.
+    +
+      intros H3 w H4.
+      rewrite truth_Conj.
+      firstorder.
+    +
+      firstorder.
   -
     discriminate.
   -
