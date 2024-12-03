@@ -255,15 +255,6 @@ Module Casari_fails.
         end
     |}.
 
-  Fact even_add : forall n, even (n + n) = true.
-  Proof.
-    intro n.
-    assert (H1 : n + n = 0 + 2 * n). lia.
-    rewrite H1.
-    rewrite even_add_mul_2.
-    reflexivity.
-  Qed.
-
   Lemma claim_1 :
     forall (s : state) (a : assignment) (x : var),
       odd (a x) = true ->
