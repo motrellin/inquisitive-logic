@@ -66,6 +66,58 @@ Notation "s , a |= phi" := (support phi s a)
     (at level 95)
     : form_scope.
 
+Fact support_Pred `{Model} :
+  forall p args s a,
+    s, a |= <{Pred p args}> <->
+    forall w,
+      s w = true ->
+      PInterpretation w p (fun arg => referent (args arg) w a) = true.
+Proof. reflexivity. Qed.
+
+Fact support_Bot `{Model} :
+  forall x s a,
+    s, a |= <{Bot x}> <->
+    forall w,
+      s w = false.
+Proof. reflexivity. Qed.
+
+Fact support_Impl `{Model} :
+  forall phi1 phi2 s a,
+    s, a |= <{phi1 -> phi2}> <->
+    forall t,
+      substate t s ->
+      t, a |= phi1 ->
+      t, a |= phi2.
+Proof. reflexivity. Qed.
+
+Fact support_Conj `{Model} :
+  forall phi1 phi2 s a,
+    s, a |= <{phi1 /\ phi2}> <->
+    (s, a |= phi1) /\
+    (s, a |= phi2).
+Proof. reflexivity. Qed.
+
+Fact support_Idisj `{Model} :
+  forall phi1 phi2 s a,
+    s, a |= <{phi1 \\/ phi2}> <->
+    (s, a |= phi1) \/
+    (s, a |= phi2).
+Proof. reflexivity. Qed.
+
+Fact support_Forall `{Model} :
+  forall phi1 s a,
+  s, a |= <{forall phi1}> <->
+    forall i,
+      s, i.: a |= phi1.
+Proof. reflexivity. Qed.
+
+Fact support_Iexists `{Model} :
+  forall phi1 s a,
+    s, a |= <{iexists phi1}> <->
+    exists i,
+      s, i .: a |= phi1.
+Proof. reflexivity. Qed.
+
 Instance support_Proper `{M : Model} :
   forall phi,
     Proper (state_eq ==> eq ==> iff) (support phi).
