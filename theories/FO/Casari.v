@@ -245,7 +245,7 @@ Module Casari_fails.
         end
     |}.
 
-  Lemma claim_1 :
+  Lemma support_IES_odd :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = false ->
       s, a |= <{IES x}>.
@@ -263,59 +263,38 @@ Module Casari_fails.
     reflexivity.
   Qed.
 
-  Lemma claim_2 :
+  Lemma support_IES_even :
     forall (s : state) (a : assignment) (x : var) (n : nat),
       even (a x) = true ->
-      even n = false ->
       s n = false ->
+      (even n = false \/ even n = true /\ a x <? n = true) ->
       s, a |= <{IES x}>.
   Proof.
     intros s a x n H1 H2 H3.
-
     exists n.
-
-    asimpl.
-    intros w H4.
-    unfold rel.
-
-    rewrite H2.
-    rewrite H1.
-    asimpl.
-    destruct (n =? w) eqn:H5.
-    -
-      apply eqb_eq in H5.
-      congruence.
-    -
-      reflexivity.
-  Qed.
-
-  Lemma claim_3 :
-    forall (s : state) (a : assignment) (x : var) (n : nat),
-      even (a x) = true ->
-      even n = true ->
-      s n = false ->
-      n > a x ->
-      s, a |= <{IES x}>.
-  Proof.
-    intros s a x n H1 H2 H3 H4.
-
-    exists n.
-
-    intros w H5.
-    asimpl in *.
-    unfold rel.
-
-    rewrite H1.
-    rewrite H2.
     simpl.
-    destruct (n =? w) eqn:H6.
+    intros w H4.
+    asimpl.
+    unfold rel.
+    rewrite H1.
+    simpl.
+    rewrite andb_true_iff.
+    split.
     -
-      apply eqb_eq in H6.
-      congruence.
+      destruct (n =? w) eqn:H5.
+      +
+        apply eqb_eq in H5.
+        congruence.
+      +
+        reflexivity.
     -
-      apply ltb_lt in H4.
-      rewrite H4.
-      reflexivity.
+      destruct H3 as [H3|[H31 H32]].
+      +
+        rewrite H3.
+        reflexivity.
+      +
+        rewrite H31,H32.
+        reflexivity.
   Qed.
 
   Definition contains_all_odds (s : state) : Prop :=
@@ -329,7 +308,7 @@ Module Casari_fails.
       m <? w = true ->
       s w = true.
 
-  Lemma claim_4_helper :
+  Lemma support_IES_even_other_direction_helper :
     forall (s : state) (m : nat),
       even m = true ->
       contains_all_odds s ->
@@ -352,7 +331,23 @@ Module Casari_fails.
       all: auto.
   Qed.
 
-  Lemma claim_4 :
+  Lemma support_IES_even_other_direction :
+    forall (s : state) (a : assignment) (x : var),
+      even (a x) = true ->
+      s, a |= <{IES x}> ->
+      exists n,
+        s n = false /\
+        (
+          even n = false \/
+          even n = true /\
+          a x <? n = true
+        ).
+  Proof.
+    intros s a x H1 [i H2].
+    asimpl in H2.
+  Abort.
+
+  Lemma support_IES_even_other_direction' :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = true ->
       contains_all_odds s ->
@@ -361,7 +356,7 @@ Module Casari_fails.
   Proof.
     intros s a x H1 H2 H3 H4.
 
-    pose proof (claim_4_helper _ _ H1 H2 H3) as H5.
+    pose proof (support_IES_even_other_direction_helper _ _ H1 H2 H3) as H5.
 
     destruct H4 as [i H4].
     asimpl in H4.
@@ -429,10 +424,10 @@ Module Casari_fails.
       eauto using substate_contains_inf_evens.
   Qed.
 
-  Proposition support_Forall_IES :
+  Proposition support_CasariSuc_IES :
     forall (s : state) (a : assignment),
       E s ->
-      s, a |= <{ forall (IES 0) }>.
+      s, a |= <{ CasariSuc IES }>.
 
   (* It seems like this direction could be sufficient for the first. For the
    * conclusion at the end of the proof, it should be enough to show, that there
@@ -445,64 +440,33 @@ Module Casari_fails.
     -
       destruct H1 as [H1|H1].
       +
-        apply claim_2 with (n := 1).
+        apply support_IES_even with (n := 1).
         *
           exact H2.
-        *
-          reflexivity.
         *
           apply H1.
           reflexivity.
+        *
+          left.
+          reflexivity.
       +
         destruct (H1 i) as [e [H3 [H4 H5]]].
-        apply ltb_lt in H5.
-        eapply claim_3.
+        eapply support_IES_even.
         *
           exact H2.
         *
-          exact H3.
-        *
           exact H4.
         *
-          simpl.
-          lia.
+          right.
+          split.
+          --
+             exact H3.
+          --
+             exact H5.
     -
-      eapply claim_1.
+      eapply support_IES_odd.
       exact H2.
   Qed.
-
-  Proposition support_Forall_IES_other_direction :
-    forall (s : state) (a : assignment),
-      s, a |= <{ forall (IES 0) }> ->
-      E s.
-  Proof.
-    intros s a H1.
-    asimpl in H1.
-    red.
-    (* This doesn't look nice. Let's admit this for now. *)
-  Admitted.
-
-  (* What about this (classically equivalent) proposition? *)
-
-  Proposition support_Forall_IES_other_direction' :
-    forall (s : state) (a : assignment) (n1 n2 : nat),
-      even n1 = false ->
-      s n1 = true ->
-      (forall e,
-        even e = false \/
-        s e = true \/
-        e <=? n2 = true
-      ) ->
-      ~ (s, a |= <{ forall (IES 0) }>).
-  Proof.
-    intros s a n1 n2 H1 H2 H3 H4.
-
-    rewrite support_Forall in H4.
-
-    specialize (H4 n1).
-    asimpl in H4.
-    destruct H4 as [i H4].
-  Abort.
 
   Local Definition counter_state : state :=
     fun w =>
@@ -510,15 +474,16 @@ Module Casari_fails.
     then 0 <? w
     else true.
 
-  Example not_support_Forall_IES :
+  Example cex_support_valid_CasariSuc_IES :
     forall (a : assignment),
-      ~ (counter_state, a |= <{forall IES 0}>).
+      ~ (counter_state, a |= <{CasariSuc IES}>).
   Proof.
     intros a H1.
 
+    unfold CasariSuc in H1.
     rewrite support_Forall in H1.
 
-    eapply claim_4 with (s := counter_state) (a := 0 .: a) (x := 0).
+    eapply support_IES_even_other_direction' with (s := counter_state) (a := 0 .: a) (x := 0).
     -
       reflexivity.
     -
@@ -537,79 +502,109 @@ Module Casari_fails.
       apply H1.
   Qed.
 
-  Proposition support_odd_IES_Forall_IES :
+  Proposition support_CasariSuc_IES_other_direction :
+    forall (s : state) (a : assignment),
+      s, a |= <{ CasariSuc IES }> ->
+      E s.
+  Proof.
+    intros s a H1.
+    asimpl in H1.
+    red.
+    (* This doesn't look nice. Let's admit this for now. *)
+  Admitted.
+
+  (* What about this (classically equivalent) proposition? *)
+
+  Proposition support_CasariSuc_IES_other_direction' :
+    forall (s : state) (a : assignment) (n1 n2 : nat),
+      even n1 = false ->
+      s n1 = true ->
+      (forall e,
+        even e = false \/
+        s e = true \/
+        e <=? n2 = true
+      ) ->
+      ~ (s, a |= <{ CasariSuc IES }>).
+  Proof.
+    intros s a n1 n2 H1 H2 H3 H4.
+
+    unfold CasariSuc in H4.
+    rewrite support_Forall in H4.
+
+    specialize (H4 n1).
+    asimpl in H4.
+    destruct H4 as [i H4].
+  Abort.
+
+  Proposition support_CasariImpl_IES_odd_case :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = false ->
       E s ->
-      s, a |= <{IES x -> forall IES 0}>.
+      s, a |= <{CasariImpl IES x}>.
   Proof.
     intros s a x H1 H2.
     intros t H3 H4.
 
-    eauto using support_Forall_IES, substate_E.
+    eauto using support_CasariSuc_IES, substate_E.
   Qed.
 
-  Proposition support_odd_IES_Forall_IES_other_direction :
+  Proposition support_CasariImpl_IES_other_direction :
     forall (s : state) (a : assignment) (x : var),
-      even (a x) = false ->
-      s, a |= <{IES x -> forall IES 0}> ->
+      s, a |= <{CasariImpl IES x}> ->
       E s.
   Proof.
-    intros s a x H1 H2.
-    eapply support_Forall_IES_other_direction.
-    rewrite support_Impl in H2.
-    apply H2.
+    intros s a x H1.
+    destruct (even (a x)) eqn:H2.
+    -
+      admit.
+    -
+      eapply support_CasariSuc_IES_other_direction.
+
+      unfold CasariImpl in H1.
+      rewrite support_Impl in H1.
+      apply H1.
+      +
+        reflexivity.
+      +
+        apply support_IES_odd.
+        exact H2.
+  Admitted.
+
+  Proposition support_CasariAnt_IES :
+    forall (s : state) (a : assignment),
+      s, a |= <{CasariAnt IES}>.
+  Proof.
+    intros s a i.
+    intros t H1 H2.
+    apply support_CasariSuc_IES.
+    eapply support_CasariImpl_IES_other_direction.
+    exact H2.
+  Qed.
+
+  Theorem not_support_valid_CasariIES :
+    ~ support_valid CasariIES.
+  Proof.
+    intros H1.
+
+    specialize (H1 _ counter_state id).
+
+    eapply cex_support_valid_CasariSuc_IES.
+
+    unfold CasariIES, Casari in H1.
+    rewrite support_Impl in H1.
+    apply H1.
     -
       reflexivity.
     -
-      fold support.
-      apply claim_1.
-      exact H1.
+      apply support_CasariAnt_IES.
   Qed.
 
-  Proposition support_odd_CasariIES_ant :
-    forall (s : state) (a : assignment) (x : var),
-      even (a x) = false ->
-      s, a |= <{(IES x -> forall IES 0) -> forall IES 0}>.
-  Proof.
-    intros s a x H1.
-
-    intros t H2 H3.
-
-    apply support_Forall_IES.
-    (*
-       Here we see, why we need the other direction... TODO
-
-        s : state
-        a : assignment
-        x : var
-        H1 : even (a x) = true
-        t : state
-        H2 : substate t s
-        H3 : t, a |= <{ (IES x) -> (forall (IES 0)) }>
-
-        ========================= (1 / 1)
-
-        E t
-     *)
-    eapply support_odd_IES_Forall_IES_other_direction.
-    -
-      exact H1.
-    -
-      exact H3.
-  Qed.
-
-  Proposition support_even_IES_Forall_IES :
-    forall (s : state) (a : assignment) (x : var),
-      even x = true ->
-      E s ->
-      s, a |= <{IES x -> forall IES 0}>.
-  Proof.
-    intros s a x H1 H2.
-    intros t H3 H4.
-    apply support_Forall_IES.
-    right.
-    intros n.
-  Admitted.
+  Print Assumptions not_support_valid_CasariIES.
+  (*
+      Axioms:
+      support_CasariImpl_IES_other_direction
+        : forall (s : state) (a : assignment) (x : var),
+          s, a |= CasariImpl IES x -> E s
+   *)
 
 End Casari_fails.
