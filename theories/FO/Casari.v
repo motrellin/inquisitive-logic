@@ -429,4 +429,37 @@ Module Casari_fails.
     exact odd_1.
   Qed.
 
+  Local Definition E : state -> Prop :=
+    fun s =>
+    (
+      forall n,
+        odd n = true ->
+        s n = false
+    ) \/
+    (
+      forall n,
+        exists e,
+          even e = true /\
+          s e = false /\
+          n <? e = true
+    ).
+
+  Lemma substate_E :
+    forall s t,
+      substate t s ->
+      E s ->
+      E t.
+  Proof.
+    intros s t H1 [H2|H2].
+    -
+      left.
+      eauto using substate_contrapos.
+    -
+      right.
+      intros n.
+      destruct (H2 n) as [e [H3 [H4 H5]]].
+      exists e.
+      repeat split; try assumption.
+      eauto using substate_contrapos.
+  Qed.
 End Casari_fails.
