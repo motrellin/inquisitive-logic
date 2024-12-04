@@ -63,6 +63,34 @@ Proof.
   all: easy.
 Qed.
 
+(** ** Complement states *)
+
+Definition complement `{Model} (s : state) : state :=
+  fun w =>
+  negb (s w).
+
+Fact complement_true `{Model} :
+  forall s w,
+    complement s w = true <->
+    s w = false.
+Proof.
+  intros s w.
+  unfold complement.
+  destruct (s w) eqn:H1.
+  all: easy.
+Qed.
+
+Fact complement_false `{Model} :
+  forall s w,
+    complement s w = false <->
+    s w = true.
+Proof.
+  intros s w.
+  unfold complement.
+  destruct (s w) eqn:H1.
+  all: easy.
+Qed.
+
 (** * Consistent states *)
 
 Definition consistent `{Model} (s : state) : Prop := exists w, s w = true.
@@ -173,4 +201,25 @@ Proof.
       congruence.
     +
       reflexivity.
+Qed.
+
+Lemma substate_complement `{Model} :
+  forall s t,
+    substate t s <->
+    substate (complement s) (complement t).
+Proof.
+  intros s t.
+  unfold complement.
+  split.
+  all: intros H1 w H2.
+  -
+    destruct (t w) eqn:H3; try reflexivity.
+    apply H1 in H3.
+    congruence.
+  -
+    destruct (s w) eqn:H3; try reflexivity.
+    specialize (H1 w).
+    simpl in H1.
+    rewrite H2,H3 in H1.
+    auto.
 Qed.

@@ -390,14 +390,14 @@ Module Casari_fails.
     forall n,
       exists e,
         even e = true /\
-        s e = false /\
+        s e = true /\
         n <? e = true.
 
   Lemma substate_contains_inf_evens :
     forall s t,
       substate t s ->
-      contains_inf_evens s ->
-      contains_inf_evens t.
+      contains_inf_evens t ->
+      contains_inf_evens s.
   Proof.
     intros s t H1 H2 n.
     destruct (H2 n) as [e [H3 [H4 H5]]].
@@ -407,7 +407,7 @@ Module Casari_fails.
 
   Local Definition E (s : state) : Prop :=
     contains_no_odd s \/
-    contains_inf_evens s.
+    contains_inf_evens (complement s).
 
   Lemma substate_E :
     forall s t,
@@ -418,10 +418,19 @@ Module Casari_fails.
     intros s t H1 [H2|H2].
     -
       left.
-      eauto using substate_contains_no_odd.
+      eapply substate_contains_no_odd.
+      +
+        exact H1.
+      +
+        exact H2.
     -
       right.
-      eauto using substate_contains_inf_evens.
+      apply substate_complement in H1.
+      eapply substate_contains_inf_evens.
+      +
+        exact H1.
+      +
+        exact H2.
   Qed.
 
   Proposition support_CasariSuc_IES :
@@ -455,6 +464,7 @@ Module Casari_fails.
         *
           exact H2.
         *
+          apply complement_true.
           exact H4.
         *
           right.
