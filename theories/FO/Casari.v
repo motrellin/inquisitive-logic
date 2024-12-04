@@ -181,7 +181,6 @@ Module Casari_fails.
   Definition IES (x : var) : form :=
     <{iexists (Pred' (Var (x+1)) (Var 0))}>.
 
-  Definition CasariIES := Casari IES.
 
   Definition rel (w m j : nat) : bool :=
     (
@@ -655,8 +654,8 @@ Module Casari_fails.
     exact H2.
   Qed.
 
-  Theorem not_support_valid_CasariIES :
-    ~ support_valid CasariIES.
+  Theorem not_support_valid_Casari_IES :
+    ~ support_valid <{Casari IES}>.
   Proof.
     intros H1.
 
@@ -664,7 +663,7 @@ Module Casari_fails.
 
     eapply cex_support_valid_CasariSuc_IES.
 
-    unfold CasariIES, Casari in H1.
+    unfold Casari in H1.
     rewrite support_Impl in H1.
     apply H1.
     -
@@ -673,7 +672,7 @@ Module Casari_fails.
       apply support_CasariAnt_IES.
   Qed.
 
-  Print Assumptions not_support_valid_CasariIES.
+  Print Assumptions not_support_valid_Casari_IES.
   (*
       Axioms:
       support_CasariImpl_IES_other_direction
