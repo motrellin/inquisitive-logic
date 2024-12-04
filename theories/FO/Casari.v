@@ -345,7 +345,7 @@ Module Casari_fails.
   Proof.
     intros s a x H1 [i H2].
     asimpl in H2.
-  Abort.
+  Admitted. (* TODO *)
 
   Lemma support_IES_even_other_direction' :
     forall (s : state) (a : assignment) (x : var),
@@ -546,16 +546,77 @@ Module Casari_fails.
     destruct H4 as [i H4].
   Abort.
 
-  Proposition support_CasariImpl_IES_odd_case :
-    forall (s : state) (a : assignment) (x : var),
-      even (a x) = false ->
-      E s ->
-      s, a |= <{CasariImpl IES x}>.
-  Proof.
-    intros s a x H1 H2.
-    intros t H3 H4.
+  Definition cofinitely_many (s : state) (p : nat -> bool) : Prop :=
+    exists e,
+      forall w,
+        p w = true ->
+        e <? w = true ->
+        s w = true.
 
-    eauto using support_CasariSuc_IES, substate_E.
+  Lemma unnamed_helper_1 :
+    forall (s : state) (a : assignment),
+      contains_all_odds s ->
+      cofinitely_many s even ->
+      ~ (s, a |= <{CasariSuc IES}>).
+  Proof.
+    intros s a H1 H2 H3.
+    apply support_CasariSuc_IES_other_direction in H3 as [H3|H3].
+    -
+      specialize (H1 1 Logic.eq_refl).
+      specialize (H3 1 Logic.eq_refl).
+      congruence.
+    -
+      red in H3.
+      destruct H2 as [e H2].
+      specialize (H3 e) as [n [H4 [H5 H6]]].
+      rewrite complement_true in H5.
+      specialize (H2 _ H4 H6).
+      congruence.
+  Qed.
+
+  Lemma support_CasariImpl_IES_even_case_other_direction' :
+    forall (s : state) (a : assignment) (x : var),
+      even (a x) = true ->
+      contains_all_odds s ->
+      cofinitely_many s even ->
+      (forall w,
+        s w = true ->
+        even w = true ->
+        w <=? a x = true
+      ) ->
+      ~ (s, a |= <{CasariImpl IES x}>).
+  Proof.
+    intros s a x H1 H2 H3 H4 H5.
+    unfold CasariImpl in H5.
+
+    eapply unnamed_helper_1; try eassumption.
+
+    rewrite support_Impl in H5.
+    apply H5.
+    -
+      reflexivity.
+    -
+      apply support_IES_even with (n := (a x) + 2).
+      +
+        exact H1.
+      +
+        destruct (s ((a x) + 2)) eqn:H7; try reflexivity.
+        apply H4 in H7.
+        *
+          apply leb_le in H7.
+          lia.
+        *
+          asimpl.
+          exact H1.
+      +
+        right.
+        split.
+        *
+          asimpl.
+          exact H1.
+        *
+          apply ltb_lt.
+          lia.
   Qed.
 
   Proposition support_CasariImpl_IES_other_direction :
@@ -566,12 +627,15 @@ Module Casari_fails.
     intros s a x H1.
     destruct (even (a x)) eqn:H2.
     -
-      admit.
-    -
-      eapply support_CasariSuc_IES_other_direction.
-
       unfold CasariImpl in H1.
       rewrite support_Impl in H1.
+      admit.
+    -
+      unfold CasariImpl in H1.
+      rewrite support_Impl in H1.
+
+      eapply support_CasariSuc_IES_other_direction.
+
       apply H1.
       +
         reflexivity.
