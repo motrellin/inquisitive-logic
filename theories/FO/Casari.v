@@ -3,7 +3,7 @@ From InqLog Require Export Truth.
 From Coq Require Import Nat Bool Lia PeanoNat.
 Import PeanoNat.Nat.
 
-(** * Casari Scheme *)
+(** * The Casari Scheme *)
 
 Definition CasariSuc `{Signature} (phi : var -> form) : form :=
   <{ forall (phi 0) }>.
@@ -164,7 +164,10 @@ Module Casari_with_atoms.
 
 End Casari_with_atoms.
 
+(** * The Casari "counter-example" *)
 Module Casari_fails.
+
+  (** ** Signature and Syntax *)
 
   Instance signature : Signature :=
     {|
@@ -181,6 +184,7 @@ Module Casari_fails.
   Definition IES (x : var) : form :=
     <{iexists (Pred' (Var (x+1)) (Var 0))}>.
 
+  (** ** The Model *)
 
   Definition rel (w m j : nat) : bool :=
     (
@@ -244,57 +248,7 @@ Module Casari_fails.
         end
     |}.
 
-  Lemma support_IES_odd :
-    forall (s : state) (a : assignment) (x : var),
-      even (a x) = false ->
-      s, a |= <{IES x}>.
-  Proof.
-    intros s a x H1.
-
-    exists (a x).
-
-    intros w H2.
-    asimpl.
-    unfold rel.
-
-    rewrite H1.
-    rewrite eqb_refl.
-    reflexivity.
-  Qed.
-
-  Lemma support_IES_even :
-    forall (s : state) (a : assignment) (x : var) (n : nat),
-      even (a x) = true ->
-      s n = false ->
-      (even n = false \/ even n = true /\ a x <? n = true) ->
-      s, a |= <{IES x}>.
-  Proof.
-    intros s a x n H1 H2 H3.
-    exists n.
-    simpl.
-    intros w H4.
-    asimpl.
-    unfold rel.
-    rewrite H1.
-    simpl.
-    rewrite andb_true_iff.
-    split.
-    -
-      destruct (n =? w) eqn:H5.
-      +
-        apply eqb_eq in H5.
-        congruence.
-      +
-        reflexivity.
-    -
-      destruct H3 as [H3|[H31 H32]].
-      +
-        rewrite H3.
-        reflexivity.
-      +
-        rewrite H31,H32.
-        reflexivity.
-  Qed.
+  (** ** Some state properties *)
 
   Definition contains_all_odds (s : state) : Prop :=
     forall w,
@@ -306,69 +260,6 @@ Module Casari_fails.
       even w = true ->
       m <? w = true ->
       s w = true.
-
-  Lemma support_IES_even_other_direction_helper :
-    forall (s : state) (m : nat),
-      even m = true ->
-      contains_all_odds s ->
-      contains_all_even_greater_than m s ->
-      forall w j,
-        rel w m j = true ->
-        s j = true.
-  Proof.
-    intros s m H1 H2 H3.
-    intros w j H5.
-    unfold rel in H5.
-
-    rewrite H1 in H5.
-    simpl in H5.
-    destruct (j =? w) eqn:H6.
-    -
-      discriminate.
-    -
-      destruct (even j) eqn:H7.
-      all: auto.
-  Qed.
-
-  Lemma support_IES_even_other_direction :
-    forall (s : state) (a : assignment) (x : var),
-      even (a x) = true ->
-      s, a |= <{IES x}> ->
-      exists n,
-        s n = false /\
-        (
-          even n = false \/
-          even n = true /\
-          a x <? n = true
-        ).
-  Proof.
-    intros s a x H1 [i H2].
-    asimpl in H2.
-  Admitted. (* TODO *)
-
-  Lemma support_IES_even_other_direction' :
-    forall (s : state) (a : assignment) (x : var),
-      even (a x) = true ->
-      contains_all_odds s ->
-      contains_all_even_greater_than (a x) s ->
-      ~ (s, a |= <{IES x}>).
-  Proof.
-    intros s a x H1 H2 H3 H4.
-
-    pose proof (support_IES_even_other_direction_helper _ _ H1 H2 H3) as H5.
-
-    destruct H4 as [i H4].
-    asimpl in H4.
-
-    pose proof (rel_2 i _ H1) as H6.
-
-    rewrite H4 in H6. discriminate.
-
-    apply H5 with (w := 1).
-    apply H4.
-    apply H2.
-    reflexivity.
-  Qed.
 
   Definition contains_no_odd (s : state) : Prop :=
     forall w,
@@ -432,16 +323,136 @@ Module Casari_fails.
         exact H2.
   Qed.
 
+  Definition cofinitely_many (s : state) (p : nat -> bool) : Prop :=
+    exists e,
+      forall w,
+        p w = true ->
+        e <? w = true ->
+        s w = true.
+
+  (** ** Support for [IES] *)
+
+  Lemma support_IES_odd :
+    forall (s : state) (a : assignment) (x : var),
+      even (a x) = false ->
+      s, a |= <{IES x}>.
+  Proof.
+    intros s a x H1.
+
+    exists (a x).
+
+    intros w H2.
+    asimpl.
+    unfold rel.
+
+    rewrite H1.
+    rewrite eqb_refl.
+    reflexivity.
+  Qed.
+
+  Lemma support_IES_even :
+    forall (s : state) (a : assignment) (x : var) (n : nat),
+      even (a x) = true ->
+      s n = false ->
+      (even n = false \/ even n = true /\ a x <? n = true) ->
+      s, a |= <{IES x}>.
+  Proof.
+    intros s a x n H1 H2 H3.
+    exists n.
+    simpl.
+    intros w H4.
+    asimpl.
+    unfold rel.
+    rewrite H1.
+    simpl.
+    rewrite andb_true_iff.
+    split.
+    -
+      destruct (n =? w) eqn:H5.
+      +
+        apply eqb_eq in H5.
+        congruence.
+      +
+        reflexivity.
+    -
+      destruct H3 as [H3|[H31 H32]].
+      +
+        rewrite H3.
+        reflexivity.
+      +
+        rewrite H31,H32.
+        reflexivity.
+  Qed.
+
+  Lemma unnamed_helper_2 :
+    forall (s : state) (m : nat),
+      even m = true ->
+      contains_all_odds s ->
+      contains_all_even_greater_than m s ->
+      forall w j,
+        rel w m j = true ->
+        s j = true.
+  Proof.
+    intros s m H1 H2 H3.
+    intros w j H5.
+    unfold rel in H5.
+
+    rewrite H1 in H5.
+    simpl in H5.
+    destruct (j =? w) eqn:H6.
+    -
+      discriminate.
+    -
+      destruct (even j) eqn:H7.
+      all: auto.
+  Qed.
+
+  Lemma support_IES_even_other_direction :
+    forall (s : state) (a : assignment) (x : var),
+      even (a x) = true ->
+      s, a |= <{IES x}> ->
+      exists n,
+        s n = false /\
+        (
+          even n = false \/
+          even n = true /\
+          a x <? n = true
+        ).
+  Proof.
+    intros s a x H1 [i H2].
+    asimpl in H2.
+  Admitted. (* TODO *)
+
+  Lemma support_IES_even_other_direction' :
+    forall (s : state) (a : assignment) (x : var),
+      even (a x) = true ->
+      contains_all_odds s ->
+      contains_all_even_greater_than (a x) s ->
+      ~ (s, a |= <{IES x}>).
+  Proof.
+    intros s a x H1 H2 H3 H4.
+
+    pose proof (unnamed_helper_2 _ _ H1 H2 H3) as H5.
+
+    destruct H4 as [i H4].
+    asimpl in H4.
+
+    pose proof (rel_2 i _ H1) as H6.
+
+    rewrite H4 in H6. discriminate.
+
+    apply H5 with (w := 1).
+    apply H4.
+    apply H2.
+    reflexivity.
+  Qed.
+
+  (** ** Support for [CasariSuc IES] *)
+
   Proposition support_CasariSuc_IES :
     forall (s : state) (a : assignment),
       E s ->
       s, a |= <{ CasariSuc IES }>.
-
-  (* It seems like this direction could be sufficient for the first. For the
-   * conclusion at the end of the proof, it should be enough to show, that there
-   * exists a counterexample s.t. not every state supports <{ forall (IES 0) }>.
-   * Edit: No, it isn't enough.
-   *)
   Proof.
     intros s a H1 i.
     destruct (even i) eqn:H2.
@@ -523,7 +534,6 @@ Module Casari_fails.
   Admitted.
 
   (* What about this (classically equivalent) proposition? *)
-
   Proposition support_CasariSuc_IES_other_direction' :
     forall (s : state) (a : assignment) (n1 n2 : nat),
       even n1 = false ->
@@ -545,13 +555,6 @@ Module Casari_fails.
     destruct H4 as [i H4].
   Abort.
 
-  Definition cofinitely_many (s : state) (p : nat -> bool) : Prop :=
-    exists e,
-      forall w,
-        p w = true ->
-        e <? w = true ->
-        s w = true.
-
   Lemma unnamed_helper_1 :
     forall (s : state) (a : assignment),
       contains_all_odds s ->
@@ -572,6 +575,8 @@ Module Casari_fails.
       specialize (H2 _ H4 H6).
       congruence.
   Qed.
+
+  (** ** Support for [CasariImpl IES] *)
 
   Lemma support_CasariImpl_IES_even_case_other_direction' :
     forall (s : state) (a : assignment) (x : var),
@@ -643,6 +648,8 @@ Module Casari_fails.
         exact H2.
   Admitted.
 
+  (** ** Support for [CasariAnt IES] *)
+
   Proposition support_CasariAnt_IES :
     forall (s : state) (a : assignment),
       s, a |= <{CasariAnt IES}>.
@@ -653,6 +660,8 @@ Module Casari_fails.
     eapply support_CasariImpl_IES_other_direction.
     exact H2.
   Qed.
+
+  (** ** Support for [Casari IES] *)
 
   Theorem not_support_valid_Casari_IES :
     ~ support_valid <{Casari IES}>.
