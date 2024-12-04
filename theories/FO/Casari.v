@@ -332,7 +332,7 @@ Module Casari_fails.
 
   (** ** Support for [IES] *)
 
-  Lemma support_IES_odd :
+  Proposition support_IES_odd :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = false ->
       s, a |= <{IES x}>.
@@ -350,7 +350,7 @@ Module Casari_fails.
     reflexivity.
   Qed.
 
-  Lemma support_IES_even :
+  Proposition support_IES_even :
     forall (s : state) (a : assignment) (x : var) (n : nat),
       even (a x) = true ->
       s n = false ->
@@ -407,22 +407,6 @@ Module Casari_fails.
       all: auto.
   Qed.
 
-  Lemma support_IES_even_other_direction :
-    forall (s : state) (a : assignment) (x : var),
-      even (a x) = true ->
-      s, a |= <{IES x}> ->
-      exists n,
-        s n = false /\
-        (
-          even n = false \/
-          even n = true /\
-          a x <? n = true
-        ).
-  Proof.
-    intros s a x H1 [i H2].
-    asimpl in H2.
-  Admitted. (* TODO *)
-
   Lemma support_IES_even_other_direction' :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = true ->
@@ -446,6 +430,22 @@ Module Casari_fails.
     apply H2.
     reflexivity.
   Qed.
+
+  Proposition support_IES_even_other_direction :
+    forall (s : state) (a : assignment) (x : var),
+      even (a x) = true ->
+      s, a |= <{IES x}> ->
+      exists n,
+        s n = false /\
+        (
+          even n = false \/
+          even n = true /\
+          a x <? n = true
+        ).
+  Proof.
+    intros s a x H1 [i H2].
+    asimpl in H2.
+  Admitted. (* TODO *)
 
   (** ** Support for [CasariSuc IES] *)
 
@@ -534,7 +534,7 @@ Module Casari_fails.
   Admitted.
 
   (* What about this (classically equivalent) proposition? *)
-  Proposition support_CasariSuc_IES_other_direction' :
+  Lemma support_CasariSuc_IES_other_direction' :
     forall (s : state) (a : assignment) (n1 n2 : nat),
       even n1 = false ->
       s n1 = true ->
