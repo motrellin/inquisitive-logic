@@ -555,38 +555,83 @@ Module Casari_fails.
       exact H2.
   Qed.
 
-  Local Definition counter_state : state :=
+  (**
+     [counter_state e] is a state that contains every odd number and every
+     (even) number greater than [e]. By this, it contains at least one odd number
+     and its complement can only contain infinitely many even numbers.
+   *)
+  Local Definition counter_state (e : nat) : state :=
     fun w =>
     if even w
-    then 0 <? w
+    then e <? w
     else true.
 
-  Example cex_support_valid_CasariSuc_IES :
-    forall (a : assignment),
-      ~ (counter_state, a |= <{CasariSuc IES}>).
+  Fact counter_state_contains_all_odds :
+    forall e,
+      contains_all_odds (counter_state e).
   Proof.
-    intros a H1.
+    intros e w H1.
+    unfold counter_state.
+    rewrite H1.
+    reflexivity.
+  Qed.
 
-    unfold CasariSuc in H1.
-    rewrite support_Forall in H1.
+  Fact counter_state_contains_all_even_greater_than :
+    forall e,
+      contains_all_even_greater_than e (counter_state e).
+  Proof.
+    intros e w H1 H2.
+    unfold counter_state.
+    rewrite H1,H2.
+    reflexivity.
+  Qed.
 
-    eapply support_IES_even_other_direction' with (s := counter_state) (a := 0 .: a) (x := 0).
-    -
-      reflexivity.
-    -
-      intros w H2.
+  Example cex_support_valid_CasariSuc_IES :
+    forall (s : state) (a : assignment) (e : nat),
+      contains_all_odds s ->
+      contains_all_even_greater_than e s ->
+      ~ (s, a |= <{CasariSuc IES}>).
+  Proof.
+    intros s a e H1 H2 H3.
 
-      unfold counter_state.
-      rewrite H2.
-      reflexivity.
-    -
-      intros w H2 H3.
+    unfold CasariSuc in H3.
+    rewrite support_Forall in H3.
 
-      unfold counter_state.
-      rewrite H2.
-      exact H3.
+    eapply support_IES_even_other_direction' with
+      (s := s)
+      (a := (if even e then e else S e) .: a)
+      (x := 0).
     -
+      destruct (even e) eqn:H4.
+      +
+        exact H4.
+      +
+        remember ((S e .: a) 0) as n eqn:eq1.
+        asimpl in eq1.
+        subst n.
+
+        rewrite even_succ.
+        unfold odd.
+        rewrite H4.
+        reflexivity.
+    -
+      intros w H4.
+
       apply H1.
+      exact H4.
+    -
+      intros w H4 H5.
+      apply H2.
+      +
+        exact H4.
+      +
+        apply ltb_lt in H5.
+        apply ltb_lt.
+        asimpl in H5.
+        destruct (even e).
+        all: lia.
+    -
+      apply H3.
   Qed.
 
   Proposition support_CasariSuc_IES_other_direction :
@@ -735,17 +780,19 @@ Module Casari_fails.
   Proof.
     intros H1.
 
-    specialize (H1 _ counter_state id).
-
     eapply cex_support_valid_CasariSuc_IES.
-
-    unfold Casari in H1.
-    rewrite support_Impl in H1.
-    apply H1.
     -
-      reflexivity.
+      apply counter_state_contains_all_odds.
     -
+      apply counter_state_contains_all_even_greater_than.
+    -
+      unfold Casari in H1.
+      apply support_valid_Impl_conseq in H1.
+      apply H1.
       apply support_CasariAnt_IES.
+    Unshelve.
+    exact 0.
+    exact id.
   Qed.
 
   Print Assumptions not_support_valid_Casari_IES.
