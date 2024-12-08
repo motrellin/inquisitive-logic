@@ -1,6 +1,6 @@
 From InqLog Require Export Truth.
 
-From Coq Require Import Nat Bool Lia PeanoNat.
+From Coq Require Import Nat Bool Lia PeanoNat Classical_Prop.
 Import PeanoNat.Nat.
 
 (** * The Casari Scheme *)
@@ -19,7 +19,7 @@ Definition Casari `{Signature} (phi : var -> form) : form :=
 
 Lemma Casari_truth_conditional `{Signature} :
   forall phi,
-    (forall x, classic (phi x) = true) ->
+    (forall x, Syntax.classic (phi x) = true) ->
     truth_conditional (Casari phi).
 Proof.
   intros phi H1.
@@ -431,6 +431,31 @@ Module Casari_fails.
     reflexivity.
   Qed.
 
+  Lemma not_exists_forall_not {X} :
+    forall (P : X -> Prop),
+      ~ (exists x, P x) ->
+      forall x,
+        ~ P x.
+  Proof.
+    firstorder.
+  Qed.
+
+  Lemma not_forall_exists_not {X} :
+    forall (P : X -> Prop),
+      ~ (forall x, P x) ->
+      exists x,
+        ~ P x.
+  Proof.
+    intros P H1.
+    apply NNPP.
+    intros H2.
+    apply H1.
+    intros x.
+    eapply not_exists_forall_not in H2.
+    apply NNPP.
+    exact H2.
+  Qed.
+
   Proposition support_IES_even_other_direction :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = true ->
@@ -443,9 +468,51 @@ Module Casari_fails.
           a x <? n = true
         ).
   Proof.
-    intros s a x H1 [i H2].
-    asimpl in H2.
-  Admitted. (* TODO *)
+    intros s a x H1 H2.
+    pose proof (support_IES_even_other_direction') as H3.
+    specialize (H3 s a x H1).
+
+    apply NNPP.
+    intros H4.
+
+    assert (H4' :
+      forall n,
+        ~ (s n = false /\ (even n = false \/ even n = true /\ (a x <? n) = true))
+    ). firstorder.
+    clear H4. rename H4' into H4.
+
+    assert (H4' :
+      forall n,
+        s n = true \/ (even n = true /\ (even n = false \/ a x <? n = false))
+    ).
+    {
+      intros n.
+      specialize (H4 n).
+      destruct (s n), (even n), (a x <? n).
+      all: firstorder.
+    }
+    clear H4. rename H4' into H4.
+
+    apply H3.
+    -
+      intros w H5.
+      specialize (H4 w) as [H4|[H41 H42]].
+      +
+        exact H4.
+      +
+        congruence.
+    -
+      intros w H5 H6.
+      specialize (H4 w) as [H4|[H41 [H42|H42]]].
+      +
+        exact H4.
+      +
+        congruence.
+      +
+        congruence.
+    -
+      exact H2.
+  Qed.
 
   (** ** Support for [CasariSuc IES] *)
 
