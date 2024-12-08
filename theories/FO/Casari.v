@@ -590,7 +590,7 @@ Module Casari_fails.
     reflexivity.
   Qed.
 
-  Example cex_support_valid_CasariSuc_IES :
+  Lemma support_CasariSuc_IES_other_direction' :
     forall (s : state) (a : assignment) (e : nat),
       contains_all_odds s ->
       contains_all_even_greater_than e s ->
@@ -644,32 +644,50 @@ Module Casari_fails.
       E s.
   Proof.
     intros s a H1.
-    asimpl in H1.
     red.
-    (* This doesn't look nice. Let's admit this for now. *)
-  Admitted.
+    apply NNPP.
+    intros H2.
+    apply Decidable.not_or in H2 as [H2 H3].
+    assert (H2' : forall n, even n = true \/ s n = true).
+    {
+      intros n.
+      apply not_exists_forall_not with (x := n) in H2.
+      destruct (even n), (s n).
+      all: firstorder.
+    }
+    clear H2. rename H2' into H2.
 
-  (* What about this (classically equivalent) proposition? *)
-  Lemma support_CasariSuc_IES_other_direction' :
-    forall (s : state) (a : assignment) (n1 n2 : nat),
-      even n1 = false ->
-      s n1 = true ->
-      (forall e,
-        even e = false \/
-        s e = true \/
-        e <=? n2 = true
-      ) ->
-      ~ (s, a |= <{ CasariSuc IES }>).
-  Proof.
-    intros s a n1 n2 H1 H2 H3 H4.
+    assert (cofinitely_many s even) as [e H3'].
+    {
+      clear H1 H2.
+      red.
+      unfold contains_inf_evens in H3.
+      apply NNPP.
+      intros H4.
+      apply H3.
+      intros n.
+      apply not_exists_forall_not with (x := n) in H4.
+      apply not_forall_exists_not in H4 as [e H4].
+      exists e.
+      rewrite complement_true.
+      destruct (even e), (s e), (n <? e).
+      all: firstorder.
+    }
+    clear H3. rename H3' into H3.
 
-    unfold CasariSuc in H4.
-    rewrite support_Forall in H4.
-
-    specialize (H4 n1).
-    asimpl in H4.
-    destruct H4 as [i H4].
-  Abort.
+    eapply support_CasariSuc_IES_other_direction' in H1.
+    -
+      exact H1.
+    -
+      intros w H4.
+      destruct (H2 w) as [H2w|H2w].
+      +
+        congruence.
+      +
+        exact H2w.
+    -
+      exact H3.
+  Qed.
 
   (** ** Support for [CasariImpl IES] *)
 
@@ -688,7 +706,7 @@ Module Casari_fails.
     intros s a x e H1 H2 H3 H4 H5.
     unfold CasariImpl in H5.
 
-    eapply cex_support_valid_CasariSuc_IES; try eassumption.
+    eapply support_CasariSuc_IES_other_direction'; try eassumption.
 
     rewrite support_Impl in H5.
     apply H5.
@@ -763,7 +781,7 @@ Module Casari_fails.
   Proof.
     intros H1.
 
-    eapply cex_support_valid_CasariSuc_IES.
+    eapply support_CasariSuc_IES_other_direction'.
     -
       apply counter_state_contains_all_odds.
     -
