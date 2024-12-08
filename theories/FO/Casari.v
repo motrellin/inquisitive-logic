@@ -296,7 +296,7 @@ Module Casari_fails.
   Qed.
 
   Local Definition E (s : state) : Prop :=
-    contains_no_odd s \/
+    (exists n, even n = false /\ s n = false) \/
     contains_inf_evens (complement s).
 
   Lemma substate_E :
@@ -305,14 +305,19 @@ Module Casari_fails.
       E s ->
       E t.
   Proof.
-    intros s t H1 [H2|H2].
+    intros s t H1 [[n [H2 H3]]|H2].
     -
       left.
-      eapply substate_contains_no_odd.
-      +
-        exact H1.
+      exists n.
+      split.
       +
         exact H2.
+      +
+        eapply substate_contrapos.
+        *
+          exact H1.
+        *
+          exact H3.
     -
       right.
       apply substate_complement in H1.
@@ -524,17 +529,16 @@ Module Casari_fails.
     intros s a H1 i.
     destruct (even i) eqn:H2.
     -
-      destruct H1 as [H1|H1].
+      destruct H1 as [[n [H11 H12]]|H1].
       +
-        apply support_IES_even with (n := 1).
+        apply support_IES_even with (n := n).
         *
           exact H2.
         *
-          apply H1.
-          reflexivity.
+          exact H12.
         *
           left.
-          reflexivity.
+          exact H11.
       +
         destruct (H1 i) as [e [H3 [H4 H5]]].
         eapply support_IES_even.
@@ -667,34 +671,13 @@ Module Casari_fails.
     destruct H4 as [i H4].
   Abort.
 
-  Lemma unnamed_helper_1 :
-    forall (s : state) (a : assignment),
-      contains_all_odds s ->
-      cofinitely_many s even ->
-      ~ (s, a |= <{CasariSuc IES}>).
-  Proof.
-    intros s a H1 H2 H3.
-    apply support_CasariSuc_IES_other_direction in H3 as [H3|H3].
-    -
-      specialize (H1 1 Logic.eq_refl).
-      specialize (H3 1 Logic.eq_refl).
-      congruence.
-    -
-      red in H3.
-      destruct H2 as [e H2].
-      specialize (H3 e) as [n [H4 [H5 H6]]].
-      rewrite complement_true in H5.
-      specialize (H2 _ H4 H6).
-      congruence.
-  Qed.
-
   (** ** Support for [CasariImpl IES] *)
 
   Lemma support_CasariImpl_IES_even_case_other_direction' :
-    forall (s : state) (a : assignment) (x : var),
+    forall (s : state) (a : assignment) (x : var) (e : nat),
       even (a x) = true ->
       contains_all_odds s ->
-      cofinitely_many s even ->
+      contains_all_even_greater_than e s ->
       (forall w,
         s w = true ->
         even w = true ->
@@ -702,10 +685,10 @@ Module Casari_fails.
       ) ->
       ~ (s, a |= <{CasariImpl IES x}>).
   Proof.
-    intros s a x H1 H2 H3 H4 H5.
+    intros s a x e H1 H2 H3 H4 H5.
     unfold CasariImpl in H5.
 
-    eapply unnamed_helper_1; try eassumption.
+    eapply cex_support_valid_CasariSuc_IES; try eassumption.
 
     rewrite support_Impl in H5.
     apply H5.
