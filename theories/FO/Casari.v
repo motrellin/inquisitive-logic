@@ -337,6 +337,7 @@ Module Casari_fails.
 
   (** ** Support for [IES] *)
 
+  (** [support_IES_odd] represents Claim 3.7. *)
   Proposition support_IES_odd :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = false ->
@@ -355,6 +356,10 @@ Module Casari_fails.
     reflexivity.
   Qed.
 
+  (**
+     [support_IES_even], [support_IES_even_other_direction'] and
+     [support_IES_even_other_direction] represent Claim 3.8.
+   *)
   Proposition support_IES_even :
     forall (s : state) (a : assignment) (x : var) (n : nat),
       even (a x) = true ->
@@ -531,33 +536,33 @@ Module Casari_fails.
     -
       destruct H1 as [[n [H11 H12]]|H1].
       +
-        apply support_IES_even with (n := n).
+        apply support_IES_even.
         *
           exact H2.
         *
-          exact H12.
-        *
-          left.
-          exact H11.
+          exists n.
+          split.
+          --
+             rewrite H11.
+             reflexivity.
+          --
+             exact H12.
       +
         destruct (H1 i) as [e [H3 [H4 H5]]].
         eapply support_IES_even.
         *
           exact H2.
         *
-          apply complement_true.
-          exact H4.
-        *
-          right.
-          split.
-          --
-             exact H3.
-          --
-             exact H5.
+          exists e.
+          simpl.
+          rewrite H3,H4,H5.
+          split; reflexivity.
     -
       eapply support_IES_odd.
       exact H2.
   Qed.
+
+  Print Assumptions support_CasariSuc_IES.
 
   (**
      [counter_state e] is a state that contains every odd number and every
@@ -688,6 +693,8 @@ Module Casari_fails.
     -
       exact H3.
   Qed.
+
+  Print Assumptions support_CasariSuc_IES_other_direction.
 
   (** ** Support for [CasariImpl IES] *)
 
