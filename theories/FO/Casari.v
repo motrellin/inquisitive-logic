@@ -250,54 +250,230 @@ Module Casari_fails.
 
   (** ** Some state properties *)
 
-  Definition contains_all_odds (s : state) : Prop :=
-    forall w,
-      even w = false ->
-      s w = true.
-
-  Definition contains_all_even_greater_than (m : nat) (s : state) : Prop :=
-    forall w,
-      even w = true ->
-      m <? w = true ->
-      s w = true.
-
-  Definition contains_no_odd (s : state) : Prop :=
-    forall w,
-      even w = false ->
-      s w = false.
-
-  Lemma substate_contains_no_odd :
-    forall s t,
-      substate t s ->
-      contains_no_odd s ->
-      contains_no_odd t.
+  Lemma not_exists_forall_not {X} :
+    forall (P : X -> Prop),
+      ~ (exists x, P x) ->
+      forall x,
+        ~ P x.
   Proof.
-    intros s t H1 H2 w H3.
-    eauto using substate_contrapos.
+    firstorder.
   Qed.
 
-  Definition contains_inf_evens (s : state) : Prop :=
-    forall n,
-      exists e,
-        even e = true /\
-        s e = true /\
-        n <? e = true.
-
-  Lemma substate_contains_inf_evens :
-    forall s t,
-      substate t s ->
-      contains_inf_evens t ->
-      contains_inf_evens s.
+  Lemma not_forall_exists_not {X} :
+    forall (P : X -> Prop),
+      ~ (forall x, P x) ->
+      exists x,
+        ~ P x.
   Proof.
-    intros s t H1 H2 n.
+    intros P H1.
+    apply NNPP.
+    intros H2.
+    apply H1.
+    intros x.
+    eapply not_exists_forall_not in H2.
+    apply NNPP.
+    exact H2.
+  Qed.
+
+  Declare Custom Entry boolpred.
+
+  Notation "(? p ?)" := p
+    (at level 0,
+    p custom boolpred at level 99)
+    : form_scope.
+
+  Notation "( x )" := x
+    (in custom boolpred, x at level 99)
+    : form_scope.
+
+  Notation "x" := x
+    (in custom boolpred at level 0, x constr at level 0)
+    : form_scope.
+
+  Notation "f x .. y" := (.. (f x) .. y)
+    (in custom boolpred at level 0,
+    only parsing,
+    f constr at level 0,
+    x constr at level 9,
+    y constr at level 9)
+    : form_scope.
+
+  Notation "p1 && p2" := (fun w => p1 w && p2 w)
+    (in custom boolpred at level 40, right associativity)
+    : form_scope.
+
+  Notation "p1 || p2" := (fun w => p1 w || p2 w)
+    (in custom boolpred at level 50, right associativity)
+    : form_scope.
+
+  Notation "~ p" := (fun w => negb (p w))
+    (in custom boolpred at level 75)
+    : form_scope.
+
+  Definition contains_all (p : nat -> bool) (s : state) : Prop :=
+    forall w,
+      p w = true ->
+      s w = true.
+
+  Instance contains_all_Proper :
+    forall p,
+      Proper (state_eq ==> iff) (contains_all p).
+  Proof.
+    intros p s1 s2 H1.
+    split.
+    -
+      intros H2 w H3.
+      rewrite <- H1.
+      apply H2.
+      exact H3.
+    -
+      intros H2 w H3.
+      rewrite H1.
+      apply H2.
+      exact H3.
+  Qed.
+
+  Lemma substate_contains_all :
+    forall p s t,
+      substate t s ->
+      contains_all p t ->
+      contains_all p s.
+  Proof.
+    intros p s t H1 H2 w H3.
+    apply H1.
+    apply H2.
+    exact H3.
+  Qed.
+
+  Definition contains_any (p : nat -> bool) (s : state) : Prop :=
+    exists w,
+      p w = true /\
+      s w = true.
+
+  Instance contains_any_Proper :
+    forall p,
+      Proper (state_eq ==> iff) (contains_any p).
+  Proof.
+    intros p s1 s2 H1.
+    split.
+    -
+      intros [w [H2 H3]].
+      exists w.
+      rewrite <- H1.
+      split; assumption.
+    -
+      intros [w [H2 H3]].
+      exists w.
+      rewrite H1.
+      split; assumption.
+  Qed.
+
+  Lemma substate_contains_any :
+    forall p s t,
+      substate t s ->
+      contains_any p t ->
+      contains_any p s.
+  Proof.
+    intros p s t H1 [w [H2 H3]].
+    exists w.
+    split.
+    -
+      exact H2.
+    -
+      apply H1.
+      exact H3.
+  Qed.
+
+  Lemma not_contains_any_contains_all_complement :
+    forall p s,
+      ~ contains_any p s ->
+      contains_all p (complement s).
+  Proof.
+    intros p s H1 w H2.
+    apply complement_true.
+    unfold contains_any in H1.
+    apply not_exists_forall_not with (x := w) in H1.
+    destruct (p w), (s w).
+    all: firstorder.
+  Qed.
+
+  Definition finitely_many (p : nat -> bool) (s : state) : Prop :=
+    exists e,
+      forall w,
+        p w = true ->
+        s w = true ->
+        w <=? e = true.
+
+  Instance finitely_many_Proper :
+    forall p,
+      Proper (state_eq ==> iff) (finitely_many p).
+  Proof.
+  Admitted.
+
+  Lemma substate_finitely_many :
+    forall p s t,
+      substate t s ->
+      finitely_many p s ->
+      finitely_many p t.
+  Proof.
+    intros p s t H1 [e H2].
+    exists e.
+    intros w H3 H4.
+    apply H2.
+    -
+      exact H3.
+    -
+      apply H1.
+      exact H4.
+  Qed.
+
+  Definition infinitely_many (p : nat -> bool) (s : state) : Prop :=
+    forall w,
+      exists e,
+        p e = true /\
+        s e = true /\
+        w <? e = true.
+
+  Lemma not_infinitely_many_finitely_many :
+    forall p s,
+      ~ infinitely_many p s ->
+      finitely_many p s.
+  Proof.
+    intros p s H1.
+    unfold infinitely_many in H1.
+    red.
+    apply not_forall_exists_not in H1 as [n H1].
+    exists n.
+    intros w H2 H3.
+    apply not_exists_forall_not with (x := w) in H1.
+    rewrite ltb_lt in H1.
+    rewrite leb_le.
+    destruct (p w), (s w).
+    all: lia.
+  Qed.
+
+
+  Instance infinitely_many_Proper :
+    forall p,
+      Proper (state_eq ==> iff) (infinitely_many p).
+  Proof.
+  Admitted.
+
+  Lemma substate_infinitely_many :
+    forall p s t,
+      substate t s ->
+      infinitely_many p t ->
+      infinitely_many p s.
+  Proof.
+    intros p s t H1 H2 n.
     destruct (H2 n) as [e [H3 [H4 H5]]].
     exists e.
     eauto using substate_contrapos.
   Qed.
 
   Local Definition E (s : state) : Prop :=
-    (exists n, even n = false /\ s n = false) \/
-    contains_inf_evens (complement s).
+    contains_any (? ~ even ?) (complement s) \/
+    infinitely_many even (complement s).
 
   Lemma substate_E :
     forall s t,
@@ -305,35 +481,24 @@ Module Casari_fails.
       E s ->
       E t.
   Proof.
-    intros s t H1 [[n [H2 H3]]|H2].
+    intros s t H1 [H2|H2].
     -
       left.
-      exists n.
-      split.
+      eapply substate_contains_any.
+      +
+        apply substate_complement in H1.
+        exact H1.
       +
         exact H2.
-      +
-        eapply substate_contrapos.
-        *
-          exact H1.
-        *
-          exact H3.
     -
       right.
-      apply substate_complement in H1.
-      eapply substate_contains_inf_evens.
+      eapply substate_infinitely_many.
       +
+        apply substate_complement in H1.
         exact H1.
       +
         exact H2.
   Qed.
-
-  Definition cofinitely_many (s : state) (p : nat -> bool) : Prop :=
-    exists e,
-      forall w,
-        p w = true ->
-        e <? w = true ->
-        s w = true.
 
   (** ** Support for [IES] *)
 
@@ -361,17 +526,22 @@ Module Casari_fails.
      [support_IES_even_other_direction] represent Claim 3.8.
    *)
   Proposition support_IES_even :
-    forall (s : state) (a : assignment) (x : var) (n : nat),
+    forall (s : state) (a : assignment) (x : var),
       even (a x) = true ->
-      s n = false ->
-      (even n = false \/ even n = true /\ a x <? n = true) ->
+      contains_any (? (~ even) || even && ltb (a x) ?) (complement s) ->
       s, a |= <{IES x}>.
   Proof.
-    intros s a x n H1 H2 H3.
+    intros s a x H1 [n [H2 H3]].
+
+    rewrite orb_true_iff in H2.
+    rewrite andb_true_iff in H2.
+    apply complement_true in H3.
+
     exists n.
     simpl.
     intros w H4.
     asimpl.
+
     unfold rel.
     rewrite H1.
     simpl.
@@ -385,43 +555,50 @@ Module Casari_fails.
       +
         reflexivity.
     -
-      destruct H3 as [H3|[H31 H32]].
+      destruct H2 as [H2|[H21 H22]].
       +
-        rewrite H3.
+        rewrite H2.
         reflexivity.
       +
-        rewrite H31,H32.
+        rewrite H21,H22.
         reflexivity.
   Qed.
 
   Lemma unnamed_helper_2 :
     forall (s : state) (m : nat),
       even m = true ->
-      contains_all_odds s ->
-      contains_all_even_greater_than m s ->
+      contains_all (? ~ even ?) s ->
+      contains_all (? even && ltb m ?) s ->
       forall w j,
         rel w m j = true ->
         s j = true.
   Proof.
-    intros s m H1 H2 H3.
-    intros w j H5.
-    unfold rel in H5.
+    intros s m H1 H2 H3 w j H4.
 
-    rewrite H1 in H5.
-    simpl in H5.
+    unfold rel in H4.
+    rewrite H1 in H4.
+    simpl in H4.
     destruct (j =? w) eqn:H6.
     -
       discriminate.
     -
+      simpl in H4.
       destruct (even j) eqn:H7.
-      all: auto.
+      +
+        apply H3.
+        apply andb_true_iff.
+        auto.
+      +
+        apply H2.
+        rewrite H7.
+        reflexivity.
   Qed.
 
   Lemma support_IES_even_other_direction' :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = true ->
-      contains_all_odds s ->
-      contains_all_even_greater_than (a x) s ->
+      contains_all (? ~ even ?) s ->
+      contains_all (? even && ltb (a x) ?) s ->
       ~ (s, a |= <{IES x}>).
   Proof.
     intros s a x H1 H2 H3 H4.
@@ -441,42 +618,11 @@ Module Casari_fails.
     reflexivity.
   Qed.
 
-  Lemma not_exists_forall_not {X} :
-    forall (P : X -> Prop),
-      ~ (exists x, P x) ->
-      forall x,
-        ~ P x.
-  Proof.
-    firstorder.
-  Qed.
-
-  Lemma not_forall_exists_not {X} :
-    forall (P : X -> Prop),
-      ~ (forall x, P x) ->
-      exists x,
-        ~ P x.
-  Proof.
-    intros P H1.
-    apply NNPP.
-    intros H2.
-    apply H1.
-    intros x.
-    eapply not_exists_forall_not in H2.
-    apply NNPP.
-    exact H2.
-  Qed.
-
   Proposition support_IES_even_other_direction :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = true ->
       s, a |= <{IES x}> ->
-      exists n,
-        s n = false /\
-        (
-          even n = false \/
-          even n = true /\
-          a x <? n = true
-        ).
+      contains_any (? (~ even) || even && ltb (a x) ?) (complement s).
   Proof.
     intros s a x H1 H2.
     pose proof (support_IES_even_other_direction') as H3.
@@ -485,41 +631,26 @@ Module Casari_fails.
     apply NNPP.
     intros H4.
 
-    assert (H4' :
-      forall n,
-        ~ (s n = false /\ (even n = false \/ even n = true /\ (a x <? n) = true))
-    ). firstorder.
-    clear H4. rename H4' into H4.
-
-    assert (H4' :
-      forall n,
-        s n = true \/ (even n = true /\ (even n = false \/ a x <? n = false))
-    ).
-    {
-      intros n.
-      specialize (H4 n).
-      destruct (s n), (even n), (a x <? n).
-      all: firstorder.
-    }
-    clear H4. rename H4' into H4.
+    apply not_contains_any_contains_all_complement in H4.
+    rewrite complement_complement in H4.
 
     apply H3.
     -
       intros w H5.
-      specialize (H4 w) as [H4|[H41 H42]].
-      +
-        exact H4.
-      +
-        congruence.
+      specialize (H4 w).
+      rewrite orb_true_iff in H4.
+      rewrite andb_true_iff in H4.
+      apply H4.
+      left.
+      exact H5.
     -
-      intros w H5 H6.
-      specialize (H4 w) as [H4|[H41 [H42|H42]]].
-      +
-        exact H4.
-      +
-        congruence.
-      +
-        congruence.
+      intros w H5.
+      rewrite andb_true_iff in H5.
+      destruct H5 as [H5 H6].
+      apply H4.
+      rewrite H5.
+      rewrite H6.
+      reflexivity.
     -
       exact H2.
   Qed.
@@ -577,19 +708,20 @@ Module Casari_fails.
 
   Fact counter_state_contains_all_odds :
     forall e,
-      contains_all_odds (counter_state e).
+      contains_all (? ~ even ?) (counter_state e).
   Proof.
     intros e w H1.
     unfold counter_state.
-    rewrite H1.
-    reflexivity.
+    destruct (even w); easy.
   Qed.
 
   Fact counter_state_contains_all_even_greater_than :
     forall e,
-      contains_all_even_greater_than e (counter_state e).
+      contains_all (? even && ltb e ?) (counter_state e).
   Proof.
-    intros e w H1 H2.
+    intros e w H1.
+    rewrite andb_true_iff in H1.
+    destruct H1 as [H1 H2].
     unfold counter_state.
     rewrite H1,H2.
     reflexivity.
@@ -597,8 +729,8 @@ Module Casari_fails.
 
   Lemma support_CasariSuc_IES_other_direction' :
     forall (s : state) (a : assignment) (e : nat),
-      contains_all_odds s ->
-      contains_all_even_greater_than e s ->
+      contains_all (? ~ even ?) s ->
+      contains_all (? even && ltb e ?) s ->
       ~ (s, a |= <{CasariSuc IES}>).
   Proof.
     intros s a e H1 H2 H3.
@@ -629,8 +761,11 @@ Module Casari_fails.
       apply H1.
       exact H4.
     -
-      intros w H4 H5.
+      intros w H4.
+      apply andb_true_iff in H4 as [H4 H5].
       apply H2.
+      apply andb_true_iff.
+      split.
       +
         exact H4.
       +
@@ -653,45 +788,24 @@ Module Casari_fails.
     apply NNPP.
     intros H2.
     apply Decidable.not_or in H2 as [H2 H3].
-    assert (H2' : forall n, even n = true \/ s n = true).
-    {
-      intros n.
-      apply not_exists_forall_not with (x := n) in H2.
-      destruct (even n), (s n).
-      all: firstorder.
-    }
-    clear H2. rename H2' into H2.
+    apply not_contains_any_contains_all_complement in H2.
+    rewrite complement_complement in H2.
 
-    assert (cofinitely_many s even) as [e H3'].
-    {
-      clear H1 H2.
-      red.
-      unfold contains_inf_evens in H3.
-      apply NNPP.
-      intros H4.
-      apply H3.
-      intros n.
-      apply not_exists_forall_not with (x := n) in H4.
-      apply not_forall_exists_not in H4 as [e H4].
-      exists e.
-      rewrite complement_true.
-      destruct (even e), (s e), (n <? e).
-      all: firstorder.
-    }
-    clear H3. rename H3' into H3.
+    apply not_infinitely_many_finitely_many in H3 as [e H3].
 
-    eapply support_CasariSuc_IES_other_direction' in H1.
+    apply support_CasariSuc_IES_other_direction' with (e := e) in H1.
     -
       exact H1.
     -
-      intros w H4.
-      destruct (H2 w) as [H2w|H2w].
-      +
-        congruence.
-      +
-        exact H2w.
+      exact H2.
     -
-      exact H3.
+      intros w H4.
+      apply andb_true_iff in H4 as [H4 H5].
+      specialize (H3 w H4).
+      rewrite complement_true in H3.
+      rewrite ltb_lt in H5.
+      rewrite leb_le in H3.
+      destruct (s w); lia.
   Qed.
 
   Print Assumptions support_CasariSuc_IES_other_direction.
@@ -699,48 +813,53 @@ Module Casari_fails.
   (** ** Support for [CasariImpl IES] *)
 
   Lemma support_CasariImpl_IES_even_case_other_direction' :
-    forall (s : state) (a : assignment) (x : var) (e : nat),
+    forall (s : state) (a : assignment) (x : var),
       even (a x) = true ->
-      contains_all_odds s ->
-      contains_all_even_greater_than e s ->
-      (forall w,
-        s w = true ->
-        even w = true ->
-        w <=? a x = true
-      ) ->
+      contains_all (? ~ even ?) s ->
+      finitely_many (? even ?) (complement s) ->
+      contains_all (? even && ltb (a x) ?) (complement s) ->
       ~ (s, a |= <{CasariImpl IES x}>).
   Proof.
-    intros s a x e H1 H2 H3 H4 H5.
+    intros s a x H1 H2 [e H3] H4 H5.
     unfold CasariImpl in H5.
 
-    eapply support_CasariSuc_IES_other_direction'; try eassumption.
-
-    rewrite support_Impl in H5.
-    apply H5.
+    eapply support_CasariSuc_IES_other_direction' with (e := e).
     -
-      reflexivity.
+      exact H2.
     -
-      apply support_IES_even with (n := (a x) + 2).
+      intros w H6.
+      apply andb_true_iff in H6 as [H6 H7].
+      specialize (H3 w H6).
+      rewrite complement_true in H3.
+      rewrite leb_le in H3.
+      rewrite ltb_lt in H7.
+      destruct (s w).
+      all: lia.
+    -
+      rewrite support_Impl in H5.
+      apply H5.
       +
-        exact H1.
+        reflexivity.
       +
-        destruct (s ((a x) + 2)) eqn:H7; try reflexivity.
-        apply H4 in H7.
+        apply support_IES_even.
         *
-          apply leb_le in H7.
-          lia.
-        *
-          asimpl.
-          exact H1.
-      +
-        right.
-        split.
-        *
-          asimpl.
           exact H1.
         *
-          apply ltb_lt.
-          lia.
+          exists (S (S (a x))).
+          simpl.
+          rewrite H1.
+          simpl.
+          split.
+          --
+             apply ltb_lt.
+             lia.
+          --
+             apply H4.
+             simpl.
+             rewrite H1.
+             simpl.
+             apply ltb_lt.
+             lia.
   Qed.
 
   Proposition support_CasariImpl_IES_other_direction :

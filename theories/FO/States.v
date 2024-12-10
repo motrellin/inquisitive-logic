@@ -91,6 +91,22 @@ Proof.
   all: easy.
 Qed.
 
+Fact complement_complement `{Model} :
+  forall s,
+    state_eq (complement (complement s)) s.
+Proof.
+  intros s w.
+  destruct (s w) eqn:H1.
+  -
+    rewrite complement_true.
+    rewrite complement_false.
+    exact H1.
+  -
+    rewrite complement_false.
+    rewrite complement_true.
+    exact H1.
+Qed.
+
 (** * Consistent states *)
 
 Definition consistent `{Model} (s : state) : Prop := exists w, s w = true.
