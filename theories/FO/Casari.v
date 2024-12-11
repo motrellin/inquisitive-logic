@@ -693,8 +693,6 @@ Module Casari_fails.
       exact H2.
   Qed.
 
-  Print Assumptions support_CasariSuc_IES.
-
   (**
      [counter_state e] is a state that contains every odd number and every
      (even) number greater than [e]. By this, it contains at least one odd number
@@ -808,36 +806,36 @@ Module Casari_fails.
       destruct (s w); lia.
   Qed.
 
-  Print Assumptions support_CasariSuc_IES_other_direction.
-
   (** ** Support for [CasariImpl IES] *)
 
-  Lemma support_CasariImpl_IES_even_case_other_direction' :
+  Lemma support_CasariImpl_IES_even_other_direction' :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = true ->
       contains_all (? ~ even ?) s ->
       finitely_many (? even ?) (complement s) ->
-      contains_all (? even && ltb (a x) ?) (complement s) ->
+      contains_any (? even && ltb (a x) ?) (complement s) ->
       ~ (s, a |= <{CasariImpl IES x}>).
   Proof.
-    intros s a x H1 H2 [e H3] H4 H5.
-    unfold CasariImpl in H5.
+    intros s a x H1 H2 [e1 H3] [e2 [H4 H6]] H7.
+    apply andb_true_iff in H4 as [H4 H5].
+    unfold CasariImpl in H7.
 
-    eapply support_CasariSuc_IES_other_direction' with (e := e).
+    eapply support_CasariSuc_IES_other_direction' with
+      (e := e1).
     -
       exact H2.
     -
-      intros w H6.
-      apply andb_true_iff in H6 as [H6 H7].
-      specialize (H3 w H6).
+      intros w H8.
+      apply andb_true_iff in H8 as [H8 H9].
+      specialize (H3 w H8).
       rewrite complement_true in H3.
       rewrite leb_le in H3.
-      rewrite ltb_lt in H7.
+      rewrite ltb_lt in H9.
       destruct (s w).
       all: lia.
     -
-      rewrite support_Impl in H5.
-      apply H5.
+      rewrite support_Impl in H7.
+      apply H7.
       +
         reflexivity.
       +
@@ -845,21 +843,84 @@ Module Casari_fails.
         *
           exact H1.
         *
-          exists (S (S (a x))).
+          exists e2.
           simpl.
-          rewrite H1.
+          rewrite H4.
           simpl.
           split.
           --
-             apply ltb_lt.
-             lia.
+             exact H5.
           --
-             apply H4.
-             simpl.
-             rewrite H1.
-             simpl.
-             apply ltb_lt.
-             lia.
+             exact H6.
+  Qed.
+
+  Lemma unnamed_helper_4 :
+    forall (s : state) (a : assignment) (x : var),
+      even (a x) = true ->
+      ~ E s ->
+      exists t,
+        substate t s /\
+        contains_all (? ~ even ?) t /\
+        finitely_many (? even ?) (complement t) /\
+        contains_any (? even && ltb (a x) ?) (complement t).
+  Proof.
+    intros s a x H1 H2.
+    apply Decidable.not_or in H2 as [H2 H3].
+    apply not_contains_any_contains_all_complement in H2.
+    rewrite complement_complement in H2.
+    apply not_infinitely_many_finitely_many in H3 as [e H3].
+    (**
+       [e] is the greatest even number not in [s].
+       We're looking for a [substate] [t] of [s], s.t.
+       there also exists a greatest even number not in [t] and
+       with one even number contained greater than [a x].
+     *)
+    eexists (
+      fun w =>
+      if even w
+      then S (S ((a x) + e)) <? w
+      else true
+    ).
+    repeat split.
+    -
+      intros w H5.
+      destruct (even w) eqn:H6.
+      +
+        specialize (H3 w H6).
+        rewrite complement_true in H3.
+        rewrite leb_le in H3.
+        rewrite ltb_lt in H5.
+        destruct (s w); lia.
+      +
+        apply H2.
+        rewrite H6.
+        reflexivity.
+    -
+      intros w H4.
+      rewrite negb_true_iff in H4.
+      rewrite H4.
+      reflexivity.
+    -
+      exists (S (S (a x + e))).
+      intros w H4 H5.
+      rewrite complement_true in H5.
+      rewrite H4 in H5.
+      apply leb_le.
+      apply ltb_nlt in H5.
+      lia.
+    -
+      exists (S (S (a x))).
+      rewrite andb_true_iff.
+      rewrite complement_true.
+      simpl.
+      rewrite H1.
+      repeat split.
+      +
+        apply ltb_lt.
+        lia.
+      +
+        apply ltb_nlt.
+        lia.
   Qed.
 
   Proposition support_CasariImpl_IES_other_direction :
@@ -870,9 +931,24 @@ Module Casari_fails.
     intros s a x H1.
     destruct (even (a x)) eqn:H2.
     -
-      unfold CasariImpl in H1.
-      rewrite support_Impl in H1.
-      admit.
+      apply NNPP.
+      intros H3.
+      eapply unnamed_helper_4 in H3 as [t [H3 [H4 [H5 H6]]]]; try eassumption.
+      eapply support_CasariImpl_IES_even_other_direction'.
+      +
+        exact H2.
+      +
+        exact H4.
+      +
+        exact H5.
+      +
+        exact H6.
+      +
+        eapply persistency.
+        *
+          exact H1.
+        *
+          exact H3.
     -
       unfold CasariImpl in H1.
       rewrite support_Impl in H1.
@@ -885,7 +961,7 @@ Module Casari_fails.
       +
         apply support_IES_odd.
         exact H2.
-  Admitted.
+  Qed.
 
   (** ** Support for [CasariAnt IES] *)
 
@@ -925,9 +1001,7 @@ Module Casari_fails.
   Print Assumptions not_support_valid_Casari_IES.
   (*
       Axioms:
-      support_CasariImpl_IES_other_direction
-        : forall (s : state) (a : assignment) (x : var),
-          s, a |= CasariImpl IES x -> E s
+        classic : forall P : Prop, P \/ ~ P
    *)
 
 End Casari_fails.
