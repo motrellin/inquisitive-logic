@@ -1,5 +1,27 @@
 # Changelog
 
+## inqlog-v0.8.0 (2024-12-11)
+
+### New
+
+* Proved `not_support_valid_Casari_IES` [Max Ole Elliger]
+
+  For this, classical logic is used at the level of meta-logic.
+
+* Added rewrite-lemmatas for std. support relation. [Max Ole Elliger]
+
+* Notation for support, ruling_out. [Max Ole Elliger]
+
+* Added notation syntax for formulae. [Max Ole Elliger]
+
+* Added some preliminary headlines. [Max Ole Elliger]
+
+### Changes
+
+* Used new notations for Casari section. [Max Ole Elliger]
+
+* Rm some `firstorder`-Calls to improve runtime. [Max Ole Elliger]
+
 ## inqlog-v0.7.0 (2024-11-14)
 
 ### New
