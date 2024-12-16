@@ -465,12 +465,18 @@ Module Casari_fails.
     all: lia.
   Qed.
 
-
   Instance infinitely_many_Proper :
     forall p,
       Proper (state_eq ==> iff) (infinitely_many p).
   Proof.
-  Admitted.
+    intros p s1 s2 H1.
+    split.
+    all: intros H2 w.
+    all: specialize (H2 w) as [e H2].
+    all: exists e.
+    all: rewrite H1 in *.
+    all: easy.
+  Qed.
 
   Lemma substate_infinitely_many :
     forall p s t,
