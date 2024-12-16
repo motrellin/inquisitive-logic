@@ -408,7 +408,20 @@ Module Casari_fails.
     forall p,
       Proper (state_eq ==> iff) (finitely_many p).
   Proof.
-  Admitted.
+    intros p s1 s2 H1.
+    unfold finitely_many.
+    split.
+    all: intros [e H2].
+    all: exists e.
+    all: intros w H3 H4.
+    all: specialize (H2 w).
+    -
+      rewrite <- H1 in H4.
+      auto.
+    -
+      rewrite H1 in H4.
+      auto.
+  Qed.
 
   Lemma substate_finitely_many :
     forall p s t,
