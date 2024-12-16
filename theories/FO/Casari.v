@@ -795,6 +795,8 @@ Module Casari_fails.
       apply H3.
   Qed.
 
+  Print Assumptions support_CasariSuc_IES_other_direction'.
+
   Proposition support_CasariSuc_IES_other_direction :
     forall (s : state) (a : assignment),
       s, a |= <{ CasariSuc IES }> ->
@@ -824,6 +826,8 @@ Module Casari_fails.
       rewrite leb_le in H3.
       destruct (s w); lia.
   Qed.
+
+  Print Assumptions support_CasariSuc_IES_other_direction.
 
   (** ** Support for [CasariImpl IES] *)
 
@@ -872,6 +876,8 @@ Module Casari_fails.
           --
              exact H6.
   Qed.
+
+  Print Assumptions support_CasariImpl_IES_even_other_direction'.
 
   Lemma unnamed_helper_4 :
     forall (s : state) (a : assignment) (x : var),
@@ -942,6 +948,8 @@ Module Casari_fails.
         lia.
   Qed.
 
+  Print Assumptions unnamed_helper_4.
+
   Proposition support_CasariImpl_IES_other_direction :
     forall (s : state) (a : assignment) (x : var),
       s, a |= <{CasariImpl IES x}> ->
@@ -982,6 +990,8 @@ Module Casari_fails.
         exact H2.
   Qed.
 
+  Print Assumptions support_CasariImpl_IES_other_direction.
+
   (** ** Support for [CasariAnt IES] *)
 
   Proposition support_CasariAnt_IES :
@@ -994,6 +1004,8 @@ Module Casari_fails.
     eapply support_CasariImpl_IES_other_direction.
     exact H2.
   Qed.
+
+  Print Assumptions support_CasariAnt_IES.
 
   (** ** Support for [Casari IES] *)
 
