@@ -2,10 +2,19 @@ From InqLog.FO Require Export Models.
 
 From Coq Require Export Morphisms Setoid.
 
-(** * Basic definitions *)
+(** * Basic definitions
+
+   We now introduce the notion of a [state] which is just a
+   set of worlds in a model.
+ *)
 
 Definition state `{Model} : Type := World -> bool.
 
+(**
+   As we typically just care whether two states behave the
+   same, we introduce this as a relation [state_eq], which
+   is indeed an equivalence relation.
+ *)
 Definition state_eq `{Model} : relation state :=
   fun s t =>
   forall w,
@@ -15,13 +24,16 @@ Instance state_eq_Equiv `{Model} : Equivalence state_eq.
 Proof.
   split.
   -
+    (* Reflexivity *)
     intros s w.
     reflexivity.
   -
+    (* Symmetry *)
     intros s t H1 w.
     rewrite H1.
     reflexivity.
   -
+    (* Transitivity *)
     intros s t u H1 H2 w.
     rewrite H1.
     rewrite H2.
@@ -150,19 +162,33 @@ Proof.
   congruence.
 Qed.
 
+(**
+   We will now see, that [substate] is a [PreOrder].
+ *)
+Print PreOrder.
+(**
+   A [PreOrder] is a [reflexive] and [transitive] [relation],
+   at least, if we follow the way, Coq defines it as such.
+ *)
 Instance substate_PreOrder `{Model} : PreOrder substate.
 Proof.
   constructor.
   -
+    (* Reflexivity *)
     intros s w H1.
     exact H1.
   -
+    (* Transitivity *)
     intros s1 s2 s3 H1 H2 w H3.
     apply H2.
     apply H1.
     exact H3.
 Qed.
 
+(**
+   We can also prove that [state_eq] is a congruence relation
+   with respect to [substate]:
+ *)
 Instance substate_Proper `{Model} : Proper (state_eq ==> state_eq ==> iff) substate.
 Proof.
   intros s1 s2 H1 t1 t2 H2.
