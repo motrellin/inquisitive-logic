@@ -1,6 +1,6 @@
 From InqLog.FO Require Export Models.
 
-From Coq Require Export Morphisms Setoid.
+From Coq Require Export Bool Morphisms Setoid.
 
 (** * Basic definitions
 
@@ -87,9 +87,7 @@ Fact complement_true `{Model} :
     s w = false.
 Proof.
   intros s w.
-  unfold complement.
-  destruct (s w) eqn:H1.
-  all: easy.
+  apply negb_true_iff.
 Qed.
 
 Fact complement_false `{Model} :
@@ -98,9 +96,7 @@ Fact complement_false `{Model} :
     s w = true.
 Proof.
   intros s w.
-  unfold complement.
-  destruct (s w) eqn:H1.
-  all: easy.
+  apply negb_false_iff.
 Qed.
 
 Fact complement_complement `{Model} :
@@ -108,15 +104,7 @@ Fact complement_complement `{Model} :
     state_eq (complement (complement s)) s.
 Proof.
   intros s w.
-  destruct (s w) eqn:H1.
-  -
-    rewrite complement_true.
-    rewrite complement_false.
-    exact H1.
-  -
-    rewrite complement_false.
-    rewrite complement_true.
-    exact H1.
+  apply negb_involutive.
 Qed.
 
 (** * Consistent states *)
@@ -172,7 +160,7 @@ Print PreOrder.
  *)
 Instance substate_PreOrder `{Model} : PreOrder substate.
 Proof.
-  constructor.
+  split.
   -
     (* Reflexivity *)
     intros s w H1.
@@ -180,9 +168,7 @@ Proof.
   -
     (* Transitivity *)
     intros s1 s2 s3 H1 H2 w H3.
-    apply H2.
-    apply H1.
-    exact H3.
+    auto.
 Qed.
 
 (**
@@ -192,15 +178,15 @@ Qed.
 Instance substate_Proper `{Model} : Proper (state_eq ==> state_eq ==> iff) substate.
 Proof.
   intros s1 s2 H1 t1 t2 H2.
-  unfold substate.
-  unfold state_eq in *.
-  firstorder.
+  split.
   -
+    intros H3 w H4.
     rewrite <- H2.
     apply H3.
     rewrite H1.
     exact H4.
   -
+    intros H3 w H4.
     rewrite H2.
     apply H3.
     rewrite <- H1.
@@ -216,9 +202,6 @@ Lemma substate_singleton `{Model} :
     ).
 Proof.
   intros w t H1.
-  unfold substate in H1.
-  unfold empty_state.
-  unfold state_eq.
   destruct (t w) eqn:H2.
   -
     right.
@@ -236,13 +219,10 @@ Proof.
   -
     left.
     intros w'.
-    destruct (t w') eqn:H3.
-    +
-      apply H1 in H3 as H4.
-      apply singleton_true in H4.
-      congruence.
-    +
-      reflexivity.
+    destruct (t w') eqn:H3; try reflexivity.
+    apply H1 in H3 as H4.
+    apply singleton_true in H4.
+    congruence.
 Qed.
 
 Lemma substate_complement `{Model} :
@@ -251,17 +231,16 @@ Lemma substate_complement `{Model} :
     substate (complement s) (complement t).
 Proof.
   intros s t.
-  unfold complement.
   split.
   all: intros H1 w H2.
   -
-    destruct (t w) eqn:H3; try reflexivity.
-    apply H1 in H3.
-    congruence.
+    apply complement_true.
+    apply complement_true in H2.
+    eapply substate_contrapos.
+    all: eassumption.
   -
-    destruct (s w) eqn:H3; try reflexivity.
-    specialize (H1 w).
-    simpl in H1.
-    rewrite H2,H3 in H1.
-    auto.
+    apply complement_false.
+    apply complement_false in H2.
+    eapply substate_contrapos.
+    all: eassumption.
 Qed.
