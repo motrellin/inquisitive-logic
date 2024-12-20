@@ -75,6 +75,15 @@ Proof.
   all: easy.
 Qed.
 
+Proposition singleton_refl `{Model} :
+  forall w,
+    singleton w w = true.
+Proof.
+  intros w.
+  rewrite singleton_true.
+  reflexivity.
+Qed.
+
 (** ** Complement states *)
 
 Definition complement `{Model} (s : state) : state :=
