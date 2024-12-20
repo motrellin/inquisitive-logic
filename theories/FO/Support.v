@@ -1,10 +1,20 @@
 From InqLog.FO Require Export Syntax States.
 
-(** * (Variable) Assignments *)
+(** * Support satisfaction
+   In this section, we will introduce the notion of a state
+   _supporting_ a formula (with respect to a variable
+   assignment function).
 
-(** * Support satisfaction *)
+   We refer to a variable assignment function by the short
+   name [assignment].
+ *)
 
 Definition assignment `{Model} : Type := var -> Individual.
+
+(**
+   To interpret a term, we define the [referent] of a term in
+   a world which is an [Individual].
+ *)
 
 Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
   match t with
@@ -15,6 +25,11 @@ Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
       fun w g =>
       FInterpretation w f (fun arg => referent (args arg) w g)
   end.
+
+(**
+   Now, we're in a position to define the [support] relation
+   as Ciardelli did.
+ *)
 
 Fixpoint support `{Model} (phi : form) : state -> assignment -> Prop :=
   match phi with
@@ -58,6 +73,10 @@ Fixpoint support `{Model} (phi : form) : state -> assignment -> Prop :=
 
   end.
 
+(**
+   Again, we introduce some notation.
+ *)
+
 Notation "M , s , a |= phi" := (@support _ M phi s a)
     (at level 95)
     : form_scope.
@@ -65,6 +84,13 @@ Notation "M , s , a |= phi" := (@support _ M phi s a)
 Notation "s , a |= phi" := (support phi s a)
     (at level 95)
     : form_scope.
+(* TODO: Why can't I increase the level to anythin higher? *)
+
+(**
+   In order to make future proofs more readable, we restate
+   the defining cases of [support] as various [Fact]s. They
+   can be used for the [rewrite]-tactic.
+ *)
 
 Fact support_Pred `{Model} :
   forall p args s a,
@@ -117,6 +143,11 @@ Fact support_Iexists `{Model} :
     exists i,
       s, i .: a |= phi1.
 Proof. reflexivity. Qed.
+
+(**
+   Next, we observe, that [state_eq] is a congruence with
+   respect to [support].
+ *)
 
 Instance support_Proper `{M : Model} :
   forall phi,
@@ -286,6 +317,8 @@ Definition ruling_out `{Model} (s : state) (phi : form) (a : assignment) :=
     consistent t /\
     substate t s /\
     (t, a |= phi).
+
+(* TODO: Rewrite lemmas for [ruling_out] *)
 
 Notation "M , s , a _||_ phi" := (@ruling_out _ M s phi a)
   (at level 95)
@@ -470,7 +503,11 @@ Proof.
     exact H2.
 Qed.
 
-Lemma support_valid_DNE_Pred `{Signature} :
+(**
+   By defining [PInterpretation] as a boolean predicate, we
+   obtain double negation elimination of atoms.
+ *)
+Example support_valid_DNE_Pred `{Signature} :
   forall p args,
     support_valid <{DNE (Pred p args)}>.
 Proof.
