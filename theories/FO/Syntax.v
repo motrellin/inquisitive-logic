@@ -2,13 +2,28 @@ From InqLog.FO Require Export Signatures.
 
 From Autosubst Require Export Autosubst.
 
-(** * Terms *)
+From Coq Require Export Bool.
+
+(** * Terms
+
+   Let's start by recursively defining _terms_ over a
+   signature. A term is either a _variable_ or an application
+   of a function symbol [f] to some terms, respecting
+   [FAri f]. This is done via a function [FAri f -> term].
+ *)
 
 Inductive term `{Signature} :=
   | Var : var -> term
   | Func : forall (f : FSymb), (FAri f -> term) -> term.
 
-(* Autosubst-stuff about terms *)
+Print var.
+(**
+   [var] is defined as [nat] via [Autosubst] which is a
+   framework for binders in terms using de Bruijn indices.
+
+   To use Autosubst efficiently, we need to define some
+   instances.
+ *)
 
 Instance Ids_term `{Signature} : Ids term.
 Proof. derive. Defined.
@@ -22,7 +37,24 @@ Proof. derive. Defined.
 Instance SubstLemmas_term `{Signature} : SubstLemmas term.
 Proof. derive. Qed.
 
-(** * Formulas *)
+(** * Formulas
+   Next step is to recursively define _formulas_ over a
+   signature. A [form]ula is either
+   - an application of a predicate symbol [p] to some terms,
+     respecting [PAri p], which is done via a function
+     [PAri p -> term],
+   - Falsum, which is represented by [Bot],
+   - an _Implication_, Conjunction or Inquisivite Disjunction,
+   - an all-quantified formula or
+   - an inquisivite existential-quantified formula.
+
+   Note, that binding is done by de Bruijn indices,
+   implemented via the libary [Autosubst]. For example,
+   we will just write [Forall phi] (for a [form]ula [phi])
+   where the variable [0] is bounded inside of [phi].
+
+   For technical reasons, we also define [Bot : var -> form].
+ *)
 
 Inductive form `{Signature} :=
   (* predicate symbols *)
@@ -37,6 +69,12 @@ Inductive form `{Signature} :=
   (* first-order connectives *)
   | Forall : {bind term in form} -> form
   | Iexists : {bind term in form} -> form.
+
+(**
+   Let us introduce some notation. It is not necessary to
+   understand the technical details. For more information,
+   please refer to the Coq documentation.
+ *)
 
 Declare Custom Entry form.
 Declare Scope form_scope.
@@ -59,28 +97,30 @@ Notation "f x .. y" := (.. (f x) .. y)
   : form_scope.
 
 Notation "phi -> psi" := (Impl phi psi)
-  (in custom form at level 70, right associativity)
+  (in custom form at level 99, right associativity)
   : form_scope.
 
 Notation "phi /\ psi" := (Conj phi psi)
-  (in custom form at level 60, right associativity)
+  (in custom form at level 80, right associativity)
   : form_scope.
 
 Notation "phi \\/ psi" := (Idisj phi psi)
-  (in custom form at level 65, right associativity)
+  (in custom form at level 86, right associativity)
   : form_scope.
 
 Notation "'forall' phi" := (Forall phi)
-  (in custom form at level 85, right associativity)
+  (in custom form at level 200, right associativity)
   : form_scope.
 
 Notation "'iexists' phi" := (Iexists phi)
-  (in custom form at level 90, right associativity)
+  (in custom form at level 201, right associativity)
   : form_scope.
 
 Open Scope form_scope.
 
-(* Autosubst-stuff about formulas *)
+(**
+   And again, we need to derive some [Autosubst]-[Instance]s.
+ *)
 
 Instance HSubst_form `{Signature} : HSubst term form.
 Proof. derive. Defined.
@@ -103,13 +143,17 @@ Proof. derive. Qed.
 Instance SubstLemmas_form `{Signature} : SubstLemmas form.
 Proof. derive. Qed.
 
-(** ** Defined connectives *)
+(** ** Defined connectives
+
+   We define some typical connectives via our definition
+   of [form], as typical. We also add some notation for them.
+ *)
 
 Definition Neg `{Signature} (phi : form) :=
   <{ phi -> (Bot 0) }>.
 
 Notation "~ phi" := (Neg phi)
-  (in custom form at level 55, right associativity)
+  (in custom form at level 75, right associativity)
   : form_scope.
 
 Definition Top `{Signature} :=
@@ -119,36 +163,50 @@ Definition Disj `{Signature} (phi1 phi2 : form) :=
   <{ ~ (~ phi1 /\ ~ phi2) }>.
 
 Notation "phi \/ psi" := (Disj phi psi)
-  (in custom form at level 66, right associativity)
+  (in custom form at level 85, right associativity)
   : form_scope.
 
 Definition Iff `{Signature} (phi1 phi2 : form) :=
   <{ (phi1 -> phi2) /\ (phi2 -> phi1) }>.
 
 Notation "phi <-> psi" := (Iff phi psi)
-  (in custom form at level 85, right associativity)
+  (in custom form at level 95, right associativity)
   : form_scope.
 
 Definition Exists `{Signature} (phi : form) :=
   <{ ~ forall (~ phi) }>.
 
 Notation "'exists' phi" := (Exists phi)
-  (in custom form at level 91, right associativity)
+  (in custom form at level 200, right associativity)
   : form_scope.
 
 Definition Iquest `{Signature} (phi : form) :=
   <{ phi \\/ ~ phi }>.
 
 Notation "? phi" := (Iquest phi)
-  (in custom form at level 56, right associativity)
+  (in custom form at level 76, right associativity)
   : form_scope.
 
-(** ** Example formulas *)
+(** ** Example formulas
+
+   We can now use our new syntax notation to define some
+   example formulas for illustration purpose.
+
+ *)
+
+Example iquest_p `{Signature} (p : PSymb) (args : PAri p -> term) : form :=
+  <{ ? Pred p args }>.
 
 Example DNE `{Signature} (phi : form) : form :=
   <{ (~ (~ phi)) -> phi }>.
 
-(** ** Classic formulas *)
+(** ** Classic formulas
+
+   We want to introduce the notion of a _classic formula_.
+   A formula is called _classic_, iff it doesn't contain
+   inquisitive disjunction or inquisitive existential
+   quantifiers.
+ *)
 
 Fixpoint classic `{Signature} (phi : form) : bool :=
   match phi with
@@ -175,6 +233,29 @@ Fixpoint classic `{Signature} (phi : form) : bool :=
 
   end.
 
+Example iquest_p_not_classic `{Signature} :
+  forall p args,
+    classic (iquest_p p args) = false.
+Proof.
+  reflexivity.
+Qed.
+
+Example DNE_classic `{Signature} :
+  forall phi,
+    classic (DNE phi) = classic phi.
+Proof.
+  intros phi.
+  simpl.
+  destruct (classic phi).
+  all: reflexivity.
+Qed.
+
+(**
+   For every formula, we can construct a classical variant of
+   it by replacing inquisitive connectives by their standard
+   variant.
+ *)
+
 Fixpoint classical_variant `{Signature} (phi : form) : form :=
   match phi with
   | Pred p ari =>
@@ -199,6 +280,11 @@ Fixpoint classical_variant `{Signature} (phi : form) : form :=
       Exists (classical_variant phi1)
 
   end.
+
+(**
+   We can verify [classical_variant] by the following
+   proposition.
+ *)
 
 Proposition classical_variant_is_classic `{Signature} :
   forall phi,

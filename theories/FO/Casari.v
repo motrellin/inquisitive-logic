@@ -1,6 +1,6 @@
 From InqLog Require Export Truth.
 
-From Coq Require Import Nat Bool Lia PeanoNat Classical_Prop.
+From Coq Require Import Nat Lia PeanoNat Classical_Prop.
 Import PeanoNat.Nat.
 
 (** * The Casari Scheme *)

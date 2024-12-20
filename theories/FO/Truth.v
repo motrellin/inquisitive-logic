@@ -1,7 +1,5 @@
 From InqLog.FO Require Export Support.
 
-From Coq Require Import Bool.
-
 (** * Truth satisfaction *)
 
 Definition truth `{Model} (phi : form) (w : World) (a : assignment) : Prop :=
