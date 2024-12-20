@@ -122,12 +122,22 @@ Definition consistent `{Model} (s : state) : Prop := exists w, s w = true.
 
 Fact empty_state_not_consistent `{Model} :
   forall s,
-    state_eq s empty_state ->
+    state_eq s empty_state <->
     ~ consistent s.
 Proof.
-  intros s H1 [w H2].
-  rewrite H1 in H2.
-  discriminate.
+  intros s.
+  split.
+  -
+    intros H1 [w H2].
+    rewrite H1 in H2.
+    discriminate.
+  -
+    intros H1 w.
+    destruct (s w) eqn:H2; try reflexivity.
+    exfalso.
+    apply H1.
+    exists w.
+    exact H2.
 Qed.
 
 Fact singleton_consistent `{Model} :
