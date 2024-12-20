@@ -153,8 +153,7 @@ Instance support_Proper `{M : Model} :
   forall phi,
     Proper (state_eq ==> eq ==> iff) (support phi).
 Proof.
-  all: intros phi s1 s2 H1 a1 a2 H2.
-  unfold state_eq in H1.
+  intros phi s1 s2 H1 a1 a2 H2.
   subst a2.
   generalize dependent a1.
   induction phi as
@@ -165,39 +164,31 @@ Proof.
   |phi1 IH1 phi2 IH2
   |phi1 IH1
   |phi1 IH1].
-  all: intros a1.
-  all: simpl in *.
   -
-    split.
-    all: intros H3 w H4.
-    +
-      apply H3.
-      rewrite H1.
-      exact H4.
-    +
-      apply H3.
-      rewrite <- H1.
-      exact H4.
+    simpl.
+    firstorder.
+    all: eauto.
   -
-    firstorder; congruence.
+    simpl.
+    firstorder.
+    all: congruence.
   -
-    unfold substate.
+    intros a1.
+    do 2 rewrite support_Impl.
     split.
     all: intros H3 s3 H4 H5.
     +
       apply H3.
       *
-        intro.
         rewrite H1.
-        auto.
+        exact H4.
       *
         exact H5.
     +
       apply H3.
       *
-        intro.
         rewrite <- H1.
-        auto.
+        exact H4.
       *
         exact H5.
   -
@@ -219,7 +210,7 @@ Proposition persistency `{Model} :
     t, a |= phi.
 Proof.
   intros s t a phi.
-  revert s t a.
+  revert a.
   induction phi as
   [p args
   |?
@@ -229,22 +220,15 @@ Proof.
   |phi1 IH1
   |phi1 IH1].
 
-  all: intros s t a H1 H2.
-  all: simpl in *.
+  all: intros a H1 H2.
   -
     firstorder.
   -
     intros w.
-    unfold substate in H2.
+    destruct (t w) eqn:H3; try reflexivity.
     specialize (H1 w).
-    specialize (H2 w).
-    destruct (t w).
-    +
-      rewrite H2 in H1.
-      discriminate.
-      reflexivity.
-    +
-      reflexivity.
+    apply H2 in H3.
+    congruence.
   -
     firstorder.
   -
@@ -255,10 +239,8 @@ Proof.
     firstorder.
   -
     destruct H1 as [i H1].
-    eapply IH1 in H1 as H3.
-    eexists.
-    exact H3.
-    exact H2.
+    exists i.
+    eauto.
 Qed.
 
 Proposition empty_state_property `{Model} :
@@ -277,28 +259,16 @@ Proof.
   |phi1 IH1
   |phi1 IH1].
   all: intros a.
-  all: simpl in *.
   -
     discriminate.
   -
+    rewrite support_Bot.
     reflexivity.
   -
     intros t H1 H2.
-    unfold substate in H1.
-    enough (state_eq t empty_state).
-    specialize (IH2 a).
-    rewrite <- H3 in IH2.
-    exact IH2.
-
-    intros w.
-    specialize (H1 w).
-    destruct (t w).
-    +
-      unfold empty_state in H1.
-      specialize (H1 eq_refl).
-      discriminate.
-    +
-      reflexivity.
+    eapply persistency.
+    apply substate_empty_state in H1.
+    all: auto.
   -
     firstorder.
   -
@@ -335,32 +305,23 @@ Proposition support_Neg `{Model} :
     s, a |= <{~ phi}> <->
     (s, a _||_ phi).
 Proof.
-  simpl.
   intros phi s a.
+  unfold Neg.
+  rewrite support_Impl.
   split.
   -
     intros H1 [t [[w H2] [H3 H4]]].
-    enough (t w = false). congruence.
-    apply H1.
-    exact H3.
-    exact H4.
+    specialize (H1 t H3 H4).
+    rewrite support_Bot in H1.
+    congruence.
   -
     intros H1 t H2 H3 w.
-    destruct (t w) eqn:H5.
-    +
-      exfalso.
-      eapply H1.
-      exists t.
-      repeat split.
-      *
-        exists w.
-        exact H5.
-      *
-        exact H2.
-      *
-        exact H3.
-    +
-      reflexivity.
+    destruct (t w) eqn:H5; try reflexivity.
+    exfalso.
+    apply H1.
+    exists t.
+    repeat split.
+    all: firstorder.
 Qed.
 
 Proposition support_Top `{Model} :
@@ -386,21 +347,23 @@ Proposition support_Disj `{Model} :
 Proof.
   intros phi1 phi2 s a.
   unfold Disj.
+  rewrite support_Neg.
   split.
   -
     intros H1.
-    rewrite support_Neg in H1.
     intros [t [H2 [H3 [H4 H5]]]].
     apply H1.
     exists t.
-    repeat split; try rewrite support_Neg; assumption.
+    rewrite support_Conj.
+    do 2 rewrite support_Neg.
+    auto.
   -
     intros H1.
-    rewrite support_Neg.
     intros [t [H2 [H3 [H4 H5]]]].
     apply H1.
     exists t.
-    repeat split; try rewrite <- support_Neg; assumption.
+    rewrite support_Neg in H4,H5.
+    auto.
 Qed.
 
 Proposition support_Iff `{Model} :
@@ -496,6 +459,8 @@ Remark support_valid_Impl_conseq `{S : Signature} :
     support_conseq phi psi.
 Proof.
   intros phi psi H1 M s a H2.
+  specialize (H1 M s a).
+  rewrite support_Impl in H1.
   eapply H1.
   -
     reflexivity.
@@ -512,39 +477,35 @@ Example support_valid_DNE_Pred `{Signature} :
     support_valid <{DNE (Pred p args)}>.
 Proof.
   intros p args M s1 a s2 H1 H2 w1 H3.
+  rewrite support_Neg in H2.
 
   destruct (
     PInterpretation w1 p (fun arg : PAri p => referent (args arg) w1 a)
-  ) eqn:H4.
+  ) eqn:H4; try reflexivity.
+
+  exfalso.
+  apply H2.
+  exists (singleton w1).
+  repeat split.
   -
+    exists w1.
+    apply singleton_true.
     reflexivity.
   -
-    rewrite support_Neg in H2.
-    exfalso.
-    apply H2.
-    exists (singleton w1).
-    repeat split.
+    intros w2 H5.
+    apply singleton_true in H5.
+    congruence.
+  -
+    rewrite support_Neg.
+    intros [s3 [[w2 H5] [H6 H7]]].
+    apply substate_singleton in H6 as [H6|H6].
+    all: rewrite H6 in *; clear H6.
     +
-      exists w1.
-      apply singleton_true.
-      reflexivity.
+      discriminate.
     +
-      intros w2 H5.
       apply singleton_true in H5.
+      subst w2.
+      rewrite support_Pred in H7.
+      specialize (H7 _ (singleton_refl w1)).
       congruence.
-    +
-      rewrite support_Neg.
-      intros [s3 [[w2 H5] [H6 H7]]].
-      apply substate_singleton in H6 as [H6|H6].
-      all: rewrite H6 in *; clear H6.
-      *
-        discriminate.
-      *
-        apply singleton_true in H5.
-        subst w2.
-        simpl in H7.
-        rewrite H7 in H4.
-        discriminate.
-        apply singleton_true.
-        reflexivity.
 Qed.
