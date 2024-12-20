@@ -1,8 +1,74 @@
+
+(**
+   We start by defining the class of [Signature]s. A _Signature_ consists of a
+   set of _predicate symbols_ (captured by the type [PSymb]) and a set of
+   _function symbols_ (captured by the type [FSymb]). Each symbol has an
+   _arity_ (type), which is assigned by the functions [PAri] and [FAri].
+
+   In addition, we need a boolean predicate [rigid], which tells us for every
+   function symbol, whether it is rigid or not.
+
+   This whole definition is taken from Ciardelli 2022.
+ *)
+
 Class Signature :=
   {
     PSymb : Type;
-    PAri : PSymb -> Type;
+    PAri : PSymb -> Type; (* TODO: Where comes this idea from? *)
     FSymb : Type;
     FAri : FSymb -> Type;
-    rigid : FSymb -> bool
+    rigid : FSymb -> bool (* TODO: Add an explanation of rigidity. *)
   }.
+
+(**
+   Here are a few examples:
+ *)
+
+Module single_unary_predicate_signature.
+
+  Instance signature : Signature :=
+    {|
+      (**
+         As we only want one predicate symbol, we need [PSymb] to be the
+         singleton type [unit].
+       *)
+      PSymb := unit;
+      (**
+         The only existing predicate symbol should be unary, so it needs arity
+         1. This is implemented by the singleton arity type [unit].
+       *)
+      PAri := fun p => match p with tt => unit end;
+      (**
+         As there exists no function symbol, the type of function symbols shall
+         be the empty type [Empty_set].
+       *)
+      FSymb := Empty_set;
+      (**
+         Destructing a [f : Empty_set] gives us no object.
+       *)
+      FAri := fun f => match f with end;
+      (**
+         As there exists no function symbol, every function symbol is rigid.
+       *)
+      rigid := fun _ => true
+    |}.
+
+End single_unary_predicate_signature.
+
+Module single_binary_predicate_signature.
+
+  Instance signature : Signature :=
+    {|
+      PSymb := unit;
+      (**
+         The only difference to the first example is the arity of the only
+         predicate symbol which is now represented by the Type [bool] which
+         consists of exact two inhabitants.
+       *)
+      PAri := fun p => match p with tt => bool end;
+      FSymb := Empty_set;
+      FAri := fun f => match f with end;
+      rigid := fun _ => true
+    |}.
+
+End single_binary_predicate_signature.

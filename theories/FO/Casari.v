@@ -33,14 +33,7 @@ Qed.
 
 Module Casari_with_atoms.
 
-  Instance signature : Signature :=
-    {|
-      PSymb := unit;
-      PAri := fun p => match p with tt => unit end;
-      FSymb := Empty_set;
-      FAri := fun f => match f with end;
-      rigid := fun _ => true
-    |}.
+  Import single_unary_predicate_signature.
 
   Definition Pred' (t : term) := Pred tt (fun arg => t).
 
@@ -169,14 +162,7 @@ Module Casari_fails.
 
   (** ** Signature and Syntax *)
 
-  Instance signature : Signature :=
-    {|
-      PSymb := unit;
-      PAri := fun p => match p with tt => bool end;
-      FSymb := Empty_set;
-      FAri := fun f => match f with end;
-      rigid := fun _ => true
-    |}.
+  Import single_binary_predicate_signature.
 
   Definition Pred' (l r : term) :=
     Pred tt (fun arg => if arg then l else r).
