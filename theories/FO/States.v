@@ -212,6 +212,17 @@ Proof.
     exact H4.
 Qed.
 
+Lemma substate_empty_state `{Model} :
+  forall t,
+    substate t empty_state ->
+    state_eq t empty_state.
+Proof.
+  intros t H1 w.
+  destruct (t w) eqn:H2; try reflexivity.
+  apply H1 in H2.
+  discriminate.
+Qed.
+
 Lemma substate_singleton `{Model} :
   forall w t,
     substate t (singleton w) ->
