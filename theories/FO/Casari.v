@@ -37,13 +37,13 @@ Module Casari_with_atoms.
 
   Definition Pred' (t : term) := Pred tt (fun arg => t).
 
-  Definition CasariDNA : form :=
-    Casari (fun x => Neg (Neg (Pred' (Var x)))).
+  Definition Atomic (x : var) : form :=
+    <{ Pred' (Var x) }>.
 
-  Definition CasariAtomic : form :=
-    Casari (fun x => Pred' (Var x)).
+  Definition DNA (x : var) : form :=
+    <{ ~ ~ (Pred' (Var x)) }>.
 
-  Remark CasariDNA_Prop (P : var -> Prop) :
+  Remark Casari_DNA_Prop (P : var -> Prop) :
     (
       forall x,
         (
@@ -62,13 +62,13 @@ Module Casari_with_atoms.
     firstorder.
   Qed.
 
-  Theorem truth_CasariDNA `{@Model signature} :
+  Theorem truth_Casari_DNA `{@Model signature} :
     forall w a,
-      truth CasariDNA w a.
+      truth (Casari DNA) w a.
   Proof.
     intros w1 a.
 
-    unfold CasariDNA, Casari.
+    unfold Casari.
 
     rewrite truth_Impl.
     intros H1.
@@ -78,13 +78,16 @@ Module Casari_with_atoms.
     rewrite truth_Forall.
     intros i.
 
+    unfold DNA.
     rewrite truth_Neg.
     intros H2.
 
-    enough (H3 : truth <{ forall ~ ~ Pred' (Var 0)}> w1 a).
+    enough (H3 : truth <{CasariSuc DNA}> w1 a).
     {
+      unfold CasariSuc in H3.
       rewrite truth_Forall in H3.
       specialize (H3 i).
+      unfold DNA in H3.
       rewrite truth_Neg in H3.
       contradiction.
     }
@@ -99,12 +102,13 @@ Module Casari_with_atoms.
     rewrite truth_Impl.
     intros H3.
 
+    unfold DNA in H3.
     rewrite truth_Neg in H3.
     contradiction.
   Qed.
 
-  Corollary support_valid_CasariDNA :
-    support_valid CasariDNA.
+  Corollary support_valid_Casari_DNA :
+    support_valid (Casari DNA).
   Proof.
     intros M s a.
     apply Casari_truth_conditional.
@@ -112,47 +116,41 @@ Module Casari_with_atoms.
       reflexivity.
     -
       intros w H1.
-      apply truth_CasariDNA.
+      apply truth_Casari_DNA.
   Qed.
 
-  Theorem support_conseq_CasariDNA_CasariAtomic :
-    support_conseq CasariDNA CasariAtomic.
+  Theorem support_conseq_Casari_DNA_Casari_Atomic :
+    support_conseq (Casari DNA) (Casari Atomic).
   Proof.
-    unfold CasariDNA.
-    unfold CasariAtomic.
-    unfold Casari.
-
     apply support_conseq_Impl.
-    apply support_conseq_Forall.
-    apply support_conseq_Impl.
-    apply support_conseq_Impl.
-
-    firstorder.
-
-    apply support_conseq_Forall.
-
-    apply support_valid_Impl_conseq.
-    intros *.
-    apply support_valid_DNE_Pred.
-
-    apply support_conseq_Forall.
-
-    firstorder.
-
-    apply support_conseq_Forall.
-    apply support_valid_Impl_conseq.
-    intros *.
-    apply support_valid_DNE_Pred.
+    -
+      apply support_conseq_Forall.
+      apply support_conseq_Impl.
+      +
+        apply support_conseq_Impl.
+        *
+          firstorder.
+        *
+          apply support_conseq_Forall.
+          apply support_valid_Impl_conseq.
+          apply support_valid_DNE_Pred.
+      +
+        apply support_conseq_Forall.
+        firstorder.
+    -
+      apply support_conseq_Forall.
+      apply support_valid_Impl_conseq.
+      apply support_valid_DNE_Pred.
   Qed.
 
-  Corollary support_valid_CasariAtomic :
-    support_valid CasariAtomic.
+  Corollary support_valid_Casari_Atomic :
+    support_valid (Casari Atomic).
   Proof.
     eapply support_valid_conseq_valid.
     -
-      exact support_valid_CasariDNA.
+      exact support_valid_Casari_DNA.
     -
-      exact support_conseq_CasariDNA_CasariAtomic.
+      exact support_conseq_Casari_DNA_Casari_Atomic.
   Qed.
 
 End Casari_with_atoms.
@@ -186,25 +184,7 @@ Module Casari_fails.
       )
     ).
 
-  Lemma rel_odd :
-    forall w m j,
-      even m = false ->
-      rel w m j = true ->
-      j = m.
-  Proof.
-    intros w m j H1 H2.
-    unfold rel in H2.
-    apply orb_true_iff in H2 as [H2|H2].
-    -
-      apply andb_true_iff in H2 as [H2 H3].
-      apply eqb_eq in H3.
-      congruence.
-    -
-      rewrite H1 in H2.
-      discriminate.
-  Qed.
-
-  Lemma rel_2 :
+  Lemma unnamed_helper_1 :
     forall w m,
       even m = true ->
       rel w m w = false.
@@ -527,8 +507,9 @@ Module Casari_fails.
   Qed.
 
   (**
-     [support_IES_even], [support_IES_even_other_direction'] and
-     [support_IES_even_other_direction] represent Claim 3.8.
+     [support_IES_even], [support_IES_even_other_direction']
+     and [support_IES_even_other_direction] represent
+     Claim 3.8.
    *)
   Proposition support_IES_even :
     forall (s : state) (a : assignment) (x : var),
@@ -538,14 +519,11 @@ Module Casari_fails.
   Proof.
     intros s a x H1 [n [H2 H3]].
 
-    rewrite orb_true_iff in H2.
-    rewrite andb_true_iff in H2.
     apply complement_true in H3.
 
     exists n.
-    simpl.
-    intros w H4.
     asimpl.
+    intros w H4.
 
     unfold rel.
     rewrite H1.
@@ -553,18 +531,16 @@ Module Casari_fails.
     rewrite andb_true_iff.
     split.
     -
-      destruct (n =? w) eqn:H5.
-      +
-        apply eqb_eq in H5.
-        congruence.
-      +
-        reflexivity.
+      destruct (n =? w) eqn:H5; try reflexivity.
+      apply eqb_eq in H5.
+      congruence.
     -
-      destruct H2 as [H2|[H21 H22]].
+      apply orb_true_iff in H2 as [H2|H2].
       +
         rewrite H2.
         reflexivity.
       +
+        apply andb_true_iff in H2 as [H21 H22].
         rewrite H21,H22.
         reflexivity.
   Qed.
@@ -613,7 +589,7 @@ Module Casari_fails.
     destruct H4 as [i H4].
     asimpl in H4.
 
-    pose proof (rel_2 i _ H1) as H6.
+    pose proof (unnamed_helper_1 i _ H1) as H6.
 
     rewrite H4 in H6. discriminate.
 
