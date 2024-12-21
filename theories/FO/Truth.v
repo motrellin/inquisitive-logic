@@ -24,8 +24,7 @@ Lemma truth_decidable `{M : TDModel} :
   forall phi w a,
     {truth phi w a} + {~ truth phi w a}.
 Proof.
-  intros *.
-  revert w a.
+  unfold truth.
   induction phi as
   [p args
   |?
@@ -36,7 +35,6 @@ Proof.
   |phi1 IH1].
   all: intros w a.
   -
-    simpl.
     destruct (PInterpretation w p (fun arg => referent (args arg) w a)) eqn:H1.
     +
       left.
@@ -47,19 +45,14 @@ Proof.
     +
       right.
       intros H2.
-      rewrite H2 in H1.
-      *
-        discriminate.
-      *
-        apply singleton_true.
-        reflexivity.
+      specialize (H2 _ (singleton_refl w)).
+      congruence.
   -
     right.
     intros H1.
     specialize (H1 w).
-    apply singleton_false in H1.
-    apply H1.
-    reflexivity.
+    rewrite singleton_refl in H1.
+    discriminate.
   -
     specialize (IH1 w a).
     specialize (IH2 w a).
@@ -71,11 +64,14 @@ Proof.
         intros t H1 H2.
         apply substate_singleton in H1 as [H1|H1].
         all: rewrite H1.
-        all: auto using empty_state_property.
+        --
+           apply empty_state_property.
+        --
+           exact IH2.
       *
         right.
         intros H1.
-        simpl in H1.
+        rewrite support_Impl in H1.
         apply IH2.
         apply H1.
         --
@@ -95,7 +91,20 @@ Proof.
   -
     specialize (IH1 w a).
     specialize (IH2 w a).
-    firstorder.
+    destruct IH1 as [IH1|IH1].
+    +
+      destruct IH2 as [IH2|IH2].
+      *
+        left.
+        split; assumption.
+      *
+        right.
+        intros [H1 H2].
+        contradiction.
+    +
+      right.
+      intros [H1 H2].
+      contradiction.
   -
     specialize (IH1 w a).
     specialize (IH2 w a).
@@ -108,7 +117,8 @@ Proof.
         left; right; assumption.
       *
         right.
-        firstorder.
+        intros [H1|H1].
+        all: contradiction.
   -
     specialize (IH1 w).
     assert (H1 :
@@ -166,21 +176,16 @@ Proposition truth_Pred `{Model} :
     PInterpretation w p (fun arg => referent (args arg) w a) = true.
 Proof.
   intros p ari w a.
-  unfold truth.
-  simpl.
   split.
   -
     intros H1.
     apply H1.
-    apply singleton_true.
-    reflexivity.
+    apply singleton_refl.
   -
     intros H1 w' H2.
-    enough (w' = w).
+    apply singleton_true in H2.
     subst w'.
     exact H1.
-    apply singleton_true.
-    exact H2.
 Qed.
 
 Proposition truth_Bot `{Model} :
@@ -188,12 +193,14 @@ Proposition truth_Bot `{Model} :
     (truth <{Bot v}> w a) <-> False.
 Proof.
   intros ? w a.
-  firstorder.
-  unfold truth in H1.
-  simpl in H1.
-  specialize (H1 w).
-  apply singleton_false in H1.
-  congruence.
+  split.
+  -
+    intros H1.
+    specialize (H1 w).
+    rewrite singleton_refl in H1.
+    discriminate.
+  -
+    contradiction.
 Qed.
 
 Proposition truth_Conj `{Model} :
@@ -218,23 +225,19 @@ Proposition truth_Impl `{Model} :
   (truth phi1 w a -> truth phi2 w a).
 Proof.
   intros phi1 phi2 w a.
-  unfold truth.
-  simpl in *.
   split.
   -
     firstorder.
   -
     intros H1 t H2 H3.
-    enough (state_eq t empty_state \/ state_eq t (singleton w)) as [H4|H4].
+    apply substate_singleton in H2 as [H2|H2].
     +
-      rewrite H4.
+      rewrite H2.
       apply empty_state_property.
     +
-      rewrite H4 in *.
-      auto.
-    +
-      apply substate_singleton.
-      exact H2.
+      rewrite H2 in *.
+      apply H1.
+      exact H3.
 Qed.
 
 Proposition truth_Forall `{Model} :
@@ -419,34 +422,29 @@ Proof.
   |phi1 IH1 phi2 IH2
   |phi1 IH1
   |phi1 IH1].
-  all: simpl in *.
+  all: intros H1 M s a.
   -
-    intros _ M s a.
     split.
     +
-      intros H1 w1 H2.
+      intros H2 w1 H3.
       rewrite truth_Pred.
       auto.
     +
-      intros H1 w1 H2.
+      intros H2 w1 H3.
       rewrite <- truth_Pred.
       auto.
   -
-    intros _ M s a.
     split.
     +
       congruence.
     +
-      intros H1 w1.
-      specialize (H1 w1).
+      intros H2 w1.
+      specialize (H2 w1).
+      rewrite truth_Bot in H2.
       destruct (s w1).
-      *
-        rewrite truth_Bot in H1.
-        easy.
-      *
-        reflexivity.
+      all: easy.
   -
-    intros H1 M s a.
+    simpl in H1.
     apply andb_true_iff in H1 as [H1 H2].
     specialize (IH1 H1).
     specialize (IH2 H2).
@@ -459,7 +457,7 @@ Proof.
       intros w2 H6.
       apply singleton_true in H6.
       subst w2.
-      simpl in H3.
+      rewrite support_Impl in H3.
       apply H3.
       *
         intros w2 H7.
@@ -485,7 +483,7 @@ Proof.
         --
            exact H6.
   -
-    intros H1 M s a.
+    simpl in H1.
     apply andb_true_iff in H1 as [H1 H2].
     specialize (IH1 H1 M s a).
     specialize (IH2 H2 M s a).
@@ -499,7 +497,6 @@ Proof.
   -
     discriminate.
   -
-    intros H1 M s a.
     specialize (IH1 H1 M s).
     split.
     +
@@ -520,3 +517,5 @@ Proof.
   -
     discriminate.
 Qed.
+
+Print Assumptions classic_truth_conditional.
