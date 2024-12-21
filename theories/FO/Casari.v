@@ -919,7 +919,7 @@ Module Casari_fails.
         lia.
   Qed.
 
-  Print Assumptions unnamed_helper_4.
+  Print Assumptions unnamed_helper_3.
 
   (**
      CLA
