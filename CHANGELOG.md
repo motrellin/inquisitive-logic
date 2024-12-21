@@ -1,5 +1,42 @@
 # Changelog
 
+## inqlog-v0.8.1 (2024-12-21)
+
+### New
+
+* Added some documentation to Support.v. [Max Ole Elliger]
+
+* Proved `substate_empty_state` [Max Ole Elliger]
+
+* Proved `singleton_refl` [Max Ole Elliger]
+
+* Added some explanation regarding states. [Max Ole Elliger]
+
+* Added explanation regarding models. [Max Ole Elliger]
+
+* Proved [infinitely_many_Proper] [Max Ole Elliger]
+
+* Proved [finitely_many_Proper] [Max Ole Elliger]
+
+### Changes
+
+* Simplified some proofs in Casari.v. [Max Ole Elliger]
+
+* Simplified some proofs in Truth.v. [Max Ole Elliger]
+
+* Simplified some proofs in Support.v. [Max Ole Elliger]
+
+* Proved both directions of `empty_state_not_consistent` [Max Ole Elliger]
+
+* Simplified some proofs in States.v. [Max Ole Elliger]
+
+* Added documentation to Syntax.v. [Max Ole Elliger]
+
+* Documentation for Signatures.v. [Max Ole Elliger]
+
+  This includes the definition of our instances for Casari inside this
+  file, so that they can be used as example signatures.
+
 ## inqlog-v0.8.0 (2024-12-11)
 
 ### New
