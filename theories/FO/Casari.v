@@ -225,6 +225,14 @@ Module Casari_fails.
     firstorder.
   Qed.
 
+  (**
+     CLA
+
+     [not_forall_exists_not] depends on classical logic.
+
+     Descendants:
+     - [not_infinitely_many_finitely_many]
+   *)
   Lemma not_forall_exists_not {X} :
     forall (P : X -> Prop),
       ~ (forall x, P x) ->
@@ -589,6 +597,15 @@ Module Casari_fails.
     congruence.
   Qed.
 
+  (**
+     CLA
+
+     [support_IES_even_other_direction] depends on classical
+     logic.
+
+     Descendants:
+     - []
+   *)
   Proposition support_IES_even_other_direction :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = true ->
@@ -736,6 +753,16 @@ Module Casari_fails.
       apply H3.
   Qed.
 
+  Print Assumptions support_CasariSuc_IES_other_direction'.
+
+  (**
+     CLA
+
+     [support_CasariSuc_IES_other_direction] depends on classical logic.
+
+     Descendants:
+     - [support_CasariImpl_IES_other_direction]
+   *)
   Proposition support_CasariSuc_IES_other_direction :
     forall (s : state) (a : assignment),
       s, a |= <{ CasariSuc IES }> ->
@@ -770,6 +797,8 @@ Module Casari_fails.
     -
       exact H1.
   Qed.
+
+  Print Assumptions support_CasariSuc_IES_other_direction.
 
   (** ** Support for [CasariImpl IES] *)
 
@@ -819,6 +848,8 @@ Module Casari_fails.
           --
              exact H5.
   Qed.
+
+  Print Assumptions support_CasariImpl_IES_even_other_direction'.
 
   Lemma unnamed_helper_3 :
     forall (s : state) (a : assignment) (x : var),
@@ -888,6 +919,16 @@ Module Casari_fails.
         lia.
   Qed.
 
+  Print Assumptions unnamed_helper_4.
+
+  (**
+     CLA
+
+     [support_CasariImpl_IES_other_direction] depends on classical logic.
+
+     Descendants:
+     - [support_CasariAnt_IES]
+   *)
   Proposition support_CasariImpl_IES_other_direction :
     forall (s : state) (a : assignment) (x : var),
       s, a |= <{CasariImpl IES x}> ->
@@ -916,6 +957,8 @@ Module Casari_fails.
         exact H2.
   Qed.
 
+  Print Assumptions support_CasariImpl_IES_other_direction.
+
   (** ** Support for [CasariAnt IES] *)
 
   Proposition support_CasariAnt_IES :
@@ -927,6 +970,8 @@ Module Casari_fails.
     eapply support_CasariImpl_IES_other_direction.
     exact H2.
   Qed.
+
+  Print Assumptions support_CasariAnt_IES.
 
   (** ** Support for [Casari IES] *)
 
