@@ -1,5 +1,11 @@
 # Changelog
 
+## inqlog-v0.8.2 (2024-12-21)
+
+### Fix
+
+* Fixed an undone renaming after merge. [Max Ole Elliger]
+
 ## inqlog-v0.8.1 (2024-12-21)
 
 ### New
