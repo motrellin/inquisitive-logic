@@ -549,7 +549,7 @@ Module Casari_fails.
     forall (s : state) (m : nat),
       even m = true ->
       contains_all (? ~ even ?) s ->
-      contains_all (? even && ltb m ?) s ->
+      contains_all (? ltb m ?) s ->
       forall w j,
         rel w m j = true ->
         s j = true.
@@ -559,51 +559,41 @@ Module Casari_fails.
     unfold rel in H4.
     rewrite H1 in H4.
     simpl in H4.
-    destruct (j =? w) eqn:H6.
-    -
-      discriminate.
-    -
-      simpl in H4.
-      destruct (even j) eqn:H7.
-      +
-        apply H3.
-        apply andb_true_iff.
-        auto.
-      +
-        apply H2.
-        rewrite H7.
-        reflexivity.
+    destruct (j =? w) eqn:H6; try discriminate.
+    simpl in H4.
+    apply orb_true_iff in H4 as [H4|H4].
+    all: auto.
   Qed.
 
   Lemma support_IES_even_other_direction' :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = true ->
       contains_all (? ~ even ?) s ->
-      contains_all (? even && ltb (a x) ?) s ->
+      contains_all (? ltb (a x) ?) s ->
       ~ (s, a |= <{IES x}>).
   Proof.
-    intros s a x H1 H2 H3 H4.
-
-    pose proof (unnamed_helper_2 _ _ H1 H2 H3) as H5.
-
-    destruct H4 as [i H4].
+    intros s a x H1 H2 H3 [i H4].
     asimpl in H4.
 
-    pose proof (unnamed_helper_1 i _ H1) as H6.
+    pose proof (unnamed_helper_1 i _ H1) as H5.
+    pose proof (unnamed_helper_2 _ _ H1 H2 H3) as H6.
 
-    rewrite H4 in H6. discriminate.
-
-    apply H5 with (w := 1).
-    apply H4.
-    apply H2.
-    reflexivity.
+    assert (H7 : s i = true).
+    {
+      apply H6 with (w := 1).
+      apply H4.
+      apply H2.
+      reflexivity.
+    }
+    specialize (H4 _ H7).
+    congruence.
   Qed.
 
   Proposition support_IES_even_other_direction :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = true ->
       s, a |= <{IES x}> ->
-      contains_any (? (~ even) || even && ltb (a x) ?) (complement s).
+      contains_any (? (~ even) || ltb (a x) ?) (complement s).
   Proof.
     intros s a x H1 H2.
     pose proof (support_IES_even_other_direction') as H3.
@@ -620,17 +610,14 @@ Module Casari_fails.
       intros w H5.
       specialize (H4 w).
       rewrite orb_true_iff in H4.
-      rewrite andb_true_iff in H4.
       apply H4.
       left.
       exact H5.
     -
       intros w H5.
-      rewrite andb_true_iff in H5.
-      destruct H5 as [H5 H6].
       apply H4.
       rewrite H5.
-      rewrite H6.
+      rewrite orb_true_r.
       reflexivity.
     -
       exact H2.
@@ -694,22 +681,23 @@ Module Casari_fails.
     destruct (even w); easy.
   Qed.
 
-  Fact counter_state_contains_all_even_greater_than :
+  Fact counter_state_contains_all_ltb :
     forall e,
-      contains_all (? even && ltb e ?) (counter_state e).
+      contains_all (? ltb e ?) (counter_state e).
   Proof.
     intros e w H1.
-    rewrite andb_true_iff in H1.
-    destruct H1 as [H1 H2].
     unfold counter_state.
-    rewrite H1,H2.
-    reflexivity.
+    destruct (even w).
+    -
+      exact H1.
+    -
+      reflexivity.
   Qed.
 
   Lemma support_CasariSuc_IES_other_direction' :
     forall (s : state) (a : assignment) (e : nat),
       contains_all (? ~ even ?) s ->
-      contains_all (? even && ltb e ?) s ->
+      contains_all (? ltb e ?) s ->
       ~ (s, a |= <{CasariSuc IES}>).
   Proof.
     intros s a e H1 H2 H3.
@@ -735,24 +723,15 @@ Module Casari_fails.
         rewrite H4.
         reflexivity.
     -
-      intros w H4.
-
-      apply H1.
-      exact H4.
+      exact H1.
     -
       intros w H4.
-      apply andb_true_iff in H4 as [H4 H5].
       apply H2.
-      apply andb_true_iff.
-      split.
-      +
-        exact H4.
-      +
-        apply ltb_lt in H5.
-        apply ltb_lt.
-        asimpl in H5.
-        destruct (even e).
-        all: lia.
+      apply ltb_lt in H4.
+      apply ltb_lt.
+      asimpl in H4.
+      destruct (even e).
+      all: lia.
     -
       apply H3.
   Qed.
@@ -763,7 +742,6 @@ Module Casari_fails.
       E s.
   Proof.
     intros s a H1.
-    red.
     apply NNPP.
     intros H2.
     apply Decidable.not_or in H2 as [H2 H3].
@@ -772,19 +750,25 @@ Module Casari_fails.
 
     apply not_infinitely_many_finitely_many in H3 as [e H3].
 
-    apply support_CasariSuc_IES_other_direction' with (e := e) in H1.
-    -
-      exact H1.
+    eapply support_CasariSuc_IES_other_direction' with
+      (e := e).
     -
       exact H2.
     -
       intros w H4.
-      apply andb_true_iff in H4 as [H4 H5].
-      specialize (H3 w H4).
-      rewrite complement_true in H3.
-      rewrite ltb_lt in H5.
-      rewrite leb_le in H3.
-      destruct (s w); lia.
+      destruct (even w) eqn:H5.
+      +
+        specialize (H3 _ H5).
+        rewrite complement_true in H3.
+        rewrite ltb_lt in H4.
+        rewrite leb_le in H3.
+        destruct (s w); lia.
+      +
+        apply H2.
+        rewrite H5.
+        reflexivity.
+    -
+      exact H1.
   Qed.
 
   (** ** Support for [CasariImpl IES] *)
@@ -794,29 +778,32 @@ Module Casari_fails.
       even (a x) = true ->
       contains_all (? ~ even ?) s ->
       finitely_many (? even ?) (complement s) ->
-      contains_any (? even && ltb (a x) ?) (complement s) ->
+      contains_any (? ltb (a x) ?) (complement s) ->
       ~ (s, a |= <{CasariImpl IES x}>).
   Proof.
-    intros s a x H1 H2 [e1 H3] [e2 [H4 H6]] H7.
-    apply andb_true_iff in H4 as [H4 H5].
-    unfold CasariImpl in H7.
+    intros s a x H1 H2 [e1 H3] [e2 [H4 H5]] H6.
 
     eapply support_CasariSuc_IES_other_direction' with
       (e := e1).
     -
       exact H2.
     -
-      intros w H8.
-      apply andb_true_iff in H8 as [H8 H9].
-      specialize (H3 w H8).
-      rewrite complement_true in H3.
-      rewrite leb_le in H3.
-      rewrite ltb_lt in H9.
-      destruct (s w).
-      all: lia.
+      intros w H7.
+      destruct (even w) eqn:H8.
+      +
+        specialize (H3 _ H8).
+        rewrite complement_true in H3.
+        rewrite leb_le in H3.
+        rewrite ltb_lt in H7.
+        destruct (s w); lia.
+      +
+        apply H2.
+        rewrite H8.
+        reflexivity.
     -
-      rewrite support_Impl in H7.
-      apply H7.
+      unfold CasariImpl in H6.
+      rewrite support_Impl in H6.
+      apply H6.
       +
         reflexivity.
       +
@@ -825,17 +812,15 @@ Module Casari_fails.
           exact H1.
         *
           exists e2.
-          simpl.
           rewrite H4.
-          simpl.
           split.
           --
-             exact H5.
+             destruct (even e2); reflexivity.
           --
-             exact H6.
+             exact H5.
   Qed.
 
-  Lemma unnamed_helper_4 :
+  Lemma unnamed_helper_3 :
     forall (s : state) (a : assignment) (x : var),
       even (a x) = true ->
       ~ E s ->
@@ -843,7 +828,7 @@ Module Casari_fails.
         substate t s /\
         contains_all (? ~ even ?) t /\
         finitely_many (? even ?) (complement t) /\
-        contains_any (? even && ltb (a x) ?) (complement t).
+        contains_any (? ltb (a x) ?) (complement t).
   Proof.
     intros s a x H1 H2.
     apply Decidable.not_or in H2 as [H2 H3].
@@ -865,16 +850,16 @@ Module Casari_fails.
     repeat split.
     -
       intros w H5.
-      destruct (even w) eqn:H6.
+      destruct (even w) eqn:H4.
       +
-        specialize (H3 w H6).
+        specialize (H3 _ H4).
         rewrite complement_true in H3.
         rewrite leb_le in H3.
         rewrite ltb_lt in H5.
         destruct (s w); lia.
       +
         apply H2.
-        rewrite H6.
+        rewrite H4.
         reflexivity.
     -
       intros w H4.
@@ -891,11 +876,10 @@ Module Casari_fails.
       lia.
     -
       exists (S (S (a x))).
-      rewrite andb_true_iff.
       rewrite complement_true.
       simpl.
       rewrite H1.
-      repeat split.
+      split.
       +
         apply ltb_lt.
         lia.
@@ -914,22 +898,10 @@ Module Casari_fails.
     -
       apply NNPP.
       intros H3.
-      eapply unnamed_helper_4 in H3 as [t [H3 [H4 [H5 H6]]]]; try eassumption.
+      eapply (unnamed_helper_3 _ _ _ H2) in H3.
+      destruct H3 as [t [H3 [H4 [H5 H6]]]].
       eapply support_CasariImpl_IES_even_other_direction'.
-      +
-        exact H2.
-      +
-        exact H4.
-      +
-        exact H5.
-      +
-        exact H6.
-      +
-        eapply persistency.
-        *
-          exact H1.
-        *
-          exact H3.
+      all: eauto using persistency.
     -
       unfold CasariImpl in H1.
       rewrite support_Impl in H1.
@@ -950,8 +922,7 @@ Module Casari_fails.
     forall (s : state) (a : assignment),
       s, a |= <{CasariAnt IES}>.
   Proof.
-    intros s a i.
-    intros t H1 H2.
+    intros s a i t H1 H2.
     apply support_CasariSuc_IES.
     eapply support_CasariImpl_IES_other_direction.
     exact H2.
@@ -968,15 +939,15 @@ Module Casari_fails.
     -
       apply counter_state_contains_all_odds.
     -
-      apply counter_state_contains_all_even_greater_than.
+      apply counter_state_contains_all_ltb.
     -
       unfold Casari in H1.
       apply support_valid_Impl_conseq in H1.
       apply H1.
       apply support_CasariAnt_IES.
     Unshelve.
-    exact 0.
-    exact id.
+    exact 24.
+    exact (fun _ => 25).
   Qed.
 
   Print Assumptions not_support_valid_Casari_IES.
