@@ -34,11 +34,22 @@
 <span class="id" title="keyword">From</span> <span class="id" title="var">Autosubst</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="library">Autosubst</span>.<br/>
 
 <br/>
+<span class="id" title="keyword">From</span> <span class="id" title="var">Coq</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Bool.Bool.html#"><span class="id" title="library">Bool</span></a>.<br/>
+
+<br/>
 </div>
 
 <div class="doc">
-<a id="lab21"></a><h1 class="section">Terms</h1>
+<a id="lab1"></a><h1 class="section">Terms</h1>
 
+
+<div class="paragraph"> </div>
+
+   Let's start by recursively defining <i>terms</i> over a
+   signature. A term is either a <i>variable</i> or an application
+   of a function symbol <span class="inlinecode"><span class="id" title="var">f</span></span> to some terms, respecting
+   <span class="inlinecode"><a class="idref" href="InqLog.FO.Signatures.html#FAri"><span class="id" title="projection">FAri</span></a></span> <span class="inlinecode"><span class="id" title="var">f</span></span>. This is done via a function <span class="inlinecode"><a class="idref" href="InqLog.FO.Signatures.html#FAri"><span class="id" title="projection">FAri</span></a></span> <span class="inlinecode"><span class="id" title="var">f</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a></span>.
+ 
 </div>
 <div class="code">
 
@@ -48,7 +59,20 @@
 &nbsp;&nbsp;| <a id="Func" class="idref" href="#Func"><span class="id" title="constructor">Func</span></a> : <span class="id" title="keyword">forall</span> (<a id="f:4" class="idref" href="#f:4"><span class="id" title="binder">f</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#FSymb"><span class="id" title="method">FSymb</span></a>), <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Signatures.html#FAri"><span class="id" title="method">FAri</span></a> <a class="idref" href="InqLog.FO.Syntax.html#f:4"><span class="id" title="variable">f</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#term:2"><span class="id" title="inductive">term</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#term:2"><span class="id" title="inductive">term</span></a>.<br/>
 
 <br/>
-<span class="comment">(*&nbsp;Autosubst-stuff&nbsp;about&nbsp;terms&nbsp;*)</span><br/>
+<span class="id" title="keyword">Print</span> <span class="id" title="var">var</span>.<br/>
+</div>
+
+<div class="doc">
+   <span class="inlinecode"><span class="id" title="definition">var</span></span> is defined as <span class="inlinecode"><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a></span> via <span class="inlinecode"><span class="id" title="library">Autosubst</span></span> which is a
+   framework for binders in terms using de Bruijn indices.
+
+<div class="paragraph"> </div>
+
+   To use Autosubst efficiently, we need to define some
+   instances.
+ 
+</div>
+<div class="code">
 
 <br/>
 <span class="id" title="keyword">Instance</span> <a id="Ids_term" class="idref" href="#Ids_term"><span class="id" title="instance">Ids_term</span></a> `{<a id="H:5" class="idref" href="#H:5"><span class="id" title="binder">Signature</span></a>} : <span class="id" title="class">Ids</span> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a>.<br/>
@@ -70,8 +94,41 @@
 </div>
 
 <div class="doc">
-<a id="lab22"></a><h1 class="section">Formulas</h1>
+<a id="lab2"></a><h1 class="section">Formulas</h1>
 
+   Next step is to recursively define <i>formulas</i> over a
+   signature. A <span class="inlinecode"><a class="idref" href="InqLog.Prop.LP.html#form"><span class="id" title="inductive">form</span></a></span>ula is either
+<ul class="doclist">
+<li> an application of a predicate symbol <span class="inlinecode"><span class="id" title="var">p</span></span> to some terms,
+     respecting <span class="inlinecode"><a class="idref" href="InqLog.FO.Signatures.html#PAri"><span class="id" title="projection">PAri</span></a></span> <span class="inlinecode"><span class="id" title="var">p</span></span>, which is done via a function
+     <span class="inlinecode"><a class="idref" href="InqLog.FO.Signatures.html#PAri"><span class="id" title="projection">PAri</span></a></span> <span class="inlinecode"><span class="id" title="var">p</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a></span>,
+
+</li>
+<li> Falsum, which is represented by <span class="inlinecode"><a class="idref" href="InqLog.FO.Syntax.html#Bot"><span class="id" title="constructor">Bot</span></a></span>,
+
+</li>
+<li> an <i>Implication</i>, Conjunction or Inquisivite Disjunction,
+
+</li>
+<li> an all-quantified formula or
+
+</li>
+<li> an inquisivite existential-quantified formula.
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+   Note, that binding is done by de Bruijn indices,
+   implemented via the libary <span class="inlinecode"><span class="id" title="library">Autosubst</span></span>. For example,
+   we will just write <span class="inlinecode"><a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a></span> <span class="inlinecode"><span class="id" title="var">phi</span></span> (for a <span class="inlinecode"><a class="idref" href="InqLog.Prop.LP.html#form"><span class="id" title="inductive">form</span></a></span>ula <span class="inlinecode"><span class="id" title="var">phi</span></span>)
+   where the variable <span class="inlinecode">0</span> is bounded inside of <span class="inlinecode"><span class="id" title="var">phi</span></span>.
+
+<div class="paragraph"> </div>
+
+   For technical reasons, we also define <span class="inlinecode"><a class="idref" href="InqLog.FO.Syntax.html#Bot"><span class="id" title="constructor">Bot</span></a></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" title="definition">var</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><a class="idref" href="InqLog.Prop.LP.html#form"><span class="id" title="inductive">form</span></a></span>.
+ 
 </div>
 <div class="code">
 
@@ -89,6 +146,17 @@
 &nbsp;&nbsp;<span class="comment">(*&nbsp;first-order&nbsp;connectives&nbsp;*)</span><br/>
 &nbsp;&nbsp;| <a id="Forall" class="idref" href="#Forall"><span class="id" title="constructor">Forall</span></a> : <span class="id" title="notation">{</span><span class="id" title="notation">bind</span> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a> <span class="id" title="notation">in</span> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a><span class="id" title="notation">}</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a><br/>
 &nbsp;&nbsp;| <a id="Iexists" class="idref" href="#Iexists"><span class="id" title="constructor">Iexists</span></a> : <span class="id" title="notation">{</span><span class="id" title="notation">bind</span> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a> <span class="id" title="notation">in</span> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a><span class="id" title="notation">}</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form:10"><span class="id" title="inductive">form</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+   Let us introduce some notation. It is not necessary to
+   understand the technical details. For more information,
+   please refer to the Coq documentation.
+ 
+</div>
+<div class="code">
 
 <br/>
 <span class="id" title="var">Declare</span> <span class="id" title="var">Custom</span> <span class="id" title="var">Entry</span> <span class="id" title="var">form</span>.<br/>
@@ -114,34 +182,40 @@
 
 <br/>
 <span class="id" title="keyword">Notation</span> <a id=":form:form_scope:x_'-&gt;'_x" class="idref" href="#:form:form_scope:x_'-&gt;'_x"><span class="id" title="notation">&quot;</span></a>phi -&gt; psi" := (<a class="idref" href="InqLog.FO.Syntax.html#Impl"><span class="id" title="constructor">Impl</span></a> <span class="id" title="var">phi</span> <span class="id" title="var">psi</span>)<br/>
-&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 70, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 99, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
 &nbsp;&nbsp;: <span class="id" title="var">form_scope</span>.<br/>
 
 <br/>
 <span class="id" title="keyword">Notation</span> <a id="9cee12c810d5cc4a29c727928118d9ca" class="idref" href="#9cee12c810d5cc4a29c727928118d9ca"><span class="id" title="notation">&quot;</span></a>phi /\ psi" := (<a class="idref" href="InqLog.FO.Syntax.html#Conj"><span class="id" title="constructor">Conj</span></a> <span class="id" title="var">phi</span> <span class="id" title="var">psi</span>)<br/>
-&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 60, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 80, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
 &nbsp;&nbsp;: <span class="id" title="var">form_scope</span>.<br/>
 
 <br/>
 <span class="id" title="keyword">Notation</span> <a id="b608da0d662b1e62470950ef7d243725" class="idref" href="#b608da0d662b1e62470950ef7d243725"><span class="id" title="notation">&quot;</span></a>phi \\/ psi" := (<a class="idref" href="InqLog.FO.Syntax.html#Idisj"><span class="id" title="constructor">Idisj</span></a> <span class="id" title="var">phi</span> <span class="id" title="var">psi</span>)<br/>
-&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 65, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 86, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
 &nbsp;&nbsp;: <span class="id" title="var">form_scope</span>.<br/>
 
 <br/>
 <span class="id" title="keyword">Notation</span> <a id=":form:form_scope:'forall'_x" class="idref" href="#:form:form_scope:'forall'_x"><span class="id" title="notation">&quot;</span></a>'forall' phi" := (<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> <span class="id" title="var">phi</span>)<br/>
-&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 85, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 200, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
 &nbsp;&nbsp;: <span class="id" title="var">form_scope</span>.<br/>
 
 <br/>
 <span class="id" title="keyword">Notation</span> <a id=":form:form_scope:'iexists'_x" class="idref" href="#:form:form_scope:'iexists'_x"><span class="id" title="notation">&quot;</span></a>'iexists' phi" := (<a class="idref" href="InqLog.FO.Syntax.html#Iexists"><span class="id" title="constructor">Iexists</span></a> <span class="id" title="var">phi</span>)<br/>
-&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 90, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 201, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
 &nbsp;&nbsp;: <span class="id" title="var">form_scope</span>.<br/>
 
 <br/>
 <span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">form_scope</span>.<br/>
 
 <br/>
-<span class="comment">(*&nbsp;Autosubst-stuff&nbsp;about&nbsp;formulas&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+   And again, we need to derive some <span class="inlinecode"><span class="id" title="library">Autosubst</span></span>-<span class="inlinecode"><span class="id" title="keyword">Instance</span></span>s.
+ 
+</div>
+<div class="code">
 
 <br/>
 <span class="id" title="keyword">Instance</span> <a id="HSubst_form" class="idref" href="#HSubst_form"><span class="id" title="instance">HSubst_form</span></a> `{<a id="H:13" class="idref" href="#H:13"><span class="id" title="binder">Signature</span></a>} : <span class="id" title="class">HSubst</span> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a> <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>.<br/>
@@ -175,8 +249,14 @@
 </div>
 
 <div class="doc">
-<a id="lab23"></a><h2 class="section">Defined connectives</h2>
+<a id="lab3"></a><h2 class="section">Defined connectives</h2>
 
+
+<div class="paragraph"> </div>
+
+   We define some typical connectives via our definition
+   of <span class="inlinecode"><a class="idref" href="InqLog.Prop.LP.html#form"><span class="id" title="inductive">form</span></a></span>, as typical. We also add some notation for them.
+ 
 </div>
 <div class="code">
 
@@ -186,7 +266,7 @@
 
 <br/>
 <span class="id" title="keyword">Notation</span> <a id="5e292632a11bcedd26dbba1b0fcafc93" class="idref" href="#5e292632a11bcedd26dbba1b0fcafc93"><span class="id" title="notation">&quot;</span></a>~ phi" := (<a class="idref" href="InqLog.FO.Syntax.html#Neg"><span class="id" title="definition">Neg</span></a> <span class="id" title="var">phi</span>)<br/>
-&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 55, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 75, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
 &nbsp;&nbsp;: <span class="id" title="var">form_scope</span>.<br/>
 
 <br/>
@@ -199,7 +279,7 @@
 
 <br/>
 <span class="id" title="keyword">Notation</span> <a id="3eed3397624d01a5bf33f318e23bebbb" class="idref" href="#3eed3397624d01a5bf33f318e23bebbb"><span class="id" title="notation">&quot;</span></a>phi \/ psi" := (<a class="idref" href="InqLog.FO.Syntax.html#Disj"><span class="id" title="definition">Disj</span></a> <span class="id" title="var">phi</span> <span class="id" title="var">psi</span>)<br/>
-&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 66, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 85, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
 &nbsp;&nbsp;: <span class="id" title="var">form_scope</span>.<br/>
 
 <br/>
@@ -208,7 +288,7 @@
 
 <br/>
 <span class="id" title="keyword">Notation</span> <a id=":form:form_scope:x_'&lt;-&gt;'_x" class="idref" href="#:form:form_scope:x_'&lt;-&gt;'_x"><span class="id" title="notation">&quot;</span></a>phi &lt;-&gt; psi" := (<a class="idref" href="InqLog.FO.Syntax.html#Iff"><span class="id" title="definition">Iff</span></a> <span class="id" title="var">phi</span> <span class="id" title="var">psi</span>)<br/>
-&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 85, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 95, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
 &nbsp;&nbsp;: <span class="id" title="var">form_scope</span>.<br/>
 
 <br/>
@@ -217,7 +297,7 @@
 
 <br/>
 <span class="id" title="keyword">Notation</span> <a id=":form:form_scope:'exists'_x" class="idref" href="#:form:form_scope:'exists'_x"><span class="id" title="notation">&quot;</span></a>'exists' phi" := (<a class="idref" href="InqLog.FO.Syntax.html#Exists"><span class="id" title="definition">Exists</span></a> <span class="id" title="var">phi</span>)<br/>
-&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 91, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 200, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
 &nbsp;&nbsp;: <span class="id" title="var">form_scope</span>.<br/>
 
 <br/>
@@ -226,34 +306,55 @@
 
 <br/>
 <span class="id" title="keyword">Notation</span> <a id="96e50c0ad2eebd7ff293c76eb2dbe1c4" class="idref" href="#96e50c0ad2eebd7ff293c76eb2dbe1c4"><span class="id" title="notation">&quot;</span></a>? phi" := (<a class="idref" href="InqLog.FO.Syntax.html#Iquest"><span class="id" title="definition">Iquest</span></a> <span class="id" title="var">phi</span>)<br/>
-&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 56, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">in</span> <span class="id" title="var">custom</span> <span class="id" title="var">form</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 76, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>)<br/>
 &nbsp;&nbsp;: <span class="id" title="var">form_scope</span>.<br/>
 
 <br/>
 </div>
 
 <div class="doc">
-<a id="lab24"></a><h2 class="section">Example formulas</h2>
+<a id="lab4"></a><h2 class="section">Example formulas</h2>
 
+
+<div class="paragraph"> </div>
+
+   We can now use our new syntax notation to define some
+   example formulas for illustration purpose.
+
+<div class="paragraph"> </div>
+
+ 
 </div>
 <div class="code">
 
 <br/>
-<span class="id" title="keyword">Example</span> <a id="DNE" class="idref" href="#DNE"><span class="id" title="definition">DNE</span></a> `{<a id="H:33" class="idref" href="#H:33"><span class="id" title="binder">Signature</span></a>} (<a id="phi:34" class="idref" href="#phi:34"><span class="id" title="binder">phi</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>) : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a> :=<br/>
-&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">&lt;{</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ccd20a8d62d2a7a8bdabffe68b63cfaf"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Syntax.html#5e292632a11bcedd26dbba1b0fcafc93"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ccd20a8d62d2a7a8bdabffe68b63cfaf"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Syntax.html#5e292632a11bcedd26dbba1b0fcafc93"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.Syntax.html#phi:34"><span class="id" title="variable">phi</span></a><a class="idref" href="InqLog.FO.Syntax.html#ccd20a8d62d2a7a8bdabffe68b63cfaf"><span class="id" title="notation">))</span></a> <a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#phi:34"><span class="id" title="variable">phi</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">}&gt;</span></a>.<br/>
+<span class="id" title="keyword">Example</span> <a id="iquest_p" class="idref" href="#iquest_p"><span class="id" title="definition">iquest_p</span></a> `{<a id="H:33" class="idref" href="#H:33"><span class="id" title="binder">Signature</span></a>} (<a id="p:34" class="idref" href="#p:34"><span class="id" title="binder">p</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#PSymb"><span class="id" title="method">PSymb</span></a>) (<a id="args:35" class="idref" href="#args:35"><span class="id" title="binder">args</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#PAri"><span class="id" title="method">PAri</span></a> <a class="idref" href="InqLog.FO.Syntax.html#p:34"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#term"><span class="id" title="inductive">term</span></a>) : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">&lt;{</span></a> <a class="idref" href="InqLog.FO.Syntax.html#96e50c0ad2eebd7ff293c76eb2dbe1c4"><span class="id" title="notation">?</span></a> <a class="idref" href="InqLog.FO.Syntax.html#Pred"><span class="id" title="constructor">Pred</span></a> <a class="idref" href="InqLog.FO.Syntax.html#p:34"><span class="id" title="variable">p</span></a> <a class="idref" href="InqLog.FO.Syntax.html#args:35"><span class="id" title="variable">args</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">}&gt;</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <a id="DNE" class="idref" href="#DNE"><span class="id" title="definition">DNE</span></a> `{<a id="H:36" class="idref" href="#H:36"><span class="id" title="binder">Signature</span></a>} (<a id="phi:37" class="idref" href="#phi:37"><span class="id" title="binder">phi</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>) : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">&lt;{</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ccd20a8d62d2a7a8bdabffe68b63cfaf"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Syntax.html#5e292632a11bcedd26dbba1b0fcafc93"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ccd20a8d62d2a7a8bdabffe68b63cfaf"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Syntax.html#5e292632a11bcedd26dbba1b0fcafc93"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.Syntax.html#phi:37"><span class="id" title="variable">phi</span></a><a class="idref" href="InqLog.FO.Syntax.html#ccd20a8d62d2a7a8bdabffe68b63cfaf"><span class="id" title="notation">))</span></a> <a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#phi:37"><span class="id" title="variable">phi</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">}&gt;</span></a>.<br/>
 
 <br/>
 </div>
 
 <div class="doc">
-<a id="lab25"></a><h2 class="section">Classic formulas</h2>
+<a id="lab5"></a><h2 class="section">Classic formulas</h2>
 
+
+<div class="paragraph"> </div>
+
+   We want to introduce the notion of a <i>classic formula</i>.
+   A formula is called <i>classic</i>, iff it doesn't contain
+   inquisitive disjunction or inquisitive existential
+   quantifiers.
+ 
 </div>
 <div class="code">
 
 <br/>
-<span class="id" title="keyword">Fixpoint</span> <a id="classic" class="idref" href="#classic"><span class="id" title="definition">classic</span></a> `{<a id="H:35" class="idref" href="#H:35"><span class="id" title="binder">Signature</span></a>} (<a id="phi:36" class="idref" href="#phi:36"><span class="id" title="binder">phi</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>) : <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> :=<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="InqLog.FO.Syntax.html#phi:36"><span class="id" title="variable">phi</span></a> <span class="id" title="keyword">with</span><br/>
+<span class="id" title="keyword">Fixpoint</span> <a id="classic" class="idref" href="#classic"><span class="id" title="definition">classic</span></a> `{<a id="H:38" class="idref" href="#H:38"><span class="id" title="binder">Signature</span></a>} (<a id="phi:39" class="idref" href="#phi:39"><span class="id" title="binder">phi</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>) : <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="InqLog.FO.Syntax.html#phi:39"><span class="id" title="variable">phi</span></a> <span class="id" title="keyword">with</span><br/>
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Pred"><span class="id" title="constructor">Pred</span></a> <span class="id" title="var">p</span> <span class="id" title="var">ari</span> =&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
 <br/>
@@ -261,16 +362,16 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
 <br/>
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Impl"><span class="id" title="constructor">Impl</span></a> <span class="id" title="var">phi1</span> <span class="id" title="var">phi2</span> =&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#classic:37"><span class="id" title="definition">classic</span></a> <span class="id" title="var">phi1</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::bool_scope:x_'&amp;&amp;'_x"><span class="id" title="notation">&amp;&amp;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#classic:37"><span class="id" title="definition">classic</span></a> <span class="id" title="var">phi2</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#classic:40"><span class="id" title="definition">classic</span></a> <span class="id" title="var">phi1</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::bool_scope:x_'&amp;&amp;'_x"><span class="id" title="notation">&amp;&amp;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#classic:40"><span class="id" title="definition">classic</span></a> <span class="id" title="var">phi2</span><br/>
 <br/>
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Conj"><span class="id" title="constructor">Conj</span></a> <span class="id" title="var">phi1</span> <span class="id" title="var">phi2</span> =&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#classic:37"><span class="id" title="definition">classic</span></a> <span class="id" title="var">phi1</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::bool_scope:x_'&amp;&amp;'_x"><span class="id" title="notation">&amp;&amp;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#classic:37"><span class="id" title="definition">classic</span></a> <span class="id" title="var">phi2</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#classic:40"><span class="id" title="definition">classic</span></a> <span class="id" title="var">phi1</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::bool_scope:x_'&amp;&amp;'_x"><span class="id" title="notation">&amp;&amp;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#classic:40"><span class="id" title="definition">classic</span></a> <span class="id" title="var">phi2</span><br/>
 <br/>
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Idisj"><span class="id" title="constructor">Idisj</span></a> <span class="id" title="var">phi1</span> <span class="id" title="var">phi2</span> =&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
 <br/>
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> <span class="id" title="var">phi1</span> =&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#classic:37"><span class="id" title="definition">classic</span></a> <span class="id" title="var">phi1</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#classic:40"><span class="id" title="definition">classic</span></a> <span class="id" title="var">phi1</span><br/>
 <br/>
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Iexists"><span class="id" title="constructor">Iexists</span></a> <span class="id" title="var">phi1</span> =&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
@@ -278,8 +379,38 @@
 &nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Fixpoint</span> <a id="classical_variant" class="idref" href="#classical_variant"><span class="id" title="definition">classical_variant</span></a> `{<a id="H:39" class="idref" href="#H:39"><span class="id" title="binder">Signature</span></a>} (<a id="phi:40" class="idref" href="#phi:40"><span class="id" title="binder">phi</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>) : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a> :=<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="InqLog.FO.Syntax.html#phi:40"><span class="id" title="variable">phi</span></a> <span class="id" title="keyword">with</span><br/>
+<span class="id" title="keyword">Example</span> <a id="iquest_p_not_classic" class="idref" href="#iquest_p_not_classic"><span class="id" title="definition">iquest_p_not_classic</span></a> `{<a id="H:42" class="idref" href="#H:42"><span class="id" title="binder">Signature</span></a>} :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="p:43" class="idref" href="#p:43"><span class="id" title="binder">p</span></a> <a id="args:44" class="idref" href="#args:44"><span class="id" title="binder">args</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#classic"><span class="id" title="definition">classic</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#iquest_p"><span class="id" title="definition">iquest_p</span></a> <a class="idref" href="InqLog.FO.Syntax.html#p:43"><span class="id" title="variable">p</span></a> <a class="idref" href="InqLog.FO.Syntax.html#args:44"><span class="id" title="variable">args</span></a>) <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <a id="DNE_classic" class="idref" href="#DNE_classic"><span class="id" title="definition">DNE_classic</span></a> `{<a id="H:45" class="idref" href="#H:45"><span class="id" title="binder">Signature</span></a>} :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="phi:46" class="idref" href="#phi:46"><span class="id" title="binder">phi</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#classic"><span class="id" title="definition">classic</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#DNE"><span class="id" title="definition">DNE</span></a> <a class="idref" href="InqLog.FO.Syntax.html#phi:46"><span class="id" title="variable">phi</span></a>) <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="InqLog.FO.Syntax.html#classic"><span class="id" title="definition">classic</span></a> <a class="idref" href="InqLog.FO.Syntax.html#phi:46"><span class="id" title="variable">phi</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">phi</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<a class="idref" href="InqLog.FO.Syntax.html#classic"><span class="id" title="definition">classic</span></a> <span class="id" title="var">phi</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+   For every formula, we can construct a classical variant of
+   it by replacing inquisitive connectives by their standard
+   variant.
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a id="classical_variant" class="idref" href="#classical_variant"><span class="id" title="definition">classical_variant</span></a> `{<a id="H:47" class="idref" href="#H:47"><span class="id" title="binder">Signature</span></a>} (<a id="phi:48" class="idref" href="#phi:48"><span class="id" title="binder">phi</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>) : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="InqLog.FO.Syntax.html#phi:48"><span class="id" title="variable">phi</span></a> <span class="id" title="keyword">with</span><br/>
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Pred"><span class="id" title="constructor">Pred</span></a> <span class="id" title="var">p</span> <span class="id" title="var">ari</span> =&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Pred"><span class="id" title="constructor">Pred</span></a> <span class="id" title="var">p</span> <span class="id" title="var">ari</span><br/>
 <br/>
@@ -287,26 +418,36 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Bot"><span class="id" title="constructor">Bot</span></a> <span class="id" title="var">v</span><br/>
 <br/>
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Impl"><span class="id" title="constructor">Impl</span></a> <span class="id" title="var">phi1</span> <span class="id" title="var">phi2</span> =&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Impl"><span class="id" title="constructor">Impl</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:41"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi1</span>) (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:41"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Impl"><span class="id" title="constructor">Impl</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:49"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi1</span>) (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:49"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi2</span>)<br/>
 <br/>
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Conj"><span class="id" title="constructor">Conj</span></a> <span class="id" title="var">phi1</span> <span class="id" title="var">phi2</span> =&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Conj"><span class="id" title="constructor">Conj</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:41"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi1</span>) (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:41"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Conj"><span class="id" title="constructor">Conj</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:49"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi1</span>) (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:49"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi2</span>)<br/>
 <br/>
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Idisj"><span class="id" title="constructor">Idisj</span></a> <span class="id" title="var">phi1</span> <span class="id" title="var">phi2</span> =&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Disj"><span class="id" title="definition">Disj</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:41"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi1</span>) (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:41"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Disj"><span class="id" title="definition">Disj</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:49"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi1</span>) (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:49"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi2</span>)<br/>
 <br/>
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> <span class="id" title="var">phi1</span> =&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:41"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi1</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:49"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi1</span>)<br/>
 <br/>
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Iexists"><span class="id" title="constructor">Iexists</span></a> <span class="id" title="var">phi1</span> =&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Exists"><span class="id" title="definition">Exists</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:41"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi1</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#Exists"><span class="id" title="definition">Exists</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant:49"><span class="id" title="definition">classical_variant</span></a> <span class="id" title="var">phi1</span>)<br/>
 <br/>
 &nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Proposition</span> <a id="classical_variant_is_classic" class="idref" href="#classical_variant_is_classic"><span class="id" title="lemma">classical_variant_is_classic</span></a> `{<a id="H:43" class="idref" href="#H:43"><span class="id" title="binder">Signature</span></a>} :<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="phi:44" class="idref" href="#phi:44"><span class="id" title="binder">phi</span></a>,<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#classic"><span class="id" title="definition">classic</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant"><span class="id" title="definition">classical_variant</span></a> <a class="idref" href="InqLog.FO.Syntax.html#phi:44"><span class="id" title="variable">phi</span></a>) <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>.<br/>
+</div>
+
+<div class="doc">
+   We can verify <span class="inlinecode"><a class="idref" href="InqLog.FO.Syntax.html#classical_variant"><span class="id" title="definition">classical_variant</span></a></span> by the following
+   proposition.
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Proposition</span> <a id="classical_variant_is_classic" class="idref" href="#classical_variant_is_classic"><span class="id" title="lemma">classical_variant_is_classic</span></a> `{<a id="H:51" class="idref" href="#H:51"><span class="id" title="binder">Signature</span></a>} :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="phi:52" class="idref" href="#phi:52"><span class="id" title="binder">phi</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#classic"><span class="id" title="definition">classic</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#classical_variant"><span class="id" title="definition">classical_variant</span></a> <a class="idref" href="InqLog.FO.Syntax.html#phi:52"><span class="id" title="variable">phi</span></a>) <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>.<br/>
 <span class="id" title="keyword">Proof</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">phi</span> <span class="id" title="keyword">as</span><br/>
 &nbsp;&nbsp;[<span class="id" title="var">p</span> <span class="id" title="var">args</span><br/>
