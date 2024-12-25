@@ -37,6 +37,15 @@ Proof. derive. Defined.
 Instance SubstLemmas_term `{Signature} : SubstLemmas term.
 Proof. derive. Qed.
 
+Fixpoint rigid_term `{Signature} (t : term) : Prop :=
+  match t with
+  | Var x => True
+  | Func f args =>
+      rigid f = true /\
+      forall arg,
+        rigid_term (args arg)
+  end.
+
 (** * Formulas
    Next step is to recursively define _formulas_ over a
    signature. A [form]ula is either
