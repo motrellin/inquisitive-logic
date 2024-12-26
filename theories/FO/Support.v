@@ -1,3 +1,5 @@
+From Coq Require Export List.
+
 From InqLog.FO Require Export Syntax States.
 
 (** * Support satisfaction
@@ -375,6 +377,38 @@ Proposition support_Iff `{Model} :
       (t,a |= phi2).
 Proof.
   firstorder.
+Qed.
+
+(** ** Support for multiple formulas *)
+
+Fixpoint support_multiple `{Model} (Phi : list form) :
+  state -> assignment -> Prop :=
+
+  match Phi with
+  | nil =>
+      fun _ _ =>
+      True
+  | phi :: Phi' =>
+      fun s a =>
+      (s, a |= phi) /\
+      support_multiple Phi' s a
+  end.
+
+Fact support_multiple_support `{Model} :
+  forall phi s a,
+    support_multiple (phi :: nil) s a <->
+    (s, a |= phi).
+Proof.
+  firstorder.
+Qed.
+
+Corollary persistency_support_multiple `{Model} :
+  forall s t a Phi,
+    support_multiple Phi s a ->
+    substate t s ->
+    support_multiple Phi t a.
+Proof.
+  induction Phi; firstorder using persistency.
 Qed.
 
 (** * Support consequence *)
