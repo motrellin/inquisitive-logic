@@ -110,7 +110,7 @@ Module Casari_with_atoms.
   Corollary support_valid_Casari_DNA :
     support_valid (Casari DNA).
   Proof.
-    intros M s a.
+    intros M s a _.
     apply Casari_truth_conditional.
     -
       reflexivity.
@@ -120,35 +120,85 @@ Module Casari_with_atoms.
   Qed.
 
   Theorem support_conseq_Casari_DNA_Casari_Atomic :
-    support_conseq (Casari DNA) (Casari Atomic).
+    support_conseq (Casari DNA :: nil) (Casari Atomic).
   Proof.
-    apply support_conseq_Impl.
-    -
-      apply support_conseq_Forall.
-      apply support_conseq_Impl.
-      +
-        apply support_conseq_Impl.
-        *
-          firstorder.
-        *
-          apply support_conseq_Forall.
-          apply support_valid_Impl_conseq.
-          apply support_valid_DNE_Pred.
-      +
-        apply support_conseq_Forall.
-        firstorder.
-    -
-      apply support_conseq_Forall.
-      apply support_valid_Impl_conseq.
-      apply support_valid_DNE_Pred.
+    assert (H1 :
+      support_conseq (<{CasariSuc DNA}> :: nil) <{CasariSuc Atomic}>
+    ).
+    {
+      intros M s1 a [H1 _].
+      intros i1.
+      eapply support_valid_Impl_conseq.
+      -
+        eapply support_valid_DNE_Pred.
+      -
+        easy.
+    }
+    assert (H2 : support_conseq (<{CasariAnt Atomic}> :: nil) <{CasariAnt DNA}>).
+    {
+      intros M s1 a [H2 _].
+
+      intros i1.
+      unfold CasariAnt in H2.
+      rewrite support_Forall in H2.
+      specialize (H2 i1).
+
+      intros s2 H3 H4.
+      rewrite support_Impl in H2.
+
+      intros i2.
+      unfold DNA.
+      rewrite support_Neg.
+      intros [s3 [H5 [H6 H7]]].
+      rewrite support_Neg in H7.
+      apply H7.
+      exists s3.
+      repeat split; try assumption; try reflexivity.
+
+      apply H2; try (etransitivity; eassumption).
+
+      unfold CasariImpl.
+      intros s4 H8 H9.
+      apply H1.
+      split; try exact I.
+
+      unfold CasariImpl in H4.
+      rewrite support_Impl in H4.
+      apply H4; try (etransitivity; eassumption).
+
+      unfold DNA.
+      rewrite support_Neg.
+      intros [s5 [HA [HB HC]]].
+      rewrite support_Neg in HC.
+      apply HC.
+      exists s5.
+      repeat split; try assumption; try reflexivity.
+      eauto using persistency.
+    }
+    intros M s a [H3 _].
+    unfold Casari.
+    intros t H4 H5.
+    apply H1.
+    split; try exact I.
+
+    unfold Casari in H3.
+    rewrite support_Impl in H3.
+    apply H3; try assumption.
+    apply H2.
+    easy.
   Qed.
 
   Corollary support_valid_Casari_Atomic :
     support_valid (Casari Atomic).
   Proof.
-    eapply support_valid_conseq_valid.
+    apply support_valid_conseq_valid with (Phi := Casari DNA :: nil).
     -
-      exact support_valid_Casari_DNA.
+      apply support_multiple_valid_cons.
+      split.
+      +
+        exact support_valid_Casari_DNA.
+      +
+        exact support_multiple_valid_nil.
     -
       exact support_conseq_Casari_DNA_Casari_Atomic.
   Qed.
@@ -989,7 +1039,11 @@ Module Casari_fails.
       unfold Casari in H1.
       apply support_valid_Impl_conseq in H1.
       apply H1.
-      apply support_CasariAnt_IES.
+      split.
+      +
+        apply support_CasariAnt_IES.
+      +
+        exact I.
     Unshelve.
     exact 24.
     exact (fun _ => 25).

@@ -413,89 +413,273 @@ Qed.
 
 (** * Support consequence *)
 
-Definition support_conseq `{S : Signature} : relation form :=
-  fun phi psi =>
+Definition support_conseq
+  `{S : Signature}
+  (cxt : list form)
+  (phi : form) :
+  Prop :=
+
   forall `(M : @Model S) s a,
-    s, a |= phi ->
-    s, a |= psi.
+    support_multiple cxt s a ->
+    s, a |= phi.
 
-Instance support_conseq_Preorder `{Signature} :
-  PreOrder support_conseq.
+Lemma support_conseq_refl `{S : Signature} :
+  forall phi,
+    support_conseq (phi :: nil) phi.
 Proof.
-  firstorder.
-Qed.
+Admitted.
 
-Lemma support_conseq_Impl `{Signature} :
-  forall phi1 phi2 psi1 psi2,
-    support_conseq phi1 phi2 ->
-    support_conseq psi1 psi2 ->
-    support_conseq <{phi2 -> psi1}> <{phi1 -> psi2}>.
+Lemma support_conseq_weakening_1 `{S : Signature} :
+  forall cxt1 cxt2 phi,
+    support_conseq cxt1 phi ->
+    support_conseq (cxt1 ++ cxt2) phi.
 Proof.
-  firstorder.
-Qed.
+Admitted.
 
-Lemma support_conseq_Conj `{Signature} :
-  forall phi1 phi2 psi1 psi2,
-    support_conseq phi1 phi2 ->
-    support_conseq psi1 psi2 ->
-    support_conseq <{phi1 /\ psi1}> <{phi2 /\ psi2}>.
+Lemma support_conseq_weakening_2 `{S : Signature} :
+  forall cxt1 cxt2 phi,
+    support_conseq cxt2 phi ->
+    support_conseq (cxt1 ++ cxt2) phi.
 Proof.
-  firstorder.
-Qed.
+Admitted.
 
-Lemma support_conseq_Idisj `{Signature} :
-  forall phi1 phi2 psi1 psi2,
-    support_conseq phi1 phi2 ->
-    support_conseq psi1 psi2 ->
-    support_conseq <{phi1 \\/ psi1}> <{phi2 \\/ psi2}>.
+Lemma support_conseq_Bot_E `{S : Signature} :
+  forall cxt x phi,
+    support_conseq cxt (Bot x) ->
+    support_conseq cxt phi.
 Proof.
-  firstorder.
-Qed.
+Admitted.
 
-Lemma support_conseq_Forall `{Signature} :
-  forall phi1 phi2,
-    support_conseq phi1 phi2 ->
-    support_conseq <{forall phi1}> <{forall phi2}>.
+Lemma support_conseq_Impl_I `{S : Signature} :
+  forall cxt phi psi,
+    support_conseq (phi :: cxt) psi ->
+    support_conseq cxt <{phi -> psi}>.
 Proof.
-  firstorder.
-Qed.
+Admitted.
 
-Lemma support_conseq_Iexists `{Signature} :
-  forall phi1 phi2,
-    support_conseq phi1 phi2 ->
-    support_conseq <{iexists phi1}> <{iexists phi2}>.
+Lemma support_conseq_Impl_E `{S : Signature} :
+  forall cxt phi psi,
+    support_conseq cxt phi ->
+    support_conseq cxt <{phi -> psi}> ->
+    support_conseq cxt psi.
 Proof.
-  intros * H1 M s a H2.
-  simpl support in *.
-  destruct H2 as [i H2].
-  exists i.
-  auto.
-Qed.
+Admitted.
+
+Lemma support_conseq_Conj_I `{S : Signature} :
+  forall cxt phi psi,
+    support_conseq cxt phi ->
+    support_conseq cxt psi ->
+    support_conseq cxt <{phi /\ psi}>.
+Proof.
+Admitted.
+
+Lemma support_conseq_Conj_E1 `{S : Signature} :
+  forall cxt phi psi,
+    support_conseq cxt <{phi /\ psi}> ->
+    support_conseq cxt phi.
+Proof.
+Admitted.
+
+Lemma support_conseq_Conj_E2 `{S : Signature} :
+  forall cxt phi psi,
+    support_conseq cxt <{phi /\ psi}> ->
+    support_conseq cxt psi.
+Proof.
+Admitted.
+
+Lemma support_conseq_Idisj_I1 `{S : Signature} :
+  forall cxt phi psi,
+    support_conseq cxt phi ->
+    support_conseq cxt <{phi \\/ psi}>.
+Proof.
+Admitted.
+
+Lemma support_conseq_Idisj_I2 `{S : Signature} :
+  forall cxt phi psi,
+    support_conseq cxt psi ->
+    support_conseq cxt <{phi \\/ psi}>.
+Proof.
+Admitted.
+
+Lemma support_conseq_Idisj_E `{S : Signature} :
+  forall cxt phi psi chi,
+    support_conseq cxt <{phi \\/ psi}> ->
+    support_conseq (phi :: cxt) chi ->
+    support_conseq (psi :: cxt) chi ->
+    support_conseq cxt chi.
+Proof.
+Admitted.
+
+Lemma support_conseq_Forall_I `{S : Signature} :
+  forall cxt phi,
+    support_conseq (map (fun psi => psi.|[ren (+1)]) cxt) phi ->
+    support_conseq cxt <{forall phi}>.
+Proof.
+Admitted.
+
+Lemma support_conseq_Forall_E_rigid `{S : Signature} :
+  forall cxt phi t,
+    rigid_term t ->
+    support_conseq cxt <{forall phi}> ->
+    support_conseq cxt phi.|[t .: ids].
+Proof.
+Admitted.
+
+Lemma support_conseq_Forall_E_classic `{S : Signature} :
+  forall cxt phi t,
+    classic phi = true ->
+    support_conseq cxt <{forall phi}> ->
+    support_conseq cxt phi.|[t .: ids].
+Proof.
+Admitted.
+
+Lemma support_conseq_Iexists_I `{S : Signature} :
+  forall cxt phi t,
+    rigid_term t ->
+    support_conseq cxt phi.|[t .: ids] ->
+    support_conseq cxt <{iexists phi}>.
+Proof.
+Admitted.
+
+Lemma support_conseq_Iexists_E `{S : Signature} :
+  forall cxt phi psi,
+    support_conseq cxt <{iexists phi}> ->
+    support_conseq (phi :: map (fun chi => chi.|[ren (+1)]) cxt) psi ->
+    support_conseq cxt psi.
+Proof.
+Admitted.
+
+Lemma support_conseq_CRAA `{S : Signature} :
+  forall cxt phi x,
+    classic phi = true ->
+    support_conseq (<{~ phi}> :: cxt) (Bot x) ->
+    support_conseq cxt phi.
+Proof.
+Admitted.
+
+Lemma support_conseq_Idisj_split `{S : Signature} :
+  forall cxt phi psi chi,
+    classic phi = true ->
+    support_conseq cxt <{phi -> psi \\/ chi}> ->
+    support_conseq cxt <{(phi -> psi) \\/ (phi -> chi)}>.
+Proof.
+Admitted.
+
+Lemma support_conseq_Iexists_split `{S : Signature} :
+  forall cxt phi psi,
+    classic phi = true ->
+    support_conseq cxt <{phi -> iexists psi}> ->
+    let phi' :=
+      phi.|[ren (+1)]
+    in
+    support_conseq cxt <{iexists phi' -> psi}>.
+Proof.
+Admitted.
+
+Lemma support_conseq_CD `{S : Signature} :
+  forall cxt phi psi,
+    let psi' :=
+      psi.|[ren (+1)]
+    in
+    support_conseq cxt <{forall phi \\/ psi'}> ->
+    support_conseq cxt <{(forall phi) \\/ psi}>.
+Proof.
+Admitted.
+
+Lemma support_conseq_KF `{S : Signature} :
+  forall cxt phi,
+    support_conseq cxt <{forall ~ ~ phi}> ->
+    support_conseq cxt <{~ ~ forall phi}>.
+Proof.
+Admitted.
 
 (** * Support valid formulas *)
 
 Definition support_valid `{S : Signature} (phi : form) : Prop :=
-  forall `(M : @Model S) s a,
+  support_conseq nil phi.
+
+Definition support_multiple_valid `{S: Signature} (Phi : list form) : Prop :=
+  forall `(M : @Model S) s a phi,
+    In phi Phi ->
     s, a |= phi.
 
-Remark support_valid_conseq_valid `{Signature} :
-  forall phi psi,
-    support_valid phi ->
-    support_conseq phi psi ->
-    support_valid psi.
+Lemma support_multiple_valid_nil `{S : Signature} :
+  support_multiple_valid nil.
 Proof.
   firstorder.
+Qed.
+
+Lemma support_multiple_valid_cons `{S : Signature} :
+  forall phi Phi',
+    support_multiple_valid (phi :: Phi') <->
+    support_valid phi /\
+    support_multiple_valid Phi'.
+Proof.
+  intros phi Phi'.
+  split.
+  -
+    intros H1.
+    split.
+    +
+      intros M s a _.
+      apply H1.
+      left.
+      reflexivity.
+    +
+      intros M s a phi' H2.
+      apply H1.
+      right.
+      exact H2.
+  -
+    intros [H1 H2].
+    intros M s a phi' [H3|H3].
+    +
+      subst phi'.
+      apply H1.
+      exact I.
+    +
+      apply H2.
+      exact H3.
+Qed.
+
+Remark support_valid_conseq_valid `{Signature} :
+  forall Phi psi,
+    support_multiple_valid Phi ->
+    support_conseq Phi psi ->
+    support_valid psi.
+Proof.
+  induction Phi as [|phi Phi' IH].
+  all: intros psi H1 H2.
+  -
+    intros M s a.
+    apply H2.
+  -
+    apply support_multiple_valid_cons in H1 as [H11 H12].
+    apply IH.
+    +
+      exact H12.
+    +
+      intros M s a H3.
+      apply H2.
+      split.
+      *
+        apply H11.
+        exact I.
+      *
+        exact H3.
 Qed.
 
 Remark support_valid_Impl_conseq `{S : Signature} :
   forall phi psi,
     support_valid <{phi -> psi}> ->
-    support_conseq phi psi.
+    support_conseq (phi :: nil) psi.
 Proof.
-  intros phi psi H1 M s a H2.
+  intros phi psi H1 M s a [H2 _].
   specialize (H1 M s a).
   rewrite support_Impl in H1.
   eapply H1.
+  -
+    exact I.
   -
     reflexivity.
   -
@@ -510,7 +694,7 @@ Example support_valid_DNE_Pred `{Signature} :
   forall p args,
     support_valid <{DNE (Pred p args)}>.
 Proof.
-  intros p args M s1 a s2 H1 H2 w1 H3.
+  intros p args M s1 a _ s2 H1 H2 w1 H3.
   rewrite support_Neg in H2.
 
   destruct (
