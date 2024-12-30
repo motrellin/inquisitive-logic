@@ -696,7 +696,7 @@ Admitted.
 
 Lemma support_conseq_Forall_E_classic `{S : Signature} :
   forall cxt phi t,
-    classic phi = true ->
+    classical phi = true ->
     support_conseq cxt <{forall phi}> ->
     support_conseq cxt phi.|[t .: ids].
 Proof.
@@ -720,7 +720,7 @@ Admitted.
 
 Lemma support_conseq_CRAA `{S : Signature} :
   forall cxt phi x,
-    classic phi = true ->
+    classical phi = true ->
     support_conseq (<{~ phi}> :: cxt) (Bot x) ->
     support_conseq cxt phi.
 Proof.
@@ -728,7 +728,7 @@ Admitted.
 
 Lemma support_conseq_Idisj_split `{S : Signature} :
   forall cxt phi psi chi,
-    classic phi = true ->
+    classical phi = true ->
     support_conseq cxt <{phi -> psi \\/ chi}> ->
     support_conseq cxt <{(phi -> psi) \\/ (phi -> chi)}>.
 Proof.
@@ -736,7 +736,7 @@ Admitted.
 
 Lemma support_conseq_Iexists_split `{S : Signature} :
   forall cxt phi psi,
-    classic phi = true ->
+    classical phi = true ->
     support_conseq cxt <{phi -> iexists psi}> ->
     let phi' :=
       phi.|[ren (+1)]

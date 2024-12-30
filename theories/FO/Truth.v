@@ -409,9 +409,9 @@ Definition truth_conditional `{S : Signature} (phi : form) : Prop :=
       s w = true ->
       truth phi w a.
 
-Proposition classic_truth_conditional `{S : Signature} :
+Proposition classical_truth_conditional `{S : Signature} :
   forall phi,
-    classic phi = true ->
+    classical phi = true ->
     truth_conditional phi.
 Proof.
   induction phi as
@@ -518,4 +518,4 @@ Proof.
     discriminate.
 Qed.
 
-Print Assumptions classic_truth_conditional.
+Print Assumptions classical_truth_conditional.

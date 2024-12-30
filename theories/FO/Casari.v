@@ -19,11 +19,11 @@ Definition Casari `{Signature} (phi : var -> form) : form :=
 
 Lemma Casari_truth_conditional `{Signature} :
   forall phi,
-    (forall x, Syntax.classic (phi x) = true) ->
+    (forall x, classical (phi x) = true) ->
     truth_conditional (Casari phi).
 Proof.
   intros phi H1.
-  apply classic_truth_conditional.
+  apply classical_truth_conditional.
   simpl.
   rewrite H1.
   reflexivity.

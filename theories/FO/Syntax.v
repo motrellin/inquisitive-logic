@@ -229,13 +229,13 @@ Example DNE `{Signature} (phi : form) : form :=
 
 (** ** Classic formulas
 
-   We want to introduce the notion of a _classic formula_.
-   A formula is called _classic_, iff it doesn't contain
+   We want to introduce the notion of a _classical formula_.
+   A formula is called _classical_, iff it doesn't contain
    inquisitive disjunction or inquisitive existential
    quantifiers.
  *)
 
-Fixpoint classic `{Signature} (phi : form) : bool :=
+Fixpoint classical `{Signature} (phi : form) : bool :=
   match phi with
   | Pred p ari =>
       true
@@ -244,45 +244,44 @@ Fixpoint classic `{Signature} (phi : form) : bool :=
       true
 
   | Impl phi1 phi2 =>
-      classic phi1 && classic phi2
+      classical phi1 && classical phi2
 
   | Conj phi1 phi2 =>
-      classic phi1 && classic phi2
+      classical phi1 && classical phi2
 
   | Idisj phi1 phi2 =>
       false
 
   | Forall phi1 =>
-      classic phi1
+      classical phi1
 
   | Iexists phi1 =>
       false
 
   end.
 
-Example iquest_p_not_classic `{Signature} :
+Example iquest_p_not_classical `{Signature} :
   forall p args,
-    classic (iquest_p p args) = false.
+    classical (iquest_p p args) = false.
 Proof.
   reflexivity.
 Qed.
 
 Example DNE_classic `{Signature} :
   forall phi,
-    classic (DNE phi) = classic phi.
+    classical (DNE phi) = classical phi.
 Proof.
   intros phi.
   simpl.
-  destruct (classic phi).
+  destruct (classical phi).
   all: reflexivity.
 Qed.
 
 (**
-   For every formula, we can construct a classical variant of
-   it by replacing inquisitive connectives by their standard
-   variant.
+   For every formula, we can construct a [classical] variant
+   of it by replacing inquisitive connectives by their
+   standard variant.
  *)
-
 Fixpoint classical_variant `{Signature} (phi : form) : form :=
   match phi with
   | Pred p ari =>
@@ -313,9 +312,9 @@ Fixpoint classical_variant `{Signature} (phi : form) : form :=
    proposition.
  *)
 
-Proposition classical_variant_is_classic `{Signature} :
+Proposition classical_variant_is_classical `{Signature} :
   forall phi,
-    classic (classical_variant phi) = true.
+    classical (classical_variant phi) = true.
 Proof.
   induction phi as
   [p args
