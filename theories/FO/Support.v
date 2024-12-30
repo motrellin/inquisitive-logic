@@ -542,7 +542,9 @@ Lemma support_conseq_refl `{S : Signature} :
   forall phi,
     support_conseq (phi :: nil) phi.
 Proof.
-Admitted.
+  intros phi M s a [H1 _].
+  exact H1.
+Qed.
 
 Lemma support_conseq_weakening_1 `{S : Signature} :
   forall cxt1 cxt2 phi,
@@ -563,14 +565,30 @@ Lemma support_conseq_Bot_E `{S : Signature} :
     support_conseq cxt (Bot x) ->
     support_conseq cxt phi.
 Proof.
-Admitted.
+  intros cxt x phi H1 M s a H2.
+  specialize (H1 M s a H2).
+  enough (H3 : state_eq s empty_state).
+  {
+    rewrite H3.
+    apply empty_state_property.
+  }
+  rewrite support_Bot in H1.
+  intros w.
+  rewrite H1.
+  reflexivity.
+Qed.
 
 Lemma support_conseq_Impl_I `{S : Signature} :
   forall cxt phi psi,
     support_conseq (phi :: cxt) psi ->
     support_conseq cxt <{phi -> psi}>.
 Proof.
-Admitted.
+  intros cxt phi psi H1 M s a H2.
+  intros t H3 H4.
+  apply H1.
+  split.
+  all: eauto using persistency_support_multiple.
+Qed.
 
 Lemma support_conseq_Impl_E `{S : Signature} :
   forall cxt phi psi,
@@ -578,7 +596,16 @@ Lemma support_conseq_Impl_E `{S : Signature} :
     support_conseq cxt <{phi -> psi}> ->
     support_conseq cxt psi.
 Proof.
-Admitted.
+  intros cxt phi psi H1 H2 M s a H3.
+  specialize (H1 _ _ _ H3).
+  specialize (H2 _ _ _ H3).
+  rewrite support_Impl in H2.
+  apply H2.
+  -
+    reflexivity.
+  -
+    apply H1.
+Qed.
 
 Lemma support_conseq_Conj_I `{S : Signature} :
   forall cxt phi psi,
@@ -586,35 +613,40 @@ Lemma support_conseq_Conj_I `{S : Signature} :
     support_conseq cxt psi ->
     support_conseq cxt <{phi /\ psi}>.
 Proof.
-Admitted.
+  firstorder.
+Qed.
 
 Lemma support_conseq_Conj_E1 `{S : Signature} :
   forall cxt phi psi,
     support_conseq cxt <{phi /\ psi}> ->
     support_conseq cxt phi.
 Proof.
-Admitted.
+  firstorder.
+Qed.
 
 Lemma support_conseq_Conj_E2 `{S : Signature} :
   forall cxt phi psi,
     support_conseq cxt <{phi /\ psi}> ->
     support_conseq cxt psi.
 Proof.
-Admitted.
+  firstorder.
+Qed.
 
 Lemma support_conseq_Idisj_I1 `{S : Signature} :
   forall cxt phi psi,
     support_conseq cxt phi ->
     support_conseq cxt <{phi \\/ psi}>.
 Proof.
-Admitted.
+  firstorder.
+Qed.
 
 Lemma support_conseq_Idisj_I2 `{S : Signature} :
   forall cxt phi psi,
     support_conseq cxt psi ->
     support_conseq cxt <{phi \\/ psi}>.
 Proof.
-Admitted.
+  firstorder.
+Qed.
 
 Lemma support_conseq_Idisj_E `{S : Signature} :
   forall cxt phi psi chi,
