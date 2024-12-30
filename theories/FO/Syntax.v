@@ -2,7 +2,7 @@ From InqLog.FO Require Export Signatures.
 
 From Autosubst Require Export Autosubst.
 
-From Coq Require Export Bool.
+From Coq Require Export Bool FunctionalExtensionality.
 
 (** * Terms
 
@@ -36,6 +36,24 @@ Proof. derive. Defined.
 
 Instance SubstLemmas_term `{Signature} : SubstLemmas term.
 Proof. derive. Qed.
+
+Section unnamed_helpers.
+
+  Context `{Signature}.
+  Context {X : Type}.
+  Context (a : var -> X).
+  Context (i : X).
+  Context (sigma : var -> var).
+
+  Lemma unnamed_helper_Syntax_1 :
+    i .: sigma >>> a = (upren sigma) >>> i .: a.
+  Proof.
+    apply functional_extensionality.
+    destruct x as [|x'].
+    all: autosubst.
+  Qed.
+
+End unnamed_helpers.
 
 Fixpoint rigid_term `{Signature} (t : term) : Prop :=
   match t with

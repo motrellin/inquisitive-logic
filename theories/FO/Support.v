@@ -1,4 +1,4 @@
-From Coq Require Export List.
+From Coq Require Export List FunctionalExtensionality.
 
 From InqLog.FO Require Export Syntax States.
 
@@ -27,6 +27,20 @@ Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
       fun w g =>
       FInterpretation w f (fun arg => referent (args arg) w g)
   end.
+
+Lemma referent_lift `{Model} :
+  forall t w a sigma,
+    referent t.[ren sigma] w a = referent t w (sigma >>> a).
+Proof.
+  induction t as [x|f args IH].
+  all: intros w a sigma.
+  -
+    reflexivity.
+  -
+    simpl.
+    f_equal.
+    eauto using functional_extensionality.
+Qed.
 
 (**
    Now, we're in a position to define the [support] relation
@@ -379,6 +393,77 @@ Proof.
   firstorder.
 Qed.
 
+(** ** Support for lifted formulas *)
+
+Lemma support_lift `{Model} :
+  forall phi s a sigma,
+    (s, (sigma >>> a) |= phi) <->
+    (s, a |= phi.|[ren sigma]).
+Proof.
+  induction phi as
+  [p args
+  |?
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1
+  |phi1 IH1].
+  all: intros s a sigma.
+  -
+    split.
+    all: intros H1 w H2.
+    all: specialize (H1 w H2).
+    all: rewrite <- H1.
+    all: f_equal.
+    +
+      eauto using functional_extensionality, referent_lift.
+    +
+      symmetry.
+      eauto using functional_extensionality, referent_lift.
+  -
+    reflexivity.
+  -
+    split.
+    all: intros H1 t H2 H3.
+    all: asimpl in H1.
+    all: apply IH2.
+    all: apply H1; try assumption.
+    all: apply IH1.
+    all: exact H3.
+  -
+    firstorder.
+  -
+    firstorder.
+  -
+    split.
+    all: intros H1 i.
+    all: specialize (H1 i).
+    all: asimpl in H1.
+    all: asimpl.
+    +
+      eapply IH1.
+      rewrite <- unnamed_helper_Syntax_1.
+      exact H1.
+    +
+      apply IH1 in H1.
+      rewrite unnamed_helper_Syntax_1.
+      exact H1.
+  -
+    split.
+    all: intros [i H1].
+    all: exists i.
+    all: asimpl in H1.
+    all: asimpl.
+    +
+      apply IH1.
+      rewrite <- unnamed_helper_Syntax_1.
+      exact H1.
+    +
+      apply IH1 in H1.
+      rewrite unnamed_helper_Syntax_1.
+      exact H1.
+Qed.
+
 (** ** Support for multiple formulas *)
 
 Fixpoint support_multiple `{Model} (Phi : list form) :
@@ -402,7 +487,37 @@ Proof.
   firstorder.
 Qed.
 
-Corollary persistency_support_multiple `{Model} :
+Lemma support_multiple_lift `{Model} :
+  forall Phi s a sigma,
+    support_multiple Phi s (sigma >>> a) <->
+    support_multiple (map (fun phi => phi.|[ren sigma]) Phi) s a.
+Proof.
+  induction Phi as [|phi Phi' IH].
+  -
+    reflexivity.
+  -
+    intros s a sigma.
+    split.
+    all: intros [H1 H2].
+    +
+      split.
+      *
+        apply support_lift in H1.
+        exact H1.
+      *
+        apply IH.
+        exact H2.
+    +
+      split.
+      *
+        apply support_lift.
+        exact H1.
+      *
+        apply IH.
+        exact H2.
+Qed.
+
+Proposition persistency_support_multiple `{Model} :
   forall s t a Phi,
     support_multiple Phi s a ->
     substate t s ->
@@ -508,14 +623,36 @@ Lemma support_conseq_Idisj_E `{S : Signature} :
     support_conseq (psi :: cxt) chi ->
     support_conseq cxt chi.
 Proof.
-Admitted.
+  intros cxt phi psi chi H1 H2 H3 M s a H4.
+  specialize (H1 _ _ _ H4).
+  rewrite support_Idisj in H1.
+  destruct H1 as [H1|H1].
+  -
+    apply H2.
+    split.
+    +
+      exact H1.
+    +
+      exact H4.
+  -
+    apply H3.
+    split.
+    +
+      exact H1.
+    +
+      exact H4.
+Qed.
 
 Lemma support_conseq_Forall_I `{S : Signature} :
   forall cxt phi,
     support_conseq (map (fun psi => psi.|[ren (+1)]) cxt) phi ->
     support_conseq cxt <{forall phi}>.
 Proof.
-Admitted.
+  intros cxt phi H1 M s a H2 i.
+  apply H1.
+  apply support_multiple_lift.
+  exact H2.
+Qed.
 
 Lemma support_conseq_Forall_E_rigid `{S : Signature} :
   forall cxt phi t,
