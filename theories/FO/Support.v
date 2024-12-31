@@ -487,6 +487,16 @@ Proof.
   firstorder.
 Qed.
 
+Lemma support_multiple_app `{Model} :
+  forall Phi Psi s a,
+    support_multiple (Phi ++ Psi) s a <->
+    support_multiple Phi s a /\
+    support_multiple Psi s a.
+Proof.
+  induction Phi as [|phi Phi' IH].
+  all: firstorder.
+Qed.
+
 Lemma support_multiple_lift `{Model} :
   forall Phi s a sigma,
     support_multiple Phi s (sigma >>> a) <->
@@ -551,14 +561,22 @@ Lemma support_conseq_weakening_1 `{S : Signature} :
     support_conseq cxt1 phi ->
     support_conseq (cxt1 ++ cxt2) phi.
 Proof.
-Admitted.
+  intros cxt1 cxt2 phi H1 M s a H2.
+  apply support_multiple_app in H2 as [H2 _].
+  apply H1.
+  exact H2.
+Qed.
 
 Lemma support_conseq_weakening_2 `{S : Signature} :
   forall cxt1 cxt2 phi,
     support_conseq cxt2 phi ->
     support_conseq (cxt1 ++ cxt2) phi.
 Proof.
-Admitted.
+  intros cxt1 cxt2 phi H1 M s a H2.
+  apply support_multiple_app in H2 as [_ H2].
+  apply H1.
+  exact H2.
+Qed.
 
 Lemma support_conseq_Bot_E `{S : Signature} :
   forall cxt x phi,
@@ -713,10 +731,24 @@ Admitted.
 Lemma support_conseq_Iexists_E `{S : Signature} :
   forall cxt phi psi,
     support_conseq cxt <{iexists phi}> ->
-    support_conseq (phi :: map (fun chi => chi.|[ren (+1)]) cxt) psi ->
+    support_conseq (phi :: map (fun chi => chi.|[ren (+1)]) cxt) psi.|[ren (+1)] ->
     support_conseq cxt psi.
 Proof.
-Admitted.
+  intros cxt phi psi H1 H2 M s a H3.
+  specialize (H1 _ _ _ H3) as [i H4].
+  enough (H6 : s, i .: a |= psi.|[ren (+1)]).
+  {
+    apply support_lift in H6.
+    exact H6.
+  }
+  apply H2.
+  split.
+  -
+    exact H4.
+  -
+    apply support_multiple_lift.
+    exact H3.
+Qed.
 
 Lemma support_conseq_CRAA `{S : Signature} :
   forall cxt phi x,
