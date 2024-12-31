@@ -28,6 +28,25 @@ Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
       FInterpretation w f (fun arg => referent (args arg) w g)
   end.
 
+Lemma rigidity_referent `{Model} :
+  forall t w w' a,
+    rigid_term t ->
+    referent t w a =
+    referent t w' a.
+Proof.
+  induction t as [x|f args IH].
+  all: intros w w' a H1.
+  -
+    reflexivity.
+  -
+    destruct H1 as [H1 H2].
+    simpl.
+
+    erewrite rigidity; try assumption.
+    f_equal.
+    eauto using functional_extensionality.
+Qed.
+
 Lemma referent_lift `{Model} :
   forall t w a sigma,
     referent t.[ren sigma] w a = referent t w (sigma >>> a).
