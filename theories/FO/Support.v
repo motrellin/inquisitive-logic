@@ -729,6 +729,21 @@ Lemma support_conseq_Forall_E_rigid `{S : Signature} :
     support_conseq cxt <{forall phi}> ->
     support_conseq cxt phi.|[t .: ids].
 Proof.
+  intros cxt phi t H1 H2 M s a H3.
+  specialize (H2 _ _ _ H3).
+  rewrite support_Forall in H2.
+  destruct (classic (consistent s)) as [[w H4]|H4].
+  -
+    specialize (H2 (referent t w a)).
+    (* TODO:
+       As [t] is rigid, its referent remains the same in
+       every world.
+     *)
+    admit.
+  -
+    apply empty_state_not_consistent in H4.
+    rewrite H4.
+    apply empty_state_property.
 Admitted.
 
 Lemma support_conseq_Forall_E_classic `{S : Signature} :
