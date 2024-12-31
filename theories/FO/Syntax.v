@@ -224,6 +224,9 @@ Notation "? phi" := (Iquest phi)
 Example iquest_p `{Signature} (p : PSymb) (args : PAri p -> term) : form :=
   <{ ? Pred p args }>.
 
+Example EM `{Signature} (phi : form) : form :=
+  <{phi \/ ~ phi}>.
+
 Example DNE `{Signature} (phi : form) : form :=
   <{ (~ (~ phi)) -> phi }>.
 
@@ -237,7 +240,7 @@ Example DNE `{Signature} (phi : form) : form :=
 
 Fixpoint classical `{Signature} (phi : form) : bool :=
   match phi with
-  | Pred p ari =>
+  | Pred p args =>
       true
 
   | Bot v =>
@@ -260,6 +263,125 @@ Fixpoint classical `{Signature} (phi : form) : bool :=
 
   end.
 
+Fact classical_Pred `{Signature} :
+  forall p args,
+    classical (Pred p args) = true.
+Proof.
+  reflexivity.
+Qed.
+
+Fact classical_Bot `{Signature} :
+  forall x,
+    classical (Bot x) = true.
+Proof.
+  reflexivity.
+Qed.
+
+Fact classical_Impl `{Signature} :
+  forall phi psi,
+    classical <{phi -> psi}> = classical phi && classical psi.
+Proof.
+  reflexivity.
+Qed.
+
+Fact classical_Conj `{Signature} :
+  forall phi psi,
+    classical <{phi /\ psi}> = classical phi && classical psi.
+Proof.
+  reflexivity.
+Qed.
+
+Fact classical_Idisj `{Signature} :
+  forall phi psi,
+    classical <{phi \\/ psi}> = false.
+Proof.
+  reflexivity.
+Qed.
+
+Fact classical_Forall `{Signature} :
+  forall phi,
+    classical <{forall phi}> = classical phi.
+Proof.
+  reflexivity.
+Qed.
+
+Fact classical_Iexists `{Signature} :
+  forall phi,
+    classical <{iexists phi}> = false.
+Proof.
+  reflexivity.
+Qed.
+
+Lemma classical_Neg `{Signature} :
+  forall phi,
+    classical <{~ phi}> = classical phi.
+Proof.
+  intros phi.
+  unfold Neg.
+  rewrite classical_Impl.
+  rewrite classical_Bot.
+  rewrite andb_true_r.
+  reflexivity.
+Qed.
+
+Lemma classical_Top `{Signature} :
+  classical Top = true.
+Proof.
+  unfold Top.
+  rewrite classical_Neg.
+  rewrite classical_Bot.
+  reflexivity.
+Qed.
+
+Lemma classical_Disj `{Signature} :
+  forall phi psi,
+    classical <{phi \/ psi}> = classical phi && classical psi.
+Proof.
+  intros phi psi.
+  unfold Disj.
+  rewrite classical_Neg.
+  rewrite classical_Conj.
+  do 2 rewrite classical_Neg.
+  reflexivity.
+Qed.
+
+Lemma classical_Iff `{Signature} :
+  forall phi psi,
+    classical <{phi <-> psi}> = classical phi && classical psi.
+Proof.
+  intros phi psi.
+  unfold Iff.
+  rewrite classical_Conj.
+  do 2 rewrite classical_Impl.
+  rewrite andb_comm with
+    (b1 := classical psi)
+    (b2 := classical phi).
+  rewrite andb_diag.
+  reflexivity.
+Qed.
+
+Lemma classical_Exists `{Signature} :
+  forall phi,
+    classical <{exists phi}> = classical phi.
+Proof.
+  intros phi.
+  unfold Exists.
+  rewrite classical_Neg.
+  rewrite classical_Forall.
+  rewrite classical_Neg.
+  reflexivity.
+Qed.
+
+Lemma classical_Iquest `{Signature} :
+  forall phi,
+    classical <{? phi}> = false.
+Proof.
+  intros phi.
+  unfold Iquest.
+  rewrite classical_Idisj.
+  reflexivity.
+Qed.
+
 Example iquest_p_not_classical `{Signature} :
   forall p args,
     classical (iquest_p p args) = false.
@@ -267,13 +389,46 @@ Proof.
   reflexivity.
 Qed.
 
-Example DNE_classic `{Signature} :
+Example EM_classical `{Signature} :
+  forall phi,
+    classical (EM phi) = classical phi.
+Proof.
+  intros phi.
+  unfold EM.
+  rewrite classical_Disj.
+  rewrite classical_Neg.
+  rewrite andb_diag.
+  reflexivity.
+Qed.
+
+Example DNE_classical `{Signature} :
   forall phi,
     classical (DNE phi) = classical phi.
 Proof.
   intros phi.
-  simpl.
-  destruct (classical phi).
+  unfold DNE.
+  rewrite classical_Impl.
+  do 2 rewrite classical_Neg.
+  rewrite andb_diag.
+  reflexivity.
+Qed.
+
+Lemma classical_hsubst `{Signature} :
+  forall phi sigma,
+    classical (phi.|[sigma]) = classical phi.
+Proof.
+  induction phi as
+  [p args
+  |?
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1
+  |phi1 IH1].
+  all: intros sigma.
+  all: simpl.
+  all: try rewrite IH1.
+  all: try rewrite IH2.
   all: reflexivity.
 Qed.
 
