@@ -828,10 +828,18 @@ Lemma support_conseq_KF `{S : Signature} :
 Proof.
 Admitted.
 
-(** * Support valid formulas *)
+(** * Support validity *)
 
-Definition support_valid `{S : Signature} (phi : form) : Prop :=
+Definition support_valid `{Signature} (phi : form) : Prop :=
   support_conseq nil phi.
+
+Remark support_valid_charac `{S : Signature} :
+  forall phi,
+    (forall `(M : @Model S) s a, s, a |= phi) <->
+    support_valid phi.
+Proof.
+  firstorder.
+Qed.
 
 Definition support_multiple_valid `{S: Signature} (Phi : list form) : Prop :=
   forall `(M : @Model S) s a phi,
@@ -851,12 +859,13 @@ Lemma support_multiple_valid_cons `{S : Signature} :
     support_multiple_valid Phi'.
 Proof.
   intros phi Phi'.
+  rewrite <- support_valid_charac.
   split.
   -
     intros H1.
     split.
     +
-      intros M s a _.
+      intros M s a.
       apply H1.
       left.
       reflexivity.
@@ -871,7 +880,6 @@ Proof.
     +
       subst phi'.
       apply H1.
-      exact I.
     +
       apply H2.
       exact H3.
