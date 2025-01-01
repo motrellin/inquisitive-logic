@@ -645,8 +645,7 @@ Lemma support_multiple_app `{Model} :
     support_multiple Phi s a /\
     support_multiple Psi s a.
 Proof.
-  induction Phi as [|phi Phi' IH].
-  all: firstorder.
+  induction Phi; firstorder.
 Qed.
 
 Lemma support_multiple_lift `{Model} :
