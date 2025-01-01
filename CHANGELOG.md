@@ -1,5 +1,76 @@
 # Changelog
 
+## inqlog-v0.9.0 (2025-01-01)
+
+### New
+
+* More useful `support_conseq`-lemmas. [Max Ole Elliger]
+
+  Proved
+  - `support_conseq_in`
+  - `support_conseq_trans`
+  - `support_conseq_weakening_nil`
+  - `support_conseq_weakening_cons_tl`
+  - `support_conseq_Bot_I`
+  - Changed the style of `support_conseq_Bot_E` from `Bot x` to `Bot 0`
+
+* Proved `support_multiple_charac` [Max Ole Elliger]
+
+* Proved more stuff about `support_conseq` [Max Ole Elliger]
+
+  Proved
+  - `support_conseq_Forall_E_rigid`
+  - `support_conseq_Iexists_I`
+  - and some helper lemmas
+
+* Proved `rigidity_referent` [Max Ole Elliger]
+
+* Some rewrite lemmas for `classical` [Max Ole Elliger]
+
+  - Added a new example formula `EM` (excluded middle)
+  - Rewrite lemmas for `classical`
+  - `classical_hsubst`
+
+* Some more `support_conseq`-proofs. [Max Ole Elliger]
+
+  This commit includes proofs for
+  - `support_multiple_app`
+  - `support_conseq_weakening_1`
+  - `support_conseq_weakening_2`
+  - `support_conseq_Iexists_E`
+
+* Proved some prop. properties of `support_conseq` [Max Ole Elliger]
+
+* Proved `support_conseq_Forall_I` (new version) [Max Ole Elliger]
+
+  This includes some helper lemmas regarding lifting.
+
+* Defined support for multiple formulas. [Max Ole Elliger]
+
+* Defined `rigid_term : term -> Prop` [Max Ole Elliger]
+
+### Changes
+
+* Used new `support_conseq`-rules for CasariAtomic. [Max Ole Elliger]
+
+* Rearranged stuff about Support and Truth. [Max Ole Elliger]
+
+  - Changed some headings
+  - Simplified some definitions/proofs
+  - Rewrote the Truth-Library with respect to classical (meta) logic
+  - Defined `truth_multiple`
+  - Defined `truth_conseq`
+  - Defined `truth_valid`
+  - Added various rewrite-lemmas
+
+* Renamed `classic` to `classical` [Max Ole Elliger]
+
+  As we probably want to use more classic logic, this could be helpful.
+
+* Changed the whole `support_conseq` section. [Max Ole Elliger]
+
+  `support_conseq` can now have multiple assumptions.
+
 ## inqlog-v0.8.2 (2024-12-21)
 
 ### Fix
