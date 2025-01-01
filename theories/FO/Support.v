@@ -594,6 +594,43 @@ Fixpoint support_multiple `{Model} (Phi : list form) :
       support_multiple Phi' s a
   end.
 
+Remark support_multiple_charac `{Model} :
+  forall Phi s a,
+    (forall phi, In phi Phi -> s, a |= phi) <->
+    support_multiple Phi s a.
+Proof.
+  induction Phi as [|phi Phi' IH].
+  all: intros s a.
+  -
+    firstorder.
+  -
+    split.
+    +
+      intros H1.
+      split.
+      *
+        apply H1.
+        left.
+        reflexivity.
+      *
+        apply IH.
+        intros phi' H2.
+        apply H1.
+        right.
+        exact H2.
+    +
+      intros [H1 H2] phi' [H3|H3].
+      *
+        subst phi'.
+        exact H1.
+      *
+        apply IH.
+        --
+           exact H2.
+        --
+           exact H3.
+Qed.
+
 Fact support_multiple_support `{Model} :
   forall phi s a,
     support_multiple (phi :: nil) s a <->
