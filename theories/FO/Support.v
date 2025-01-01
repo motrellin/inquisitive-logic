@@ -47,18 +47,46 @@ Proof.
     eauto using functional_extensionality.
 Qed.
 
-Lemma referent_lift `{Model} :
+Lemma referent_subst `{Model} :
+  forall t w a sigma,
+    (forall x, rigid_term (sigma x)) ->
+    referent t.[sigma] w a = referent t w (fun x => referent (sigma x) w a).
+Proof.
+  induction t as [x|f args IH].
+  -
+    autosubst.
+  -
+    intros a w sigma H1.
+    asimpl.
+    f_equal.
+    eauto using functional_extensionality.
+Qed.
+
+Remark referent_subst_var `{Model} :
   forall t w a sigma,
     referent t.[ren sigma] w a = referent t w (sigma >>> a).
 Proof.
-  induction t as [x|f args IH].
-  all: intros w a sigma.
+  intros t w a sigma.
+  rewrite referent_subst.
   -
     reflexivity.
   -
-    simpl.
-    f_equal.
-    eauto using functional_extensionality.
+    easy.
+Qed.
+
+Lemma unnamed_helper_Support_24 `{Model} :
+  forall w a i sigma,
+    (fun x => referent (up sigma x) w (i .: a)) =
+    i .: (fun x => referent (sigma x) w a).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros [|x'].
+  -
+    autosubst.
+  -
+    asimpl.
+    apply referent_subst_var.
 Qed.
 
 (**
@@ -414,10 +442,11 @@ Qed.
 
 (** ** Support for lifted formulas *)
 
-Lemma support_lift `{Model} :
-  forall phi s a sigma,
-    (s, (sigma >>> a) |= phi) <->
-    (s, a |= phi.|[ren sigma]).
+Lemma support_subst `{Model} :
+  forall phi s a sigma w,
+    (forall x, rigid_term (sigma x)) ->
+    (s, (fun x => referent (sigma x) w a) |= phi) <->
+    (s, a |= phi.|[sigma]).
 Proof.
   induction phi as
   [p args
@@ -427,60 +456,127 @@ Proof.
   |phi1 IH1 phi2 IH2
   |phi1 IH1
   |phi1 IH1].
-  all: intros s a sigma.
+  all: intros s a sigma w H1.
   -
     split.
-    all: intros H1 w H2.
-    all: specialize (H1 w H2).
-    all: rewrite <- H1.
+    all: intros H2 w' H3.
+    all: specialize (H2 w' H3).
+    all: rewrite <- H2.
     all: f_equal.
+    all: apply functional_extensionality.
+    all: intros arg.
     +
-      eauto using functional_extensionality, referent_lift.
+      etransitivity.
+      *
+        apply referent_subst.
+        exact H1.
+      *
+        do 2 f_equal.
+        apply functional_extensionality.
+        intros x.
+        apply rigidity_referent.
+        exact (H1 x).
     +
       symmetry.
-      eauto using functional_extensionality, referent_lift.
+      etransitivity.
+      *
+        apply referent_subst.
+        exact H1.
+      *
+        do 2 f_equal.
+        apply functional_extensionality.
+        intros x.
+        apply rigidity_referent.
+        exact (H1 x).
   -
     reflexivity.
   -
     split.
-    all: intros H1 t H2 H3.
-    all: asimpl in H1.
-    all: apply IH2.
-    all: apply H1; try assumption.
-    all: apply IH1.
-    all: exact H3.
-  -
-    firstorder.
-  -
-    firstorder.
+    all: intros H2 t H3 H4.
+    all: eapply IH2; try eassumption.
+    all: asimpl in H2.
+    all: apply H2; try assumption.
+    all: eapply IH1; eassumption.
   -
     split.
-    all: intros H1 i.
-    all: specialize (H1 i).
-    all: asimpl in H1.
-    all: asimpl.
+    all: intros [H2 H3].
+    all: split.
+    all: try eapply IH1.
+    all: try eapply IH2.
+    all: eassumption.
+  -
+    split.
+    all: intros [H2|H2].
+    all: try eapply IH1 in H2.
+    all: try eapply IH2 in H2.
+    all: try assumption.
+    all: try (left; eassumption).
+    all: try (right; eassumption).
+  -
+    split.
+    all: intros H2 i.
+    all: asimpl in H2.
+    all: specialize (H2 i).
     +
       eapply IH1.
-      rewrite <- unnamed_helper_Syntax_1.
-      exact H1.
+      *
+        apply unnamed_helper_Syntax_3.
+        exact H1.
+      *
+        rewrite unnamed_helper_Support_24.
+        exact H2.
     +
-      apply IH1 in H1.
-      rewrite unnamed_helper_Syntax_1.
-      exact H1.
+      eapply IH1 in H2.
+      *
+        rewrite <- unnamed_helper_Support_24.
+        exact H2.
+      *
+        apply unnamed_helper_Syntax_3.
+        exact H1.
   -
     split.
-    all: intros [i H1].
+    all: intros [i H2].
     all: exists i.
-    all: asimpl in H1.
-    all: asimpl.
     +
-      apply IH1.
-      rewrite <- unnamed_helper_Syntax_1.
-      exact H1.
+      eapply IH1.
+      *
+        apply unnamed_helper_Syntax_3.
+        exact H1.
+      *
+        rewrite unnamed_helper_Support_24.
+        exact H2.
     +
-      apply IH1 in H1.
-      rewrite unnamed_helper_Syntax_1.
-      exact H1.
+      eapply IH1 in H2.
+      *
+        rewrite <- unnamed_helper_Support_24.
+        exact H2.
+      *
+        apply unnamed_helper_Syntax_3.
+        exact H1.
+Qed.
+
+Remark support_subst_var `{Model} :
+  forall phi s a sigma,
+    (s, (sigma >>> a) |= phi) <->
+    (s, a |= phi.|[ren sigma]).
+Proof.
+  intros phi s a sigma.
+  destruct (classic (consistent s)) as [[w H1]|H1].
+  -
+    pose proof support_subst as H2.
+    specialize H2 with
+      (phi := phi)
+      (s := s)
+      (a := a)
+      (w := w).
+    specialize (H2 (ren sigma)).
+    apply H2.
+    intros x.
+    exact I.
+  -
+    apply empty_state_not_consistent in H1.
+    rewrite H1.
+    firstorder using empty_state_property.
 Qed.
 
 (** ** Support for multiple formulas *)
@@ -531,7 +627,7 @@ Proof.
     +
       split.
       *
-        apply support_lift in H1.
+        apply support_subst_var in H1.
         exact H1.
       *
         apply IH.
@@ -539,7 +635,7 @@ Proof.
     +
       split.
       *
-        apply support_lift.
+        apply support_subst_var.
         exact H1.
       *
         apply IH.
@@ -723,11 +819,11 @@ Proof.
   exact H2.
 Qed.
 
-Lemma support_conseq_Forall_E_rigid `{S : Signature} :
+Lemma support_conseq_Forall_E_rigid `{Signature} :
   forall cxt phi t,
     rigid_term t ->
     support_conseq cxt <{forall phi}> ->
-    support_conseq cxt phi.|[t .: ids].
+    support_conseq cxt phi.|[t/].
 Proof.
   intros cxt phi t H1 H2 M s a H3.
   specialize (H2 _ _ _ H3).
@@ -735,16 +831,30 @@ Proof.
   destruct (classic (consistent s)) as [[w H4]|H4].
   -
     specialize (H2 (referent t w a)).
-    (* TODO:
-       As [t] is rigid, its referent remains the same in
-       every world.
-     *)
-    admit.
+    apply support_subst with
+      (phi := phi)
+      (s := s)
+      (a := a)
+      (sigma := (t .: ids))
+      (w := w).
+    +
+      intros [|x']; easy.
+    +
+      assert (H5 :
+        (fun x => referent ((t .: ids) x) w a) =
+        referent t w a .: a
+      ).
+      {
+        apply functional_extensionality.
+        intros [|x']; autosubst.
+      }
+      rewrite H5.
+      exact H2.
   -
     apply empty_state_not_consistent in H4.
     rewrite H4.
     apply empty_state_property.
-Admitted.
+Qed.
 
 Lemma support_conseq_Forall_E_classic `{S : Signature} :
   forall cxt phi t,
@@ -760,7 +870,36 @@ Lemma support_conseq_Iexists_I `{S : Signature} :
     support_conseq cxt phi.|[t .: ids] ->
     support_conseq cxt <{iexists phi}>.
 Proof.
-Admitted.
+  intros cxt phi t H1 H2 M s a H3.
+  specialize (H2 _ _ _ H3).
+  destruct (classic (consistent s)) as [[w H4]|H4].
+  -
+    exists (referent t w a).
+    apply support_subst with
+      (phi := phi)
+      (s := s)
+      (a := a)
+      (sigma := (t .: ids))
+      (w := w)
+      in H2.
+    +
+      assert (H5 :
+        (fun x => referent ((t .: ids) x) w a) =
+        referent t w a .: a
+      ).
+      {
+        apply functional_extensionality.
+        intros [|x']; autosubst.
+      }
+      rewrite H5 in H2.
+      exact H2.
+    +
+      intros [|x']; easy.
+  -
+    apply empty_state_not_consistent in H4.
+    rewrite H4.
+    apply empty_state_property.
+Qed.
 
 Lemma support_conseq_Iexists_E `{S : Signature} :
   forall cxt phi psi,
@@ -772,7 +911,7 @@ Proof.
   specialize (H1 _ _ _ H3) as [i H4].
   enough (H6 : s, i .: a |= psi.|[ren (+1)]).
   {
-    apply support_lift in H6.
+    apply support_subst_var in H6.
     exact H6.
   }
   apply H2.

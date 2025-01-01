@@ -37,24 +37,6 @@ Proof. derive. Defined.
 Instance SubstLemmas_term `{Signature} : SubstLemmas term.
 Proof. derive. Qed.
 
-Section unnamed_helpers.
-
-  Context `{Signature}.
-  Context {X : Type}.
-  Context (a : var -> X).
-  Context (i : X).
-  Context (sigma : var -> var).
-
-  Lemma unnamed_helper_Syntax_1 :
-    i .: sigma >>> a = (upren sigma) >>> i .: a.
-  Proof.
-    apply functional_extensionality.
-    destruct x as [|x'].
-    all: autosubst.
-  Qed.
-
-End unnamed_helpers.
-
 Fixpoint rigid_term `{Signature} (t : term) : Prop :=
   match t with
   | Var x => True
@@ -63,6 +45,38 @@ Fixpoint rigid_term `{Signature} (t : term) : Prop :=
       forall arg,
         rigid_term (args arg)
   end.
+
+Lemma unnamed_helper_Syntax_2 `{Signature} :
+  forall t (sigma : var -> term),
+  (forall x, rigid_term (sigma x)) ->
+    rigid_term t ->
+    rigid_term t.[sigma].
+Proof.
+  induction t as [x|f args IH].
+  -
+    autosubst.
+  -
+    intros sigma H1 [H2 H3].
+    split; eauto.
+Qed.
+
+Lemma unnamed_helper_Syntax_3 `{Signature} :
+  forall sigma,
+    (forall x, rigid_term (sigma x)) ->
+    forall x,
+      rigid_term (up sigma x).
+Proof.
+  intros sigma H1 [|x'].
+  -
+    exact I.
+  -
+    asimpl.
+    apply unnamed_helper_Syntax_2.
+    +
+      easy.
+    +
+      apply H1.
+Qed.
 
 (** * Formulas
    Next step is to recursively define _formulas_ over a
