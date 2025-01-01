@@ -699,12 +699,74 @@ Definition support_conseq
     support_multiple cxt s a ->
     s, a |= phi.
 
+Lemma support_conseq_in `{Signature} :
+  forall cxt phi,
+    In phi cxt ->
+    support_conseq cxt phi.
+Proof.
+  intros cxt phi H1 M s a H2.
+  eapply support_multiple_charac.
+  -
+    exact H2.
+  -
+    exact H1.
+Qed.
+
 Lemma support_conseq_refl `{S : Signature} :
   forall phi,
     support_conseq (phi :: nil) phi.
 Proof.
-  intros phi M s a [H1 _].
-  exact H1.
+  intros phi.
+  apply support_conseq_in.
+  left.
+  reflexivity.
+Qed.
+
+Lemma support_conseq_trans `{Signature} :
+  forall cxt1 cxt2 phi,
+    (forall psi, In psi cxt2 -> support_conseq cxt1 psi) ->
+    support_conseq cxt2 phi ->
+    support_conseq cxt1 phi.
+Proof.
+  intros cxt1 cxt2 phi H1 H2 M s a H3.
+  apply H2.
+  apply support_multiple_charac.
+  intros psi H4.
+  apply H1.
+  -
+    exact H4.
+  -
+    exact H3.
+Qed.
+
+Lemma support_conseq_weakening_nil `{Signature} :
+  forall cxt phi,
+    support_conseq nil phi ->
+    support_conseq cxt phi.
+Proof.
+  intros cxt phi H1 M s a H2.
+  apply H1.
+  exact I.
+Qed.
+
+Lemma support_conseq_weakening_cons_hd `{Signature} :
+  forall cxt phi,
+    support_conseq (phi :: cxt) phi.
+Proof.
+  intros cxt phi.
+  apply support_conseq_in.
+  left.
+  reflexivity.
+Qed.
+
+Lemma support_conseq_weakening_cons_tl `{Signature} :
+  forall cxt phi psi,
+    support_conseq cxt psi ->
+    support_conseq (phi :: cxt) psi.
+Proof.
+  intros cxt phi psi H1 M s a [_ H3].
+  apply H1.
+  exact H3.
 Qed.
 
 Lemma support_conseq_weakening_1 `{S : Signature} :
@@ -729,12 +791,36 @@ Proof.
   exact H2.
 Qed.
 
+Lemma support_conseq_Bot_I `{Signature} :
+  forall cxt phi,
+    support_conseq cxt phi ->
+    support_conseq cxt <{~ phi}> ->
+    support_conseq cxt (Bot 0).
+Proof.
+  intros cxt phi H1 H2 M s a H3 w.
+  specialize (H1 _ _ _ H3).
+  specialize (H2 _ _ _ H3).
+  destruct (s w) eqn:H4; try reflexivity.
+  exfalso.
+  rewrite support_Neg in H2.
+  apply H2.
+  exists s.
+  repeat split.
+  -
+    exists w.
+    exact H4.
+  -
+    reflexivity.
+  -
+    exact H1.
+Qed.
+
 Lemma support_conseq_Bot_E `{S : Signature} :
-  forall cxt x phi,
-    support_conseq cxt (Bot x) ->
+  forall cxt phi,
+    support_conseq cxt (Bot 0) ->
     support_conseq cxt phi.
 Proof.
-  intros cxt x phi H1 M s a H2.
+  intros cxt phi H1 M s a H2.
   specialize (H1 M s a H2).
   enough (H3 : state_eq s empty_state).
   {
