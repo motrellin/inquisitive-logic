@@ -255,6 +255,16 @@ Proof.
     congruence.
 Qed.
 
+Lemma singleton_substate `{Model} :
+  forall (s : state) w,
+    s w = true ->
+    substate (singleton w) s.
+Proof.
+  intros s w H1 w' H2.
+  apply singleton_true in H2.
+  congruence.
+Qed.
+
 Lemma substate_complement `{Model} :
   forall s t,
     substate t s <->
