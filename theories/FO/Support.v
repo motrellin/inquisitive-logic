@@ -49,14 +49,14 @@ Qed.
 
 Lemma referent_subst `{Model} :
   forall t w a sigma,
-    (forall x, rigid_term (sigma x)) ->
-    referent t.[sigma] w a = referent t w (fun x => referent (sigma x) w a).
+    referent t.[sigma] w a =
+    referent t w (fun x => referent (sigma x) w a).
 Proof.
   induction t as [x|f args IH].
   -
     autosubst.
   -
-    intros a w sigma H1.
+    intros a w sigma.
     asimpl.
     f_equal.
     eauto using functional_extensionality.
@@ -68,10 +68,7 @@ Remark referent_subst_var `{Model} :
 Proof.
   intros t w a sigma.
   rewrite referent_subst.
-  -
-    reflexivity.
-  -
-    easy.
+  reflexivity.
 Qed.
 
 Lemma unnamed_helper_Support_24 `{Model} :
@@ -469,7 +466,6 @@ Proof.
       etransitivity.
       *
         apply referent_subst.
-        exact H1.
       *
         do 2 f_equal.
         apply functional_extensionality.
@@ -481,7 +477,6 @@ Proof.
       etransitivity.
       *
         apply referent_subst.
-        exact H1.
       *
         do 2 f_equal.
         apply functional_extensionality.
