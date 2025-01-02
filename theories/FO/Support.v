@@ -973,14 +973,6 @@ Proof.
     apply empty_state_property.
 Qed.
 
-Lemma support_conseq_Forall_E_classic `{S : Signature} :
-  forall cxt phi t,
-    classical phi = true ->
-    support_conseq cxt <{forall phi}> ->
-    support_conseq cxt phi.|[t .: ids].
-Proof.
-Admitted.
-
 Lemma support_conseq_Iexists_I `{S : Signature} :
   forall cxt phi t,
     rigid_term t ->
@@ -1040,14 +1032,6 @@ Proof.
     exact H3.
 Qed.
 
-Lemma support_conseq_CRAA `{S : Signature} :
-  forall cxt phi x,
-    classical phi = true ->
-    support_conseq (<{~ phi}> :: cxt) (Bot x) ->
-    support_conseq cxt phi.
-Proof.
-Admitted.
-
 Lemma support_conseq_Idisj_split `{S : Signature} :
   forall cxt phi psi chi,
     classical phi = true ->
@@ -1064,16 +1048,6 @@ Lemma support_conseq_Iexists_split `{S : Signature} :
       phi.|[ren (+1)]
     in
     support_conseq cxt <{iexists phi' -> psi}>.
-Proof.
-Admitted.
-
-Lemma support_conseq_CD `{S : Signature} :
-  forall cxt phi psi,
-    let psi' :=
-      psi.|[ren (+1)]
-    in
-    support_conseq cxt <{forall phi \\/ psi'}> ->
-    support_conseq cxt <{(forall phi) \\/ psi}>.
 Proof.
 Admitted.
 
