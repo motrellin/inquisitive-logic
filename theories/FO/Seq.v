@@ -263,3 +263,225 @@ Definition satisfaction_conseq `{S : Signature} :
     exists psi,
       In psi Psi /\
       satisfaction psi f a.
+
+Lemma satisfaction_conseq_empty `{Signature} :
+  forall ls rs phi,
+    In (pair nil phi) rs ->
+    satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Lemma satisfaction_conseq_id `{Signature} :
+      forall ns ls rs p args,
+        In (pair ns (Pred p args)) ls ->
+        In (pair ns (Pred p args)) rs ->
+        satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Lemma satisfaction_conseq_Bot_l `{Signature} :
+  forall n ns ls rs x,
+    In (pair ns (Bot x)) ls ->
+    In n ns ->
+    satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Lemma satisfaction_conseq_Pred_r `{Signature} :
+  forall ns ls rs p args,
+    In (pair ns (Pred p args)) rs ->
+    (forall n,
+      In n ns ->
+      satisfaction_conseq ls
+      (
+        (pair (n :: nil) (Pred p args)) :: rs
+      )
+    ) ->
+    satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Lemma satisfaction_conseq_Pred_l `{Signature} :
+  forall ns1 ns2 ls rs p args,
+    In (pair ns1 (Pred p args)) ls ->
+    (forall n,
+      In n ns2 ->
+      In n ns1
+    ) ->
+    satisfaction_conseq ((pair ns2 (Pred p args)) :: ls) rs ->
+    satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Lemma satisfaction_conseq_Impl_r `{Signature} :
+  forall ns ls rs phi psi,
+    In (pair ns <{phi -> psi}>) rs ->
+    (forall ns',
+      (forall n,
+        In n ns' ->
+        In n ns
+      ) ->
+      satisfaction_conseq
+      (
+        (pair ns' phi) :: ls
+      )
+      (
+        (pair ns' psi) :: rs
+      )
+    ) ->
+    satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Lemma satisfaction_conseq_Impl_l `{Signature} :
+  forall ns1 ns2 ls rs phi psi,
+    In (pair ns1 <{phi -> psi}>) ls ->
+    (forall n,
+      In n ns2 ->
+      In n ns1
+    ) ->
+    satisfaction_conseq ls ((pair ns2 phi) :: rs) ->
+    satisfaction_conseq ((pair ns2 psi) :: ls) rs ->
+    satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Lemma satisfaction_conseq_Conj_r `{Signature} :
+  forall ns ls rs phi psi,
+    In (pair ns <{phi /\ psi}>) rs ->
+    satisfaction_conseq ls ((pair ns phi) :: rs) ->
+    satisfaction_conseq ls ((pair ns psi) :: rs) ->
+    satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Lemma satisfaction_conseq_Conj_l `{Signature} :
+  forall ns ls rs phi psi,
+    In (pair ns <{phi /\ psi}>) ls ->
+    satisfaction_conseq
+    (
+      (pair ns phi) :: (pair ns psi) :: ls
+    ) rs ->
+    satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Lemma satisfaction_conseq_Idisj_r `{Signature} :
+  forall ns ls rs phi psi,
+    In (pair ns <{phi \\/ psi}>) rs ->
+    satisfaction_conseq ls
+    (
+      (pair ns phi) :: (pair ns psi) :: rs
+    ) ->
+    satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Lemma satisfaction_conseq_Idisj_l `{Signature} :
+  forall ns ls rs phi psi,
+    In (pair ns <{phi \\/ psi}>) ls ->
+    satisfaction_conseq ((pair ns phi) :: ls) rs ->
+    satisfaction_conseq ((pair ns psi) :: ls) rs ->
+    satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Lemma satisfaction_conseq_Forall_r `{Signature} :
+  forall ns ls rs phi,
+    In (pair ns <{forall phi}>) rs ->
+    satisfaction_conseq
+    (
+      map (fun x => pair (fst x) (snd x).|[ren (+1)]) ls
+    )
+    (
+      (pair ns phi) ::
+      map (fun x => pair (fst x) (snd x).|[ren (+1)]) rs
+    ) ->
+    satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Lemma satisfaction_conseq_Forall_l `{Signature} :
+  forall ns ls rs phi t,
+    In (pair ns <{forall phi}>) ls ->
+    rigid_term t ->
+    satisfaction_conseq
+    (
+      (pair ns phi.|[t/]) ::
+      (pair ns <{forall phi}>) ::
+      ls
+    )
+    (
+      rs
+    ) ->
+    satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Lemma satisfaction_conseq_Iexists_r `{Signature} :
+  forall ns ls rs phi t,
+    In (pair ns <{iexists phi}>) rs ->
+    rigid_term t ->
+    satisfaction_conseq ls
+    (
+      (pair ns phi.|[t/]) ::
+      (pair ns <{iexists phi}>) ::
+      rs
+    ) ->
+    satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Lemma satisfaction_conseq_Iexists_l `{Signature} :
+  forall ns ls rs phi,
+    In (pair ns <{iexists phi}>) ls ->
+    satisfaction_conseq
+    (
+      (pair ns phi) ::
+      map (fun x => pair (fst x) (snd x).|[ren (+1)]) ls
+    )
+    (
+      map (fun x => pair (fst x) (snd x).|[ren (+1)]) rs
+    ) ->
+    satisfaction_conseq ls rs.
+Proof.
+Admitted.
+
+Theorem soundness `{Signature} :
+  forall Phi Psi,
+    Seq Phi Psi ->
+    satisfaction_conseq Phi Psi.
+Proof.
+  induction 1 as
+  [ls rs phi H1 (* Seq_empty *)
+  |ns ls rs p args H1 H2 (* Seq_id *)
+  |ns ls rs x H1 (* Seq_Bot_l *)
+  |ns ls rs p args H1 H2 IH1 (* Seq_Pred_r *)
+  |ns1 ns2 ls rs p args H1 H2 H3 IH1 (* Seq_Pred_l *)
+  |ns ls rs phi psi H1 H2 IH1 (* Seq_Impl_r *)
+  |ns1 ns2 ls rs phi psi H1 H2 H3 IH1 H4 IH2 (* Seq_Impl_l *)
+  |ns ls rs phi psi H1 H2 IH1 H3 IH2 (* Seq_Conj_r *)
+  |ns ls rs phi psi H1 H2 IH1 (* Seq_Conj_l *)
+  |ns ls rs phi psi H1 H2 IH1 (* Seq_Idisj_r *)
+  |ns ls rs phi psi H1 H2 IH1 H3 IH2 (* Seq_Idisj_l *)
+  |ns ls rs phi H1 H2 IH1 (* Seq_Forall_r *)
+  |ns ls rs phi t H1 H2 H3 IH1 (* Seq_Forall_l *)
+  |ns ls rs phi t H1 H2 H3 IH1 (* Seq_Iexists_r *)
+  |ns ls rs phi H1 H2 IH1 (* Seq_Iexists_l *)].
+  all: eauto using
+    satisfaction_conseq_empty,
+    satisfaction_conseq_id,
+    satisfaction_conseq_Bot_l,
+    satisfaction_conseq_Pred_r,
+    satisfaction_conseq_Pred_l,
+    satisfaction_conseq_Impl_r,
+    satisfaction_conseq_Impl_l,
+    satisfaction_conseq_Conj_r,
+    satisfaction_conseq_Conj_l,
+    satisfaction_conseq_Idisj_r,
+    satisfaction_conseq_Idisj_l,
+    satisfaction_conseq_Forall_r,
+    satisfaction_conseq_Forall_l,
+    satisfaction_conseq_Iexists_r,
+    satisfaction_conseq_Iexists_l.
+Qed.
