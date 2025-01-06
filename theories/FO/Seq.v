@@ -127,3 +127,80 @@ Inductive Seq `{Signature} :
           map (fun x => pair (fst x) (snd x).|[ren (+1)]) rs
         ) ->
         Seq ls rs.
+
+Proposition prop_4_6 `{Signature} :
+  forall phi ns1 ns2 ls rs,
+  In (pair ns1 phi) ls ->
+  In (pair ns2 phi) rs ->
+  (forall n, In n ns2 -> In n ns1) ->
+  Seq ls rs.
+Proof with (
+  try (
+    eapply in_map_iff;
+    eexists;
+    split;
+    try reflexivity;
+    try eassumption);
+  try reflexivity;
+  try (left; reflexivity);
+  try (right; eassumption);
+  try (right; left; reflexivity);
+  eauto
+).
+  induction phi as
+  [p args
+  |?
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1
+  |phi1 IH1].
+  all: intros ns1 ns2 ls rs H1 H2 H3.
+  -
+    eapply Seq_Pred_l...
+    eapply Seq_id...
+  -
+    destruct ns2 as [|n ns2'].
+    +
+      eapply Seq_empty...
+    +
+      eapply Seq_Bot_l.
+      *
+        exact H1.
+      *
+        apply H3.
+        left.
+        reflexivity.
+  -
+    eapply Seq_Impl_r...
+    intros ns3 H4.
+    eapply Seq_Impl_l with (ns2 := ns3)...
+    +
+      eapply IH1...
+    +
+      eapply IH2...
+  -
+    eapply Seq_Conj_l...
+    eapply Seq_Conj_r...
+    +
+      eapply IH1...
+    +
+      eapply IH2...
+  -
+    eapply Seq_Idisj_r...
+    eapply Seq_Idisj_l...
+    +
+      eapply IH1...
+    +
+      eapply IH2...
+  -
+    eapply Seq_Forall_r...
+    eapply Seq_Forall_l with (t := Var 0)...
+    asimpl.
+    eapply IH1...
+  -
+    eapply Seq_Iexists_l...
+    eapply Seq_Iexists_r with (t := Var 0)...
+    asimpl.
+    eapply IH1...
+Qed.
