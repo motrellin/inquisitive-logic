@@ -445,7 +445,22 @@ Lemma satisfaction_conseq_Conj_l `{Signature} :
     ) rs ->
     satisfaction_conseq ls rs.
 Proof.
-Admitted.
+  intros ns ls rs phi psi H1 H2.
+  intros M f a H3.
+  specialize (H3 _ H1) as H4.
+  destruct H4 as [H4 H5].
+  apply H2.
+  intros chi [H6|[H6|H6]].
+  +
+    subst chi.
+    exact H4.
+  +
+    subst chi.
+    exact H5.
+  +
+    apply H3.
+    exact H6.
+Qed.
 
 Lemma satisfaction_conseq_Idisj_r `{Signature} :
   forall ns ls rs phi psi,
