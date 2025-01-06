@@ -204,3 +204,42 @@ Proof with (
     asimpl.
     eapply IH1...
 Qed.
+
+Example ex_4_7 `{Signature} :
+  forall ns phi psi,
+    Seq
+    ((pair ns <{iexists phi}>) :: nil)
+    ((pair ns <{iexists ~ psi -> phi}>) :: nil).
+Proof with (
+  try (right; left; autosubst);
+  try (left; autosubst);
+  try easy
+).
+  intros ns1 phi psi.
+  eapply Seq_Iexists_l...
+  eapply Seq_Iexists_r with (t := Var 0)...
+  eapply Seq_Impl_r...
+  intros ns' H1.
+  eapply prop_4_6...
+Qed.
+
+Example ex_4_8 `{Signature} :
+  forall ns phi psi,
+    Seq
+    ((pair ns <{(forall phi) \\/ psi}>) :: nil)
+    ((pair ns (Forall (Idisj phi psi.|[ren (+1)]))) :: nil).
+Proof with (
+  try (left; autosubst);
+  try (right; left; autosubst);
+  try easy
+).
+  intros ns phi psi.
+  eapply Seq_Forall_r...
+  eapply Seq_Idisj_l...
+  all: eapply Seq_Idisj_r...
+  -
+    eapply Seq_Forall_l with (t := Var 0)...
+    eapply prop_4_6...
+  -
+    eapply prop_4_6...
+Qed.
