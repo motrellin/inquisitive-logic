@@ -294,6 +294,10 @@ Lemma satisfaction_conseq_Bot_l `{Signature} :
     In n ns ->
     satisfaction_conseq ls rs.
 Proof.
+  intros n ns ls rs ? H1 H2.
+  intros M f a H3.
+  specialize (H3 _ H1 (f n)).
+  simpl in H3.
 Admitted.
 
 Lemma satisfaction_conseq_Pred_r `{Signature} :
