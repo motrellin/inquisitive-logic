@@ -425,9 +425,11 @@ Proof.
     intros chi [H9|H9].
     *
       subst chi.
+      asimpl in H6.
       apply H6.
       --
-         admit.
+         apply substate_mapping_state.
+         exact H2.
       --
          exact H8.
     *
@@ -435,7 +437,7 @@ Proof.
       exact H9.
   +
     eexists; split; eassumption.
-Admitted.
+Qed.
 
 Lemma satisfaction_conseq_Conj_r `{Signature} :
   forall ns ls rs phi psi,
