@@ -243,3 +243,23 @@ Proof with (
   -
     eapply prop_4_6...
 Qed.
+
+Definition satisfaction
+  `{Model}
+  (phi : ((list nat)*form)%type)
+  (f : nat -> World)
+  (a : assignment) : Prop :=
+  mapping_state f (fst phi), a |= snd phi.
+
+Definition satisfaction_conseq `{S : Signature} :
+  relation (list ((list nat)*form)) :=
+  fun Phi Psi =>
+  forall `(M : @Model S) (f : nat -> World) (a : assignment),
+    (
+      forall phi,
+        In phi Phi ->
+        satisfaction phi f a
+    ) ->
+    exists psi,
+      In psi Psi /\
+      satisfaction psi f a.

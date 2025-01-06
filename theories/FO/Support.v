@@ -1,6 +1,6 @@
-From Coq Require Export List FunctionalExtensionality.
+From Coq Require Export FunctionalExtensionality.
 
-From InqLog.FO Require Export Syntax States.
+From InqLog.FO Require Export States Syntax.
 
 (** * Support satisfaction
    In this section, we will introduce the notion of a state

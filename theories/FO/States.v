@@ -1,3 +1,4 @@
+From InqLog Require Export ListBib.
 From InqLog.FO Require Export Models.
 
 From Coq Require Export Bool Morphisms Setoid.
@@ -115,6 +116,17 @@ Proof.
   intros s w.
   apply negb_involutive.
 Qed.
+
+(** ** Mapping states *)
+
+Definition mapping_state
+  `{Model}
+  (f : nat -> World)
+  (ns : list nat) :
+  state :=
+
+  fun w =>
+  inb World_deceq w (map f ns).
 
 (** * Consistent states *)
 

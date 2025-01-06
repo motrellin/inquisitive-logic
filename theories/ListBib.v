@@ -1,4 +1,4 @@
-From Coq Require Import Bool List.
+From Coq Require Export Bool List.
 
 Section inb.
 
