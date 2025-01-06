@@ -269,7 +269,11 @@ Lemma satisfaction_conseq_empty `{Signature} :
     In (pair nil phi) rs ->
     satisfaction_conseq ls rs.
 Proof.
-Admitted.
+  intros ls rs phi H1.
+  intros M f a H2.
+  eexists; split; try exact H1.
+  apply empty_state_property.
+Qed.
 
 Lemma satisfaction_conseq_id `{Signature} :
       forall ns ls rs p args,
