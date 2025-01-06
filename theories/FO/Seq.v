@@ -277,7 +277,16 @@ Lemma satisfaction_conseq_id `{Signature} :
         In (pair ns (Pred p args)) rs ->
         satisfaction_conseq ls rs.
 Proof.
-Admitted.
+  intros ns ls rs p args H1 H2.
+  intros M f a H3.
+  eexists.
+  split.
+  +
+    exact H2.
+  +
+    apply H3.
+    exact H1.
+Qed.
 
 Lemma satisfaction_conseq_Bot_l `{Signature} :
   forall n ns ls rs x,
