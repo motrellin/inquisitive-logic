@@ -302,7 +302,12 @@ Proof.
   intros M f a H3.
   specialize (H3 _ H1 (f n)).
   simpl in H3.
-Admitted.
+  unfold mapping_state in H3.
+  eapply in_map in H2.
+  eapply In_iff_inb in H2.
+  rewrite H3 in H2.
+  discriminate.
+Qed.
 
 Lemma satisfaction_conseq_Pred_r `{Signature} :
   forall ns ls rs p args,
