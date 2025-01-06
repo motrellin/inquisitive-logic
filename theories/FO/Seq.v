@@ -387,6 +387,26 @@ Lemma satisfaction_conseq_Impl_l `{Signature} :
     satisfaction_conseq ((pair ns2 psi) :: ls) rs ->
     satisfaction_conseq ls rs.
 Proof.
+  intros ns1 ns2 ls rs phi psi H1 H2 H3 H4.
+  intros M f a H5.
+  specialize (H5 _ H1) as H6.
+  specialize (H3 _ _ _ H5) as [chi [[H7|H7] H8]].
+  +
+    subst chi.
+    apply H4.
+    intros chi [H9|H9].
+    *
+      subst chi.
+      apply H6.
+      --
+         admit.
+      --
+         exact H8.
+    *
+      apply H5.
+      exact H9.
+  +
+    eexists; split; eassumption.
 Admitted.
 
 Lemma satisfaction_conseq_Conj_r `{Signature} :
