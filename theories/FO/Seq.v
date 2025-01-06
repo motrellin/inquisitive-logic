@@ -332,30 +332,29 @@ Proof.
   eexists.
   split; try exact H1.
   intros w H5.
-  assert (exists n, In n ns /\ f n = w) as [n [H6 H7]].
-  {
-    admit.
-  }
+  apply In_iff_inb in H5 as H6.
+  simpl in H6.
+  apply in_map_iff in H6 as [n [H6 H7]].
   subst w.
-  specialize (H2 n H6 M f a H3) as [psi [H7 H8]].
-  destruct H7 as [H7|H7].
+  specialize (H2 n H7 M f a H3) as [psi [H8 H9]].
+  destruct H8 as [H8|H8].
   +
     subst psi.
-    asimpl in H8.
-    apply H8.
-    destruct (World_deceq (f n) (f n)) as [H9|H9]; easy.
+    apply H9.
+    asimpl.
+    destruct (World_deceq (f n) (f n)) as [HA|HA]; easy.
   +
-    assert (H9 : psi = pair ns (Pred p args)).
+    assert (HA : psi = pair ns (Pred p args)).
     {
       apply NNPP.
-      intros H9.
+      intros HA.
       apply H4.
       eexists; repeat split; eassumption.
     }
     subst psi.
-    apply H8.
+    apply H9.
     exact H5.
-Admitted.
+Qed.
 
 Lemma satisfaction_conseq_Pred_l `{Signature} :
   forall ns1 ns2 ls rs p args,
