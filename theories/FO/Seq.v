@@ -362,7 +362,23 @@ Lemma satisfaction_conseq_Pred_l `{Signature} :
     satisfaction_conseq ((pair ns2 (Pred p args)) :: ls) rs ->
     satisfaction_conseq ls rs.
 Proof.
-Admitted.
+  intros ns1 ns2 ls rs p args H1 H2 H3.
+  intros M f a H4.
+  apply H3.
+  intros phi [H5|H5].
+  -
+    subst phi.
+    apply H4 in H1.
+    eapply persistency.
+    +
+      exact H1.
+    +
+      apply substate_mapping_state.
+      exact H2.
+  -
+    apply H4.
+    exact H5.
+Qed.
 
 Lemma satisfaction_conseq_Impl_r `{Signature} :
   forall ns ls rs phi psi,

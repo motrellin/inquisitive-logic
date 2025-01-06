@@ -296,3 +296,27 @@ Proof.
     eapply substate_contrapos.
     all: eassumption.
 Qed.
+
+Lemma substate_mapping_state `{Model} :
+  forall f ns1 ns2,
+    (forall n,
+      In n ns2 ->
+      In n ns1
+    ) ->
+    substate (mapping_state f ns2) (mapping_state f ns1).
+Proof.
+  intros f ns1 ns2 H1 w H2.
+  unfold mapping_state in *.
+  simpl.
+  apply In_iff_inb in H2.
+  apply in_map_iff in H2 as [n [H2 H3]].
+  apply In_iff_inb.
+  apply in_map_iff.
+  exists n.
+  split.
+  -
+    exact H2.
+  -
+    apply H1.
+    exact H3.
+Qed.

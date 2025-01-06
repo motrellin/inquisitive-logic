@@ -42,4 +42,14 @@ Section inb.
           firstorder.
   Qed.
 
+  Corollary In_iff_inb :
+    forall x xs,
+      In x xs <->
+      inb x xs = true.
+  Proof.
+    intros x xs.
+    apply reflect_iff.
+    apply In_reflect_inb.
+  Qed.
+
 End inb.
