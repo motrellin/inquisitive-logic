@@ -416,7 +416,25 @@ Lemma satisfaction_conseq_Conj_r `{Signature} :
     satisfaction_conseq ls ((pair ns psi) :: rs) ->
     satisfaction_conseq ls rs.
 Proof.
-Admitted.
+  intros ns ls rs phi psi H1 H2 H3.
+  intros M f a H4.
+  specialize (H2 _ _ _ H4) as [[ns2 psi1] [[H5|H5] H6]].
+  +
+    injection H5; intros; subst ns2 psi1; clear H5.
+    specialize (H3 _ _ _ H4) as [[ns3 psi2] [[H7|H7] H8]].
+    *
+      injection H7; intros; subst ns3 psi2; clear H7.
+      eexists.
+      split.
+      --
+         exact H1.
+      --
+         split; assumption.
+    *
+      eexists; split; eassumption.
+  +
+    eexists; split; eassumption.
+Qed.
 
 Lemma satisfaction_conseq_Conj_l `{Signature} :
   forall ns ls rs phi psi,
