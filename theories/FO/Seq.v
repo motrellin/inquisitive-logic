@@ -496,7 +496,29 @@ Lemma satisfaction_conseq_Idisj_l `{Signature} :
     satisfaction_conseq ((pair ns psi) :: ls) rs ->
     satisfaction_conseq ls rs.
 Proof.
-Admitted.
+  intros ns ls rs phi psi H1 H2 H3.
+  intros M f a H4.
+  apply H4 in H1 as H5.
+  destruct H5 as [H5|H5].
+  -
+    apply H2.
+    intros chi [H6|H6].
+    +
+      subst chi.
+      exact H5.
+    +
+      apply H4.
+      exact H6.
+  -
+    apply H3.
+    intros chi [H6|H6].
+    +
+      subst chi.
+      exact H5.
+    +
+      apply H4.
+      exact H6.
+Qed.
 
 Lemma satisfaction_conseq_Forall_r `{Signature} :
   forall ns ls rs phi,
