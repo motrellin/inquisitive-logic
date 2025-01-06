@@ -308,6 +308,40 @@ Lemma satisfaction_conseq_Pred_r `{Signature} :
     ) ->
     satisfaction_conseq ls rs.
 Proof.
+  intros ns ls rs p args H1 H2.
+  intros M f a H3.
+  destruct (classic (exists psi, psi <> (pair ns (Pred p args)) /\ In psi rs /\ satisfaction psi f a)) as [H4|H4].
+  {
+    destruct H4 as [psi [_ [H4 H5]]].
+    exists psi.
+    split; assumption.
+  }
+  eexists.
+  split; try exact H1.
+  intros w H5.
+  assert (exists n, In n ns /\ f n = w) as [n [H6 H7]].
+  {
+    admit.
+  }
+  subst w.
+  specialize (H2 n H6 M f a H3) as [psi [H7 H8]].
+  destruct H7 as [H7|H7].
+  +
+    subst psi.
+    asimpl in H8.
+    apply H8.
+    destruct (World_deceq (f n) (f n)) as [H9|H9]; easy.
+  +
+    assert (H9 : psi = pair ns (Pred p args)).
+    {
+      apply NNPP.
+      intros H9.
+      apply H4.
+      eexists; repeat split; eassumption.
+    }
+    subst psi.
+    apply H8.
+    exact H5.
 Admitted.
 
 Lemma satisfaction_conseq_Pred_l `{Signature} :
