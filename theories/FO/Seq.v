@@ -942,7 +942,24 @@ Lemma satisfaction_conseq_Iexists_l `{Signature} :
     ) ->
     satisfaction_conseq ls rs.
 Proof.
-Admitted.
+  intros ns ls rs phi H1 H2.
+  intros M f a H3.
+  specialize (H3 _ H1) as H4.
+  asimpl in H4.
+  destruct H4 as [i H4].
+  specialize (H2 M f (i .: a)).
+  apply satisfaction_exists_subst_var in H2.
+  -
+    exact H2.
+  -
+    apply satisfaction_forall_cons.
+    split.
+    +
+      exact H4.
+    +
+      apply satisfaction_forall_subst_var.
+      exact H3.
+Qed.
 
 Theorem soundness `{Signature} :
   forall Phi Psi,
