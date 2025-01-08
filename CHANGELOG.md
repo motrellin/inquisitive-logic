@@ -1,5 +1,99 @@
 # Changelog
 
+## inqlog-v0.10.0 (2025-01-08)
+
+### New
+
+* Print Assumptions for `soundness` of Seq. [Max Ole Elliger]
+
+  This concludes thes soundness proof for the sequent calculus.
+
+* Proved `satisfaction_conseq_Iexists_l` [Max Ole Elliger]
+
+* Proved `satisfaction_conseq_Iexists_r` [Max Ole Elliger]
+
+  This includes a small improvement of the statement and `Seq_Iexists_r`.
+
+* Proved `satisfaction_conseq_Forall_l` [Max Ole Elliger]
+
+  This includes a small improvement of the statement and `Seq_Forall_l`.
+
+* Proved `satisfaction_conseq_Forall_r` [Max Ole Elliger]
+
+  This commit also includes various improvements:
+  - Introduction of some defining names, e.g. `label` or 'lb_form'
+  - Defined `satisfaction_forall` and `satisfaction_exists` to make
+    `satisfaction_conseq` more readable.
+  - Proved some helping lemmas about them.
+
+* Proved `satisfaction_conseq_Impl_r` [Max Ole Elliger]
+
+  This includes various helper lemmas and the definition of
+  `excluding_states`.
+
+* `Proved satisfaction_conseq_Impl_l` [Max Ole Elliger]
+
+* Proved `satisfaction_conseq_Pred_r` [Max Ole Elliger]
+
+* Proved `satisfaction_conseq_Bot_l` [Max Ole Elliger]
+
+* Proved `satisfaction_conseq_Pred_l` [Max Ole Elliger]
+
+  This includes proofs for
+  - `In_iff_inb`
+  - `substate_mapping_state`
+
+* Proved `satisfaction_conseq_empty` [Max Ole Elliger]
+
+* Proved `satisfaction_conseq_Idisj_l` [Max Ole Elliger]
+
+* Proved `satisfaction_conseq_Idisj_r` [Max Ole Elliger]
+
+* Proved `satisfaction_conseq_Conj_l` [Max Ole Elliger]
+
+* Proved `satisfaction_conseq_Conj_r` [Max Ole Elliger]
+
+* Proved `satisfaction_conseq_id` [Max Ole Elliger]
+
+* Setup structure for soundness of Seq. [Max Ole Elliger]
+
+* Defined `satisfaction` and `satisfaction_conseq` [Max Ole Elliger]
+
+  Both are for labelled formulas and sequents.
+
+  This also includes the definition of `mapping_state`.
+
+* Proved some examples. [Max Ole Elliger]
+
+  Proved
+  - Example 4.7 from inqbq_aiml
+  - Example 4.8 from inqbq_aiml
+
+* Proved prop_4_6 from inqbq_aiml. [Max Ole Elliger]
+
+* Defined the rules for sequent calculus. [Max Ole Elliger]
+
+* Defined `inb` [Max Ole Elliger]
+
+  `inb` is the boolean twin of the list predicate `In`. It is defined for
+  lists of types with decidable equality.
+
+* Proved `singleton_substate` [Max Ole Elliger]
+
+### Changes
+
+* Proved some `support_conseq`-lemmas in Truth.v. [Max Ole Elliger]
+
+  This includes
+  - `truth_subst`
+  - `support_conseq_Forall_E_classical`
+  - `support_conseq_CRAA`
+  - `support_conseq_CD`
+
+* Simplified `referent_subst` [Max Ole Elliger]
+
+  It is not necessary that `t` is rigid.
+
 ## inqlog-v0.9.0 (2025-01-01)
 
 ### New
