@@ -2,8 +2,11 @@ From InqLog.FO Require Export Truth.
 
 (* whole section from inqbq_aiml *)
 
+Definition label : Type := list nat.
+Definition lb_form `{Signature} : Type := (list nat)*form.
+
 Inductive Seq `{Signature} :
-  relation (list ((list nat)*form)) :=
+  relation (list lb_form) :=
   | Seq_empty :
       forall ls rs phi,
         In (pair nil phi) rs ->
@@ -246,23 +249,190 @@ Qed.
 
 Definition satisfaction
   `{Model}
-  (phi : ((list nat)*form)%type)
+  (phi : lb_form)
   (f : nat -> World)
   (a : assignment) : Prop :=
   mapping_state f (fst phi), a |= snd phi.
 
+Lemma satisfaction_subst `{Model} :
+  forall phi f a sigma w,
+    (forall x, rigid_term (sigma x)) ->
+    satisfaction phi f (fun x => referent (sigma x) w a) <->
+    satisfaction (pair (fst phi) (snd phi).|[sigma]) f a.
+Proof.
+  intros.
+  apply support_subst.
+  exact H1.
+Qed.
+
+Lemma satisfaction_subst_var `{Model} :
+  forall phi f a sigma,
+    satisfaction phi f (sigma >>> a) <->
+    satisfaction (pair (fst phi) (snd phi).|[ren sigma]) f a.
+Proof.
+  intros.
+  apply support_subst_var.
+Qed.
+
+Definition satisfaction_forall
+  `{Model}
+  (Phi : list lb_form)
+  (f : nat -> World)
+  (a : assignment) :
+  Prop :=
+
+  forall phi,
+    In phi Phi ->
+    satisfaction phi f a.
+
+Lemma satisfaction_forall_nil `{Model} :
+  forall f a,
+    satisfaction_forall nil f a.
+Proof.
+  easy.
+Qed.
+
+Lemma satisfaction_forall_cons `{Model} :
+  forall phi Phi' f a,
+    satisfaction_forall (phi :: Phi') f a <->
+    satisfaction phi f a /\
+    satisfaction_forall Phi' f a.
+Proof.
+  intros phi Phi' f a.
+  split.
+  -
+    intros H1.
+    split.
+    +
+      apply H1.
+      left.
+      reflexivity.
+    +
+      intros psi H2.
+      apply H1.
+      right.
+      exact H2.
+  -
+    intros [H1 H2] psi [H3|H3].
+    +
+      subst psi.
+      exact H1.
+    +
+      apply H2.
+      exact H3.
+Qed.
+
+Lemma satisfaction_forall_subst_var `{Model} :
+  forall Phi f a sigma,
+    satisfaction_forall Phi f (sigma >>> a) <->
+    satisfaction_forall (map (fun phi => pair (fst phi) (snd phi).|[ren sigma]) Phi) f a.
+Proof.
+  induction Phi as [|phi Phi' IH].
+  all: intros s a sigma.
+  -
+    easy.
+  -
+    simpl.
+    split.
+    all: intros H2.
+    all: apply satisfaction_forall_cons.
+    all: apply satisfaction_forall_cons in H2 as [H2 H3].
+    all: split.
+    all: try (apply IH; exact H3).
+    +
+      apply satisfaction_subst_var in H2.
+      assumption.
+    +
+      apply satisfaction_subst_var.
+      assumption.
+Qed.
+
+Definition satisfaction_exists
+  `{Model}
+  (Phi : list lb_form)
+  (f : nat -> World)
+  (a : assignment) :
+  Prop :=
+
+  exists phi,
+    In phi Phi /\
+    satisfaction phi f a.
+
+Lemma satisfaction_exists_nil `{Model} :
+  forall f a,
+    ~ satisfaction_exists nil f a.
+Proof.
+  intros f a [phi [H1 H2]].
+  contradiction.
+Qed.
+
+Lemma satisfaction_exists_cons `{Model} :
+  forall phi Phi' f a,
+    satisfaction_exists (phi :: Phi') f a <->
+    satisfaction phi f a \/
+    satisfaction_exists Phi' f a.
+Proof.
+  intros phi Phi' f a.
+  split.
+  -
+    intros [psi [[H2|H2] H3]].
+    +
+      subst psi.
+      left.
+      exact H3.
+    +
+      right.
+      exists psi; split; assumption.
+  -
+    intros [H1|[psi [H2 H3]]].
+    +
+      exists phi.
+      split.
+      *
+        left.
+        reflexivity.
+      *
+        exact H1.
+    +
+      exists psi; split.
+      *
+        right; assumption.
+      *
+        exact H3.
+Qed.
+
+Lemma satisfaction_exists_subst_var `{Model} :
+  forall Phi s a sigma,
+    satisfaction_exists Phi s (sigma >>> a) <->
+    satisfaction_exists (map (fun phi => pair (fst phi) (snd phi).|[ren sigma]) Phi) s a.
+Proof.
+  induction Phi as [|phi Phi' IH].
+  all: intros s a sigma.
+  -
+    firstorder.
+  -
+    split.
+    all: simpl.
+    all: intros H2.
+    all: apply satisfaction_exists_cons.
+    all: apply satisfaction_exists_cons in H2 as [H2|H2].
+    all: try (right; eapply IH; eassumption).
+    +
+      apply satisfaction_subst_var in H2.
+      left.
+      exact H2.
+    +
+      left.
+      apply satisfaction_subst_var.
+      exact H2.
+Qed.
+
 Definition satisfaction_conseq `{S : Signature} :
-  relation (list ((list nat)*form)) :=
+  relation (list lb_form) :=
   fun Phi Psi =>
   forall `(M : @Model S) (f : nat -> World) (a : assignment),
-    (
-      forall phi,
-        In phi Phi ->
-        satisfaction phi f a
-    ) ->
-    exists psi,
-      In psi Psi /\
-      satisfaction psi f a.
+    satisfaction_forall Phi f a ->
+    satisfaction_exists Psi f a.
 
 Lemma satisfaction_conseq_empty `{Signature} :
   forall ls rs phi,
@@ -622,7 +792,49 @@ Lemma satisfaction_conseq_Forall_r `{Signature} :
     ) ->
     satisfaction_conseq ls rs.
 Proof.
-Admitted.
+  intros ns ls rs phi H1 H2.
+  intros M f a H3.
+
+  destruct (
+    classic (
+      exists chi,
+        chi <> (pair ns <{forall phi}>) /\
+        In chi rs /\
+        satisfaction chi f a
+    )
+  ) as [H4|H4].
+  {
+    destruct H4 as [chi [_ [H4 H5]]].
+    exists chi; split; assumption.
+  }
+  eexists; split; try exact H1.
+  intros i.
+  simpl.
+
+  eapply satisfaction_exists_cons with
+    (f := f)
+    (a := i .: a)
+    in H2 as [H2|H2].
+  -
+    exact H2.
+  -
+    destruct H2 as [psi [H5 H6]].
+    apply in_map_iff in H5 as [chi [H7 H8]].
+    subst psi.
+    apply satisfaction_subst_var in H6.
+
+    assert (H9 : chi = pair ns (Forall phi)).
+    {
+      apply NNPP.
+      intros H9.
+      apply H4; eexists; repeat split; eassumption.
+    }
+    subst chi.
+    apply H6.
+  -
+    apply satisfaction_forall_subst_var.
+    exact H3.
+Qed.
 
 Lemma satisfaction_conseq_Forall_l `{Signature} :
   forall ns ls rs phi t,
