@@ -128,6 +128,40 @@ Definition mapping_state
   fun w =>
   inb World_deceq w (map f ns).
 
+Lemma mapping_state_nil `{Model} :
+  forall f,
+    state_eq (mapping_state f nil) empty_state.
+Proof.
+  intros f w.
+  reflexivity.
+Qed.
+
+Lemma mapping_state_cons `{Model} :
+  forall f n ns',
+    (mapping_state f (n :: ns')) =
+    (fun w => if World_deceq (f n) w then true else mapping_state f ns' w).
+Proof.
+  reflexivity.
+Qed.
+
+(** ** Excluding states *)
+
+Definition excluding_state `{Model} (s : state) (w : World) : state :=
+  fun w' =>
+  if World_deceq w w'
+  then false
+  else s w'.
+
+Lemma unnamed_helper_States_1 `{Model} :
+  forall s w,
+    s w = false ->
+    state_eq (excluding_state s w) s.
+Proof.
+  intros s w H1 w'.
+  unfold excluding_state.
+  destruct (World_deceq w w'); congruence.
+Qed.
+
 (** * Consistent states *)
 
 Definition consistent `{Model} (s : state) : Prop := exists w, s w = true.
@@ -297,6 +331,16 @@ Proof.
     all: eassumption.
 Qed.
 
+Lemma substate_excluding_state `{Model} :
+  forall s w,
+    substate (excluding_state s w) s.
+Proof.
+  intros s w w' H1.
+  unfold excluding_state in H1.
+  destruct (World_deceq w w') as [H2|H2]; easy.
+Qed.
+
+
 Lemma substate_mapping_state `{Model} :
   forall f ns1 ns2,
     (forall n,
@@ -319,4 +363,101 @@ Proof.
   -
     apply H1.
     exact H3.
+Qed.
+
+Lemma unnamed_helper_States_2 `{Model} :
+  forall t f n ns,
+    substate t (mapping_state f (n :: ns)) ->
+    substate (excluding_state t (f n)) (mapping_state f ns).
+Proof.
+  unfold mapping_state, excluding_state.
+  intros t f n ns H1 w H2.
+  destruct (World_deceq (f n) w) as [H3|H3].
+  -
+    discriminate.
+  -
+    apply H1 in H2 as H4.
+    apply In_iff_inb.
+    apply In_iff_inb in H4 as [H4|H4].
+    +
+      congruence.
+    +
+      exact H4.
+Qed.
+
+Lemma substate_mapping_state_iff `{Model} :
+  forall f ns t,
+  substate t (mapping_state f ns) <->
+  exists ns',
+    state_eq t (mapping_state f ns') /\
+    forall n,
+      In n ns' ->
+      In n ns.
+Proof.
+  intros f ns1 t.
+  split.
+  -
+    intros H1.
+    generalize dependent t.
+    induction ns1 as [|n ns1' IH].
+    all: intros t H1.
+    +
+      exists nil.
+      split.
+      *
+        rewrite mapping_state_nil in H1.
+        apply substate_empty_state in H1.
+        rewrite H1, mapping_state_nil.
+        reflexivity.
+      *
+        easy.
+    +
+      destruct (t (f n)) eqn:H2.
+      *
+        specialize IH with
+          (t := excluding_state t (f n)).
+        destruct IH as [ns' [H3 H4]].
+        {
+          apply unnamed_helper_States_2.
+          exact H1.
+        }
+        exists (n :: ns').
+        split.
+        --
+           intros w.
+           rewrite mapping_state_cons.
+           rewrite <- H3.
+           unfold excluding_state.
+           destruct (World_deceq (f n) w); congruence.
+        --
+           intros n' [H5|H5].
+           ++
+              left; congruence.
+           ++
+              right; auto.
+      *
+        specialize IH with
+          (t := t).
+        destruct IH as [ns' [H3 H4]].
+        {
+          intros w H3.
+          apply H1 in H3 as H4.
+          apply In_iff_inb in H4 as [H4|H4].
+          -
+            congruence.
+          -
+            apply In_iff_inb.
+            exact H4.
+        }
+        exists ns'.
+        split.
+        --
+           exact H3.
+        --
+           firstorder.
+  -
+    intros [ns2 [H1 H2]].
+    rewrite H1.
+    apply substate_mapping_state.
+    exact H2.
 Qed.

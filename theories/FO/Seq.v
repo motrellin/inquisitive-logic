@@ -402,7 +402,66 @@ Lemma satisfaction_conseq_Impl_r `{Signature} :
     ) ->
     satisfaction_conseq ls rs.
 Proof.
-Admitted.
+  intros ns1 ls rs phi psi H1 H2.
+  intros M f a H3.
+  destruct (
+    classic (
+      exists chi,
+        chi <> (pair ns1 <{phi -> psi}>) /\
+        In chi rs /\
+        satisfaction chi f a
+    )
+  ) as [H4|H4].
+  {
+    destruct H4 as [chi [_ [H4 H5]]].
+    exists chi.
+    split; assumption.
+  }
+  eexists; split; try exact H1.
+
+  intros t H5 H6.
+  simpl in H5.
+
+  apply substate_mapping_state_iff in H5 as [ns2 [H7 H8]].
+  rewrite H7 in *; clear H7.
+
+  specialize (H2 ns2 H8).
+  assert (H9 :
+    forall chi,
+      In chi ((pair ns2 phi) :: ls) ->
+      satisfaction chi f a
+  ).
+  {
+    intros chi [H9|H9].
+    -
+      subst chi.
+      exact H6.
+    -
+      apply H3.
+      exact H9.
+  }
+  specialize (H2 _ _ _ H9) as [chi [[HA|HA] HB]].
+  -
+    subst chi.
+    exact HB.
+  -
+    assert (HC : chi = pair ns1 <{phi -> psi}>).
+    {
+      apply NNPP.
+      intros HC.
+      apply H4.
+      exists chi.
+      easy.
+    }
+    subst chi.
+    asimpl in HB.
+    apply HB.
+    +
+      apply substate_mapping_state.
+      exact H8.
+    +
+      exact H6.
+Qed.
 
 Lemma satisfaction_conseq_Impl_l `{Signature} :
   forall ns1 ns2 ls rs phi psi,
