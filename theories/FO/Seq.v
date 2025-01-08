@@ -113,7 +113,6 @@ Inductive Seq `{Signature} :
         Seq ls
         (
           (pair ns phi.|[t/]) ::
-          (pair ns <{iexists phi}>) ::
           rs
         ) ->
         Seq ls rs
@@ -893,12 +892,42 @@ Lemma satisfaction_conseq_Iexists_r `{Signature} :
     satisfaction_conseq ls
     (
       (pair ns phi.|[t/]) ::
-      (pair ns <{iexists phi}>) ::
       rs
     ) ->
     satisfaction_conseq ls rs.
 Proof.
-Admitted.
+  intros ns ls rs phi t H1 H2 H3.
+  intros M f a H4.
+  specialize (H3 _ _ _ H4) as H5.
+  apply satisfaction_exists_cons in H5 as [H5|H5].
+  -
+    eexists; split; try exact H1.
+    destruct ns as [|n ns'].
+    +
+      apply empty_state_property.
+    +
+      exists (referent t (f n) a).
+      asimpl.
+      asimpl in H5.
+      eapply support_subst with
+        (sigma := t .: ids)
+        in H5.
+      *
+        assert (H6 :
+          referent t (f n) a .: a =
+          fun x => referent ((t .: ids) x) (f n) a
+        ).
+        {
+          apply functional_extensionality.
+          intros [|x']; reflexivity.
+        }
+        rewrite H6.
+        exact H5.
+      *
+        intros [|x']; easy.
+  -
+    exact H5.
+Qed.
 
 Lemma satisfaction_conseq_Iexists_l `{Signature} :
   forall ns ls rs phi,
