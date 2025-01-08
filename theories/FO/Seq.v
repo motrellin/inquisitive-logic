@@ -999,3 +999,5 @@ Proof.
     satisfaction_conseq_Iexists_r,
     satisfaction_conseq_Iexists_l.
 Qed.
+
+Print Assumptions soundness.
