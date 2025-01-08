@@ -100,7 +100,6 @@ Inductive Seq `{Signature} :
         Seq
         (
           (pair ns phi.|[t/]) ::
-          (pair ns <{forall phi}>) ::
           ls
         )
         (
@@ -843,7 +842,6 @@ Lemma satisfaction_conseq_Forall_l `{Signature} :
     satisfaction_conseq
     (
       (pair ns phi.|[t/]) ::
-      (pair ns <{forall phi}>) ::
       ls
     )
     (
@@ -851,7 +849,42 @@ Lemma satisfaction_conseq_Forall_l `{Signature} :
     ) ->
     satisfaction_conseq ls rs.
 Proof.
-Admitted.
+  intros ns ls rs phi t H1 H2 H3.
+  intros M f a H4.
+  specialize (H4 _ H1) as H5.
+
+  apply H3.
+  intros psi [H6|H6].
+  -
+    subst psi.
+    destruct ns as [|n ns'].
+    +
+      apply empty_state_property.
+    +
+      asimpl.
+      asimpl in H5.
+      specialize (H5 (referent t (f n) a)).
+
+      eapply support_subst with
+        (sigma := t .: ids)
+        (w := f n).
+      *
+        intros [|]; easy.
+      *
+        assert (H6 :
+          (fun x => referent ((t .: ids) x) (f n) a) =
+          referent t (f n) a .: a
+        ).
+        {
+          apply functional_extensionality.
+          intros [|x']; autosubst.
+        }
+        rewrite H6.
+        exact H5.
+  -
+    apply H4.
+    exact H6.
+Qed.
 
 Lemma satisfaction_conseq_Iexists_r `{Signature} :
   forall ns ls rs phi t,
