@@ -1,7 +1,7 @@
 From InqLog Require Export ListBib.
 From InqLog.FO Require Export Models.
 
-From Coq Require Export Bool Morphisms Setoid.
+From Coq Require Export Bool.
 
 (** * Basic definitions
 
@@ -142,6 +142,21 @@ Lemma mapping_state_cons `{Model} :
     (fun w => if World_deceq (f n) w then true else mapping_state f ns' w).
 Proof.
   reflexivity.
+Qed.
+
+Instance mapping_state_Proper `{Model} :
+  forall f,
+    Proper (In_eq ==> state_eq) (mapping_state f).
+Proof.
+  intros f ns1 ns2 H1 w.
+  apply In_iff_inb.
+  split.
+  all: intros H2.
+  all: apply in_map_iff in H2 as [n [H2 H3]].
+  all: subst w.
+  all: apply in_map.
+  all: apply H1.
+  all: exact H3.
 Qed.
 
 (** ** Excluding states *)
