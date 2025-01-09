@@ -12,9 +12,10 @@ Inductive Seq `{Signature} :
         In (pair nil phi) rs ->
         Seq ls rs
   | Seq_id :
-      forall ns ls rs p args,
-        In (pair ns (Pred p args)) ls ->
-        In (pair ns (Pred p args)) rs ->
+      forall ns1 ns2 ls rs p args,
+        In (pair ns1 (Pred p args)) ls ->
+        In (pair ns2 (Pred p args)) rs ->
+        In_eq ns1 ns2 ->
         Seq ls rs
   | Seq_Bot_l :
       forall n ns ls rs x,
@@ -444,20 +445,25 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_id `{Signature} :
-      forall ns ls rs p args,
-        In (pair ns (Pred p args)) ls ->
-        In (pair ns (Pred p args)) rs ->
+      forall ns1 ns2 ls rs p args,
+        In (pair ns1 (Pred p args)) ls ->
+        In (pair ns2 (Pred p args)) rs ->
+        In_eq ns1 ns2 ->
         satisfaction_conseq ls rs.
 Proof.
-  intros ns ls rs p args H1 H2.
-  intros M f a H3.
+  intros ns1 ns2 ls rs p args H1 H2 H3.
+  intros M f a H4.
   eexists.
   split.
-  +
+  -
     exact H2.
-  +
-    apply H3.
-    exact H1.
+  -
+    apply H4 in H1 as H5.
+    unfold satisfaction in *.
+    simpl fst in *.
+    simpl snd in *.
+    rewrite <- H3.
+    exact H5.
 Qed.
 
 Lemma satisfaction_conseq_Bot_l `{Signature} :
