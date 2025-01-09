@@ -1,4 +1,4 @@
-From Coq Require Export Bool List.
+From Coq Require Export Bool List Morphisms Setoid.
 
 Section inb.
 
@@ -53,3 +53,24 @@ Section inb.
   Qed.
 
 End inb.
+
+Definition In_eq {X} : relation (list X) :=
+  fun ls rs =>
+  forall x,
+    In x ls <->
+    In x rs.
+
+Instance In_eq_equiv {X} : Equivalence (@In_eq X).
+Proof.
+  split.
+  -
+    intros xs1 x.
+    reflexivity.
+  -
+    intros xs1 xs2 H1 x.
+    symmetry.
+    apply H1.
+  -
+    intros xs1 xs2 xs3 H1 H2 x.
+    etransitivity; eauto.
+Qed.
