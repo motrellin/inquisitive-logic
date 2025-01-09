@@ -469,12 +469,11 @@ Proof.
   intros n ns ls rs ? H1 H2.
   intros M f a H3.
   specialize (H3 _ H1 (f n)).
-  simpl in H3.
-  unfold mapping_state in H3.
-  eapply in_map in H2.
-  eapply In_iff_inb in H2.
-  rewrite H3 in H2.
-  discriminate.
+  apply In_iff_inb_false in H3.
+  exfalso.
+  apply H3.
+  apply in_map.
+  exact H2.
 Qed.
 
 Lemma satisfaction_conseq_Pred_r `{Signature} :
@@ -500,7 +499,7 @@ Proof.
   eexists.
   split; try exact H1.
   intros w H5.
-  apply In_iff_inb in H5 as H6.
+  apply In_iff_inb_true in H5 as H6.
   simpl in H6.
   apply in_map_iff in H6 as [n [H6 H7]].
   subst w.

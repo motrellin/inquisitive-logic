@@ -42,7 +42,7 @@ Section inb.
           firstorder.
   Qed.
 
-  Corollary In_iff_inb :
+  Corollary In_iff_inb_true :
     forall x xs,
       In x xs <->
       inb x xs = true.
@@ -50,6 +50,60 @@ Section inb.
     intros x xs.
     apply reflect_iff.
     apply In_reflect_inb.
+  Qed.
+
+  Corollary In_iff_inb_false :
+    forall x xs,
+      (~ In x xs) <->
+      inb x xs = false.
+  Proof.
+    intros x xs.
+    split.
+    -
+      intros H1.
+      destruct (inb x xs) eqn:H2; try reflexivity.
+      apply In_iff_inb_true in H2.
+      contradiction.
+    -
+      intros H1 H2.
+      apply In_iff_inb_true in H2.
+      congruence.
+  Qed.
+
+  Corollary In_iff_inb :
+    forall x xs y ys,
+      (In x xs <-> In y ys) <->
+      inb x xs = inb y ys.
+  Proof.
+    intros x xs y ys.
+    split.
+    -
+      intros H1.
+      destruct (inb y ys) eqn:H2.
+      +
+        apply In_iff_inb_true.
+        apply H1.
+        apply In_iff_inb_true.
+        exact H2.
+      +
+        apply In_iff_inb_false.
+        intros H3.
+        apply H1 in H3.
+        apply In_iff_inb_true in H3.
+        congruence.
+    -
+      intros H1.
+      split.
+      all: intros H2.
+      all: apply In_iff_inb_true.
+      +
+        rewrite <- H1.
+        apply In_iff_inb_true.
+        exact H2.
+      +
+        rewrite H1.
+        apply In_iff_inb_true.
+        exact H2.
   Qed.
 
 End inb.

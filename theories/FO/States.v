@@ -352,9 +352,9 @@ Proof.
   intros f ns1 ns2 H1 w H2.
   unfold mapping_state in *.
   simpl.
-  apply In_iff_inb in H2.
+  apply In_iff_inb_true in H2.
   apply in_map_iff in H2 as [n [H2 H3]].
-  apply In_iff_inb.
+  apply In_iff_inb_true.
   apply in_map_iff.
   exists n.
   split.
@@ -377,8 +377,8 @@ Proof.
     discriminate.
   -
     apply H1 in H2 as H4.
-    apply In_iff_inb.
-    apply In_iff_inb in H4 as [H4|H4].
+    apply In_iff_inb_true.
+    apply In_iff_inb_true in H4 as [H4|H4].
     +
       congruence.
     +
@@ -442,11 +442,11 @@ Proof.
         {
           intros w H3.
           apply H1 in H3 as H4.
-          apply In_iff_inb in H4 as [H4|H4].
+          apply In_iff_inb_true in H4 as [H4|H4].
           -
             congruence.
           -
-            apply In_iff_inb.
+            apply In_iff_inb_true.
             exact H4.
         }
         exists ns'.
