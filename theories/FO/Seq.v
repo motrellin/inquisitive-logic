@@ -280,6 +280,73 @@ Proof.
            exact H3.
 Qed.
 
+Example ex_4_5 `{Signature} :
+  forall ns n p args,
+    In n ns ->
+    Seq ((pair ns <{~ ~ Pred p args}>) :: nil)
+    ((pair (n :: nil) <{Pred p args}>) :: nil).
+Proof.
+  intros ns1 n1 p args H1.
+  apply Seq_Impl_l with
+    (ns1 := ns1)
+    (ns2 := n1 :: nil)
+    (phi := <{~ Pred p args}>)
+    (psi := Bot 0).
+  -
+    left.
+    reflexivity.
+  -
+    intros n2 [H2|H2].
+    +
+      congruence.
+    +
+      contradiction.
+  -
+    apply Seq_Impl_r with
+      (ns := n1 :: nil)
+      (phi := Pred p args)
+      (psi := Bot 0).
+    +
+      left.
+      reflexivity.
+    +
+      intros ns2 H2.
+      apply In_sublist_singleton in H2 as [H2|H2]; try decide equality.
+      *
+        apply Seq_id with
+          (ns1 := ns2)
+          (ns2 := n1 :: nil)
+          (p := p)
+          (args := args).
+        --
+           left.
+           reflexivity.
+        --
+           right.
+           right.
+           left.
+           reflexivity.
+        --
+           exact H2.
+      *
+        subst ns2.
+        apply Seq_empty with
+          (phi := Bot 0).
+        left.
+        reflexivity.
+  -
+    apply Seq_Bot_l with
+      (n := n1)
+      (ns := n1 :: nil)
+      (x := 0).
+    +
+      left.
+      reflexivity.
+    +
+      left.
+      reflexivity.
+Qed.
+
 Example ex_4_7 `{Signature} :
   forall ns phi psi,
     Seq
