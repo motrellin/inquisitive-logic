@@ -145,3 +145,60 @@ Proof.
     left.
     reflexivity.
 Qed.
+
+Definition In_sublist {X} : relation (list X) :=
+  fun xs2 xs1 =>
+  forall x,
+    In x xs2 ->
+    In x xs1.
+
+Instance In_sublist_PreOrder {X} :
+  PreOrder (@In_sublist X).
+Proof.
+  split.
+  -
+    intros xs x H1.
+    exact H1.
+  -
+    intros xs1 xs2 xs3 H1 H2 x H3.
+    apply H2.
+    apply H1.
+    exact H3.
+Qed.
+
+Lemma In_sublist_singleton {X} (X_deceq : forall (x y : X), {x = y} + {x <> y}) :
+  forall (xs : list X) (x : X),
+    In_sublist xs (x :: nil) ->
+    In_eq xs (x :: nil) \/
+    xs = nil.
+Proof.
+  intros xs x1 H1.
+  destruct (In_dec X_deceq x1 xs) as [H2|H2].
+  -
+    left.
+    intros x2.
+    split.
+    +
+      auto.
+    +
+      intros [H3|H3].
+      *
+        subst x2.
+        exact H2.
+      *
+        contradiction.
+  -
+    right.
+    destruct xs as [|x2 xs'].
+    +
+      reflexivity.
+    +
+      exfalso.
+      assert (H3 : In x2 (x2 :: xs')). left; reflexivity.
+      apply H1 in H3 as H4.
+      destruct H4 as [H4|H4].
+      *
+        congruence.
+      *
+        contradiction.
+Qed.
