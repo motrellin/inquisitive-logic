@@ -128,3 +128,20 @@ Proof.
     intros xs1 xs2 xs3 H1 H2 x.
     etransitivity; eauto.
 Qed.
+
+Lemma In_eq_nil {X} :
+  forall (xs : list X),
+    In_eq xs nil ->
+    xs = nil.
+Proof.
+  destruct xs as [|x xs'].
+  -
+    reflexivity.
+  -
+    intros H1.
+    specialize (H1 x) as [H1 _].
+    exfalso.
+    apply H1.
+    left.
+    reflexivity.
+Qed.
