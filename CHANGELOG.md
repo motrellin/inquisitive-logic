@@ -1,5 +1,33 @@
 # Changelog
 
+## inqlog-v0.11.0 (2025-01-11)
+
+### New
+
+* Proved `ex_4_5` in FO/Seq.v. [Max Ole Elliger]
+
+* Defined `In_sublist` and proved stuff about it. [Max Ole Elliger]
+
+* Proved Lemma `In_eq_nil` [Max Ole Elliger]
+
+* Proved `mapping_state_Proper` [Max Ole Elliger]
+
+* Defined `In_eq` [Max Ole Elliger]
+
+  Two lists are equivalent via `In_eq`, if they contain the same elements.
+
+### Changes
+
+* Used `In_sublist` for `Seq` [Max Ole Elliger]
+
+* Some improvements regarding `inb`-lemmas. [Max Ole Elliger]
+
+### Fix
+
+* Fixed `Seq_id` [Max Ole Elliger]
+
+  It is enough to enforce, that the two labels are equivalent via `In_eq`.
+
 ## inqlog-v0.10.0 (2025-01-08)
 
 ### New
