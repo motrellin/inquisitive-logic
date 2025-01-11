@@ -33,30 +33,21 @@ Inductive Seq `{Signature} :
   | Seq_Pred_l :
       forall ns1 ns2 ls rs p args,
         In (pair ns1 (Pred p args)) ls ->
-        (forall n,
-          In n ns2 ->
-          In n ns1
-        ) ->
+        In_sublist ns2 ns1 ->
         Seq ((pair ns2 (Pred p args)) :: ls) rs ->
         Seq ls rs
   | Seq_Impl_r :
       forall ns ls rs phi psi,
         In (pair ns <{phi -> psi}>) rs ->
         (forall ns',
-          (forall n,
-            In n ns' ->
-            In n ns
-          ) ->
+          In_sublist ns' ns ->
           Seq ((pair ns' phi) :: ls) ((pair ns' psi) :: rs)
         ) ->
         Seq ls rs
   | Seq_Impl_l :
       forall ns1 ns2 ls rs phi psi,
         In (pair ns1 <{phi -> psi}>) ls ->
-        (forall n,
-          In n ns2 ->
-          In n ns1
-        ) ->
+        In_sublist ns2 ns1 ->
         Seq ls ((pair ns2 phi) :: rs) ->
         Seq ((pair ns2 psi) :: ls) rs ->
         Seq ls rs
@@ -134,21 +125,9 @@ Proposition prop_4_6 `{Signature} :
   forall phi ns1 ns2 ls rs,
   In (pair ns1 phi) ls ->
   In (pair ns2 phi) rs ->
-  (forall n, In n ns2 -> In n ns1) ->
+  In_sublist ns2 ns1 ->
   Seq ls rs.
-Proof with (
-  try (
-    eapply in_map_iff;
-    eexists;
-    split;
-    try reflexivity;
-    try eassumption);
-  try reflexivity;
-  try (left; reflexivity);
-  try (right; eassumption);
-  try (right; left; reflexivity);
-  eauto
-).
+Proof.
   induction phi as
   [p args
   |?
@@ -159,52 +138,146 @@ Proof with (
   |phi1 IH1].
   all: intros ns1 ns2 ls rs H1 H2 H3.
   -
-    eapply Seq_Pred_l...
-    eapply Seq_id...
+    eapply Seq_Pred_l.
+    +
+      exact H1.
+    +
+      exact H3.
+    +
+      eapply Seq_id.
+      *
+        left; reflexivity.
+      *
+        exact H2.
+      *
+        reflexivity.
   -
     destruct ns2 as [|n ns2'].
     +
-      eapply Seq_empty...
+      eapply Seq_empty.
+      exact H2.
     +
       eapply Seq_Bot_l.
       *
         exact H1.
       *
         apply H3.
-        left.
-        reflexivity.
+        left; reflexivity.
   -
-    eapply Seq_Impl_r...
-    intros ns3 H4.
-    eapply Seq_Impl_l with (ns2 := ns3)...
+    eapply Seq_Impl_r.
     +
-      eapply IH1...
+      exact H2.
     +
-      eapply IH2...
+      intros ns3 H4.
+      eapply Seq_Impl_l.
+      *
+        right; exact H1.
+      *
+        etransitivity; eassumption.
+      *
+        eapply IH1.
+        --
+           left; reflexivity.
+        --
+           left; reflexivity.
+        --
+           reflexivity.
+      *
+        eapply IH2.
+        --
+           left; reflexivity.
+        --
+           left; reflexivity.
+        --
+           reflexivity.
   -
-    eapply Seq_Conj_l...
-    eapply Seq_Conj_r...
+    eapply Seq_Conj_l.
     +
-      eapply IH1...
+      exact H1.
     +
-      eapply IH2...
+      eapply Seq_Conj_r.
+      *
+        exact H2.
+      *
+        eapply IH1.
+        --
+           left; reflexivity.
+        --
+           left; reflexivity.
+        --
+           exact H3.
+      *
+        eapply IH2.
+        --
+           right; left; reflexivity.
+        --
+           left; reflexivity.
+        --
+           exact H3.
   -
-    eapply Seq_Idisj_r...
-    eapply Seq_Idisj_l...
+    eapply Seq_Idisj_r.
     +
-      eapply IH1...
+      exact H2.
     +
-      eapply IH2...
+      eapply Seq_Idisj_l.
+      *
+        exact H1.
+      *
+        eapply IH1.
+        --
+           left; reflexivity.
+        --
+           left; reflexivity.
+        --
+           exact H3.
+      *
+        eapply IH2.
+        --
+           left; reflexivity.
+        --
+           right; left; reflexivity.
+        --
+           exact H3.
   -
-    eapply Seq_Forall_r...
-    eapply Seq_Forall_l with (t := Var 0)...
-    asimpl.
-    eapply IH1...
+    eapply Seq_Forall_r.
+    +
+      exact H2.
+    +
+      eapply Seq_Forall_l with (t := Var 0).
+      *
+        apply in_map_iff.
+        exists (pair ns1 <{forall phi1}>).
+        easy.
+      *
+        exact I.
+      *
+        eapply IH1.
+        --
+           left; autosubst.
+        --
+           left; reflexivity.
+        --
+           exact H3.
   -
-    eapply Seq_Iexists_l...
-    eapply Seq_Iexists_r with (t := Var 0)...
-    asimpl.
-    eapply IH1...
+    eapply Seq_Iexists_l.
+    +
+      exact H1.
+    +
+      eapply Seq_Iexists_r with (t := Var 0).
+      *
+        apply in_map_iff.
+        exists (pair ns2 <{iexists phi1}>).
+        easy.
+      *
+        exact I.
+      *
+        eapply IH1.
+        --
+           left; reflexivity.
+        --
+           left; autosubst.
+        --
+           exact H3.
 Qed.
 
 Example ex_4_7 `{Signature} :
@@ -532,10 +605,7 @@ Qed.
 Lemma satisfaction_conseq_Pred_l `{Signature} :
   forall ns1 ns2 ls rs p args,
     In (pair ns1 (Pred p args)) ls ->
-    (forall n,
-      In n ns2 ->
-      In n ns1
-    ) ->
+    In_sublist ns2 ns1 ->
     satisfaction_conseq ((pair ns2 (Pred p args)) :: ls) rs ->
     satisfaction_conseq ls rs.
 Proof.
@@ -561,10 +631,7 @@ Lemma satisfaction_conseq_Impl_r `{Signature} :
   forall ns ls rs phi psi,
     In (pair ns <{phi -> psi}>) rs ->
     (forall ns',
-      (forall n,
-        In n ns' ->
-        In n ns
-      ) ->
+      In_sublist ns' ns ->
       satisfaction_conseq
       (
         (pair ns' phi) :: ls
@@ -639,10 +706,7 @@ Qed.
 Lemma satisfaction_conseq_Impl_l `{Signature} :
   forall ns1 ns2 ls rs phi psi,
     In (pair ns1 <{phi -> psi}>) ls ->
-    (forall n,
-      In n ns2 ->
-      In n ns1
-    ) ->
+    In_sublist ns2 ns1 ->
     satisfaction_conseq ls ((pair ns2 phi) :: rs) ->
     satisfaction_conseq ((pair ns2 psi) :: ls) rs ->
     satisfaction_conseq ls rs.
