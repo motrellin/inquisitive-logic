@@ -425,6 +425,20 @@ Definition satisfaction_forall
 
 Arguments satisfaction_forall _ /.
 
+Instance satisfaction_forall_Proper `{Model} :
+  Proper (In_eq ==> eq ==> eq ==> iff) satisfaction_forall.
+Proof.
+  intros Phi1 Phi2 H1 f1 f2 H2 a1 a2 H3.
+  subst.
+  split.
+  all: intros H4.
+  all: apply Forall_forall.
+  all: intros phi H5.
+  all: eapply Forall_forall in H4.
+  all: try apply H1.
+  all: eassumption.
+Qed.
+
 Lemma satisfaction_forall_subst_var `{Model} :
   forall Phi f a sigma,
     satisfaction_forall Phi f (sigma >>> a) <->
@@ -461,6 +475,21 @@ Definition satisfaction_exists
   List.Exists (satisfaction f a) Phi.
 
 Arguments satisfaction_exists _ /.
+
+Instance satisfaction_exists_Proper `{Model} :
+  Proper (In_eq ==> eq ==> eq ==> iff) satisfaction_exists.
+Proof.
+  intros Phi1 Phi2 H1 f1 f2 H2 a1 a2 H3.
+  subst.
+  split.
+  all: intros H4.
+  all: apply Exists_exists in H4 as [phi [H4 H5]].
+  all: apply Exists_exists.
+  all: exists phi.
+  all: split.
+  all: try apply H1.
+  all: assumption.
+Qed.
 
 Lemma satisfaction_exists_subst_var `{Model} :
   forall Phi s a sigma,
