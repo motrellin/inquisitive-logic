@@ -390,16 +390,16 @@ Qed.
 
 Definition satisfaction
   `{Model}
-  (phi : lb_form)
   (f : nat -> World)
-  (a : assignment) : Prop :=
+  (a : assignment)
+  (phi : lb_form) : Prop :=
   mapping_state f (fst phi), a |= snd phi.
 
 Lemma satisfaction_subst `{Model} :
   forall phi f a sigma w,
     (forall x, rigid_term (sigma x)) ->
-    satisfaction phi f (fun x => referent (sigma x) w a) <->
-    satisfaction (pair (fst phi) (snd phi).|[sigma]) f a.
+    satisfaction f (fun x => referent (sigma x) w a) phi <->
+    satisfaction f a (pair (fst phi) (snd phi).|[sigma]).
 Proof.
   intros.
   apply support_subst.
@@ -408,8 +408,8 @@ Qed.
 
 Lemma satisfaction_subst_var `{Model} :
   forall phi f a sigma,
-    satisfaction phi f (sigma >>> a) <->
-    satisfaction (pair (fst phi) (snd phi).|[ren sigma]) f a.
+    satisfaction f (sigma >>> a) phi <->
+    satisfaction f a (pair (fst phi) (snd phi).|[ren sigma]).
 Proof.
   intros.
   apply support_subst_var.
@@ -421,47 +421,9 @@ Definition satisfaction_forall
   (f : nat -> World)
   (a : assignment) :
   Prop :=
+  List.Forall (satisfaction f a) Phi.
 
-  forall phi,
-    In phi Phi ->
-    satisfaction phi f a.
-
-Lemma satisfaction_forall_nil `{Model} :
-  forall f a,
-    satisfaction_forall nil f a.
-Proof.
-  easy.
-Qed.
-
-Lemma satisfaction_forall_cons `{Model} :
-  forall phi Phi' f a,
-    satisfaction_forall (phi :: Phi') f a <->
-    satisfaction phi f a /\
-    satisfaction_forall Phi' f a.
-Proof.
-  intros phi Phi' f a.
-  split.
-  -
-    intros H1.
-    split.
-    +
-      apply H1.
-      left.
-      reflexivity.
-    +
-      intros psi H2.
-      apply H1.
-      right.
-      exact H2.
-  -
-    intros [H1 H2] psi [H3|H3].
-    +
-      subst psi.
-      exact H1.
-    +
-      apply H2.
-      exact H3.
-Qed.
+Arguments satisfaction_forall _ /.
 
 Lemma satisfaction_forall_subst_var `{Model} :
   forall Phi f a sigma,
@@ -471,13 +433,14 @@ Proof.
   induction Phi as [|phi Phi' IH].
   all: intros s a sigma.
   -
+    simpl.
     easy.
   -
     simpl.
     split.
     all: intros H2.
-    all: apply satisfaction_forall_cons.
-    all: apply satisfaction_forall_cons in H2 as [H2 H3].
+    all: apply Forall_cons_iff.
+    all: apply Forall_cons_iff in H2 as [H2 H3].
     all: split.
     all: try (apply IH; exact H3).
     +
@@ -495,52 +458,9 @@ Definition satisfaction_exists
   (a : assignment) :
   Prop :=
 
-  exists phi,
-    In phi Phi /\
-    satisfaction phi f a.
+  List.Exists (satisfaction f a) Phi.
 
-Lemma satisfaction_exists_nil `{Model} :
-  forall f a,
-    ~ satisfaction_exists nil f a.
-Proof.
-  intros f a [phi [H1 H2]].
-  contradiction.
-Qed.
-
-Lemma satisfaction_exists_cons `{Model} :
-  forall phi Phi' f a,
-    satisfaction_exists (phi :: Phi') f a <->
-    satisfaction phi f a \/
-    satisfaction_exists Phi' f a.
-Proof.
-  intros phi Phi' f a.
-  split.
-  -
-    intros [psi [[H2|H2] H3]].
-    +
-      subst psi.
-      left.
-      exact H3.
-    +
-      right.
-      exists psi; split; assumption.
-  -
-    intros [H1|[psi [H2 H3]]].
-    +
-      exists phi.
-      split.
-      *
-        left.
-        reflexivity.
-      *
-        exact H1.
-    +
-      exists psi; split.
-      *
-        right; assumption.
-      *
-        exact H3.
-Qed.
+Arguments satisfaction_exists _ /.
 
 Lemma satisfaction_exists_subst_var `{Model} :
   forall Phi s a sigma,
@@ -550,13 +470,14 @@ Proof.
   induction Phi as [|phi Phi' IH].
   all: intros s a sigma.
   -
-    firstorder.
+    simpl.
+    easy.
   -
     split.
     all: simpl.
     all: intros H2.
-    all: apply satisfaction_exists_cons.
-    all: apply satisfaction_exists_cons in H2 as [H2|H2].
+    all: apply Exists_cons.
+    all: apply Exists_cons in H2 as [H2|H2].
     all: try (right; eapply IH; eassumption).
     +
       apply satisfaction_subst_var in H2.
@@ -582,6 +503,7 @@ Lemma satisfaction_conseq_empty `{Signature} :
 Proof.
   intros * H1.
   intros M f a H2.
+  apply Exists_exists.
   eexists; split; try exact H1.
   apply empty_state_property.
 Qed.
@@ -595,17 +517,20 @@ Lemma satisfaction_conseq_id `{Signature} :
 Proof.
   intros * H1 H2 H3.
   intros M f a H4.
+  apply Exists_exists.
   eexists.
   split.
   -
     exact H2.
   -
-    apply H4 in H1 as H5.
+    apply Forall_forall with
+      (x := pair ns1 (Pred p args))
+      in H4; try exact H1.
     unfold satisfaction in *.
     simpl fst in *.
     simpl snd in *.
     rewrite <- H3.
-    exact H5.
+    exact H4.
 Qed.
 
 Lemma satisfaction_conseq_Bot_l `{Signature} :
@@ -616,7 +541,10 @@ Lemma satisfaction_conseq_Bot_l `{Signature} :
 Proof.
   intros * H1 H2.
   intros M f a H3.
-  specialize (H3 _ H1 (f n)).
+  apply Forall_forall with
+    (x := pair ns (Bot x))
+    in H3; try assumption.
+  specialize (H3 (f n)).
   apply In_iff_inb_false in H3.
   exfalso.
   apply H3.
@@ -638,12 +566,14 @@ Lemma satisfaction_conseq_Pred_r `{Signature} :
 Proof.
   intros * H1 H2.
   intros M f a H3.
-  destruct (classic (exists psi, psi <> (pair ns (Pred p args)) /\ In psi rs /\ satisfaction psi f a)) as [H4|H4].
+  destruct (classic (exists psi, psi <> (pair ns (Pred p args)) /\ In psi rs /\ satisfaction f a psi)) as [H4|H4].
   {
     destruct H4 as [psi [_ [H4 H5]]].
+    apply Exists_exists.
     exists psi.
     split; assumption.
   }
+  apply Exists_exists.
   eexists.
   split; try exact H1.
   intros w H5.
@@ -651,7 +581,8 @@ Proof.
   simpl in H6.
   apply in_map_iff in H6 as [n [H6 H7]].
   subst w.
-  specialize (H2 n H7 M f a H3) as [psi [H8 H9]].
+  specialize (H2 n H7 M f a H3).
+  apply Exists_exists in H2 as [psi [H8 H9]].
   destruct H8 as [H8|H8].
   +
     subst psi.
@@ -681,19 +612,19 @@ Proof.
   intros * H1 H2 H3.
   intros M f a H4.
   apply H3.
+  apply Forall_forall.
   intros phi [H5|H5].
   -
     subst phi.
-    apply H4 in H1.
+    eapply Forall_forall in H4; try exact H1.
     eapply persistency.
     +
-      exact H1.
+      exact H4.
     +
       apply substate_mapping_state.
       exact H2.
   -
-    apply H4.
-    exact H5.
+    eapply Forall_forall in H4; eassumption.
 Qed.
 
 Lemma satisfaction_conseq_Impl_r `{Signature} :
@@ -718,14 +649,16 @@ Proof.
       exists chi,
         chi <> (pair ns <{phi -> psi}>) /\
         In chi rs /\
-        satisfaction chi f a
+        satisfaction f a chi
     )
   ) as [H4|H4].
   {
     destruct H4 as [chi [_ [H4 H5]]].
+    apply Exists_exists.
     exists chi.
     split; assumption.
   }
+  apply Exists_exists.
   eexists; split; try exact H1.
 
   intros t H5 H6.
@@ -736,20 +669,19 @@ Proof.
 
   specialize (H2 ns2 H8).
   assert (H9 :
-    forall chi,
-      In chi ((pair ns2 phi) :: ls) ->
-      satisfaction chi f a
+    satisfaction_forall ((pair ns2 phi) :: ls) f a
   ).
   {
+    apply Forall_forall.
     intros chi [H9|H9].
     -
       subst chi.
       exact H6.
     -
-      apply H3.
-      exact H9.
+      eapply Forall_forall in H3; eassumption.
   }
-  specialize (H2 _ _ _ H9) as [chi [[HA|HA] HB]].
+  specialize (H2 _ _ _ H9).
+  apply Exists_exists in H2 as [chi [[HA|HA] HB]].
   -
     subst chi.
     exact HB.
@@ -782,14 +714,15 @@ Lemma satisfaction_conseq_Impl_l `{Signature} :
 Proof.
   intros * H1 H2 H3 H4.
   intros M f a H5.
-  specialize (H5 _ H1) as H6.
-  specialize (H3 _ _ _ H5) as [chi [[H7|H7] H8]].
+  specialize (H3 _ _ _ H5).
+  eapply Forall_forall in H5 as H6; try exact H1.
+  apply Exists_exists in H3 as [chi [[H7|H7] H8]].
   +
     subst chi.
     apply H4.
-    intros chi [H9|H9].
+    apply Forall_cons_iff.
+    split.
     *
-      subst chi.
       asimpl in H6.
       apply H6.
       --
@@ -798,9 +731,9 @@ Proof.
       --
          exact H8.
     *
-      apply H5.
-      exact H9.
+      exact H5.
   +
+    apply Exists_exists.
     eexists; split; eassumption.
 Qed.
 
@@ -813,12 +746,15 @@ Lemma satisfaction_conseq_Conj_r `{Signature} :
 Proof.
   intros * H1 H2 H3.
   intros M f a H4.
-  specialize (H2 _ _ _ H4) as [[ns2 psi1] [[H5|H5] H6]].
+  specialize (H2 _ _ _ H4) as H5.
+  apply Exists_exists in H5 as [[ns2 psi1] [[H5|H5] H6]].
   +
     injection H5; intros; subst ns2 psi1; clear H5.
-    specialize (H3 _ _ _ H4) as [[ns3 psi2] [[H7|H7] H8]].
+    specialize (H3 _ _ _ H4) as H7.
+    apply Exists_exists in H7 as [[ns3 psi2] [[H7|H7] H8]].
     *
       injection H7; intros; subst ns3 psi2; clear H7.
+      apply Exists_exists.
       eexists.
       split.
       --
@@ -826,8 +762,10 @@ Proof.
       --
          split; assumption.
     *
+      apply Exists_exists.
       eexists; split; eassumption.
   +
+    apply Exists_exists.
     eexists; split; eassumption.
 Qed.
 
@@ -842,9 +780,10 @@ Lemma satisfaction_conseq_Conj_l `{Signature} :
 Proof.
   intros * H1 H2.
   intros M f a H3.
-  specialize (H3 _ H1) as H4.
+  eapply Forall_forall in H3 as H4; try exact H1.
   destruct H4 as [H4 H5].
   apply H2.
+  apply Forall_forall.
   intros chi [H6|[H6|H6]].
   +
     subst chi.
@@ -853,8 +792,8 @@ Proof.
     subst chi.
     exact H5.
   +
-    apply H3.
-    exact H6.
+    eapply Forall_forall in H3; try exact H6.
+    exact H3.
 Qed.
 
 Lemma satisfaction_conseq_Idisj_r `{Signature} :
@@ -868,19 +807,23 @@ Lemma satisfaction_conseq_Idisj_r `{Signature} :
 Proof.
   intros * H1 H2.
   intros M f a H3.
-  specialize (H2 _ _ _ H3) as [chi [H4 H5]].
+  specialize (H2 _ _ _ H3) as H4.
+  apply Exists_exists in H4 as [chi [H4 H5]].
   destruct H4 as [H4|[H4|H4]].
   -
     subst chi.
+    apply Exists_exists.
     eexists; split; try exact H1.
     left.
     exact H5.
   -
     subst chi.
+    apply Exists_exists.
     eexists; split; try exact H1.
     right.
     exact H5.
   -
+    apply Exists_exists.
     eexists; split; eassumption.
 Qed.
 
@@ -893,26 +836,26 @@ Lemma satisfaction_conseq_Idisj_l `{Signature} :
 Proof.
   intros * H1 H2 H3.
   intros M f a H4.
-  apply H4 in H1 as H5.
+  eapply Forall_forall in H4 as H5; try exact H1.
   destruct H5 as [H5|H5].
   -
     apply H2.
+    apply Forall_forall.
     intros chi [H6|H6].
     +
       subst chi.
       exact H5.
     +
-      apply H4.
-      exact H6.
+      eapply Forall_forall in H4; eassumption.
   -
     apply H3.
+    apply Forall_forall.
     intros chi [H6|H6].
     +
       subst chi.
       exact H5.
     +
-      apply H4.
-      exact H6.
+      eapply Forall_forall in H4; eassumption.
 Qed.
 
 Lemma satisfaction_conseq_Forall_r `{Signature} :
@@ -936,25 +879,25 @@ Proof.
       exists chi,
         chi <> (pair ns <{forall phi}>) /\
         In chi rs /\
-        satisfaction chi f a
+        satisfaction f a chi
     )
   ) as [H4|H4].
   {
     destruct H4 as [chi [_ [H4 H5]]].
+    apply Exists_exists.
     exists chi; split; assumption.
   }
+  apply Exists_exists.
   eexists; split; try exact H1.
   intros i.
   simpl.
 
-  eapply satisfaction_exists_cons with
-    (f := f)
-    (a := i .: a)
-    in H2 as [H2|H2].
+  specialize (H2 M f (i .: a)).
+  apply Exists_cons in H2 as [H2|H2].
   -
     exact H2.
   -
-    destruct H2 as [psi [H5 H6]].
+    apply Exists_exists in H2 as [psi [H5 H6]].
     apply in_map_iff in H5 as [chi [H7 H8]].
     subst psi.
     apply satisfaction_subst_var in H6.
@@ -988,9 +931,10 @@ Lemma satisfaction_conseq_Forall_l `{Signature} :
 Proof.
   intros * H1 H2 H3.
   intros M f a H4.
-  specialize (H4 _ H1) as H5.
+  eapply Forall_forall in H4 as H5; try exact H1.
 
   apply H3.
+  apply Forall_forall.
   intros psi [H6|H6].
   -
     subst psi.
@@ -1019,8 +963,7 @@ Proof.
         rewrite H6.
         exact H5.
   -
-    apply H4.
-    exact H6.
+    eapply Forall_forall in H4; eassumption.
 Qed.
 
 Lemma satisfaction_conseq_Iexists_r `{Signature} :
@@ -1037,8 +980,9 @@ Proof.
   intros * H1 H2 H3.
   intros M f a H4.
   specialize (H3 _ _ _ H4) as H5.
-  apply satisfaction_exists_cons in H5 as [H5|H5].
+  apply Exists_cons in H5 as [H5|H5].
   -
+    apply Exists_exists.
     eexists; split; try exact H1.
     destruct ns as [|n ns'].
     +
@@ -1082,7 +1026,7 @@ Lemma satisfaction_conseq_Iexists_l `{Signature} :
 Proof.
   intros * H1 H2.
   intros M f a H3.
-  specialize (H3 _ H1) as H4.
+  eapply Forall_forall in H3 as H4; try exact H1.
   asimpl in H4.
   destruct H4 as [i H4].
   specialize (H2 M f (i .: a)).
@@ -1090,7 +1034,7 @@ Proof.
   -
     exact H2.
   -
-    apply satisfaction_forall_cons.
+    apply Forall_cons_iff.
     split.
     +
       exact H4.
