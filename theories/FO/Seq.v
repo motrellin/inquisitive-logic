@@ -12,18 +12,18 @@ Inductive Seq `{Signature} :
         In (pair nil phi) rs ->
         Seq ls rs
   | Seq_id :
-      forall ns1 ns2 ls rs p args,
+      forall ls rs ns1 ns2 p args,
         In (pair ns1 (Pred p args)) ls ->
         In (pair ns2 (Pred p args)) rs ->
         In_eq ns1 ns2 ->
         Seq ls rs
   | Seq_Bot_l :
-      forall n ns ls rs x,
+      forall ls rs n ns x,
         In (pair ns (Bot x)) ls ->
         In n ns ->
         Seq ls rs
   | Seq_Pred_r :
-      forall ns ls rs p args,
+      forall ls rs ns p args,
         In (pair ns (Pred p args)) rs ->
         (forall n,
           In n ns ->
@@ -31,13 +31,13 @@ Inductive Seq `{Signature} :
         ) ->
         Seq ls rs
   | Seq_Pred_l :
-      forall ns1 ns2 ls rs p args,
+      forall ls rs ns1 ns2 p args,
         In (pair ns1 (Pred p args)) ls ->
         In_sublist ns2 ns1 ->
         Seq ((pair ns2 (Pred p args)) :: ls) rs ->
         Seq ls rs
   | Seq_Impl_r :
-      forall ns ls rs phi psi,
+      forall ls rs ns phi psi,
         In (pair ns <{phi -> psi}>) rs ->
         (forall ns',
           In_sublist ns' ns ->
@@ -45,36 +45,36 @@ Inductive Seq `{Signature} :
         ) ->
         Seq ls rs
   | Seq_Impl_l :
-      forall ns1 ns2 ls rs phi psi,
+      forall ls rs ns1 ns2 phi psi,
         In (pair ns1 <{phi -> psi}>) ls ->
         In_sublist ns2 ns1 ->
         Seq ls ((pair ns2 phi) :: rs) ->
         Seq ((pair ns2 psi) :: ls) rs ->
         Seq ls rs
   | Seq_Conj_r :
-      forall ns ls rs phi psi,
+      forall ls rs ns phi psi,
         In (pair ns <{phi /\ psi}>) rs ->
         Seq ls ((pair ns phi) :: rs) ->
         Seq ls ((pair ns psi) :: rs) ->
         Seq ls rs
   | Seq_Conj_l :
-      forall ns ls rs phi psi,
+      forall ls rs ns phi psi,
         In (pair ns <{phi /\ psi}>) ls ->
         Seq ((pair ns phi) :: (pair ns psi) :: ls) rs ->
         Seq ls rs
   | Seq_Idisj_r :
-      forall ns ls rs phi psi,
+      forall ls rs ns phi psi,
         In (pair ns <{phi \\/ psi}>) rs ->
         Seq ls ((pair ns phi) :: (pair ns psi) :: rs) ->
         Seq ls rs
   | Seq_Idisj_l :
-      forall ns ls rs phi psi,
+      forall ls rs ns phi psi,
         In (pair ns <{phi \\/ psi}>) ls ->
         Seq ((pair ns phi) :: ls) rs ->
         Seq ((pair ns psi) :: ls) rs ->
         Seq ls rs
   | Seq_Forall_r :
-      forall ns ls rs phi,
+      forall ls rs ns phi,
         In (pair ns <{forall phi}>) rs ->
         Seq
         (
@@ -86,7 +86,7 @@ Inductive Seq `{Signature} :
         ) ->
         Seq ls rs
   | Seq_Forall_l :
-      forall ns ls rs phi t,
+      forall ls rs ns phi t,
         In (pair ns <{forall phi}>) ls ->
         rigid_term t ->
         Seq
@@ -99,7 +99,7 @@ Inductive Seq `{Signature} :
         ) ->
         Seq ls rs
   | Seq_Iexists_r :
-      forall ns ls rs phi t,
+      forall ls rs ns phi t,
         In (pair ns <{iexists phi}>) rs ->
         rigid_term t ->
         Seq ls
@@ -109,7 +109,7 @@ Inductive Seq `{Signature} :
         ) ->
         Seq ls rs
   | Seq_Iexists_l :
-      forall ns ls rs phi,
+      forall ls rs ns phi,
         In (pair ns <{iexists phi}>) ls ->
         Seq
         (
@@ -122,12 +122,14 @@ Inductive Seq `{Signature} :
         Seq ls rs.
 
 Proposition prop_4_6 `{Signature} :
-  forall phi ns1 ns2 ls rs,
+  forall ls rs ns1 ns2 phi,
   In (pair ns1 phi) ls ->
   In (pair ns2 phi) rs ->
   In_sublist ns2 ns1 ->
   Seq ls rs.
 Proof.
+  intros *.
+  revert ls rs ns1 ns2.
   induction phi as
   [p args
   |?
@@ -136,7 +138,7 @@ Proof.
   |phi1 IH1 phi2 IH2
   |phi1 IH1
   |phi1 IH1].
-  all: intros ns1 ns2 ls rs H1 H2 H3.
+  all: intros * H1 H2 H3.
   -
     eapply Seq_Pred_l.
     +
@@ -578,20 +580,20 @@ Lemma satisfaction_conseq_empty `{Signature} :
     In (pair nil phi) rs ->
     satisfaction_conseq ls rs.
 Proof.
-  intros ls rs phi H1.
+  intros * H1.
   intros M f a H2.
   eexists; split; try exact H1.
   apply empty_state_property.
 Qed.
 
 Lemma satisfaction_conseq_id `{Signature} :
-      forall ns1 ns2 ls rs p args,
+      forall ls rs ns1 ns2 p args,
         In (pair ns1 (Pred p args)) ls ->
         In (pair ns2 (Pred p args)) rs ->
         In_eq ns1 ns2 ->
         satisfaction_conseq ls rs.
 Proof.
-  intros ns1 ns2 ls rs p args H1 H2 H3.
+  intros * H1 H2 H3.
   intros M f a H4.
   eexists.
   split.
@@ -607,12 +609,12 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_Bot_l `{Signature} :
-  forall n ns ls rs x,
+  forall ls rs n ns x,
     In (pair ns (Bot x)) ls ->
     In n ns ->
     satisfaction_conseq ls rs.
 Proof.
-  intros n ns ls rs ? H1 H2.
+  intros * H1 H2.
   intros M f a H3.
   specialize (H3 _ H1 (f n)).
   apply In_iff_inb_false in H3.
@@ -623,7 +625,7 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_Pred_r `{Signature} :
-  forall ns ls rs p args,
+  forall ls rs ns p args,
     In (pair ns (Pred p args)) rs ->
     (forall n,
       In n ns ->
@@ -634,7 +636,7 @@ Lemma satisfaction_conseq_Pred_r `{Signature} :
     ) ->
     satisfaction_conseq ls rs.
 Proof.
-  intros ns ls rs p args H1 H2.
+  intros * H1 H2.
   intros M f a H3.
   destruct (classic (exists psi, psi <> (pair ns (Pred p args)) /\ In psi rs /\ satisfaction psi f a)) as [H4|H4].
   {
@@ -670,13 +672,13 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_Pred_l `{Signature} :
-  forall ns1 ns2 ls rs p args,
+  forall ls rs ns1 ns2 p args,
     In (pair ns1 (Pred p args)) ls ->
     In_sublist ns2 ns1 ->
     satisfaction_conseq ((pair ns2 (Pred p args)) :: ls) rs ->
     satisfaction_conseq ls rs.
 Proof.
-  intros ns1 ns2 ls rs p args H1 H2 H3.
+  intros * H1 H2 H3.
   intros M f a H4.
   apply H3.
   intros phi [H5|H5].
@@ -695,7 +697,7 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_Impl_r `{Signature} :
-  forall ns ls rs phi psi,
+  forall ls rs ns phi psi,
     In (pair ns <{phi -> psi}>) rs ->
     (forall ns',
       In_sublist ns' ns ->
@@ -709,12 +711,12 @@ Lemma satisfaction_conseq_Impl_r `{Signature} :
     ) ->
     satisfaction_conseq ls rs.
 Proof.
-  intros ns1 ls rs phi psi H1 H2.
+  intros * H1 H2.
   intros M f a H3.
   destruct (
     classic (
       exists chi,
-        chi <> (pair ns1 <{phi -> psi}>) /\
+        chi <> (pair ns <{phi -> psi}>) /\
         In chi rs /\
         satisfaction chi f a
     )
@@ -752,7 +754,7 @@ Proof.
     subst chi.
     exact HB.
   -
-    assert (HC : chi = pair ns1 <{phi -> psi}>).
+    assert (HC : chi = pair ns <{phi -> psi}>).
     {
       apply NNPP.
       intros HC.
@@ -771,14 +773,14 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_Impl_l `{Signature} :
-  forall ns1 ns2 ls rs phi psi,
+  forall ls rs ns1 ns2 phi psi,
     In (pair ns1 <{phi -> psi}>) ls ->
     In_sublist ns2 ns1 ->
     satisfaction_conseq ls ((pair ns2 phi) :: rs) ->
     satisfaction_conseq ((pair ns2 psi) :: ls) rs ->
     satisfaction_conseq ls rs.
 Proof.
-  intros ns1 ns2 ls rs phi psi H1 H2 H3 H4.
+  intros * H1 H2 H3 H4.
   intros M f a H5.
   specialize (H5 _ H1) as H6.
   specialize (H3 _ _ _ H5) as [chi [[H7|H7] H8]].
@@ -803,13 +805,13 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_Conj_r `{Signature} :
-  forall ns ls rs phi psi,
+  forall ls rs ns phi psi,
     In (pair ns <{phi /\ psi}>) rs ->
     satisfaction_conseq ls ((pair ns phi) :: rs) ->
     satisfaction_conseq ls ((pair ns psi) :: rs) ->
     satisfaction_conseq ls rs.
 Proof.
-  intros ns ls rs phi psi H1 H2 H3.
+  intros * H1 H2 H3.
   intros M f a H4.
   specialize (H2 _ _ _ H4) as [[ns2 psi1] [[H5|H5] H6]].
   +
@@ -830,7 +832,7 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_Conj_l `{Signature} :
-  forall ns ls rs phi psi,
+  forall ls rs ns phi psi,
     In (pair ns <{phi /\ psi}>) ls ->
     satisfaction_conseq
     (
@@ -838,7 +840,7 @@ Lemma satisfaction_conseq_Conj_l `{Signature} :
     ) rs ->
     satisfaction_conseq ls rs.
 Proof.
-  intros ns ls rs phi psi H1 H2.
+  intros * H1 H2.
   intros M f a H3.
   specialize (H3 _ H1) as H4.
   destruct H4 as [H4 H5].
@@ -856,7 +858,7 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_Idisj_r `{Signature} :
-  forall ns ls rs phi psi,
+  forall ls rs ns phi psi,
     In (pair ns <{phi \\/ psi}>) rs ->
     satisfaction_conseq ls
     (
@@ -864,7 +866,7 @@ Lemma satisfaction_conseq_Idisj_r `{Signature} :
     ) ->
     satisfaction_conseq ls rs.
 Proof.
-  intros ns ls rs phi psi H1 H2.
+  intros * H1 H2.
   intros M f a H3.
   specialize (H2 _ _ _ H3) as [chi [H4 H5]].
   destruct H4 as [H4|[H4|H4]].
@@ -883,13 +885,13 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_Idisj_l `{Signature} :
-  forall ns ls rs phi psi,
+  forall ls rs ns phi psi,
     In (pair ns <{phi \\/ psi}>) ls ->
     satisfaction_conseq ((pair ns phi) :: ls) rs ->
     satisfaction_conseq ((pair ns psi) :: ls) rs ->
     satisfaction_conseq ls rs.
 Proof.
-  intros ns ls rs phi psi H1 H2 H3.
+  intros * H1 H2 H3.
   intros M f a H4.
   apply H4 in H1 as H5.
   destruct H5 as [H5|H5].
@@ -914,7 +916,7 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_Forall_r `{Signature} :
-  forall ns ls rs phi,
+  forall ls rs ns phi,
     In (pair ns <{forall phi}>) rs ->
     satisfaction_conseq
     (
@@ -926,7 +928,7 @@ Lemma satisfaction_conseq_Forall_r `{Signature} :
     ) ->
     satisfaction_conseq ls rs.
 Proof.
-  intros ns ls rs phi H1 H2.
+  intros * H1 H2.
   intros M f a H3.
 
   destruct (
@@ -971,7 +973,7 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_Forall_l `{Signature} :
-  forall ns ls rs phi t,
+  forall ls rs ns phi t,
     In (pair ns <{forall phi}>) ls ->
     rigid_term t ->
     satisfaction_conseq
@@ -984,7 +986,7 @@ Lemma satisfaction_conseq_Forall_l `{Signature} :
     ) ->
     satisfaction_conseq ls rs.
 Proof.
-  intros ns ls rs phi t H1 H2 H3.
+  intros * H1 H2 H3.
   intros M f a H4.
   specialize (H4 _ H1) as H5.
 
@@ -1022,7 +1024,7 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_Iexists_r `{Signature} :
-  forall ns ls rs phi t,
+  forall ls rs ns phi t,
     In (pair ns <{iexists phi}>) rs ->
     rigid_term t ->
     satisfaction_conseq ls
@@ -1032,7 +1034,7 @@ Lemma satisfaction_conseq_Iexists_r `{Signature} :
     ) ->
     satisfaction_conseq ls rs.
 Proof.
-  intros ns ls rs phi t H1 H2 H3.
+  intros * H1 H2 H3.
   intros M f a H4.
   specialize (H3 _ _ _ H4) as H5.
   apply satisfaction_exists_cons in H5 as [H5|H5].
@@ -1066,7 +1068,7 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_Iexists_l `{Signature} :
-  forall ns ls rs phi,
+  forall ls rs ns phi,
     In (pair ns <{iexists phi}>) ls ->
     satisfaction_conseq
     (
@@ -1078,7 +1080,7 @@ Lemma satisfaction_conseq_Iexists_l `{Signature} :
     ) ->
     satisfaction_conseq ls rs.
 Proof.
-  intros ns ls rs phi H1 H2.
+  intros * H1 H2.
   intros M f a H3.
   specialize (H3 _ H1) as H4.
   asimpl in H4.
