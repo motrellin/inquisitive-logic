@@ -119,6 +119,13 @@ Inductive Seq `{Signature} :
         (
           map (fun x => pair (fst x) (snd x).|[ren (+1)]) rs
         ) ->
+        Seq ls rs
+  | Seq_cut :
+      forall ls1 ls2 ls rs1 rs2 rs ns phi,
+        In_eq ls (ls1 ++ ls2) ->
+        In_eq rs (rs1 ++ rs2) ->
+        Seq ls1 ((pair ns phi) :: rs1) ->
+        Seq ((pair ns phi) :: ls2) rs2 ->
         Seq ls rs.
 
 Proposition prop_4_6 `{Signature} :
@@ -1072,6 +1079,35 @@ Proof.
       exact H3.
 Qed.
 
+Lemma satisfaction_conseq_cut `{Signature} :
+  forall ls1 ls2 ls rs1 rs2 rs ns phi,
+    In_eq ls (ls1 ++ ls2) ->
+    In_eq rs (rs1 ++ rs2) ->
+    satisfaction_conseq ls1 ((pair ns phi) :: rs1) ->
+    satisfaction_conseq ((pair ns phi) :: ls2) rs2 ->
+    satisfaction_conseq ls rs.
+Proof.
+  intros * H1 H2 H3 H4.
+  intros M f a H5.
+
+  rewrite H1 in H5.
+  rewrite H2.
+
+  apply Forall_app in H5 as [H5 H6].
+  apply Exists_app.
+
+  apply H3 in H5.
+  apply Exists_cons in H5 as [H5|H5].
+  -
+    right.
+    apply H4.
+    apply Forall_cons_iff.
+    split; assumption.
+  -
+    left.
+    exact H5.
+Qed.
+
 Theorem soundness `{Signature} :
   forall Phi Psi,
     Seq Phi Psi ->
@@ -1092,7 +1128,8 @@ Proof.
   |ns ls rs phi H1 H2 IH1 (* Seq_Forall_r *)
   |ns ls rs phi t H1 H2 H3 IH1 (* Seq_Forall_l *)
   |ns ls rs phi t H1 H2 H3 IH1 (* Seq_Iexists_r *)
-  |ns ls rs phi H1 H2 IH1 (* Seq_Iexists_l *)].
+  |ns ls rs phi H1 H2 IH1 (* Seq_Iexists_l *)
+  |ls1 ls2 ls rs1 rs2 rs ns phi (* Seq_cut *)].
   all: eauto using
     satisfaction_conseq_empty,
     satisfaction_conseq_id,
@@ -1108,7 +1145,8 @@ Proof.
     satisfaction_conseq_Forall_r,
     satisfaction_conseq_Forall_l,
     satisfaction_conseq_Iexists_r,
-    satisfaction_conseq_Iexists_l.
+    satisfaction_conseq_Iexists_l,
+    satisfaction_conseq_cut.
 Qed.
 
 Print Assumptions soundness.
