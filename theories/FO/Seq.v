@@ -1150,3 +1150,46 @@ Proof.
 Qed.
 
 Print Assumptions soundness.
+
+Proposition Seq_mon `{Signature} :
+  forall ls rs ns1 ns2 phi,
+    In (pair ns1 phi) ls ->
+    In_sublist ns2 ns1 ->
+    Seq ((pair ns2 phi) :: ls) rs ->
+    Seq ls rs.
+Proof.
+  intros * H1 H2 H3.
+  apply Seq_cut with
+    (ls1 := ((pair ns1 phi) :: nil))
+    (ls2 := ls)
+    (rs1 := nil)
+    (rs2 := rs)
+    (ns := ns2)
+    (phi := phi).
+  -
+    intros psi.
+    split.
+    +
+      intros H4.
+      right.
+      exact H4.
+    +
+      intros [H4|H4].
+      *
+        subst psi.
+        exact H1.
+      *
+        exact H4.
+  -
+    reflexivity.
+  -
+    eapply prop_4_6.
+    +
+      left; reflexivity.
+    +
+      left; reflexivity.
+    +
+      exact H2.
+  -
+    exact H3.
+Qed.
