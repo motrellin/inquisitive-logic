@@ -2,15 +2,45 @@ From InqLog.FO Require Export Truth.
 
 (* whole section from inqbq_aiml *)
 
+(** * Defining the Sequent Calculus
+
+   For the sequent calculus introduced by Litak/Sano, we
+   first the define the notion of _labelled formulas_. A
+   labelled formel is a pair consisting of a list of
+   natural numbers and a formula.
+
+   We will frequently use the notions of [In_eq] and
+   [In_sublist], as the original paper uses sets to define
+   labels.
+ *)
+
 Definition label : Type := list nat.
 Definition lb_form `{Signature} : Type := (list nat)*form.
 
+(**
+   Now, we are in a position to define the rules of the
+   Sequent Calculus in Coq. For this, we define [Seq] as a
+   [relation] on [list]s of labelled forms.
+ *)
+
 Inductive Seq `{Signature} :
   relation (list lb_form) :=
+  (**
+     As we allow arbitrary lists of natural numbers as
+     labels, we add an extra rule to capture this:
+     [Seq_empty]. By intuition, these labels correspondent
+     to states, e.g. the empty list [nil] corresponds to the
+     empty state. By this, we want to be in a position to
+     derive a formula with an empty label.
+   *)
   | Seq_empty :
       forall ls rs phi,
         In (pair nil phi) rs ->
         Seq ls rs
+  (**
+     The following rules correspond to the original sequent
+     calculus.
+   *)
   | Seq_id :
       forall ls rs ns1 ns2 p args,
         In (pair ns1 (Pred p args)) ls ->
@@ -120,6 +150,10 @@ Inductive Seq `{Signature} :
           map (fun x => pair (fst x) (snd x).|[ren (+1)]) rs
         ) ->
         Seq ls rs
+  (**
+     In addition, we add the cut elimination rule to our
+     calculus, which is shown to be admissible by Litak/Sano.
+   *)
   | Seq_cut :
       forall ls1 ls2 ls rs1 rs2 rs ns phi,
         In_eq ls (ls1 ++ ls2) ->
@@ -127,6 +161,8 @@ Inductive Seq `{Signature} :
         Seq ls1 ((pair ns phi) :: rs1) ->
         Seq ((pair ns phi) :: ls2) rs2 ->
         Seq ls rs.
+
+(** ** Properties of [Seq] *)
 
 Proposition prop_4_6 `{Signature} :
   forall ls rs ns1 ns2 phi,
@@ -289,6 +325,8 @@ Proof.
            exact H3.
 Qed.
 
+(** ** Some example derivations *)
+
 Example ex_4_5 `{Signature} :
   forall ns n p args,
     In n ns ->
@@ -395,6 +433,18 @@ Proof with (
     eapply prop_4_6...
 Qed.
 
+(** * Corresponding semantic
+
+   We need a notion of [satisfaction] in order to
+   understand the sequent calculus. We want to interpret
+   a labelled formula in a Model by a _mapping function_ [f]
+   and a variable assignment [a].
+
+   Note, that we used a different argument order as for the
+   [support] relation. By this, we can use some notions of
+   the standard library more readable.
+ *)
+
 Definition satisfaction
   `{Model}
   (f : nat -> World)
@@ -421,6 +471,8 @@ Proof.
   intros.
   apply support_subst_var.
 Qed.
+
+(** ** [satisfaction_forall] *)
 
 Definition satisfaction_forall
   `{Model}
@@ -471,6 +523,8 @@ Proof.
       apply satisfaction_subst_var.
       assumption.
 Qed.
+
+(** ** [satisfaction_exists] *)
 
 Definition satisfaction_exists
   `{Model}
@@ -525,12 +579,16 @@ Proof.
       exact H2.
 Qed.
 
+(** * [satisfaction_conseq] *)
+
 Definition satisfaction_conseq `{S : Signature} :
   relation (list lb_form) :=
   fun Phi Psi =>
   forall `(M : @Model S) (f : nat -> World) (a : assignment),
     satisfaction_forall Phi f a ->
     satisfaction_exists Psi f a.
+
+(** ** Soundness lemmata for [Seq] *)
 
 Lemma satisfaction_conseq_empty `{Signature} :
   forall ls rs phi,
@@ -1108,6 +1166,8 @@ Proof.
     exact H5.
 Qed.
 
+(** ** Soundness *)
+
 Theorem soundness `{Signature} :
   forall Phi Psi,
     Seq Phi Psi ->
@@ -1150,6 +1210,8 @@ Proof.
 Qed.
 
 Print Assumptions soundness.
+
+(** * More derivable rules *)
 
 Proposition Seq_mon `{Signature} :
   forall ls rs ns1 ns2 phi,
