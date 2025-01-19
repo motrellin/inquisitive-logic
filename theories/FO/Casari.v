@@ -5,21 +5,21 @@ Import PeanoNat.Nat.
 
 (** * The Casari Scheme *)
 
-Definition CasariSuc `{Signature} (phi : var -> form) : form :=
-  <{ forall (phi 0) }>.
+Definition CasariSuc `{Signature} (phi : form) : form :=
+  <{ forall phi }>.
 
-Definition CasariImpl `{Signature} (phi : var -> form) (x : var) : form :=
-  <{phi x -> CasariSuc phi}>.
+Definition CasariImpl `{Signature} (phi : form) : form :=
+  Impl phi (CasariSuc phi).
 
-Definition CasariAnt `{Signature} (phi : var -> form) : form :=
-  <{ forall CasariImpl phi 0 -> CasariSuc phi }>.
+Definition CasariAnt `{Signature} (phi : form) : form :=
+  <{ forall CasariImpl phi -> CasariSuc phi }>.
 
-Definition Casari `{Signature} (phi : var -> form) : form :=
+Definition Casari `{Signature} (phi : form) : form :=
   <{ CasariAnt phi -> CasariSuc phi }>.
 
 Remark Casari_truth_conditional `{Signature} :
   forall phi,
-    (forall x, classical (phi x) = true) ->
+    classical phi = true ->
     truth_conditional (Casari phi).
 Proof.
   intros phi H1.
@@ -37,11 +37,11 @@ Module Casari_with_atoms.
 
   Definition Pred' (t : term) := Pred tt (fun arg => t).
 
-  Definition Atomic (x : var) : form :=
-    <{ Pred' (Var x) }>.
+  Definition Atomic : form :=
+    <{ Pred' (Var 0) }>.
 
-  Definition DNA (x : var) : form :=
-    <{ ~ ~ (Pred' (Var x)) }>.
+  Definition DNA : form :=
+    <{ ~ ~ (Pred' (Var 0)) }>.
 
   Remark Casari_DNA_Prop (P : var -> Prop) :
     (
@@ -80,7 +80,7 @@ Module Casari_with_atoms.
       rewrite eq1.
       apply support_conseq_Forall_E_rigid; try easy.
       apply support_conseq_Impl_E with
-        (phi := CasariImpl DNA 0).
+        (phi := CasariImpl DNA).
       +
         apply support_conseq_Impl_I.
         apply support_conseq_Bot_E.
@@ -93,8 +93,8 @@ Module Casari_with_atoms.
           apply support_conseq_weakening_cons_hd.
       +
         assert (eq2 :
-          <{ (CasariImpl DNA 0) -> (Forall <{ ~ ~ (Pred' (Var 0)) }>) }> =
-          <{ (CasariImpl DNA 0) -> (Forall <{ ~ ~ (Pred' (Var 0)) }>) }>.|[Var 0/]
+          <{ (CasariImpl DNA) -> (Forall <{ ~ ~ (Pred' (Var 0)) }>) }> =
+          <{ (CasariImpl DNA) -> (Forall <{ ~ ~ (Pred' (Var 0)) }>) }>.|[Var 0/]
         ). reflexivity.
         rewrite eq2.
         apply support_conseq_Forall_E_rigid; try easy.
@@ -107,7 +107,7 @@ Module Casari_with_atoms.
   Proof.
     apply support_conseq_Forall_I.
     eapply support_conseq_Impl_E with
-      (phi := DNA 0).
+      (phi := DNA).
     -
       apply support_conseq_Impl_I.
       apply support_conseq_Bot_I with
@@ -168,7 +168,7 @@ Module Casari_with_atoms.
       intros psi [H3|H3]; try easy.
       subst psi.
       apply support_conseq_Impl_E with
-        (phi := CasariImpl Atomic 0).
+        (phi := CasariImpl Atomic).
       +
         apply support_conseq_Impl_I.
         apply support_conseq_trans with
@@ -177,10 +177,10 @@ Module Casari_with_atoms.
           intros psi [H3|H3]; try easy.
           subst psi.
           apply support_conseq_Impl_E with
-            (phi := DNA 0).
+            (phi := DNA).
           --
              apply support_conseq_Impl_I.
-             apply support_conseq_Bot_I with (phi := Atomic 0).
+             apply support_conseq_Bot_I with (phi := Atomic).
              ++
                 apply support_conseq_weakening_cons_tl.
                 apply support_conseq_weakening_cons_hd.
@@ -195,8 +195,8 @@ Module Casari_with_atoms.
           exact support_conseq_CasariSuc_DNA_CasariSuc_Atomic.
       +
         assert (eq1 :
-          <{ (CasariImpl Atomic 0) -> (CasariSuc Atomic) }> =
-          <{ (CasariImpl Atomic 0) -> (CasariSuc Atomic) }>.|[Var 0/]
+          <{ (CasariImpl Atomic) -> (CasariSuc Atomic) }> =
+          <{ (CasariImpl Atomic) -> (CasariSuc Atomic) }>.|[Var 0/]
         ). reflexivity.
         rewrite eq1.
         apply support_conseq_Forall_E_rigid; try exact I.
@@ -262,8 +262,8 @@ Module Casari_fails.
   Definition Pred' (l r : term) :=
     Pred tt (fun arg => if arg then l else r).
 
-  Definition IES (x : var) : form :=
-    <{iexists (Pred' (Var (x+1)) (Var 0))}>.
+  Definition IES : form :=
+    <{iexists (Pred' (Var 1) (Var 0))}>.
 
   (** ** The Model *)
 
@@ -594,16 +594,16 @@ Module Casari_fails.
 
   (** [support_IES_odd] represents Claim 3.7. *)
   Proposition support_IES_odd :
-    forall (s : state) (a : assignment) (x : var),
-      even (a x) = false ->
-      s, a |= <{IES x}>.
+    forall (s : state) (a : assignment),
+      even (a 0) = false ->
+      s, a |= IES.
   Proof.
-    intros s a x H1.
+    intros s a H1.
 
-    exists (a x).
+    exists (a 0).
 
     intros w H2.
-    asimpl.
+    simpl.
     unfold rel.
 
     rewrite H1.
@@ -617,17 +617,17 @@ Module Casari_fails.
      Claim 3.8.
    *)
   Proposition support_IES_even :
-    forall (s : state) (a : assignment) (x : var),
-      even (a x) = true ->
-      contains_any (? (~ even) || even && ltb (a x) ?) (complement s) ->
-      s, a |= <{IES x}>.
+    forall (s : state) (a : assignment),
+      even (a 0) = true ->
+      contains_any (? (~ even) || even && ltb (a 0) ?) (complement s) ->
+      s, a |= IES.
   Proof.
-    intros s a x H1 [n [H2 H3]].
+    intros s a H1 [n [H2 H3]].
 
     apply complement_true in H3.
 
     exists n.
-    asimpl.
+    simpl.
     intros w H4.
 
     unfold rel.
@@ -671,13 +671,13 @@ Module Casari_fails.
   Qed.
 
   Lemma support_IES_even_other_direction' :
-    forall (s : state) (a : assignment) (x : var),
-      even (a x) = true ->
+    forall (s : state) (a : assignment),
+      even (a 0) = true ->
       contains_all (? ~ even ?) s ->
-      contains_all (? ltb (a x) ?) s ->
-      ~ (s, a |= <{IES x}>).
+      contains_all (? ltb (a 0) ?) s ->
+      ~ (s, a |= IES).
   Proof.
-    intros s a x H1 H2 H3 [i H4].
+    intros s a H1 H2 H3 [i H4].
     asimpl in H4.
 
     pose proof (unnamed_helper_1 i _ H1) as H5.
@@ -691,6 +691,7 @@ Module Casari_fails.
       reflexivity.
     }
     specialize (H4 _ H7).
+    simpl in *.
     congruence.
   Qed.
 
@@ -704,14 +705,14 @@ Module Casari_fails.
      - []
    *)
   Proposition support_IES_even_other_direction :
-    forall (s : state) (a : assignment) (x : var),
-      even (a x) = true ->
-      s, a |= <{IES x}> ->
-      contains_any (? (~ even) || ltb (a x) ?) (complement s).
+    forall (s : state) (a : assignment),
+      even (a 0) = true ->
+      s, a |= IES ->
+      contains_any (? (~ even) || ltb (a 0) ?) (complement s).
   Proof.
-    intros s a x H1 H2.
+    intros s a H1 H2.
     pose proof (support_IES_even_other_direction') as H3.
-    specialize (H3 s a x H1).
+    specialize (H3 s a H1).
 
     apply NNPP.
     intros H4.
@@ -821,8 +822,7 @@ Module Casari_fails.
 
     eapply support_IES_even_other_direction' with
       (s := s)
-      (a := (if even e then e else S e) .: a)
-      (x := 0).
+      (a := (if even e then e else S e) .: a).
     -
       destruct (even e) eqn:H4.
       +
@@ -900,14 +900,14 @@ Module Casari_fails.
   (** ** Support for [CasariImpl IES] *)
 
   Lemma support_CasariImpl_IES_even_other_direction' :
-    forall (s : state) (a : assignment) (x : var),
-      even (a x) = true ->
+    forall (s : state) (a : assignment),
+      even (a 0) = true ->
       contains_all (? ~ even ?) s ->
       finitely_many (? even ?) (complement s) ->
-      contains_any (? ltb (a x) ?) (complement s) ->
-      ~ (s, a |= <{CasariImpl IES x}>).
+      contains_any (? ltb (a 0) ?) (complement s) ->
+      ~ (s, a |= <{CasariImpl IES}>).
   Proof.
-    intros s a x H1 H2 [e1 H3] [e2 [H4 H5]] H6.
+    intros s a H1 H2 [e1 H3] [e2 [H4 H5]] H6.
 
     eapply support_CasariSuc_IES_other_direction' with
       (e := e1).
@@ -1027,12 +1027,12 @@ Module Casari_fails.
      - [support_CasariAnt_IES]
    *)
   Proposition support_CasariImpl_IES_other_direction :
-    forall (s : state) (a : assignment) (x : var),
-      s, a |= <{CasariImpl IES x}> ->
+    forall (s : state) (a : assignment),
+      s, a |= <{CasariImpl IES}> ->
       E s.
   Proof.
-    intros s a x H1.
-    destruct (even (a x)) eqn:H2.
+    intros s a H1.
+    destruct (even (a 0)) eqn:H2.
     -
       apply NNPP.
       intros H3.
