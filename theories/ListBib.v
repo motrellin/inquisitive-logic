@@ -146,6 +146,51 @@ Proof.
     reflexivity.
 Qed.
 
+Instance cons_Proper {X} :
+  Proper (@eq X ==> In_eq ==> In_eq) cons.
+Proof.
+  intros x1 x2 H1 xs1 xs2 H2 x.
+  subst x2.
+  split.
+  all: intros [H3|H3].
+  all: try (left; exact H3).
+  all: try (right; apply H2; exact H3).
+Qed.
+
+Lemma In_eq_cons_cons {X} :
+  forall (x1 x2 : X) xs,
+    In_eq (x1 :: x2 :: xs) (x2 :: x1 :: xs).
+Proof.
+  intros * x.
+  split.
+  all: intros [H1|[H1|H1]].
+  all: (left + (right; left + right); exact H1).
+Qed.
+
+Instance app_Proper {X} :
+  Proper (In_eq ==> In_eq ==> In_eq) (@app X).
+Proof.
+  intros xs1 xs2 H1 ys1 ys2 H2 x.
+  split.
+  all: intros H3.
+  all: apply in_app_iff.
+  all: apply in_app_iff in H3 as [H3|H3].
+  all: apply H1 in H3 + apply H2 in H3.
+  all: left + right; exact H3.
+Qed.
+
+Lemma In_eq_app_comm {X} :
+  forall (xs1 xs2 : list X),
+    In_eq (xs1 ++ xs2) (xs2 ++ xs1).
+Proof.
+  intros xs1 xs2 x.
+  split.
+  all: intros H1.
+  all: apply in_app_iff.
+  all: apply in_app_iff in H1 as [H1|H1].
+  all: left + right; exact H1.
+Qed.
+
 Definition In_sublist {X} : relation (list X) :=
   fun xs2 xs1 =>
   forall x,
