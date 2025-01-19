@@ -1174,22 +1174,22 @@ Theorem soundness `{Signature} :
     satisfaction_conseq Phi Psi.
 Proof.
   induction 1 as
-  [ls rs phi H1 (* Seq_empty *)
-  |ns ls rs p args H1 H2 (* Seq_id *)
-  |ns ls rs x H1 (* Seq_Bot_l *)
-  |ns ls rs p args H1 H2 IH1 (* Seq_Pred_r *)
-  |ns1 ns2 ls rs p args H1 H2 H3 IH1 (* Seq_Pred_l *)
-  |ns ls rs phi psi H1 H2 IH1 (* Seq_Impl_r *)
-  |ns1 ns2 ls rs phi psi H1 H2 H3 IH1 H4 IH2 (* Seq_Impl_l *)
-  |ns ls rs phi psi H1 H2 IH1 H3 IH2 (* Seq_Conj_r *)
-  |ns ls rs phi psi H1 H2 IH1 (* Seq_Conj_l *)
-  |ns ls rs phi psi H1 H2 IH1 (* Seq_Idisj_r *)
-  |ns ls rs phi psi H1 H2 IH1 H3 IH2 (* Seq_Idisj_l *)
-  |ns ls rs phi H1 H2 IH1 (* Seq_Forall_r *)
-  |ns ls rs phi t H1 H2 H3 IH1 (* Seq_Forall_l *)
-  |ns ls rs phi t H1 H2 H3 IH1 (* Seq_Iexists_r *)
-  |ns ls rs phi H1 H2 IH1 (* Seq_Iexists_l *)
-  |ls1 ls2 ls rs1 rs2 rs ns phi (* Seq_cut *)].
+  [ls1 rs1 phi1 H1 (* Seq_empty *)
+  |ls1 rs1 ns1 p args H1 H2 (* Seq_id *)
+  |ls1 rs1 n ns1 x H1 H2 (* Seq_Bot_l *)
+  |ls1 rs1 ns1 p args H1 H2 IH1 (* Seq_Pred_r *)
+  |ls1 rs1 ns1 ns2 p args H1 H2 H3 IH1 (* Seq_Pred_l *)
+  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 (* Seq_Impl_r *)
+  |ls1 rs1 ns1 ns2 phi1 phi2 H1 H2 H3 IH1 H4 IH2 (* Seq_Impl_l *)
+  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 H3 IH2 (* Seq_Conj_r *)
+  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 (* Seq_Conj_l *)
+  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 (* Seq_Idisj_r *)
+  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 H3 IH2 (* Seq_Idisj_l *)
+  |ls1 rs1 ns1 phi1 H1 H2 IH1 (* Seq_Forall_r *)
+  |ls1 rs1 ns1 phi1 t H1 H2 H3 IH1 (* Seq_Forall_l *)
+  |ls1 rs1 ns1 phi1 t H1 H2 H3 IH1 (* Seq_Iexists_r *)
+  |ls1 rs1 ns1 phi1 H1 H2 IH1 (* Seq_Iexists_l *)
+  |ls1 ls2 ls3 rs1 rs2 rs3 ns1 phi1 H1 H2 H3 IH1 H4 IH2 (* Seq_cut *)].
   all: eauto using
     satisfaction_conseq_empty,
     satisfaction_conseq_id,
