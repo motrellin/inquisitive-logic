@@ -1,4 +1,4 @@
-From Coq Require Export Bool List Morphisms Setoid.
+From Coq Require Export Bool List Morphisms Setoid Lia.
 
 Section inb.
 
@@ -246,4 +246,30 @@ Proof.
         congruence.
       *
         contradiction.
+Qed.
+
+Definition length_order {X} : relation (@list X) :=
+  fun xs1 xs2 =>
+  length xs1 < length xs2.
+
+Proposition length_order_wf {X} :
+  well_founded (@length_order X).
+Proof.
+  red.
+  assert (H1 :
+    forall s (xs : list X),
+      length xs <= s -> Acc length_order xs
+  ).
+  {
+    induction s as [|s' IH].
+    all: intros xs1 H1.
+    all: constructor.
+    all: intros xs2 H2.
+    all: red in H2.
+    all: try apply IH.
+    all: lia.
+  }
+  intros xs.
+  eapply H1.
+  reflexivity.
 Qed.
