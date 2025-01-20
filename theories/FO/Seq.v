@@ -1544,3 +1544,100 @@ Proof.
   -
     exact H3.
 Qed.
+
+From InqLog.FO Require Import Casari.
+
+Proposition prop_6_4 `{Signature} :
+  forall phi ns,
+    Seq
+    ((pair ns (CasariAnt phi)) :: nil)
+    ((pair ns (CasariSuc phi)) :: nil).
+Proof.
+  intros phi ns.
+  induction ns as [ns IH] using (well_founded_ind length_order_wf).
+  eapply Seq_Forall_r.
+  -
+    left; reflexivity.
+  -
+    eapply Seq_Forall_l with (t := Var 0).
+    +
+      left; reflexivity.
+    +
+      exact I.
+    +
+      eapply Seq_Impl_l.
+      *
+        left; reflexivity.
+      *
+        reflexivity.
+      *
+        eapply Seq_Impl_r.
+        --
+           left; reflexivity.
+        --
+           intros ns' H1.
+           assert (
+            {In_sublist ns ns'} + {~ In_sublist ns ns'}
+           ) as [H2|H2].
+           {
+             admit.
+           }
+           ++
+              eapply prop_4_6.
+              **
+                 asimpl.
+                 left; reflexivity.
+              **
+                 right.
+                 right.
+                 left; reflexivity.
+              **
+                 exact H2.
+           ++
+              assert (H3 : length_order ns' ns).
+              {
+                admit.
+              }
+              apply IH in H3.
+              assert (H4 :
+                Seq
+                ((pair ns (CasariAnt phi)) :: nil)
+                ((pair ns' (CasariSuc phi)) :: nil)
+              ).
+              {
+                eapply Seq_mon.
+                -
+                  left; reflexivity.
+                -
+                  exact H1.
+                -
+                  apply Seq_weakening_l with
+                    (ls1 := ((pair ns' (CasariAnt phi)) :: nil))
+                    (ns := ns)
+                    (phi := CasariAnt phi).
+                  +
+                    apply In_eq_cons_cons.
+                  +
+                    exact H3.
+              }
+              asimpl.
+              eapply Seq_weakening_l.
+              admit.
+      *
+        eapply Seq_Forall_l with (t := Var 0).
+        --
+           left; reflexivity.
+        --
+           exact I.
+        --
+           eapply prop_4_6.
+           ++
+              left; reflexivity.
+           ++
+              left.
+              asimpl.
+              f_equal.
+              admit. (* This is fine *)
+           ++
+              reflexivity.
+Admitted.
