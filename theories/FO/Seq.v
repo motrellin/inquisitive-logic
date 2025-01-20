@@ -156,13 +156,88 @@ Inductive Seq `{Signature} :
    *)
   | Seq_cut :
       forall ls1 ls2 ls rs1 rs2 rs ns phi,
-        In_eq ls (ls1 ++ ls2) ->
-        In_eq rs (rs1 ++ rs2) ->
+        In_sublist (ls1 ++ ls2) ls ->
+        In_sublist (rs1 ++ rs2) rs ->
         Seq ls1 ((pair ns phi) :: rs1) ->
         Seq ((pair ns phi) :: ls2) rs2 ->
         Seq ls rs.
 
 (** ** Properties of [Seq] *)
+
+Proposition Seq_weakening `{Signature} :
+  forall ls1 ls2,
+    In_sublist ls1 ls2 ->
+    forall rs1 rs2,
+      In_sublist rs1 rs2 ->
+      Seq ls1 rs1 ->
+      Seq ls2 rs2.
+Proof with eauto using cons_In_sublist_cons, map_In_sublist_map.
+  intros ls1 ls2 H1 rs1 rs2 H2 H3.
+  generalize dependent rs2.
+  generalize dependent ls2.
+  induction H3 as
+  [ls1 rs1 phi1 H1 (* Seq_empty *)
+  |ls1 rs1 ns1 p args H1 H2 (* Seq_id *)
+  |ls1 rs1 n ns1 x H1 H2 (* Seq_Bot_l *)
+  |ls1 rs1 ns1 p args H1 H2 IH1 (* Seq_Pred_r *)
+  |ls1 rs1 ns1 ns2 p args H1 H2 H3 IH1 (* Seq_Pred_l *)
+  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 (* Seq_Impl_r *)
+  |ls1 rs1 ns1 ns2 phi1 phi2 H1 H2 H3 IH1 H4 IH2 (* Seq_Impl_l *)
+  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 H3 IH2 (* Seq_Conj_r *)
+  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 (* Seq_Conj_l *)
+  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 (* Seq_Idisj_r *)
+  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 H3 IH2 (* Seq_Idisj_l *)
+  |ls1 rs1 ns1 phi1 H1 H2 IH1 (* Seq_Forall_r *)
+  |ls1 rs1 ns1 phi1 t H1 H2 H3 IH1 (* Seq_Forall_l *)
+  |ls1 rs1 ns1 phi1 t H1 H2 H3 IH1 (* Seq_Iexists_r *)
+  |ls1 rs1 ns1 phi1 H1 H2 IH1 (* Seq_Iexists_l *)
+  |ls1 ls2 ls3 rs1 rs2 rs3 ns1 phi1 H1 H2 H3 IH1 H4 IH2 (* Seq_cut *)].
+  all: intros ls H5 rs H6.
+  -
+    eapply Seq_empty...
+  -
+    eapply Seq_id...
+  -
+    eapply Seq_Bot_l...
+  -
+    eapply Seq_Pred_r...
+  -
+    eapply Seq_Pred_l...
+  -
+    eapply Seq_Impl_r...
+  -
+    eapply Seq_Impl_l...
+  -
+    eapply Seq_Conj_r...
+  -
+    eapply Seq_Conj_l...
+  -
+    eapply Seq_Idisj_r...
+  -
+    eapply Seq_Idisj_l...
+  -
+    eapply Seq_Forall_r...
+  -
+    eapply Seq_Forall_l...
+  -
+    eapply Seq_Iexists_r...
+  -
+    eapply Seq_Iexists_l...
+  -
+    eapply Seq_cut...
+    all: etransitivity.
+    all: eassumption.
+Qed.
+
+Instance Seq_Proper `{Signature} :
+  Proper (In_eq ==> In_eq ==> iff) Seq.
+Proof.
+  intros ls1 ls2 [H1 H2] rs1 rs2 [H3 H4].
+  split.
+  all: intros H5.
+  all: eapply Seq_weakening.
+  all: eassumption.
+Qed.
 
 Proposition prop_4_6 `{Signature} :
   forall ls rs ns1 ns2 phi,
@@ -1139,8 +1214,8 @@ Qed.
 
 Lemma satisfaction_conseq_cut `{Signature} :
   forall ls1 ls2 ls rs1 rs2 rs ns phi,
-    In_eq ls (ls1 ++ ls2) ->
-    In_eq rs (rs1 ++ rs2) ->
+    In_sublist (ls1 ++ ls2) ls ->
+    In_sublist (rs1 ++ rs2) rs ->
     satisfaction_conseq ls1 ((pair ns phi) :: rs1) ->
     satisfaction_conseq ((pair ns phi) :: ls2) rs2 ->
     satisfaction_conseq ls rs.
@@ -1148,8 +1223,33 @@ Proof.
   intros * H1 H2 H3 H4.
   intros M f a H5.
 
-  rewrite H1 in H5.
-  rewrite H2.
+  enough (H6 : satisfaction_exists (rs1 ++ rs2) f a).
+  {
+    apply Exists_exists.
+    apply Exists_app in H6 as [H6|H6].
+    all: apply Exists_exists in H6 as [psi [H6 H7]].
+    all: exists psi.
+    all: split.
+    all: try exact H7.
+    all: apply H2.
+    all: apply in_app_iff.
+    all: left + right; exact H6.
+  }
+
+  assert (H5' : satisfaction_forall (ls1 ++ ls2) f a).
+  {
+    apply Forall_app.
+    split.
+    all: apply Forall_forall.
+    all: intros psi H6.
+    all: eapply Forall_forall.
+    all: try exact H5.
+    all: apply H1.
+    all: apply in_app_iff.
+    all: left + right; exact H6.
+  }
+  clear H5.
+  rename H5' into H5.
 
   apply Forall_app in H5 as [H5 H6].
   apply Exists_app.
@@ -1213,295 +1313,6 @@ Print Assumptions soundness.
 
 (** * More derivable rules *)
 
-Proposition Seq_weakening_r `{Signature} :
-  forall ls rs1 rs2 ns phi,
-    In_eq rs2 ((pair ns phi) :: rs1) ->
-    Seq ls rs1 ->
-    Seq ls rs2.
-Proof.
-  intros ls rs1 rs2 ns phi H1 H2.
-  generalize dependent phi.
-  generalize dependent ns.
-  generalize dependent rs2.
-  induction H2 as
-  [ls1 rs1 phi1 H1 (* Seq_empty *)
-  |ls1 rs1 ns1 p args H1 H2 (* Seq_id *)
-  |ls1 rs1 n ns1 x H1 H2 (* Seq_Bot_l *)
-  |ls1 rs1 ns1 p args H1 H2 IH1 (* Seq_Pred_r *)
-  |ls1 rs1 ns1 ns2 p args H1 H2 H3 IH1 (* Seq_Pred_l *)
-  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 (* Seq_Impl_r *)
-  |ls1 rs1 ns1 ns2 phi1 phi2 H1 H2 H3 IH1 H4 IH2 (* Seq_Impl_l *)
-  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 H3 IH2 (* Seq_Conj_r *)
-  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 (* Seq_Conj_l *)
-  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 (* Seq_Idisj_r *)
-  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 H3 IH2 (* Seq_Idisj_l *)
-  |ls1 rs1 ns1 phi1 H1 H2 IH1 (* Seq_Forall_r *)
-  |ls1 rs1 ns1 phi1 t H1 H2 H3 IH1 (* Seq_Forall_l *)
-  |ls1 rs1 ns1 phi1 t H1 H2 H3 IH1 (* Seq_Iexists_r *)
-  |ls1 rs1 ns1 phi1 H1 H2 IH1 (* Seq_Iexists_l *)
-  |ls1 ls2 ls3 rs1 rs2 rs3 ns1 phi1 H1 H2 H3 IH1 H4 IH2 (* Seq_cut *)].
-  all: intros rs ns phi H5.
-  - (* Seq_empty *)
-    eapply Seq_empty.
-    apply H5.
-    right.
-    eassumption.
-  - (* Seq_id *)
-    eapply Seq_id.
-    +
-      eassumption.
-    +
-      apply H5; right; eassumption.
-    +
-      assumption.
-  - (* Seq_Bot_l *)
-    eapply Seq_Bot_l; eassumption.
-  - (* Seq_Pred_r *)
-    eapply Seq_Pred_r.
-    +
-      apply H5; right; eassumption.
-    +
-      intros n H6.
-      eapply IH1.
-      *
-        exact H6.
-      *
-        admit.
-  - (* Seq_Pred_l *)
-    eapply Seq_Pred_l.
-    +
-      exact H1.
-    +
-      exact H2.
-    +
-      eapply IH1.
-      exact H5.
-  - (* Seq_Impl_r *)
-    eapply Seq_Impl_r.
-    +
-      apply H5; right; eassumption.
-    +
-      intros ns' H6.
-      eapply IH1.
-      *
-        exact H6.
-      *
-        admit.
-  - (* Seq_Impl_l *)
-    eapply Seq_Impl_l; try eassumption.
-    +
-      eapply IH1.
-      admit.
-    +
-      eapply IH2.
-      exact H5.
-  - (* Seq_Conj_r *)
-    eapply Seq_Conj_r.
-    +
-      apply H5; right; eassumption.
-    +
-      eapply IH1.
-      admit.
-    +
-      eapply IH2.
-      admit.
-  - (* Seq_Conj_l *)
-    eapply Seq_Conj_l; try eassumption.
-    eapply IH1.
-    exact H5.
-  - (* Seq_Idisj_r *)
-    eapply Seq_Idisj_r.
-    +
-      apply H5; right; eassumption.
-    +
-      eapply IH1.
-      admit.
-  - (* Seq_Idisj_l *)
-    eapply Seq_Idisj_l; try eassumption.
-    +
-      eapply IH1.
-      exact H5.
-    +
-      eapply IH2.
-      exact H5.
-  - (* Seq_Forall_r *)
-    eapply Seq_Forall_r.
-    +
-      apply H5; right; eassumption.
-    +
-      eapply IH1.
-      admit.
-  - (* Seq_Forall_l *)
-    eapply Seq_Forall_l; try eassumption.
-    eapply IH1.
-    exact H5.
-  - (* Seq_Iexists_r *)
-    eapply Seq_Iexists_r.
-    +
-      apply H5; right; eassumption.
-    +
-      exact H2.
-    +
-      eapply IH1.
-      admit.
-  - (* Seq_Iexists_l *)
-    eapply Seq_Iexists_l; try eassumption.
-    eapply IH1.
-    admit.
-  - (* Seq_cut *)
-    eapply Seq_cut with (rs2 := ((pair ns phi) :: rs2)).
-    +
-      exact H1.
-    +
-      admit.
-    +
-      eapply IH1.
-      admit.
-    +
-      eapply IH2.
-      reflexivity.
-Admitted.
-
-Proposition Seq_weakening_l `{Signature} :
-  forall ls1 ls2 rs ns phi,
-    In_eq ls2 ((pair ns phi) :: ls1) ->
-    Seq ls1 rs ->
-    Seq ls2 rs.
-Proof.
-  intros ls1 ls2 rs ns phi H1 H2.
-  generalize dependent phi.
-  generalize dependent ns.
-  generalize dependent ls2.
-  induction H2 as
-  [ls1 rs1 phi1 H1 (* Seq_empty *)
-  |ls1 rs1 ns1 p args H1 H2 (* Seq_id *)
-  |ls1 rs1 n ns1 x H1 H2 (* Seq_Bot_l *)
-  |ls1 rs1 ns1 p args H1 H2 IH1 (* Seq_Pred_r *)
-  |ls1 rs1 ns1 ns2 p args H1 H2 H3 IH1 (* Seq_Pred_l *)
-  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 (* Seq_Impl_r *)
-  |ls1 rs1 ns1 ns2 phi1 phi2 H1 H2 H3 IH1 H4 IH2 (* Seq_Impl_l *)
-  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 H3 IH2 (* Seq_Conj_r *)
-  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 (* Seq_Conj_l *)
-  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 (* Seq_Idisj_r *)
-  |ls1 rs1 ns1 phi1 phi2 H1 H2 IH1 H3 IH2 (* Seq_Idisj_l *)
-  |ls1 rs1 ns1 phi1 H1 H2 IH1 (* Seq_Forall_r *)
-  |ls1 rs1 ns1 phi1 t H1 H2 H3 IH1 (* Seq_Forall_l *)
-  |ls1 rs1 ns1 phi1 t H1 H2 H3 IH1 (* Seq_Iexists_r *)
-  |ls1 rs1 ns1 phi1 H1 H2 IH1 (* Seq_Iexists_l *)
-  |ls1 ls2 ls3 rs1 rs2 rs3 ns1 phi1 H1 H2 H3 IH1 H4 IH2 (* Seq_cut *)].
-  all: intros ls ns phi H5.
-  - (* Seq_empty *)
-    eapply Seq_empty.
-    exact H1.
-  - (* Seq_id *)
-    eapply Seq_id; try eassumption.
-    apply H5; right; eassumption.
-  - (* Seq_Bot_l *)
-    eapply Seq_Bot_l.
-    +
-      apply H5; right; eassumption.
-    +
-      exact H2.
-  - (* Seq_Pred_r *)
-    eapply Seq_Pred_r; try eassumption.
-    intros n H6.
-    eapply IH1; eassumption.
-  - (* Seq_Pred_l *)
-    eapply Seq_Pred_l.
-    +
-      apply H5; right; eassumption.
-    +
-      exact H2.
-    +
-      eapply IH1.
-      admit.
-  - (* Seq_Impl_r *)
-    eapply Seq_Impl_r; try eassumption.
-    intros ns' H6.
-    eapply IH1.
-    +
-      exact H6.
-    +
-      admit.
-  - (* Seq_Impl_l *)
-    eapply Seq_Impl_l.
-    +
-      apply H5; right; eassumption.
-    +
-      exact H2.
-    +
-      eapply IH1.
-      exact H5.
-    +
-      eapply IH2.
-      admit.
-  - (* Seq_Conj_r *)
-    eapply Seq_Conj_r; try eassumption.
-    +
-      eapply IH1.
-      exact H5.
-    +
-      eapply IH2.
-      exact H5.
-  - (* Seq_Conj_l *)
-    eapply Seq_Conj_l.
-    +
-      apply H5; right; eassumption.
-    +
-      eapply IH1.
-      admit.
-  - (* Seq_Idisj_r *)
-    eapply Seq_Idisj_r; try eassumption.
-    eapply IH1.
-    exact H5.
-  - (* Seq_Idisj_l *)
-    eapply Seq_Idisj_l.
-    +
-      apply H5; right; eassumption.
-    +
-      eapply IH1.
-      admit.
-    +
-      eapply IH2.
-      admit.
-  - (* Seq_Forall_r *)
-    eapply Seq_Forall_r; try eassumption.
-    eapply IH1.
-    admit.
-  - (* Seq_Forall_l *)
-    eapply Seq_Forall_l.
-    +
-      apply H5; right; eassumption.
-    +
-      exact H2.
-    +
-      eapply IH1.
-      admit.
-  - (* Seq_Iexists_r *)
-    eapply Seq_Iexists_r; try eassumption.
-    eapply IH1.
-    exact H5.
-  - (* Seq_Iexists_l *)
-    eapply Seq_Iexists_l.
-    +
-      apply H5; right; eassumption.
-    +
-      eapply IH1.
-      admit.
-  - (* Seq_cut *)
-    eapply Seq_cut with (ls1 := ((pair ns phi) :: ls1)).
-    +
-      admit.
-    +
-      exact H2.
-    +
-      eapply IH1.
-      reflexivity.
-    +
-      eapply IH2.
-      admit.
-Admitted.
-
 Proposition Seq_mon `{Signature} :
   forall ls rs ns1 ns2 phi,
     In (pair ns1 phi) ls ->
@@ -1518,19 +1329,12 @@ Proof.
     (ns := ns2)
     (phi := phi).
   -
-    intros psi.
-    split.
+    intros psi [H4|H4].
     +
-      intros H4.
-      right.
-      exact H4.
+      subst psi.
+      exact H1.
     +
-      intros [H4|H4].
-      *
-        subst psi.
-        exact H1.
-      *
-        exact H4.
+      apply in_app_iff in H4 as [H4|H4]; easy.
   -
     reflexivity.
   -
@@ -1547,14 +1351,19 @@ Qed.
 
 From InqLog.FO Require Import Casari.
 
-Proposition prop_6_4 `{Signature} :
-  forall phi ns,
+Proposition Seq_CasariAnt_CasariSuc `{Signature} :
+  forall ns (phi : form) sigma,
+    (
+      forall sigma1 sigma2,
+        sigma1 0 = sigma2 0 ->
+        phi.|[sigma1] = phi.|[sigma2]
+    ) ->
     Seq
-    ((pair ns (CasariAnt phi)) :: nil)
-    ((pair ns (CasariSuc phi)) :: nil).
+    ((pair ns (CasariAnt phi).|[sigma]) :: nil)
+    ((pair ns (CasariSuc phi).|[sigma]) :: nil).
 Proof.
-  intros phi ns.
   induction ns as [ns IH] using (well_founded_ind length_order_wf).
+  intros phi sigma H1.
   eapply Seq_Forall_r.
   -
     left; reflexivity.
@@ -1575,54 +1384,60 @@ Proof.
         --
            left; reflexivity.
         --
-           intros ns' H1.
+           intros ns' H2.
            assert (
             {In_sublist ns ns'} + {~ In_sublist ns ns'}
-           ) as [H2|H2].
+           ) as [H3|H3].
            {
              admit.
            }
            ++
               eapply prop_4_6.
               **
-                 asimpl.
                  left; reflexivity.
               **
                  right.
                  right.
-                 left; reflexivity.
+                 left.
+                 autosubst.
               **
-                 exact H2.
+                 exact H3.
            ++
-              assert (H3 : length_order ns' ns).
-              {
-                admit.
-              }
-              apply IH in H3.
-              assert (H4 :
-                Seq
-                ((pair ns (CasariAnt phi)) :: nil)
-                ((pair ns' (CasariSuc phi)) :: nil)
-              ).
-              {
-                eapply Seq_mon.
-                -
-                  left; reflexivity.
-                -
-                  exact H1.
-                -
-                  apply Seq_weakening_l with
-                    (ls1 := ((pair ns' (CasariAnt phi)) :: nil))
-                    (ns := ns)
-                    (phi := CasariAnt phi).
-                  +
-                    apply In_eq_cons_cons.
-                  +
-                    exact H3.
-              }
-              asimpl.
-              eapply Seq_weakening_l.
-              admit.
+              apply Seq_weakening with
+                (ls1 := (pair ns (CasariAnt phi).|[sigma].|[ren (+1)]) :: nil)
+                (rs1 := (pair ns' (CasariSuc phi).|[sigma].|[ren (+1)]) :: nil).
+              **
+                 intros psi [H4|H4]; contradiction + subst psi.
+                 right.
+                 right.
+                 left.
+                 reflexivity.
+              **
+                 intros psi [H4|H4]; contradiction + subst psi.
+                 left.
+                 f_equal.
+                 asimpl.
+                 f_equal.
+                 apply H1.
+                 reflexivity.
+              **
+                 eapply Seq_mon.
+                 ---
+                     left; reflexivity.
+                 ---
+                     exact H2.
+                 ---
+                     eapply Seq_weakening with
+                       (ls1 := (pair ns' (CasariAnt phi).|[sigma].|[ren (+1)]) :: nil).
+                     +++
+                         firstorder.
+                     +++
+                         reflexivity.
+                     +++
+                         do 2 rewrite hsubst_comp.
+                         eapply IH; try assumption.
+                         simpl in H2.
+                         admit.
       *
         eapply Seq_Forall_l with (t := Var 0).
         --
@@ -1635,9 +1450,40 @@ Proof.
               left; reflexivity.
            ++
               left.
-              asimpl.
               f_equal.
-              admit. (* This is fine *)
+              asimpl.
+              apply H1.
+              reflexivity.
            ++
               reflexivity.
 Admitted.
+
+Corollary Seq_Casari `{Signature} :
+  forall phi ns,
+    (
+      forall sigma1 sigma2,
+        sigma1 0 = sigma2 0 ->
+        phi.|[sigma1] = phi.|[sigma2]
+    ) ->
+    Seq nil ((pair ns (Casari phi)) :: nil).
+Proof.
+  intros phi ns H1.
+  eapply Seq_Impl_r.
+  -
+    left; reflexivity.
+  -
+    intros ns' H2.
+    eapply Seq_weakening with
+      (ls1 := (pair ns' (CasariAnt phi).|[ids] :: nil))
+      (rs1 := (pair ns' (CasariSuc phi).|[ids] :: nil)).
+    +
+      asimpl.
+      reflexivity.
+    +
+      intros psi [H3|H3]; contradiction + subst psi.
+      left.
+      asimpl; reflexivity.
+    +
+      eapply Seq_CasariAnt_CasariSuc.
+      exact H1.
+Qed.

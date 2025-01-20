@@ -108,89 +108,6 @@ Section inb.
 
 End inb.
 
-Definition In_eq {X} : relation (list X) :=
-  fun ls rs =>
-  forall x,
-    In x ls <->
-    In x rs.
-
-Instance In_eq_equiv {X} : Equivalence (@In_eq X).
-Proof.
-  split.
-  -
-    intros xs1 x.
-    reflexivity.
-  -
-    intros xs1 xs2 H1 x.
-    symmetry.
-    apply H1.
-  -
-    intros xs1 xs2 xs3 H1 H2 x.
-    etransitivity; eauto.
-Qed.
-
-Lemma In_eq_nil {X} :
-  forall (xs : list X),
-    In_eq xs nil ->
-    xs = nil.
-Proof.
-  destruct xs as [|x xs'].
-  -
-    reflexivity.
-  -
-    intros H1.
-    specialize (H1 x) as [H1 _].
-    exfalso.
-    apply H1.
-    left.
-    reflexivity.
-Qed.
-
-Instance cons_Proper {X} :
-  Proper (@eq X ==> In_eq ==> In_eq) cons.
-Proof.
-  intros x1 x2 H1 xs1 xs2 H2 x.
-  subst x2.
-  split.
-  all: intros [H3|H3].
-  all: try (left; exact H3).
-  all: try (right; apply H2; exact H3).
-Qed.
-
-Lemma In_eq_cons_cons {X} :
-  forall (x1 x2 : X) xs,
-    In_eq (x1 :: x2 :: xs) (x2 :: x1 :: xs).
-Proof.
-  intros * x.
-  split.
-  all: intros [H1|[H1|H1]].
-  all: (left + (right; left + right); exact H1).
-Qed.
-
-Instance app_Proper {X} :
-  Proper (In_eq ==> In_eq ==> In_eq) (@app X).
-Proof.
-  intros xs1 xs2 H1 ys1 ys2 H2 x.
-  split.
-  all: intros H3.
-  all: apply in_app_iff.
-  all: apply in_app_iff in H3 as [H3|H3].
-  all: apply H1 in H3 + apply H2 in H3.
-  all: left + right; exact H3.
-Qed.
-
-Lemma In_eq_app_comm {X} :
-  forall (xs1 xs2 : list X),
-    In_eq (xs1 ++ xs2) (xs2 ++ xs1).
-Proof.
-  intros xs1 xs2 x.
-  split.
-  all: intros H1.
-  all: apply in_app_iff.
-  all: apply in_app_iff in H1 as [H1|H1].
-  all: left + right; exact H1.
-Qed.
-
 Definition In_sublist {X} : relation (list X) :=
   fun xs2 xs1 =>
   forall x,
@@ -211,6 +128,99 @@ Proof.
     exact H3.
 Qed.
 
+Lemma cons_In_sublist_cons {X} :
+  forall (x : X) xs1 xs2,
+    In_sublist xs1 xs2 ->
+    In_sublist (x :: xs1) (x :: xs2).
+Proof.
+  firstorder.
+Qed.
+
+Lemma map_In_sublist_map {X Y} :
+  forall (f : X -> Y) xs1 xs2,
+    In_sublist xs1 xs2 ->
+    In_sublist (map f xs1) (map f xs2).
+Proof.
+  intros * H1 y H2.
+  apply in_map_iff in H2 as [x [H2 H3]].
+  subst y.
+  apply in_map.
+  apply H1.
+  exact H3.
+Qed.
+
+Definition In_eq {X} : relation (list X) :=
+  fun ls rs =>
+  In_sublist ls rs /\
+  In_sublist rs ls.
+
+Instance In_eq_equiv {X} : Equivalence (@In_eq X).
+Proof.
+  firstorder.
+Qed.
+
+Lemma In_eq_nil {X} :
+  forall (xs : list X),
+    In_eq xs nil ->
+    xs = nil.
+Proof.
+  destruct xs as [|x xs'].
+  -
+    reflexivity.
+  -
+    intros [H1 H2].
+    specialize (H1 x).
+    exfalso.
+    apply H1.
+    left.
+    reflexivity.
+Qed.
+
+Instance cons_Proper {X} :
+  Proper (@eq X ==> In_eq ==> In_eq) cons.
+Proof.
+  intros x1 x2 H1 xs1 xs2 H2.
+  subst x2.
+  split.
+  all: intros x [H3|H3].
+  all: try (left; exact H3).
+  all: try (right; apply H2; exact H3).
+Qed.
+
+Lemma In_eq_cons_cons {X} :
+  forall (x1 x2 : X) xs,
+    In_eq (x1 :: x2 :: xs) (x2 :: x1 :: xs).
+Proof.
+  intros *.
+  split.
+  all: intros x [H1|[H1|H1]].
+  all: (left + (right; left + right); exact H1).
+Qed.
+
+Instance app_Proper {X} :
+  Proper (In_eq ==> In_eq ==> In_eq) (@app X).
+Proof.
+  intros xs1 xs2 H1 ys1 ys2 H2.
+  split.
+  all: intros x H3.
+  all: apply in_app_iff.
+  all: apply in_app_iff in H3 as [H3|H3].
+  all: apply H1 in H3 + apply H2 in H3.
+  all: left + right; exact H3.
+Qed.
+
+Lemma In_eq_app_comm {X} :
+  forall (xs1 xs2 : list X),
+    In_eq (xs1 ++ xs2) (xs2 ++ xs1).
+Proof.
+  intros xs1 xs2.
+  split.
+  all: intros x H1.
+  all: apply in_app_iff.
+  all: apply in_app_iff in H1 as [H1|H1].
+  all: left + right; exact H1.
+Qed.
+
 Lemma In_sublist_singleton {X} (X_deceq : forall (x y : X), {x = y} + {x <> y}) :
   forall (xs : list X) (x : X),
     In_sublist xs (x :: nil) ->
@@ -221,12 +231,11 @@ Proof.
   destruct (In_dec X_deceq x1 xs) as [H2|H2].
   -
     left.
-    intros x2.
     split.
     +
       auto.
     +
-      intros [H3|H3].
+      intros x2 [H3|H3].
       *
         subst x2.
         exact H2.
