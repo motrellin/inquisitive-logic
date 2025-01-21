@@ -265,6 +265,22 @@ Module Casari_fails.
   Definition IES : form :=
     <{iexists (Pred' (Var 1) (Var 0))}>.
 
+  Remark highest_occ_free_var_IES :
+    highest_occ_free_var IES 0.
+  Proof.
+    intros sigma1 sigma2 H1.
+    asimpl.
+    f_equal.
+    f_equal.
+    apply functional_extensionality.
+    intros [|].
+    -
+      cbv.
+      rewrite H1; reflexivity.
+    -
+      reflexivity.
+  Qed.
+
   (** ** The Model *)
 
   Definition rel (w m j : nat) : bool :=

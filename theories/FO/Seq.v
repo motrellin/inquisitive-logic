@@ -1353,11 +1353,7 @@ From InqLog.FO Require Import Casari.
 
 Proposition Seq_CasariAnt_CasariSuc `{Signature} :
   forall ns (phi : form) sigma,
-    (
-      forall sigma1 sigma2,
-        sigma1 0 = sigma2 0 ->
-        phi.|[sigma1] = phi.|[sigma2]
-    ) ->
+    highest_occ_free_var phi 0 ->
     Seq
     ((pair ns (CasariAnt phi).|[sigma]) :: nil)
     ((pair ns (CasariSuc phi).|[sigma]) :: nil).
@@ -1419,7 +1415,7 @@ Proof.
                  asimpl.
                  f_equal.
                  apply H1.
-                 reflexivity.
+                 inversion 1; reflexivity.
               **
                  eapply Seq_mon.
                  ---
@@ -1453,18 +1449,14 @@ Proof.
               f_equal.
               asimpl.
               apply H1.
-              reflexivity.
+              inversion 1; reflexivity.
            ++
               reflexivity.
 Admitted.
 
 Corollary Seq_Casari `{Signature} :
   forall phi ns,
-    (
-      forall sigma1 sigma2,
-        sigma1 0 = sigma2 0 ->
-        phi.|[sigma1] = phi.|[sigma2]
-    ) ->
+    highest_occ_free_var phi 0 ->
     Seq nil ((pair ns (Casari phi)) :: nil).
 Proof.
   intros phi ns H1.
