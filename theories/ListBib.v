@@ -149,6 +149,44 @@ Proof.
   exact H3.
 Qed.
 
+Lemma In_sublist_dec {X} :
+  (forall (x1 x2 : X), {x1 = x2} + {x1 <> x2}) ->
+  forall (xs1 xs2 : list X),
+    {In_sublist xs1 xs2} + {~ In_sublist xs1 xs2}.
+Proof.
+  intros H1 xs1 xs2.
+  induction xs1 as [|x xs1' [IH|IH]].
+  -
+    left.
+    easy.
+  -
+    destruct (in_dec H1 x xs2) as [H2|H2].
+    +
+      left.
+      intros x' [H3|H3].
+      *
+        subst x'.
+        exact H2.
+      *
+        apply IH.
+        exact H3.
+    +
+      right.
+      intros H3.
+      apply H2.
+      apply H3.
+      left.
+      reflexivity.
+  -
+    right.
+    intros H2.
+    apply IH.
+    intros x' H3.
+    apply H2.
+    right.
+    exact H3.
+Qed.
+
 Definition In_eq {X} : relation (list X) :=
   fun ls rs =>
   In_sublist ls rs /\

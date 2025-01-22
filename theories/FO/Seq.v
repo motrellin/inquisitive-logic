@@ -1351,6 +1351,8 @@ Qed.
 
 From InqLog.FO Require Import Casari.
 
+Scheme Equality for nat.
+
 Proposition Seq_CasariAnt_CasariSuc `{Signature} :
   forall ns (phi : form) sigma,
     highest_occ_free_var phi 0 ->
@@ -1381,12 +1383,7 @@ Proof.
            left; reflexivity.
         --
            intros ns' H2.
-           assert (
-            {In_sublist ns ns'} + {~ In_sublist ns ns'}
-           ) as [H3|H3].
-           {
-             admit.
-           }
+           destruct (In_sublist_dec nat_eq_dec ns ns') as [H3|H3].
            ++
               eapply prop_4_6.
               **
