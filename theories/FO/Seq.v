@@ -1479,3 +1479,21 @@ Proof.
       eapply Seq_CasariAnt_CasariSuc.
       exact H1.
 Qed.
+
+Corollary support_valid_Casari_bd `{S : Signature} :
+  forall phi ns,
+    highest_occ_free_var phi 0 ->
+    forall (M : @Model S) f a,
+      mapping_state f ns, a |= Casari phi.
+Proof.
+  intros phi ns H1 M f a.
+  pose proof (Seq_Casari phi ns H1) as H2.
+  apply soundness in H2.
+  specialize (H2 _ f a (Forall_nil _)).
+  apply Exists_exists in H2 as [psi [[H2|H2] H3]].
+  -
+    subst psi.
+    exact H3.
+  -
+    contradiction.
+Qed.
