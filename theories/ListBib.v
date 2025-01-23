@@ -114,6 +114,19 @@ Definition In_sublist {X} : relation (list X) :=
     In x xs2 ->
     In x xs1.
 
+Lemma In_sublist_nil {X} :
+  forall (xs : list X),
+    In_sublist xs nil ->
+    xs = nil.
+Proof.
+  intros [|x xs'] H1.
+  all: try reflexivity.
+  exfalso.
+  eapply H1.
+  left.
+  reflexivity.
+Qed.
+
 Instance In_sublist_PreOrder {X} :
   PreOrder (@In_sublist X).
 Proof.
@@ -152,7 +165,7 @@ Qed.
 Lemma In_sublist_dec {X} :
   (forall (x1 x2 : X), {x1 = x2} + {x1 <> x2}) ->
   forall (xs1 xs2 : list X),
-    {In_sublist xs1 xs2} + {~ In_sublist xs1 xs2}.
+    {In_sublist xs1 xs2} + {exists x, In x xs1 /\ ~ In x xs2}.
 Proof.
   intros H1 xs1 xs2.
   induction xs1 as [|x xs1' [IH|IH]].
@@ -172,19 +185,23 @@ Proof.
         exact H3.
     +
       right.
-      intros H3.
-      apply H2.
-      apply H3.
-      left.
-      reflexivity.
+      exists x.
+      split.
+      *
+        left.
+        reflexivity.
+      *
+        exact H2.
   -
     right.
-    intros H2.
-    apply IH.
-    intros x' H3.
-    apply H2.
-    right.
-    exact H3.
+    destruct IH as [x' [H2 H3]].
+    exists x'.
+    split.
+    +
+      right.
+      exact H2.
+    +
+      exact H3.
 Qed.
 
 Definition In_eq {X} : relation (list X) :=
@@ -318,5 +335,117 @@ Proof.
   }
   intros xs.
   eapply H1.
+  reflexivity.
+Qed.
+
+Definition In_sublist_order {X} : relation (@list X) :=
+  fun xs1 xs2 =>
+  In_sublist xs1 xs2 /\
+  exists x,
+    In x xs2 /\
+    ~ In x xs1.
+
+Proposition In_sublist_order_wf {X} :
+  (forall (x y : X), {x = y} + {x <> y}) ->
+  well_founded (@In_sublist_order X).
+Proof.
+  intros H1.
+  red.
+  assert (H2 :
+    forall (xs1 xs2 : list X),
+      In_sublist xs2 xs1 ->
+      Acc In_sublist_order xs2
+  ).
+  {
+    induction xs1 as [xs1 IH] using (well_founded_ind length_order_wf).
+    intros xs2 H2.
+    constructor.
+    intros xs3 [H3 H4].
+    destruct H4 as [x1 [H4 H5]].
+    eapply IH with
+      (y := filter (fun x2 => if H1 x1 x2 then false else true) xs1).
+    -
+      apply H2 in H4 as H6.
+      clear dependent xs3.
+      clear dependent xs2.
+      clear IH.
+      rename H6 into H2.
+      induction xs1 as [|x2 xs1' IH].
+      +
+        easy.
+      +
+        destruct H2 as [H2|H2].
+        *
+          subst x2.
+          simpl.
+          destruct (H1 x1 x1) as [H3|H3]; try easy.
+          clear H3.
+          destruct (in_dec H1 x1 xs1') as [H3|H3].
+          --
+             apply IH in H3.
+             red.
+             red in H3.
+             simpl.
+             lia.
+          --
+             assert (H4 :
+              filter (fun x2 => if H1 x1 x2 then false else true) xs1' = xs1'
+             ).
+             {
+               clear IH.
+               rename xs1' into xs1.
+               induction xs1 as [|x2 xs1' IH].
+               -
+                 reflexivity.
+               -
+                 simpl.
+                 destruct (H1 x1 x2) as [H4|H4].
+                 +
+                   exfalso.
+                   apply H3.
+                   left.
+                   congruence.
+                 +
+                   f_equal.
+                   apply IH.
+                   intros H5.
+                   apply H3.
+                   right.
+                   exact H5.
+             }
+             rewrite H4.
+             red.
+             simpl.
+             lia.
+        *
+          specialize (IH H2).
+          red in IH.
+          red.
+          simpl.
+          destruct (H1 x1 x2) as [H3|H3].
+          --
+             lia.
+          --
+             simpl.
+             lia.
+    -
+      intros x2 H6.
+      destruct (H1 x1 x2) as [H7|H7] eqn:H8.
+      +
+        subst x2.
+        contradiction.
+      +
+        apply filter_In.
+        split.
+        *
+          apply H2.
+          apply H3.
+          exact H6.
+        *
+          rewrite H8.
+          reflexivity.
+  }
+  intros xs.
+  eapply H2.
   reflexivity.
 Qed.

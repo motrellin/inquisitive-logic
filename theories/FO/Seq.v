@@ -1360,7 +1360,9 @@ Proposition Seq_CasariAnt_CasariSuc `{Signature} :
     ((pair ns (CasariAnt phi).|[sigma]) :: nil)
     ((pair ns (CasariSuc phi).|[sigma]) :: nil).
 Proof.
-  induction ns as [ns IH] using (well_founded_ind length_order_wf).
+  induction ns as [ns IH] using
+    (well_founded_ind (In_sublist_order_wf nat_eq_dec)).
+
   intros phi sigma H1.
   eapply Seq_Forall_r.
   -
@@ -1430,7 +1432,11 @@ Proof.
                          do 2 rewrite hsubst_comp.
                          eapply IH; try assumption.
                          simpl in H2.
-                         admit.
+                         split.
+                         ***
+                             exact H2.
+                         ***
+                             exact H3.
       *
         eapply Seq_Forall_l with (t := Var 0).
         --
@@ -1449,7 +1455,7 @@ Proof.
               inversion 1; reflexivity.
            ++
               reflexivity.
-Admitted.
+Qed.
 
 Corollary Seq_Casari `{Signature} :
   forall phi ns,
@@ -1494,3 +1500,5 @@ Proof.
   -
     contradiction.
 Qed.
+
+Print Assumptions support_valid_Casari_bd.
