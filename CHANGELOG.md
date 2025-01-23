@@ -1,5 +1,53 @@
 # Changelog
 
+## inqlog-v0.12.0 (2025-01-23)
+
+### New
+
+* Finished proof of `support_valid_Casari_bd` [Max Ole Elliger]
+
+  ToDo:
+  - The notion of boundness should be checked again.
+
+* Proved `In_sublist_dec` [Max Ole Elliger]
+
+* Proved `support_valid_Casari_bd` [Max Ole Elliger]
+
+* Defined `highest_occ_free_var` [Max Ole Elliger]
+
+* Proved `length_order_wf` [Max Ole Elliger]
+
+  By this, we get wellfounded induction on the length of a list.
+
+* Added some docs regarding theories/FO/Seq.v. [Max Ole Elliger]
+
+* Proved `Seq_mon` [Max Ole Elliger]
+
+* Added rule of cut. [Max Ole Elliger]
+
+* Added Proper-statements for `satisfaction_{forall,exists}` [Max Ole Elliger]
+
+### Changes
+
+* Rewrote cut-rule, almost finished the proof of `Seq_Casari` [Max Ole Elliger]
+
+* Proved some properties about `In_eq` regarding cons, app. [Max Ole Elliger]
+
+* Redefined satisfaction_{forall,exists} [Max Ole Elliger]
+
+  Now using List.Forall, List.Exists for definition
+
+* Changed order of universal quantified vars in Seq. [Max Ole Elliger]
+
+### Fix
+
+* Fixed the definition of `Casari` [Max Ole Elliger]
+
+  Previously, we defined `Casari : (var -> form) -> form`. Unfortunately,
+  this definition isn't useful, as one doesn't know the dependence from
+  the argument for Casari from their variable argument. This is now fixed
+  by using the free variable 0 all the time.
+
 ## inqlog-v0.11.0 (2025-01-11)
 
 ### New
