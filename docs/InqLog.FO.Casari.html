@@ -38,7 +38,7 @@
 </div>
 
 <div class="doc">
-<a id="lab31"></a><h1 class="section">The Casari Scheme</h1>
+<a id="lab32"></a><h1 class="section">The Casari Scheme</h1>
 
 </div>
 <div class="code">
@@ -76,7 +76,7 @@
 </div>
 
 <div class="doc">
-<a id="lab32"></a><h1 class="section">Some Casari Instances with atomic predicates</h1>
+<a id="lab33"></a><h1 class="section">Some Casari Instances with atomic predicates</h1>
 
 </div>
 <div class="code">
@@ -319,7 +319,7 @@
 </div>
 
 <div class="doc">
-<a id="lab33"></a><h1 class="section">The Casari "counter-example"</h1>
+<a id="lab34"></a><h1 class="section">The Casari "counter-example"</h1>
 
 </div>
 <div class="code">
@@ -329,7 +329,7 @@
 </div>
 
 <div class="doc">
-<a id="lab34"></a><h2 class="section">Signature and Syntax</h2>
+<a id="lab35"></a><h2 class="section">Signature and Syntax</h2>
 
 </div>
 <div class="code">
@@ -346,10 +346,27 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">&lt;{</span></a><a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:'iexists'_x"><span class="id" title="notation">iexists</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ccd20a8d62d2a7a8bdabffe68b63cfaf"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Casari.html#Casari_fails.Pred'"><span class="id" title="definition">Pred'</span></a> <a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:x_x_'..'_x"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Syntax.html#Var"><span class="id" title="constructor">Var</span></a> 1<a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:x_x_'..'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:x_x_'..'_x"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Syntax.html#Var"><span class="id" title="constructor">Var</span></a> 0<a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:x_x_'..'_x"><span class="id" title="notation">)</span></a><a class="idref" href="InqLog.FO.Syntax.html#ccd20a8d62d2a7a8bdabffe68b63cfaf"><span class="id" title="notation">)</span></a><a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">}&gt;</span></a>.<br/>
 
 <br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Remark</span> <a id="Casari_fails.highest_occ_free_var_IES" class="idref" href="#Casari_fails.highest_occ_free_var_IES"><span class="id" title="lemma">highest_occ_free_var_IES</span></a> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#highest_occ_free_var"><span class="id" title="definition">highest_occ_free_var</span></a> <a class="idref" href="InqLog.FO.Casari.html#Casari_fails.IES"><span class="id" title="definition">IES</span></a> 0.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">sigma1</span> <span class="id" title="var">sigma2</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">asimpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">f_equal</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">f_equal</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Logic.FunctionalExtensionality.html#functional_extensionality"><span class="id" title="lemma">functional_extensionality</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">cbv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span>; <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
 </div>
 
 <div class="doc">
-<a id="lab35"></a><h2 class="section">The Model</h2>
+<a id="lab36"></a><h2 class="section">The Model</h2>
 
 </div>
 <div class="code">
@@ -406,7 +423,7 @@
 </div>
 
 <div class="doc">
-<a id="lab36"></a><h2 class="section">Some state properties</h2>
+<a id="lab37"></a><h2 class="section">Some state properties</h2>
 
 </div>
 <div class="code">
@@ -730,7 +747,7 @@
 </div>
 
 <div class="doc">
-<a id="lab37"></a><h2 class="section">Support for <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#Casari_fails.IES"><span class="id" title="definition">IES</span></a></span></h2>
+<a id="lab38"></a><h2 class="section">Support for <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#Casari_fails.IES"><span class="id" title="definition">IES</span></a></span></h2>
 
 <div class="paragraph"> </div>
 
@@ -918,7 +935,7 @@
 </div>
 
 <div class="doc">
-<a id="lab38"></a><h2 class="section">Support for <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#CasariSuc"><span class="id" title="definition">CasariSuc</span></a></span> <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#Casari_fails.IES"><span class="id" title="definition">IES</span></a></span></h2>
+<a id="lab39"></a><h2 class="section">Support for <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#CasariSuc"><span class="id" title="definition">CasariSuc</span></a></span> <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#Casari_fails.IES"><span class="id" title="definition">IES</span></a></span></h2>
 
 </div>
 <div class="code">
@@ -1113,7 +1130,7 @@
 </div>
 
 <div class="doc">
-<a id="lab39"></a><h2 class="section">Support for <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#CasariImpl"><span class="id" title="definition">CasariImpl</span></a></span> <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#Casari_fails.IES"><span class="id" title="definition">IES</span></a></span></h2>
+<a id="lab40"></a><h2 class="section">Support for <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#CasariImpl"><span class="id" title="definition">CasariImpl</span></a></span> <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#Casari_fails.IES"><span class="id" title="definition">IES</span></a></span></h2>
 
 </div>
 <div class="code">
@@ -1304,7 +1321,7 @@
 </div>
 
 <div class="doc">
-<a id="lab40"></a><h2 class="section">Support for <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#CasariAnt"><span class="id" title="definition">CasariAnt</span></a></span> <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#Casari_fails.IES"><span class="id" title="definition">IES</span></a></span></h2>
+<a id="lab41"></a><h2 class="section">Support for <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#CasariAnt"><span class="id" title="definition">CasariAnt</span></a></span> <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#Casari_fails.IES"><span class="id" title="definition">IES</span></a></span></h2>
 
 </div>
 <div class="code">
@@ -1327,7 +1344,7 @@
 </div>
 
 <div class="doc">
-<a id="lab41"></a><h2 class="section">Support for <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#Casari"><span class="id" title="definition">Casari</span></a></span> <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#Casari_fails.IES"><span class="id" title="definition">IES</span></a></span></h2>
+<a id="lab42"></a><h2 class="section">Support for <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#Casari"><span class="id" title="definition">Casari</span></a></span> <span class="inlinecode"><a class="idref" href="InqLog.FO.Casari.html#Casari_fails.IES"><span class="id" title="definition">IES</span></a></span></h2>
 
 </div>
 <div class="code">

@@ -675,6 +675,32 @@
 &nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">try</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">IH2</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">reflexivity</span>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab15"></a><h2 class="section">Free Variables</h2>
+
+
+<div class="paragraph"> </div>
+
+   For later purposes, we need a predicate to indicate the
+   highest occuring free variable in a formula. For this, we
+   use substitutions as characteristic property.
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="highest_occ_free_var" class="idref" href="#highest_occ_free_var"><span class="id" title="definition">highest_occ_free_var</span></a> `{<a id="H:104" class="idref" href="#H:104"><span class="id" title="binder">Signature</span></a>}<br/>
+&nbsp;&nbsp;(<a id="phi:105" class="idref" href="#phi:105"><span class="id" title="binder">phi</span></a> : <a class="idref" href="InqLog.FO.Syntax.html#form"><span class="id" title="inductive">form</span></a>)<br/>
+&nbsp;&nbsp;(<a id="x:106" class="idref" href="#x:106"><span class="id" title="binder">x</span></a> : <span class="id" title="definition">var</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Prop</span> :=<br/>
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="sigma1:107" class="idref" href="#sigma1:107"><span class="id" title="binder">sigma1</span></a> <a id="sigma2:108" class="idref" href="#sigma2:108"><span class="id" title="binder">sigma2</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><span class="id" title="keyword">forall</span> <a id="y:109" class="idref" href="#y:109"><span class="id" title="binder">y</span></a>, <a class="idref" href="InqLog.FO.Syntax.html#y:109"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Peano.html#cb53cf0ee22c036a03b4a9281c68b5a3"><span class="id" title="notation">&lt;=</span></a> <a class="idref" href="InqLog.FO.Syntax.html#x:106"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Syntax.html#sigma1:107"><span class="id" title="variable">sigma1</span></a> <a class="idref" href="InqLog.FO.Syntax.html#y:109"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="InqLog.FO.Syntax.html#sigma2:108"><span class="id" title="variable">sigma2</span></a> <a class="idref" href="InqLog.FO.Syntax.html#y:109"><span class="id" title="variable">y</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#phi:105"><span class="id" title="variable">phi</span></a><span class="id" title="notation">.|[</span><a class="idref" href="InqLog.FO.Syntax.html#sigma1:107"><span class="id" title="variable">sigma1</span></a><span class="id" title="notation">]</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="InqLog.FO.Syntax.html#phi:105"><span class="id" title="variable">phi</span></a><span class="id" title="notation">.|[</span><a class="idref" href="InqLog.FO.Syntax.html#sigma2:108"><span class="id" title="variable">sigma2</span></a><span class="id" title="notation">]</span>.<br/>
 </div>
 </div>
 <div id="footer">
