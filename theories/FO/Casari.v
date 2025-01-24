@@ -1,4 +1,4 @@
-From InqLog Require Export Truth.
+From InqLog.FO Require Export Truth Seq.
 
 From Coq Require Import Nat Lia PeanoNat Classical_Prop.
 Import PeanoNat.Nat.
@@ -1119,3 +1119,157 @@ Module Casari_fails.
    *)
 
 End Casari_fails.
+
+(** * Bounded Casari *)
+
+Scheme Equality for nat.
+
+Proposition Seq_CasariAnt_CasariSuc `{Signature} :
+  forall ns (phi : form) sigma,
+    highest_occ_free_var phi 0 ->
+    Seq
+    ((pair ns (CasariAnt phi).|[sigma]) :: nil)
+    ((pair ns (CasariSuc phi).|[sigma]) :: nil).
+Proof.
+  induction ns as [ns IH] using
+    (well_founded_ind (In_sublist_order_wf nat_eq_dec)).
+
+  intros phi sigma H1.
+  eapply Seq_Forall_r.
+  -
+    left; reflexivity.
+  -
+    eapply Seq_Forall_l with (t := Var 0).
+    +
+      left; reflexivity.
+    +
+      exact I.
+    +
+      eapply Seq_Impl_l.
+      *
+        left; reflexivity.
+      *
+        reflexivity.
+      *
+        eapply Seq_Impl_r.
+        --
+           left; reflexivity.
+        --
+           intros ns' H2.
+           destruct (In_sublist_dec nat_eq_dec ns ns') as [H3|H3].
+           ++
+              eapply prop_4_6.
+              **
+                 left; reflexivity.
+              **
+                 right.
+                 right.
+                 left.
+                 autosubst.
+              **
+                 exact H3.
+           ++
+              apply Seq_weakening with
+                (ls1 := (pair ns (CasariAnt phi).|[sigma].|[ren (+1)]) :: nil)
+                (rs1 := (pair ns' (CasariSuc phi).|[sigma].|[ren (+1)]) :: nil).
+              **
+                 intros psi [H4|H4]; contradiction + subst psi.
+                 right.
+                 right.
+                 left.
+                 reflexivity.
+              **
+                 intros psi [H4|H4]; contradiction + subst psi.
+                 left.
+                 f_equal.
+                 asimpl.
+                 f_equal.
+                 apply H1.
+                 inversion 1; reflexivity.
+              **
+                 eapply Seq_mon.
+                 ---
+                     left; reflexivity.
+                 ---
+                     exact H2.
+                 ---
+                     eapply Seq_weakening with
+                       (ls1 := (pair ns' (CasariAnt phi).|[sigma].|[ren (+1)]) :: nil).
+                     +++
+                         firstorder.
+                     +++
+                         reflexivity.
+                     +++
+                         do 2 rewrite hsubst_comp.
+                         eapply IH; try assumption.
+                         simpl in H2.
+                         split.
+                         ***
+                             exact H2.
+                         ***
+                             exact H3.
+      *
+        eapply Seq_Forall_l with (t := Var 0).
+        --
+           left; reflexivity.
+        --
+           exact I.
+        --
+           eapply prop_4_6.
+           ++
+              left; reflexivity.
+           ++
+              left.
+              f_equal.
+              asimpl.
+              apply H1.
+              inversion 1; reflexivity.
+           ++
+              reflexivity.
+Qed.
+
+Corollary Seq_Casari `{Signature} :
+  forall phi ns,
+    highest_occ_free_var phi 0 ->
+    Seq nil ((pair ns (Casari phi)) :: nil).
+Proof.
+  intros phi ns H1.
+  eapply Seq_Impl_r.
+  -
+    left; reflexivity.
+  -
+    intros ns' H2.
+    eapply Seq_weakening with
+      (ls1 := (pair ns' (CasariAnt phi).|[ids] :: nil))
+      (rs1 := (pair ns' (CasariSuc phi).|[ids] :: nil)).
+    +
+      asimpl.
+      reflexivity.
+    +
+      intros psi [H3|H3]; contradiction + subst psi.
+      left.
+      asimpl; reflexivity.
+    +
+      eapply Seq_CasariAnt_CasariSuc.
+      exact H1.
+Qed.
+
+Corollary support_valid_Casari_bd `{S : Signature} :
+  forall phi ns,
+    highest_occ_free_var phi 0 ->
+    forall (M : @Model S) f a,
+      mapping_state f ns, a |= Casari phi.
+Proof.
+  intros phi ns H1 M f a.
+  pose proof (Seq_Casari phi ns H1) as H2.
+  apply soundness in H2.
+  specialize (H2 _ f a (Forall_nil _)).
+  apply Exists_exists in H2 as [psi [[H2|H2] H3]].
+  -
+    subst psi.
+    exact H3.
+  -
+    contradiction.
+Qed.
+
+Print Assumptions support_valid_Casari_bd.
