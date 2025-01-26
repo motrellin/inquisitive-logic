@@ -234,80 +234,38 @@ Qed.
 
 (** ** Truth of multiple formulas *)
 
-Fixpoint truth_multiple `{Model} (Phi : list form) :
-  World -> assignment -> Prop :=
+Definition truth_mult
+  `{Model}
+  (w : World)
+  (a : assignment) :
+  list form -> Prop :=
 
-  match Phi with
-  | nil =>
-      fun _ _ =>
-      True
-  | phi :: Phi' =>
-      fun w a =>
-      truth phi w a /\
-      truth_multiple Phi' w a
-  end.
+  List.Forall (fun phi => truth phi w a).
 
-Remark truth_multiple_support_multiple `{Model} :
+Remark truth_mult_support_mult `{Model} :
   forall Phi w a,
-    truth_multiple Phi w a <->
-    support_multiple Phi (singleton w) a.
-Proof.
-  induction Phi; firstorder.
-Qed.
-
-Fact truth_multiple_truth `{Model} :
-  forall phi w a,
-    truth_multiple (phi :: nil) w a <->
-    truth phi w a.
+    truth_mult w a Phi <->
+    support_mult (singleton w) a Phi.
 Proof.
   firstorder.
 Qed.
 
-Lemma truth_multiple_app `{Model} :
-  forall Phi Psi w a,
-    truth_multiple (Phi ++ Psi) w a <->
-    truth_multiple Phi w a /\
-    truth_multiple Psi w a.
-Proof.
-  induction Phi; firstorder.
-Qed.
+(** ** Truth of some formulas *)
 
-(** * Truth consequence *)
+Definition truth_some
+  `{Model}
+  (w : World)
+  (a : assignment) :
+  list form -> Prop :=
 
-Definition truth_conseq
-  `{S : Signature}
-  (cxt : list form)
-  (phi : form) :
-  Prop :=
+  List.Exists (fun phi => truth phi w a).
 
-  forall `(M : @Model S) w a,
-    truth_multiple cxt w a ->
-    truth phi w a.
-
-(** * Truth validity *)
-
-Definition truth_valid `{Signature} (phi : form) : Prop :=
-  truth_conseq nil phi.
-
-Remark truth_valid_charac `{S : Signature} :
-  forall phi,
-    (forall `(M : @Model S) w a, truth phi w a) <->
-    truth_valid phi.
+Remark truth_some_support_some `{Model} :
+  forall Phi w a,
+    truth_some w a Phi <->
+    support_some (singleton w) a Phi.
 Proof.
   firstorder.
-Qed.
-
-Example truth_valid_EM `{Signature} :
-  forall phi,
-    truth_valid (EM phi).
-Proof.
-  intros phi.
-  apply truth_valid_charac.
-  intros M w a.
-  unfold EM.
-  rewrite truth_Disj.
-  rewrite truth_Neg.
-  apply classic.
 Qed.
 
 (** * Truth-conditional formulas *)
@@ -480,7 +438,7 @@ Qed.
 
 Print Assumptions classical_truth_conditional.
 
-Lemma truth_subst `{Model} :
+Lemma truth_hsubst `{Model} :
   forall phi w a sigma,
     truth phi w (fun x => referent (sigma x) w a) <->
     truth phi.|[sigma] w a.
@@ -561,129 +519,4 @@ Proof.
       apply IH1 in H1.
       rewrite <- unnamed_helper_Support_24.
       exact H1.
-Qed.
-
-Corollary support_conseq_Forall_E_classical `{S : Signature} :
-  forall cxt phi t,
-    classical phi = true ->
-    support_conseq cxt <{forall phi}> ->
-    support_conseq cxt phi.|[t .: ids].
-Proof.
-  intros cxt phi t H1 H2 M s a H3.
-  specialize (H2 _ _ _ H3).
-  rewrite support_Forall in H2.
-  apply classical_truth_conditional.
-  -
-    rewrite classical_hsubst.
-    exact H1.
-  -
-    intros w H4.
-    specialize (H2 (referent t w a)).
-    apply truth_subst.
-    apply truth_conditional_other_direction with
-      (s := s).
-    +
-      assert (H5 :
-        (fun x => referent ((t .: ids) x) w a) =
-        referent t w a .: a
-      ).
-      {
-        apply functional_extensionality.
-        intros [|x']; autosubst.
-      }
-      rewrite H5.
-      exact H2.
-    +
-      exact H4.
-Qed.
-
-Corollary support_conseq_CRAA `{S : Signature} :
-  forall cxt phi,
-    classical phi = true ->
-    support_conseq (<{~ phi}> :: cxt) (Bot 0) ->
-    support_conseq cxt phi.
-Proof.
-  intros cxt phi H1 H2 M s a H3.
-  apply classical_truth_conditional; try exact H1.
-  intros w H4.
-  apply NNPP.
-  intros H5.
-  rewrite <- truth_Neg in H5.
-  enough (H6 : truth (Bot 0) w a).
-  {
-    rewrite truth_Bot in H6.
-    exact H6.
-  }
-  apply H2.
-  split.
-  -
-    exact H5.
-  -
-    eapply persistency_support_multiple.
-    +
-      exact H3.
-    +
-      apply singleton_substate.
-      exact H4.
-Qed.
-
-Lemma support_conseq_CD `{S : Signature} :
-  forall cxt phi psi,
-    let psi' :=
-      psi.|[ren (+1)]
-    in
-    support_conseq cxt <{forall phi \\/ psi'}> ->
-    support_conseq cxt <{(forall phi) \\/ psi}>.
-Proof.
-  intros cxt phi psi psi' H1 M s a H2.
-  destruct (classic (consistent s)) as [[w H3]|H3].
-  -
-    specialize (H1 _ _ _ H2).
-    rewrite support_Forall in H1.
-    assert (H4 :
-      forall i,
-        (s, i .: a |= phi) \/
-        (s, a |= psi)
-    ).
-    {
-      intros i.
-      specialize (H1 i) as [H1|H1].
-      -
-        left.
-        exact H1.
-      -
-        subst psi'.
-        right.
-        apply support_subst
-          with (w := w)
-          in H1.
-        +
-          exact H1.
-        +
-          easy.
-    }
-    rewrite support_Idisj.
-    rewrite support_Forall.
-    destruct (
-      classic (exists i, ~ (s, i .: a |= phi))
-    ) as [[i H5]|H5].
-    +
-      specialize (H4 i) as [H4|H4].
-      *
-        contradiction.
-      *
-        right.
-        exact H4.
-    +
-      left.
-      intros i.
-      apply NNPP.
-      intros H6.
-      apply H5.
-      exists i.
-      exact H6.
-  -
-    apply empty_state_not_consistent in H3.
-    rewrite H3.
-    apply empty_state_property.
 Qed.

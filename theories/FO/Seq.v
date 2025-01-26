@@ -527,24 +527,24 @@ Definition satisfaction
   (phi : lb_form) : Prop :=
   mapping_state f (fst phi), a |= snd phi.
 
-Lemma satisfaction_subst `{Model} :
+Lemma satisfaction_hsubst `{Model} :
   forall phi f a sigma w,
     (forall x, rigid_term (sigma x)) ->
     satisfaction f (fun x => referent (sigma x) w a) phi <->
     satisfaction f a (pair (fst phi) (snd phi).|[sigma]).
 Proof.
   intros.
-  apply support_subst.
+  apply support_hsubst.
   exact H1.
 Qed.
 
-Lemma satisfaction_subst_var `{Model} :
+Lemma satisfaction_hsubst_var `{Model} :
   forall phi f a sigma,
     satisfaction f (sigma >>> a) phi <->
     satisfaction f a (pair (fst phi) (snd phi).|[ren sigma]).
 Proof.
   intros.
-  apply support_subst_var.
+  apply support_hsubst_var.
 Qed.
 
 (** ** [satisfaction_forall] *)
@@ -573,7 +573,7 @@ Proof.
   all: eassumption.
 Qed.
 
-Lemma satisfaction_forall_subst_var `{Model} :
+Lemma satisfaction_forall_hsubst_var `{Model} :
   forall Phi f a sigma,
     satisfaction_forall Phi f (sigma >>> a) <->
     satisfaction_forall (map (fun phi => pair (fst phi) (snd phi).|[ren sigma]) Phi) f a.
@@ -592,10 +592,10 @@ Proof.
     all: split.
     all: try (apply IH; exact H3).
     +
-      apply satisfaction_subst_var in H2.
+      apply satisfaction_hsubst_var in H2.
       assumption.
     +
-      apply satisfaction_subst_var.
+      apply satisfaction_hsubst_var.
       assumption.
 Qed.
 
@@ -627,7 +627,7 @@ Proof.
   all: assumption.
 Qed.
 
-Lemma satisfaction_exists_subst_var `{Model} :
+Lemma satisfaction_exists_hsubst_var `{Model} :
   forall Phi s a sigma,
     satisfaction_exists Phi s (sigma >>> a) <->
     satisfaction_exists (map (fun phi => pair (fst phi) (snd phi).|[ren sigma]) Phi) s a.
@@ -645,12 +645,12 @@ Proof.
     all: apply Exists_cons in H2 as [H2|H2].
     all: try (right; eapply IH; eassumption).
     +
-      apply satisfaction_subst_var in H2.
+      apply satisfaction_hsubst_var in H2.
       left.
       exact H2.
     +
       left.
-      apply satisfaction_subst_var.
+      apply satisfaction_hsubst_var.
       exact H2.
 Qed.
 
@@ -1069,7 +1069,7 @@ Proof.
     apply Exists_exists in H2 as [psi [H5 H6]].
     apply in_map_iff in H5 as [chi [H7 H8]].
     subst psi.
-    apply satisfaction_subst_var in H6.
+    apply satisfaction_hsubst_var in H6.
 
     assert (H9 : chi = pair ns (Forall phi)).
     {
@@ -1080,7 +1080,7 @@ Proof.
     subst chi.
     apply H6.
   -
-    apply satisfaction_forall_subst_var.
+    apply satisfaction_forall_hsubst_var.
     exact H3.
 Qed.
 
@@ -1115,7 +1115,7 @@ Proof.
       asimpl in H5.
       specialize (H5 (referent t (f n) a)).
 
-      eapply support_subst with
+      eapply support_hsubst with
         (sigma := t .: ids)
         (w := f n).
       *
@@ -1160,7 +1160,7 @@ Proof.
       exists (referent t (f n) a).
       asimpl.
       asimpl in H5.
-      eapply support_subst with
+      eapply support_hsubst with
         (sigma := t .: ids)
         in H5.
       *
@@ -1199,7 +1199,7 @@ Proof.
   asimpl in H4.
   destruct H4 as [i H4].
   specialize (H2 M f (i .: a)).
-  apply satisfaction_exists_subst_var in H2.
+  apply satisfaction_exists_hsubst_var in H2.
   -
     exact H2.
   -
@@ -1208,7 +1208,7 @@ Proof.
     +
       exact H4.
     +
-      apply satisfaction_forall_subst_var.
+      apply satisfaction_forall_hsubst_var.
       exact H3.
 Qed.
 

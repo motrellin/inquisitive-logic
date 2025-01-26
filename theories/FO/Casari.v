@@ -1,4 +1,4 @@
-From InqLog.FO Require Export Truth Seq.
+From InqLog.FO Require Export Consequence Seq.
 
 From Coq Require Import Nat Lia PeanoNat Classical_Prop.
 Import PeanoNat.Nat.
@@ -65,6 +65,7 @@ Module Casari_with_atoms.
   Theorem support_valid_Casari_DNA :
     support_valid (Casari DNA).
   Proof.
+    apply support_valid_charac_support_conseq.
     apply support_conseq_Impl_I.
     apply support_conseq_Forall_I.
     apply support_conseq_Impl_I.
@@ -135,6 +136,7 @@ Module Casari_with_atoms.
       rewrite <- app_nil_l with
         (l := map (fun psi => psi.|[ren (+1)]) (CasariSuc DNA :: nil)).
       eapply support_conseq_weakening_1.
+      apply support_valid_charac_support_conseq.
       apply support_valid_DNE_Pred.
   Qed.
 
@@ -240,11 +242,13 @@ Module Casari_with_atoms.
   Corollary support_valid_Casari_Atomic :
     support_valid (Casari Atomic).
   Proof.
+    apply support_valid_charac_support_conseq.
     apply support_conseq_trans with
       (cxt2 := Casari DNA :: nil).
     -
       intros psi [H1|H1]; try easy.
       subst psi.
+      apply support_valid_charac_support_conseq.
       exact support_valid_Casari_DNA.
     -
       exact support_conseq_Casari_DNA_Casari_Atomic.
@@ -1100,16 +1104,15 @@ Module Casari_fails.
       apply counter_state_contains_all_ltb.
     -
       unfold Casari in H1.
-      apply support_valid_Impl_conseq in H1.
-      apply H1.
-      split.
+      eapply H1.
       +
+        reflexivity.
+      +
+        fold support.
         apply support_CasariAnt_IES.
-      +
-        exact I.
     Unshelve.
-    exact 24.
     exact (fun _ => 25).
+    exact 24.
   Qed.
 
   Print Assumptions not_support_valid_Casari_IES.

@@ -439,7 +439,7 @@ Qed.
 
 (** ** Support for lifted formulas *)
 
-Lemma support_subst `{Model} :
+Lemma support_hsubst `{Model} :
   forall phi s a sigma w,
     (forall x, rigid_term (sigma x)) ->
     (s, (fun x => referent (sigma x) w a) |= phi) <->
@@ -550,7 +550,7 @@ Proof.
         exact H1.
 Qed.
 
-Remark support_subst_var `{Model} :
+Remark support_hsubst_var `{Model} :
   forall phi s a sigma,
     (s, (sigma >>> a) |= phi) <->
     (s, a |= phi.|[ren sigma]).
@@ -558,7 +558,7 @@ Proof.
   intros phi s a sigma.
   destruct (classic (consistent s)) as [[w H1]|H1].
   -
-    pose proof support_subst as H2.
+    pose proof support_hsubst as H2.
     specialize H2 with
       (phi := phi)
       (s := s)
@@ -576,587 +576,195 @@ Qed.
 
 (** ** Support for multiple formulas *)
 
-Fixpoint support_multiple `{Model} (Phi : list form) :
-  state -> assignment -> Prop :=
+Definition support_mult
+  `{Model}
+  (s : state)
+  (a : assignment) :
+  list form -> Prop :=
 
-  match Phi with
-  | nil =>
-      fun _ _ =>
-      True
-  | phi :: Phi' =>
-      fun s a =>
-      (s, a |= phi) /\
-      support_multiple Phi' s a
-  end.
+  List.Forall (fun phi => s,a |= phi).
 
-Remark support_multiple_charac `{Model} :
-  forall Phi s a,
-    (forall phi, In phi Phi -> s, a |= phi) <->
-    support_multiple Phi s a.
-Proof.
-  induction Phi as [|phi Phi' IH].
-  all: intros s a.
-  -
-    firstorder.
-  -
-    split.
-    +
-      intros H1.
-      split.
-      *
-        apply H1.
-        left.
-        reflexivity.
-      *
-        apply IH.
-        intros phi' H2.
-        apply H1.
-        right.
-        exact H2.
-    +
-      intros [H1 H2] phi' [H3|H3].
-      *
-        subst phi'.
-        exact H1.
-      *
-        apply IH.
-        --
-           exact H2.
-        --
-           exact H3.
-Qed.
-
-Fact support_multiple_support `{Model} :
+Fact support_mult_support `{Model} :
   forall phi s a,
-    support_multiple (phi :: nil) s a <->
+    support_mult s a (phi :: nil) <->
     (s, a |= phi).
 Proof.
-  firstorder.
-Qed.
-
-Lemma support_multiple_app `{Model} :
-  forall Phi Psi s a,
-    support_multiple (Phi ++ Psi) s a <->
-    support_multiple Phi s a /\
-    support_multiple Psi s a.
-Proof.
-  induction Phi; firstorder.
-Qed.
-
-Lemma support_multiple_lift `{Model} :
-  forall Phi s a sigma,
-    support_multiple Phi s (sigma >>> a) <->
-    support_multiple (map (fun phi => phi.|[ren sigma]) Phi) s a.
-Proof.
-  induction Phi as [|phi Phi' IH].
-  -
-    reflexivity.
-  -
-    intros s a sigma.
-    split.
-    all: intros [H1 H2].
-    +
-      split.
-      *
-        apply support_subst_var in H1.
-        exact H1.
-      *
-        apply IH.
-        exact H2.
-    +
-      split.
-      *
-        apply support_subst_var.
-        exact H1.
-      *
-        apply IH.
-        exact H2.
-Qed.
-
-Proposition persistency_support_multiple `{Model} :
-  forall s t a Phi,
-    support_multiple Phi s a ->
-    substate t s ->
-    support_multiple Phi t a.
-Proof.
-  induction Phi; firstorder using persistency.
-Qed.
-
-(** * Support consequence *)
-
-Definition support_conseq
-  `{S : Signature}
-  (cxt : list form)
-  (phi : form) :
-  Prop :=
-
-  forall `(M : @Model S) s a,
-    support_multiple cxt s a ->
-    s, a |= phi.
-
-Lemma support_conseq_in `{Signature} :
-  forall cxt phi,
-    In phi cxt ->
-    support_conseq cxt phi.
-Proof.
-  intros cxt phi H1 M s a H2.
-  eapply support_multiple_charac.
-  -
-    exact H2.
-  -
-    exact H1.
-Qed.
-
-Lemma support_conseq_refl `{S : Signature} :
-  forall phi,
-    support_conseq (phi :: nil) phi.
-Proof.
-  intros phi.
-  apply support_conseq_in.
-  left.
-  reflexivity.
-Qed.
-
-Lemma support_conseq_trans `{Signature} :
-  forall cxt1 cxt2 phi,
-    (forall psi, In psi cxt2 -> support_conseq cxt1 psi) ->
-    support_conseq cxt2 phi ->
-    support_conseq cxt1 phi.
-Proof.
-  intros cxt1 cxt2 phi H1 H2 M s a H3.
-  apply H2.
-  apply support_multiple_charac.
-  intros psi H4.
-  apply H1.
-  -
-    exact H4.
-  -
-    exact H3.
-Qed.
-
-Lemma support_conseq_weakening_nil `{Signature} :
-  forall cxt phi,
-    support_conseq nil phi ->
-    support_conseq cxt phi.
-Proof.
-  intros cxt phi H1 M s a H2.
-  apply H1.
-  exact I.
-Qed.
-
-Lemma support_conseq_weakening_cons_hd `{Signature} :
-  forall cxt phi,
-    support_conseq (phi :: cxt) phi.
-Proof.
-  intros cxt phi.
-  apply support_conseq_in.
-  left.
-  reflexivity.
-Qed.
-
-Lemma support_conseq_weakening_cons_tl `{Signature} :
-  forall cxt phi psi,
-    support_conseq cxt psi ->
-    support_conseq (phi :: cxt) psi.
-Proof.
-  intros cxt phi psi H1 M s a [_ H3].
-  apply H1.
-  exact H3.
-Qed.
-
-Lemma support_conseq_weakening_1 `{S : Signature} :
-  forall cxt1 cxt2 phi,
-    support_conseq cxt1 phi ->
-    support_conseq (cxt1 ++ cxt2) phi.
-Proof.
-  intros cxt1 cxt2 phi H1 M s a H2.
-  apply support_multiple_app in H2 as [H2 _].
-  apply H1.
-  exact H2.
-Qed.
-
-Lemma support_conseq_weakening_2 `{S : Signature} :
-  forall cxt1 cxt2 phi,
-    support_conseq cxt2 phi ->
-    support_conseq (cxt1 ++ cxt2) phi.
-Proof.
-  intros cxt1 cxt2 phi H1 M s a H2.
-  apply support_multiple_app in H2 as [_ H2].
-  apply H1.
-  exact H2.
-Qed.
-
-Lemma support_conseq_Bot_I `{Signature} :
-  forall cxt phi,
-    support_conseq cxt phi ->
-    support_conseq cxt <{~ phi}> ->
-    support_conseq cxt (Bot 0).
-Proof.
-  intros cxt phi H1 H2 M s a H3 w.
-  specialize (H1 _ _ _ H3).
-  specialize (H2 _ _ _ H3).
-  destruct (s w) eqn:H4; try reflexivity.
-  exfalso.
-  rewrite support_Neg in H2.
-  apply H2.
-  exists s.
-  repeat split.
-  -
-    exists w.
-    exact H4.
-  -
-    reflexivity.
-  -
-    exact H1.
-Qed.
-
-Lemma support_conseq_Bot_E `{S : Signature} :
-  forall cxt phi,
-    support_conseq cxt (Bot 0) ->
-    support_conseq cxt phi.
-Proof.
-  intros cxt phi H1 M s a H2.
-  specialize (H1 M s a H2).
-  enough (H3 : state_eq s empty_state).
-  {
-    rewrite H3.
-    apply empty_state_property.
-  }
-  rewrite support_Bot in H1.
-  intros w.
-  rewrite H1.
-  reflexivity.
-Qed.
-
-Lemma support_conseq_Impl_I `{S : Signature} :
-  forall cxt phi psi,
-    support_conseq (phi :: cxt) psi ->
-    support_conseq cxt <{phi -> psi}>.
-Proof.
-  intros cxt phi psi H1 M s a H2.
-  intros t H3 H4.
-  apply H1.
-  split.
-  all: eauto using persistency_support_multiple.
-Qed.
-
-Lemma support_conseq_Impl_E `{S : Signature} :
-  forall cxt phi psi,
-    support_conseq cxt phi ->
-    support_conseq cxt <{phi -> psi}> ->
-    support_conseq cxt psi.
-Proof.
-  intros cxt phi psi H1 H2 M s a H3.
-  specialize (H1 _ _ _ H3).
-  specialize (H2 _ _ _ H3).
-  rewrite support_Impl in H2.
-  apply H2.
-  -
-    reflexivity.
-  -
-    apply H1.
-Qed.
-
-Lemma support_conseq_Conj_I `{S : Signature} :
-  forall cxt phi psi,
-    support_conseq cxt phi ->
-    support_conseq cxt psi ->
-    support_conseq cxt <{phi /\ psi}>.
-Proof.
-  firstorder.
-Qed.
-
-Lemma support_conseq_Conj_E1 `{S : Signature} :
-  forall cxt phi psi,
-    support_conseq cxt <{phi /\ psi}> ->
-    support_conseq cxt phi.
-Proof.
-  firstorder.
-Qed.
-
-Lemma support_conseq_Conj_E2 `{S : Signature} :
-  forall cxt phi psi,
-    support_conseq cxt <{phi /\ psi}> ->
-    support_conseq cxt psi.
-Proof.
-  firstorder.
-Qed.
-
-Lemma support_conseq_Idisj_I1 `{S : Signature} :
-  forall cxt phi psi,
-    support_conseq cxt phi ->
-    support_conseq cxt <{phi \\/ psi}>.
-Proof.
-  firstorder.
-Qed.
-
-Lemma support_conseq_Idisj_I2 `{S : Signature} :
-  forall cxt phi psi,
-    support_conseq cxt psi ->
-    support_conseq cxt <{phi \\/ psi}>.
-Proof.
-  firstorder.
-Qed.
-
-Lemma support_conseq_Idisj_E `{S : Signature} :
-  forall cxt phi psi chi,
-    support_conseq cxt <{phi \\/ psi}> ->
-    support_conseq (phi :: cxt) chi ->
-    support_conseq (psi :: cxt) chi ->
-    support_conseq cxt chi.
-Proof.
-  intros cxt phi psi chi H1 H2 H3 M s a H4.
-  specialize (H1 _ _ _ H4).
-  rewrite support_Idisj in H1.
-  destruct H1 as [H1|H1].
-  -
-    apply H2.
-    split.
-    +
-      exact H1.
-    +
-      exact H4.
-  -
-    apply H3.
-    split.
-    +
-      exact H1.
-    +
-      exact H4.
-Qed.
-
-Lemma support_conseq_Forall_I `{S : Signature} :
-  forall cxt phi,
-    support_conseq (map (fun psi => psi.|[ren (+1)]) cxt) phi ->
-    support_conseq cxt <{forall phi}>.
-Proof.
-  intros cxt phi H1 M s a H2 i.
-  apply H1.
-  apply support_multiple_lift.
-  exact H2.
-Qed.
-
-Lemma support_conseq_Forall_E_rigid `{Signature} :
-  forall cxt phi t,
-    rigid_term t ->
-    support_conseq cxt <{forall phi}> ->
-    support_conseq cxt phi.|[t/].
-Proof.
-  intros cxt phi t H1 H2 M s a H3.
-  specialize (H2 _ _ _ H3).
-  rewrite support_Forall in H2.
-  destruct (classic (consistent s)) as [[w H4]|H4].
-  -
-    specialize (H2 (referent t w a)).
-    apply support_subst with
-      (phi := phi)
-      (s := s)
-      (a := a)
-      (sigma := (t .: ids))
-      (w := w).
-    +
-      intros [|x']; easy.
-    +
-      assert (H5 :
-        (fun x => referent ((t .: ids) x) w a) =
-        referent t w a .: a
-      ).
-      {
-        apply functional_extensionality.
-        intros [|x']; autosubst.
-      }
-      rewrite H5.
-      exact H2.
-  -
-    apply empty_state_not_consistent in H4.
-    rewrite H4.
-    apply empty_state_property.
-Qed.
-
-Lemma support_conseq_Iexists_I `{S : Signature} :
-  forall cxt phi t,
-    rigid_term t ->
-    support_conseq cxt phi.|[t .: ids] ->
-    support_conseq cxt <{iexists phi}>.
-Proof.
-  intros cxt phi t H1 H2 M s a H3.
-  specialize (H2 _ _ _ H3).
-  destruct (classic (consistent s)) as [[w H4]|H4].
-  -
-    exists (referent t w a).
-    apply support_subst with
-      (phi := phi)
-      (s := s)
-      (a := a)
-      (sigma := (t .: ids))
-      (w := w)
-      in H2.
-    +
-      assert (H5 :
-        (fun x => referent ((t .: ids) x) w a) =
-        referent t w a .: a
-      ).
-      {
-        apply functional_extensionality.
-        intros [|x']; autosubst.
-      }
-      rewrite H5 in H2.
-      exact H2.
-    +
-      intros [|x']; easy.
-  -
-    apply empty_state_not_consistent in H4.
-    rewrite H4.
-    apply empty_state_property.
-Qed.
-
-Lemma support_conseq_Iexists_E `{S : Signature} :
-  forall cxt phi psi,
-    support_conseq cxt <{iexists phi}> ->
-    support_conseq (phi :: map (fun chi => chi.|[ren (+1)]) cxt) psi.|[ren (+1)] ->
-    support_conseq cxt psi.
-Proof.
-  intros cxt phi psi H1 H2 M s a H3.
-  specialize (H1 _ _ _ H3) as [i H4].
-  enough (H6 : s, i .: a |= psi.|[ren (+1)]).
-  {
-    apply support_subst_var in H6.
-    exact H6.
-  }
-  apply H2.
-  split.
-  -
-    exact H4.
-  -
-    apply support_multiple_lift.
-    exact H3.
-Qed.
-
-Lemma support_conseq_Idisj_split `{S : Signature} :
-  forall cxt phi psi chi,
-    classical phi = true ->
-    support_conseq cxt <{phi -> psi \\/ chi}> ->
-    support_conseq cxt <{(phi -> psi) \\/ (phi -> chi)}>.
-Proof.
-Admitted.
-
-Lemma support_conseq_Iexists_split `{S : Signature} :
-  forall cxt phi psi,
-    classical phi = true ->
-    support_conseq cxt <{phi -> iexists psi}> ->
-    let phi' :=
-      phi.|[ren (+1)]
-    in
-    support_conseq cxt <{iexists phi' -> psi}>.
-Proof.
-Admitted.
-
-Lemma support_conseq_KF `{S : Signature} :
-  forall cxt phi,
-    support_conseq cxt <{forall ~ ~ phi}> ->
-    support_conseq cxt <{~ ~ forall phi}>.
-Proof.
-Admitted.
-
-(** * Support validity *)
-
-Definition support_valid `{Signature} (phi : form) : Prop :=
-  support_conseq nil phi.
-
-Remark support_valid_charac `{S : Signature} :
-  forall phi,
-    (forall `(M : @Model S) s a, s, a |= phi) <->
-    support_valid phi.
-Proof.
-  firstorder.
-Qed.
-
-Definition support_multiple_valid `{S: Signature} (Phi : list form) : Prop :=
-  forall `(M : @Model S) s a phi,
-    In phi Phi ->
-    s, a |= phi.
-
-Lemma support_multiple_valid_nil `{S : Signature} :
-  support_multiple_valid nil.
-Proof.
-  firstorder.
-Qed.
-
-Lemma support_multiple_valid_cons `{S : Signature} :
-  forall phi Phi',
-    support_multiple_valid (phi :: Phi') <->
-    support_valid phi /\
-    support_multiple_valid Phi'.
-Proof.
-  intros phi Phi'.
-  rewrite <- support_valid_charac.
+  intros phi s a.
   split.
   -
     intros H1.
-    split.
+    eapply Forall_forall in H1.
     +
-      intros M s a.
-      apply H1.
-      left.
-      reflexivity.
+      exact H1.
     +
-      intros M s a phi' H2.
-      apply H1.
-      right.
-      exact H2.
+      left; reflexivity.
   -
-    intros [H1 H2].
-    intros M s a phi' [H3|H3].
-    +
-      subst phi'.
-      apply H1.
-    +
-      apply H2.
-      exact H3.
+    intros H1.
+    repeat constructor + assumption.
 Qed.
 
-Remark support_valid_conseq_valid `{Signature} :
-  forall Phi psi,
-    support_multiple_valid Phi ->
-    support_conseq Phi psi ->
-    support_valid psi.
+Lemma support_mult_hsubst_var `{Model} :
+  forall Phi s a sigma,
+    support_mult s (sigma >>> a) Phi <->
+    support_mult s a (map (fun phi => phi.|[ren sigma]) Phi).
 Proof.
   induction Phi as [|phi Phi' IH].
-  all: intros psi H1 H2.
+  all: intros s a sigma.
   -
-    intros M s a.
-    apply H2.
+    split.
+    all: intro.
+    all: constructor.
   -
-    apply support_multiple_valid_cons in H1 as [H11 H12].
-    apply IH.
+    split.
+    all: intros H1.
+    all: apply Forall_cons_iff in H1 as [H1 H2].
     +
-      exact H12.
+      constructor.
+      *
+        apply support_hsubst_var in H1.
+        exact H1.
+      *
+        apply IH.
+        exact H2.
     +
-      intros M s a H3.
-      apply H2.
-      split.
+      constructor.
       *
-        apply H11.
-        exact I.
+        apply support_hsubst_var.
+        exact H1.
       *
-        exact H3.
+        apply IH.
+        exact H2.
 Qed.
 
-Remark support_valid_Impl_conseq `{S : Signature} :
-  forall phi psi,
-    support_valid <{phi -> psi}> ->
-    support_conseq (phi :: nil) psi.
+Proposition persistency_support_mult `{Model} :
+  forall s t a Phi,
+    support_mult s a Phi ->
+    substate t s ->
+    support_mult t a Phi.
 Proof.
-  intros phi psi H1 M s a [H2 _].
-  specialize (H1 M s a).
-  rewrite support_Impl in H1.
-  eapply H1.
+  induction Phi as [|phi Phi' IH].
   -
-    exact I.
+    intros; constructor.
   -
-    reflexivity.
+    intros H1 H3.
+    apply Forall_cons_iff in H1 as [H1 H2].
+    constructor.
+    +
+      eapply persistency; eassumption.
+    +
+      eapply IH; eassumption.
+Qed.
+
+(** ** Support for some formulas *)
+
+Definition support_some
+  `{Model}
+  (s : state)
+  (a : assignment) :
+  list form -> Prop :=
+
+  List.Exists (fun phi => s,a |= phi).
+
+Fact support_some_support `{Model} :
+  forall phi s a,
+    support_some s a (phi :: nil) <->
+    (s, a |= phi).
+Proof.
+  split.
+  all: intros H1.
   -
-    exact H2.
+    apply Exists_cons in H1 as [H1|H1]; easy.
+  -
+    constructor.
+    exact H1.
+Qed.
+
+Lemma support_some_hsubst_var `{Model} :
+  forall Phi s a sigma,
+    support_some s (sigma >>> a) Phi <->
+    support_some s a (map (fun phi => phi.|[ren sigma]) Phi).
+Proof.
+  induction Phi as [|phi Phi' IH].
+  all: intros s a sigma.
+  -
+    split.
+    all: inversion 1.
+  -
+    split.
+    all: simpl.
+    all: intros H1.
+    all: apply Exists_cons.
+    all: apply Exists_cons in H1 as [H1|H1].
+    +
+      left.
+      apply support_hsubst_var in H1.
+      exact H1.
+    +
+      right.
+      apply IH.
+      exact H1.
+    +
+      left.
+      apply support_hsubst_var.
+      exact H1.
+    +
+      right.
+      apply IH.
+      exact H1.
+Qed.
+
+Proposition persistency_support_some `{Model} :
+  forall s t a Phi,
+    support_some s a Phi ->
+    substate t s ->
+    support_some t a Phi.
+Proof.
+  induction Phi as [|phi Phi' IH].
+  all: intros H1 H2.
+  -
+    inversion H1.
+  -
+    apply Exists_cons in H1 as [H1|H1].
+    +
+      left.
+      eapply persistency; eassumption.
+    +
+      right.
+      apply IH; assumption.
+Qed.
+
+(** * Support validity *)
+
+Definition support_valid `{S : Signature} (phi : form) :=
+  forall `(M : @Model S) s a,
+    s, a |= phi.
+
+Definition support_valid_mult `{Signature} :
+  list form -> Prop :=
+
+  List.Forall support_valid.
+
+Remark support_valid_mult_charac `{S : Signature} :
+  forall Phi,
+    (forall `(M : @Model S) s a, support_mult s a Phi) <->
+    support_valid_mult Phi.
+Proof.
+  intros Phi.
+  split.
+  -
+    intros H1.
+    apply Forall_forall.
+    intros phi H2 M s a.
+    eapply Forall_forall in H1; eassumption.
+  -
+    intros H1 M s a.
+    apply Forall_forall.
+    intros phi H2.
+    eapply Forall_forall in H1.
+    +
+      apply H1.
+    +
+      exact H2.
 Qed.
 
 (**
@@ -1167,7 +775,7 @@ Example support_valid_DNE_Pred `{Signature} :
   forall p args,
     support_valid <{DNE (Pred p args)}>.
 Proof.
-  intros p args M s1 a _ s2 H1 H2 w1 H3.
+  intros p args M s1 a s2 H1 H2 w1 H3.
   rewrite support_Neg in H2.
 
   destruct (
