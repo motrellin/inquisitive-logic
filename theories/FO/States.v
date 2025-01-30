@@ -9,7 +9,13 @@ From Coq Require Export Bool.
    set of worlds in a model.
  *)
 
-Definition state `{Model} : Type := World -> bool.
+Record state `{Model} : Type :=
+  {
+    state_fun : World -> bool;
+    state_Proper :: Proper (equiv ==> eq) state_fun
+  }.
+
+Coercion state_fun : state >-> Funclass.
 
 (**
    As we typically just care whether two states behave the
@@ -44,35 +50,52 @@ Qed.
 (** * Example states *)
 (** ** The empty state *)
 
-Definition empty_state `{Model} : state := fun _ => false.
+Program Definition empty_state `{Model} : state :=
+  {|
+    state_fun := fun _ => false
+  |}.
+
+Next Obligation.
+  easy.
+Qed.
 
 (** ** Singleton states *)
 
-Definition singleton `{Model} (w : World) : state :=
-  fun w' =>
-  if World_deceq w' w
-  then true
-  else false.
+Program Definition singleton `{Model} (w : World) : state :=
+  {|
+    state_fun :=
+      fun w' =>
+      if w' == w
+      then true
+      else false
+   |}.
+
+Next Obligation.
+  intros w1 w2 H1.
+  destruct (w1 == w) as [H2|H2].
+  all: destruct (w2 == w) as [H3|H3].
+  all: reflexivity + rewrite H1 in H2; contradiction.
+Qed.
 
 Proposition singleton_true `{Model} :
   forall w w',
     singleton w w' = true <->
-    w' = w.
+    w' == w.
 Proof.
   intros w w'.
-  unfold singleton.
-  destruct (World_deceq w' w) as [H1|H1].
+  simpl.
+  destruct (w' == w) as [H1|H1].
   all: easy.
 Qed.
 
 Proposition singleton_false `{Model} :
   forall w w',
     singleton w w' = false <->
-    w' <> w.
+    w' =/= w.
 Proof.
   intros w w'.
-  unfold singleton.
-  destruct (World_deceq w' w) as [H1|H1].
+  simpl.
+  destruct (w' == w) as [H1|H1].
   all: easy.
 Qed.
 
@@ -87,9 +110,16 @@ Qed.
 
 (** ** Complement states *)
 
-Definition complement `{Model} (s : state) : state :=
-  fun w =>
-  negb (s w).
+Program Definition complement `{Model} (s : state) : state :=
+  {|
+    state_fun := fun w => negb (s w)
+  |}.
+
+Next Obligation.
+  intros w1 w2 H1.
+  rewrite H1.
+  reflexivity.
+Qed.
 
 Fact complement_true `{Model} :
   forall s w,
@@ -117,6 +147,7 @@ Proof.
   apply negb_involutive.
 Qed.
 
+(*
 (** ** Mapping states *)
 
 Definition mapping_state
@@ -158,23 +189,38 @@ Proof.
   all: apply H1.
   all: exact H3.
 Qed.
-
+ *)
 (** ** Excluding states *)
 
-Definition excluding_state `{Model} (s : state) (w : World) : state :=
-  fun w' =>
-  if World_deceq w w'
-  then false
-  else s w'.
+Program Definition excluding_state `{Model} (s : state) (w : World) : state :=
+  {|
+    state_fun :=
+      fun w' =>
+      if w == w'
+      then false
+      else s w'
+  |}.
+
+Next Obligation.
+  intros w1 w2 H1.
+  destruct (w == w1) as [H2|H2].
+  all: destruct (w == w2) as [H3|H3].
+  all: rewrite H1 in *; reflexivity + contradiction.
+Qed.
 
 Lemma unnamed_helper_States_1 `{Model} :
-  forall s w,
+  forall (s : state) w,
     s w = false ->
     state_eq (excluding_state s w) s.
 Proof.
   intros s w H1 w'.
-  unfold excluding_state.
-  destruct (World_deceq w w'); congruence.
+  simpl.
+  destruct (w == w') as [H2|H2].
+  -
+    rewrite H2 in H1.
+    congruence.
+  -
+    reflexivity.
 Qed.
 
 (** * Consistent states *)
@@ -305,7 +351,7 @@ Proof.
       symmetry.
       apply singleton_false.
       intros H4.
-      subst w'.
+      rewrite H4 in H3.
       congruence.
   -
     left.
@@ -313,6 +359,7 @@ Proof.
     destruct (t w') eqn:H3; try reflexivity.
     apply H1 in H3 as H4.
     apply singleton_true in H4.
+    rewrite H4 in H3.
     congruence.
 Qed.
 
@@ -323,7 +370,8 @@ Lemma singleton_substate `{Model} :
 Proof.
   intros s w H1 w' H2.
   apply singleton_true in H2.
-  congruence.
+  rewrite H2.
+  exact H1.
 Qed.
 
 Lemma substate_complement `{Model} :
@@ -351,11 +399,11 @@ Lemma substate_excluding_state `{Model} :
     substate (excluding_state s w) s.
 Proof.
   intros s w w' H1.
-  unfold excluding_state in H1.
-  destruct (World_deceq w w') as [H2|H2]; easy.
+  simpl in H1.
+  destruct (w == w') as [H2|H2]; easy.
 Qed.
 
-
+(*
 Lemma substate_mapping_state `{Model} :
   forall f ns1 ns2,
     (forall n,
@@ -475,4 +523,236 @@ Proof.
     rewrite H1.
     apply substate_mapping_state.
     exact H2.
+Qed.
+ *)
+
+Program Definition restricted_Model `{M : Model} (s : state) : Model :=
+  {|
+    World := {w : World | s w = true};
+    World_Setoid :=
+      {|
+        equiv := fun x y => (proj1_sig x == proj1_sig y)%type
+      |};
+    Individual := Individual;
+    Individual_inh := Individual_inh;
+    Individual_deceq := Individual_deceq;
+    PInterpretation :=
+      fun w =>
+      PInterpretation (proj1_sig w);
+    FInterpretation :=
+      fun w =>
+      FInterpretation (proj1_sig w)
+ |}.
+
+Next Obligation.
+  constructor.
+  -
+    intros x.
+    reflexivity.
+  -
+    intros x y H1.
+    symmetry. exact H1.
+  -
+    intros x y z H1 H2.
+    rewrite H1.
+    exact H2.
+Qed.
+
+Next Obligation.
+  intros x y.
+  simpl.
+  apply equiv_dec.
+Qed.
+
+Next Obligation.
+  repeat intro.
+  apply PInterpretation_Proper.
+  assumption.
+Qed.
+
+Next Obligation.
+  repeat intro.
+  apply FInterpretation_Proper.
+  assumption.
+Qed.
+
+Next Obligation.
+  apply rigidity.
+  assumption.
+Qed.
+
+Program Definition restricted_state
+  `{Model}
+  (s t : state) :
+  @state _ (restricted_Model s) :=
+
+  {|
+    state_fun := fun w =>
+      s (proj1_sig w) && t (proj1_sig w)
+  |}.
+
+Next Obligation.
+  intros w1 w2 H1.
+  simpl.
+  rewrite H1.
+  reflexivity.
+Qed.
+
+Definition unrestricted_state
+  `{Model}
+  (s : state)
+  (t : @state _ (restricted_Model s)) : state.
+Proof.
+  unshelve econstructor.
+  -
+    intros w.
+    destruct (s w) eqn:H1.
+    +
+      exact (t (exist _ _ H1)).
+    +
+      exact false.
+  -
+    intros w1 w2 H1.
+    simpl.
+    set (f :=
+      (
+        fun (b' : bool) (w : World) =>
+        (
+          if b' as b return (s w = b -> bool)
+          then fun H2 : s w = true =>
+            t (exist (fun w : World => s w = true) w H2)
+          else fun _ : s w = false =>
+            false
+        )
+      )
+    ).
+    assert (H42 :
+      forall b1 b2 w1 w2 (H1 : s w1 = b1) (H2 : s w2 = b2),
+        b1 = b2 ->
+        w1 == w2 ->
+        f b1 w1 H1 = f b2 w2 H2
+    ).
+    {
+      clear dependent w1.
+      clear dependent w2.
+      intros b1 b2 w1 w2 H1 H2 H3 H4.
+      destruct b1, b2; try congruence.
+      -
+        apply state_Proper.
+        exact H4.
+      -
+        reflexivity.
+    }
+    apply H42.
+    +
+      rewrite H1.
+      reflexivity.
+    +
+      exact H1.
+Defined.
+
+Lemma unnamed_States_helper_1 `{Model} :
+  forall (s t : state) w,
+    s w = false ->
+    unrestricted_state s t w = false.
+Proof.
+  intros s t w H1.
+  unfold unrestricted_state.
+  simpl.
+  set (f :=
+    (
+      fun (b' : bool) (w : World) =>
+      (
+        if b' as b return (s w = b -> bool)
+        then fun H2 : s w = true =>
+          t (exist (fun w : World => s w = true) w H2)
+        else fun _ : s w = false =>
+          false
+      )
+    )
+  ).
+  assert (H42 :
+    forall b w H1,
+      b = false ->
+      f b w H1 = false
+  ).
+  {
+    clear dependent w.
+    intros b w H1 H2.
+    unfold f.
+    destruct b; easy.
+  }
+  eapply H42.
+  exact H1.
+Qed.
+
+Lemma unnamed_States_helper_2 `{Model} :
+  forall (s t : state) w (H1 : s w = true),
+    unrestricted_state s t w = t (exist _ _ H1).
+Proof.
+  intros s t w H1.
+  simpl.
+  set (f :=
+    (
+      fun (b' : bool) (w : World) =>
+      (
+        if b' as b return (s w = b -> bool)
+        then fun H2 : s w = true =>
+          t (exist (fun w : World => s w = true) w H2)
+        else fun _ : s w = false =>
+          false
+      )
+    )
+  ).
+  assert (H42 :
+    forall b w (H1 : s w = b) (H2 : s w = true),
+      f b w H1 = t (exist _ w H2)
+  ).
+  {
+    clear dependent w.
+    intros b w H1 H2.
+    destruct b.
+    -
+      apply state_Proper.
+      simpl.
+      reflexivity.
+    -
+      congruence.
+  }
+  apply H42.
+Qed.
+
+Lemma unrestricted_substate `{Model} :
+  forall s1 s2 s3,
+    substate s3 (restricted_state s1 s2) ->
+    substate (unrestricted_state s1 s3) s2.
+Proof.
+  intros * H1 w H2.
+  (*
+  enough (H3 : s1 w && s2 w = true).
+  {
+    apply andb_true_iff in H3 as [H3 H4].
+    exact H4.
+  }
+   *)
+  destruct (s1 w) eqn:H3.
+  -
+    rewrite unnamed_States_helper_2 with (H1 := H3) in H2.
+    apply H1 in H2.
+    apply andb_true_iff in H2 as [H21 H22].
+    exact H22.
+  -
+    rewrite unnamed_States_helper_1 in H2; easy.
+Qed.
+
+Lemma unnamed_States_helper_3 `{Model}:
+  forall s t,
+    state_eq t (restricted_state s (unrestricted_state s t)).
+Proof.
+  intros s t [w H1].
+  symmetry.
+  simpl.
+  rewrite H1 at 1.
+  simpl.
+  apply unnamed_States_helper_2.
 Qed.

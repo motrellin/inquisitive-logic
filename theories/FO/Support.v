@@ -28,6 +28,51 @@ Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
       FInterpretation w f (fun arg => referent (args arg) w g)
   end.
 
+Instance referent_Proper `{Model} :
+  Proper (eq ==> equiv ==> eq ==> eq) referent.
+Proof.
+  intros t1 t2 H1 w1 w2 H2 a1 a2 H3.
+  subst.
+  revert a2.
+  generalize dependent w2.
+  revert w1.
+  induction t2 as [x|f args IH].
+  all: intros w1 w2 H1 a.
+  -
+    reflexivity.
+  -
+    simpl.
+    assert (H2 : FInterpretation w1 = FInterpretation w2).
+    {
+      rewrite H1.
+      reflexivity.
+    }
+    rewrite H2.
+    f_equal.
+    apply functional_extensionality.
+    intros arg.
+    apply IH.
+    exact H1.
+Qed.
+
+Lemma restricted_referent `{M : Model} :
+  forall s t w a,
+    @referent _ (restricted_Model s) t w a =
+    @referent _ M t (proj1_sig w) a.
+Proof.
+  intros s.
+  induction t as [x|f args IH].
+  all: intros w a.
+  -
+    reflexivity.
+  -
+    simpl.
+    f_equal.
+    apply functional_extensionality.
+    intros arg.
+    apply IH.
+Qed.
+
 Lemma rigidity_referent `{Model} :
   forall t w w' a,
     rigid_term t ->
@@ -339,6 +384,125 @@ Proof.
     firstorder.
     exact Individual_inh.
 Qed.
+
+Proposition locality `{M : Model} :
+  forall phi s a t,
+    substate t s ->
+    support phi t a <->
+    support phi (@restricted_state _ M s t) a.
+Proof.
+  induction phi as
+  [p args
+  |?
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1
+  |phi1 IH1].
+  all: intros s1 a s2 H1.
+  -
+    split.
+    +
+      intros H2 w H3.
+      apply andb_true_iff in H3 as [_ H3].
+      apply H2 in H3.
+      simpl.
+      rewrite <- H3.
+      f_equal.
+      apply functional_extensionality.
+      intros arg.
+      apply restricted_referent.
+    +
+      intros H2 w H3.
+      apply H1 in H3 as H4.
+
+      specialize (H2 (exist _ _ H4)).
+      rewrite <- H2.
+      simpl.
+      f_equal.
+      apply functional_extensionality.
+      intros arg.
+      rewrite restricted_referent.
+      reflexivity.
+
+      simpl.
+      apply andb_true_iff; split; assumption.
+  -
+    split.
+    +
+      intros H2 w.
+      apply andb_false_iff.
+      right.
+      rewrite H2.
+      reflexivity.
+    +
+      intros H2 w.
+      destruct (s2 w) eqn:H3; try reflexivity.
+      simpl in H2.
+      apply H1 in H3 as H4.
+      specialize (H2 (exist _ _ H4)).
+      apply andb_false_iff in H2 as [H2|H2].
+      all: simpl in H2.
+      all: congruence.
+  -
+    split.
+    all: intros H2 s3 H3 H4.
+    all: rewrite support_Impl in H2.
+    +
+      apply unrestricted_substate in H3 as H5.
+      rewrite (unnamed_States_helper_3 s1 s3) in *.
+      eapply IH2.
+      {
+        etransitivity; eassumption.
+      }
+      apply H2; try eassumption.
+      eapply IH1; try etransitivity; eassumption.
+    +
+      eapply IH2.
+      {
+        etransitivity; eassumption.
+      }
+      apply H2.
+      *
+        intros w H5.
+        apply andb_true_iff in H5 as [H5 H6].
+        apply andb_true_iff.
+        split.
+        --
+           exact H5.
+        --
+           apply H3.
+           exact H6.
+      *
+        apply IH1.
+        {
+          etransitivity; eassumption.
+        }
+        exact H4.
+  -
+    firstorder.
+  -
+    firstorder.
+  -
+    split.
+    all: intros H2 i.
+    all: rewrite support_Forall in H2.
+    +
+      eapply IH1; auto.
+    +
+      eapply IH1; eauto.
+  -
+    split.
+    all: intros [i H2].
+    +
+      exists i.
+      eapply IH1; auto.
+    +
+      exists i.
+      eapply IH1; eauto.
+Qed.
+
+Print Assumptions locality.
 
 (** ** Ruling out a formula *)
 
@@ -793,7 +957,8 @@ Proof.
   -
     intros w2 H5.
     apply singleton_true in H5.
-    congruence.
+    rewrite H5.
+    exact H3.
   -
     rewrite support_Neg.
     intros [s3 [[w2 H5] [H6 H7]]].
@@ -803,7 +968,6 @@ Proof.
       discriminate.
     +
       apply singleton_true in H5.
-      subst w2.
       rewrite support_Pred in H7.
       specialize (H7 _ (singleton_refl w1)).
       congruence.

@@ -1,6 +1,6 @@
 From InqLog.FO Require Export Signatures.
 
-From Coq Require Export Classical_Prop.
+From Coq Require Export Classical_Prop SetoidDec.
 
 (**
    To interpret formulas, we need a suitable model. We will
@@ -14,9 +14,8 @@ Class Model `{Signature} :=
        equality_.
      *)
     World : Type;
-    World_deceq :
-      forall (w w' : World),
-      {w = w'} + {w <> w'};
+    World_Setoid :: Setoid World;
+    World_Setoid_EqDec :: EqDec World_Setoid;
 
     (**
        Second, a _non-empty_ set of _individuals_ with
@@ -46,6 +45,7 @@ Class Model `{Signature} :=
       forall (p : PSymb),
         (PAri p -> Individual) ->
         bool;
+    PInterpretation_Proper :: Proper (equiv ==> eq) PInterpretation;
 
     (**
        We proceed the same way for function symbols.
@@ -55,6 +55,7 @@ Class Model `{Signature} :=
       forall (f : FSymb),
         (FAri f -> Individual) ->
         Individual;
+    FInterpretation_Proper :: Proper (equiv ==> eq) FInterpretation;
 
     (**
        Lastly, a model needs to ensure [rigidity]. This means,
@@ -67,5 +68,6 @@ Class Model `{Signature} :=
         forall (w w' : World),
           FInterpretation w f = FInterpretation w' f
   }.
+
 
 (* TODO Examples? *)

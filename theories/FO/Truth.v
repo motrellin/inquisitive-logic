@@ -21,8 +21,18 @@ Proof.
   -
     intros H1 w' H2.
     apply singleton_true in H2.
-    subst w'.
-    exact H1.
+    rewrite <- H1.
+    assert (H3 : PInterpretation w' = PInterpretation w).
+    {
+      rewrite H2.
+      reflexivity.
+    }
+    rewrite H3.
+    f_equal.
+    apply functional_extensionality.
+    intros arg.
+    rewrite H2.
+    reflexivity.
 Qed.
 
 Lemma truth_Bot `{Model} :
@@ -289,7 +299,7 @@ Proof.
   -
     intros w' H3.
     apply singleton_true in H3.
-    subst w'.
+    rewrite H3.
     exact H2.
 Qed.
 
