@@ -1,3 +1,6 @@
+From Coq Require Export List.
+
+From InqLog Require Export SetoidLib.
 
 (**
    We start by defining the class of [Signature]s. A _Signature_ consists of a
@@ -14,9 +17,15 @@
 Class Signature :=
   {
     PSymb : Type;
+    PSymb_EqDec :: EqDec (eq_setoid PSymb);
     PAri : PSymb -> Type; (* TODO: Where comes this idea from? *)
+    PAri_enum : forall p, list (PAri p);
+    PAri_enum_charac : forall p a, In a (PAri_enum p);
     FSymb : Type;
+    FSymb_EqDec :: EqDec (eq_setoid FSymb);
     FAri : FSymb -> Type;
+    FAri_enum : forall f, list (FAri f);
+    FAri_enum_charac : forall f a, In a (FAri_enum f);
     rigid : FSymb -> bool (* TODO: Add an explanation of rigidity. *)
   }.
 
@@ -26,7 +35,7 @@ Class Signature :=
 
 Module single_unary_predicate_signature.
 
-  Instance signature : Signature :=
+  Program Instance signature : Signature :=
     {|
       (**
          As we only want one predicate symbol, we need [PSymb] to be the
@@ -53,11 +62,25 @@ Module single_unary_predicate_signature.
       rigid := fun _ => true
     |}.
 
+  Next Obligation.
+    destruct p.
+    exact (tt :: nil).
+  Defined.
+
+  Next Obligation.
+    destruct p.
+    destruct a.
+    left.
+    reflexivity.
+  Qed.
+
+  Solve All Obligations with easy.
+
 End single_unary_predicate_signature.
 
 Module single_binary_predicate_signature.
 
-  Instance signature : Signature :=
+  Program Instance signature : Signature :=
     {|
       PSymb := unit;
       (**
@@ -70,5 +93,21 @@ Module single_binary_predicate_signature.
       FAri := fun f => match f with end;
       rigid := fun _ => true
     |}.
+
+  Next Obligation.
+    destruct p.
+    exact (true :: false :: nil).
+  Defined.
+
+  Next Obligation.
+    destruct p.
+    destruct a.
+    -
+      left; reflexivity.
+    -
+      right; left; reflexivity.
+  Qed.
+
+  Solve All Obligations with easy.
 
 End single_binary_predicate_signature.

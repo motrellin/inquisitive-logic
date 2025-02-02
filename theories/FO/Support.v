@@ -271,8 +271,12 @@ Proof.
   |phi1 IH1].
   -
     simpl.
-    firstorder.
-    all: eauto.
+    intros a.
+    split.
+    all: intros H2 w H3.
+    all: rewrite H1 in H3 + rewrite <- H1 in H3.
+    all: apply H2 in H3.
+    all: exact H3.
   -
     simpl.
     firstorder.

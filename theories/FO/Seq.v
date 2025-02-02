@@ -9,13 +9,64 @@ From InqLog.FO Require Export Truth.
    labelled formel is a pair consisting of a list of
    natural numbers and a formula.
 
-   We will frequently use the notions of [In_eq] and
-   [In_sublist], as the original paper uses sets to define
+   We will frequently use the notions of [InS_eq] and
+   [InS_sublist], as the original paper uses sets to define
    labels.
  *)
 
 Definition label : Type := list nat.
+
 Definition lb_form `{Signature} : Type := (list nat)*form.
+
+Definition lb_form_eq `{Signature} : relation lb_form :=
+  fun phi psi =>
+  (fst phi) = (fst psi) /\
+  (snd phi) == (snd psi).
+
+Program Instance lb_form_Setoid `{Signature} : Setoid lb_form :=
+  {|
+    equiv := lb_form_eq
+  |}.
+
+Next Obligation.
+  constructor.
+  -
+    intros [l1 phi1].
+    split; reflexivity.
+  -
+    intros [l1 phi1] [l2 phi2] [H1 H2].
+    split; easy.
+  -
+    intros [l1 phi1] [l2 phi2] [l3 phi3] [H1 H2] [H3 H4].
+    split; etransitivity; eassumption.
+Qed.
+
+Instance lb_form_EqDec `{Signature} : EqDec lb_form_Setoid.
+Proof.
+  intros [l1 phi1] [l2 phi2].
+  assert ({l1 = l2} + {l1 <> l2}) as [H1|H1] by repeat decide equality.
+  all: destruct (phi1 == phi2) as [H2|H2].
+  all: try (left; split; assumption).
+  all: right; intros [H3 H4]; contradiction.
+Qed.
+
+Program Definition lb_form_hsubst `{Signature} (sigma : var -> term) :
+  Morph lb_form lb_form :=
+
+  {|
+    morph :=
+      fun phi =>
+      pair (fst phi) (snd phi).|[sigma]
+  |}.
+
+Next Obligation.
+  intros phi1 phi2 [H1 H2].
+  split.
+  -
+    exact H1.
+  -
+    simpl in *.
+Admitted.
 
 (**
    Now, we are in a position to define the rules of the
@@ -35,7 +86,7 @@ Inductive Seq `{Signature} :
    *)
   | Seq_empty :
       forall ls rs phi,
-        In (pair nil phi) rs ->
+        InS (pair nil phi) rs ->
         Seq ls rs
   (**
      The following rules correspond to the original sequent
@@ -43,81 +94,81 @@ Inductive Seq `{Signature} :
    *)
   | Seq_id :
       forall ls rs ns1 ns2 p args,
-        In (pair ns1 (Pred p args)) ls ->
-        In (pair ns2 (Pred p args)) rs ->
-        In_eq ns1 ns2 ->
+        InS (pair ns1 (Pred p args)) ls ->
+        InS (pair ns2 (Pred p args)) rs ->
+        InS_eq ns1 ns2 ->
         Seq ls rs
   | Seq_Bot_l :
       forall ls rs n ns x,
-        In (pair ns (Bot x)) ls ->
-        In n ns ->
+        InS (pair ns (Bot x)) ls ->
+        InS n ns ->
         Seq ls rs
   | Seq_Pred_r :
       forall ls rs ns p args,
-        In (pair ns (Pred p args)) rs ->
+        InS (pair ns (Pred p args)) rs ->
         (forall n,
-          In n ns ->
+          InS n ns ->
           Seq ls ((pair (n :: nil) (Pred p args)) :: rs)
         ) ->
         Seq ls rs
   | Seq_Pred_l :
       forall ls rs ns1 ns2 p args,
-        In (pair ns1 (Pred p args)) ls ->
-        In_sublist ns2 ns1 ->
+        InS (pair ns1 (Pred p args)) ls ->
+        InS_sublist ns2 ns1 ->
         Seq ((pair ns2 (Pred p args)) :: ls) rs ->
         Seq ls rs
   | Seq_Impl_r :
       forall ls rs ns phi psi,
-        In (pair ns <{phi -> psi}>) rs ->
+        InS (pair ns <{phi -> psi}>) rs ->
         (forall ns',
-          In_sublist ns' ns ->
+          InS_sublist ns' ns ->
           Seq ((pair ns' phi) :: ls) ((pair ns' psi) :: rs)
         ) ->
         Seq ls rs
   | Seq_Impl_l :
       forall ls rs ns1 ns2 phi psi,
-        In (pair ns1 <{phi -> psi}>) ls ->
-        In_sublist ns2 ns1 ->
+        InS (pair ns1 <{phi -> psi}>) ls ->
+        InS_sublist ns2 ns1 ->
         Seq ls ((pair ns2 phi) :: rs) ->
         Seq ((pair ns2 psi) :: ls) rs ->
         Seq ls rs
   | Seq_Conj_r :
       forall ls rs ns phi psi,
-        In (pair ns <{phi /\ psi}>) rs ->
+        InS (pair ns <{phi /\ psi}>) rs ->
         Seq ls ((pair ns phi) :: rs) ->
         Seq ls ((pair ns psi) :: rs) ->
         Seq ls rs
   | Seq_Conj_l :
       forall ls rs ns phi psi,
-        In (pair ns <{phi /\ psi}>) ls ->
+        InS (pair ns <{phi /\ psi}>) ls ->
         Seq ((pair ns phi) :: (pair ns psi) :: ls) rs ->
         Seq ls rs
   | Seq_Idisj_r :
       forall ls rs ns phi psi,
-        In (pair ns <{phi \\/ psi}>) rs ->
+        InS (pair ns <{phi \\/ psi}>) rs ->
         Seq ls ((pair ns phi) :: (pair ns psi) :: rs) ->
         Seq ls rs
   | Seq_Idisj_l :
       forall ls rs ns phi psi,
-        In (pair ns <{phi \\/ psi}>) ls ->
+        InS (pair ns <{phi \\/ psi}>) ls ->
         Seq ((pair ns phi) :: ls) rs ->
         Seq ((pair ns psi) :: ls) rs ->
         Seq ls rs
   | Seq_Forall_r :
       forall ls rs ns phi,
-        In (pair ns <{forall phi}>) rs ->
+        InS (pair ns <{forall phi}>) rs ->
         Seq
         (
-          map (fun x => pair (fst x) (snd x).|[ren (+1)]) ls
+          map (lb_form_hsubst (ren (+1))) ls
         )
         (
           (pair ns phi) ::
-          map (fun x => pair (fst x) (snd x).|[ren (+1)]) rs
+          map (lb_form_hsubst (ren (+1))) rs
         ) ->
         Seq ls rs
   | Seq_Forall_l :
       forall ls rs ns phi t,
-        In (pair ns <{forall phi}>) ls ->
+        InS (pair ns <{forall phi}>) ls ->
         rigid_term t ->
         Seq
         (
@@ -130,7 +181,7 @@ Inductive Seq `{Signature} :
         Seq ls rs
   | Seq_Iexists_r :
       forall ls rs ns phi t,
-        In (pair ns <{iexists phi}>) rs ->
+        InS (pair ns <{iexists phi}>) rs ->
         rigid_term t ->
         Seq ls
         (
@@ -140,38 +191,43 @@ Inductive Seq `{Signature} :
         Seq ls rs
   | Seq_Iexists_l :
       forall ls rs ns phi,
-        In (pair ns <{iexists phi}>) ls ->
+        InS (pair ns <{iexists phi}>) ls ->
         Seq
         (
           (pair ns phi) ::
-          map (fun x => pair (fst x) (snd x).|[ren (+1)]) ls
+          map (lb_form_hsubst (ren (+1))) ls
         )
         (
-          map (fun x => pair (fst x) (snd x).|[ren (+1)]) rs
+          map (lb_form_hsubst (ren (+1))) rs
         ) ->
         Seq ls rs
   (**
-     In addition, we add the cut elimination rule to our
+     InS addition, we add the cut elimination rule to our
      calculus, which is shown to be admissible by Litak/Sano.
    *)
   | Seq_cut :
       forall ls1 ls2 ls rs1 rs2 rs ns phi,
-        In_sublist (ls1 ++ ls2) ls ->
-        In_sublist (rs1 ++ rs2) rs ->
+        InS_sublist (ls1 ++ ls2) ls ->
+        InS_sublist (rs1 ++ rs2) rs ->
         Seq ls1 ((pair ns phi) :: rs1) ->
         Seq ((pair ns phi) :: ls2) rs2 ->
         Seq ls rs.
 
 (** ** Properties of [Seq] *)
 
+Program Canonical nat_Setoid : Setoid nat :=
+  {|
+    equiv := @eq nat
+  |}.
+
 Proposition Seq_weakening `{Signature} :
   forall ls1 ls2,
-    In_sublist ls1 ls2 ->
+    InS_sublist ls1 ls2 ->
     forall rs1 rs2,
-      In_sublist rs1 rs2 ->
+      InS_sublist rs1 rs2 ->
       Seq ls1 rs1 ->
       Seq ls2 rs2.
-Proof with eauto using cons_In_sublist_cons, map_In_sublist_map.
+Proof with eauto using cons_InS_sublist_cons, map_InS_sublist_map.
   intros ls1 ls2 H1 rs1 rs2 H2 H3.
   generalize dependent rs2.
   generalize dependent ls2.
@@ -230,7 +286,7 @@ Proof with eauto using cons_In_sublist_cons, map_In_sublist_map.
 Qed.
 
 Instance Seq_Proper `{Signature} :
-  Proper (In_eq ==> In_eq ==> iff) Seq.
+  Proper (InS_eq ==> InS_eq ==> iff) Seq.
 Proof.
   intros ls1 ls2 [H1 H2] rs1 rs2 [H3 H4].
   split.
@@ -241,9 +297,9 @@ Qed.
 
 Proposition prop_4_6 `{Signature} :
   forall ls rs ns1 ns2 phi,
-  In (pair ns1 phi) ls ->
-  In (pair ns2 phi) rs ->
-  In_sublist ns2 ns1 ->
+  InS (pair ns1 phi) ls ->
+  InS (pair ns2 phi) rs ->
+  InS_sublist ns2 ns1 ->
   Seq ls rs.
 Proof.
   intros *.
@@ -363,17 +419,23 @@ Proof.
     +
       exact H2.
     +
-      eapply Seq_Forall_l with (t := Var 0).
+      eapply Seq_Forall_l with (t := Var 0)...
       *
-        apply in_map_iff.
+        apply InS_map_iff.
         exists (pair ns1 <{forall phi1}>).
-        easy.
+        split.
+        --
+           admit.
+        --
+           exact H1.
       *
         exact I.
       *
         eapply IH1.
         --
-           left; autosubst.
+           (*left; autosubst.*)
+           left.
+           admit.
         --
            left; reflexivity.
         --
@@ -385,9 +447,9 @@ Proof.
     +
       eapply Seq_Iexists_r with (t := Var 0).
       *
-        apply in_map_iff.
+        apply InS_map_iff.
         exists (pair ns2 <{iexists phi1}>).
-        easy.
+        admit.
       *
         exact I.
       *
@@ -395,16 +457,18 @@ Proof.
         --
            left; reflexivity.
         --
-           left; autosubst.
+           (*left; autosubst.*)
+           left.
+           admit.
         --
            exact H3.
-Qed.
+Admitted.
 
 (** ** Some example derivations *)
 
 Example ex_4_5 `{Signature} :
   forall ns n p args,
-    In n ns ->
+    InS n ns ->
     Seq ((pair ns <{~ ~ Pred p args}>) :: nil)
     ((pair (n :: nil) <{Pred p args}>) :: nil).
 Proof.
@@ -418,11 +482,13 @@ Proof.
     left.
     reflexivity.
   -
-    intros n2 [H2|H2].
+    intros n2 H2.
+    apply InS_cons in H2 as [H2|H2].
     +
       congruence.
     +
-      contradiction.
+      contradict H2.
+      apply InS_nil.
   -
     apply Seq_Impl_r with
       (ns := n1 :: nil)
@@ -433,7 +499,13 @@ Proof.
       reflexivity.
     +
       intros ns2 H2.
-      apply In_sublist_singleton in H2 as [H2|H2]; try decide equality.
+      apply InS_sublist_singleton in H2 as [H2|H2].
+      *
+        subst ns2.
+        apply Seq_empty with
+          (phi := Bot 0).
+        left.
+        reflexivity.
       *
         apply Seq_id with
           (ns1 := ns2)
@@ -450,12 +522,6 @@ Proof.
            reflexivity.
         --
            exact H2.
-      *
-        subst ns2.
-        apply Seq_empty with
-          (phi := Bot 0).
-        left.
-        reflexivity.
   -
     apply Seq_Bot_l with
       (n := n1)
@@ -475,17 +541,24 @@ Example ex_4_7 `{Signature} :
     ((pair ns <{iexists phi}>) :: nil)
     ((pair ns <{iexists ~ psi -> phi}>) :: nil).
 Proof with (
-  try (right; left; autosubst);
-  try (left; autosubst);
+  try (right; left; autosubst + reflexivity);
+  try (left; autosubst + reflexivity);
   try easy
 ).
   intros ns1 phi psi.
   eapply Seq_Iexists_l...
   eapply Seq_Iexists_r with (t := Var 0)...
+  {
+    admit.
+  }
   eapply Seq_Impl_r...
+  {
+    admit.
+  }
   intros ns' H1.
   eapply prop_4_6...
-Qed.
+  exact H1.
+Admitted.
 
 Example ex_4_8 `{Signature} :
   forall ns phi psi,
@@ -493,20 +566,26 @@ Example ex_4_8 `{Signature} :
     ((pair ns <{(forall phi) \\/ psi}>) :: nil)
     ((pair ns (Forall (Idisj phi psi.|[ren (+1)]))) :: nil).
 Proof with (
-  try (left; autosubst);
-  try (right; left; autosubst);
+  try (left; autosubst + reflexivity);
+  try (right; left; autosubst + reflexivity);
   try easy
 ).
   intros ns phi psi.
   eapply Seq_Forall_r...
   eapply Seq_Idisj_l...
+  {
+    admit.
+  }
   all: eapply Seq_Idisj_r...
   -
     eapply Seq_Forall_l with (t := Var 0)...
     eapply prop_4_6...
+    {
+      admit.
+    }
   -
     eapply prop_4_6...
-Qed.
+Admitted.
 
 (** * Corresponding semantic
 
@@ -560,7 +639,7 @@ Definition satisfaction_forall
 Arguments satisfaction_forall _ /.
 
 Instance satisfaction_forall_Proper `{Model} :
-  Proper (In_eq ==> eq ==> eq ==> iff) satisfaction_forall.
+  Proper (InS_eq ==> eq ==> eq ==> iff) satisfaction_forall.
 Proof.
   intros Phi1 Phi2 H1 f1 f2 H2 a1 a2 H3.
   subst.
@@ -570,7 +649,7 @@ Proof.
   all: intros phi H5.
   all: eapply Forall_forall in H4.
   all: try apply H1.
-  all: eassumption.
+  all: try eassumption.
 Qed.
 
 Lemma satisfaction_forall_hsubst_var `{Model} :
@@ -612,8 +691,8 @@ Definition satisfaction_exists
 
 Arguments satisfaction_exists _ /.
 
-Instance satisfaction_exists_Proper `{Model} :
-  Proper (In_eq ==> eq ==> eq ==> iff) satisfaction_exists.
+InSstance satisfaction_exists_Proper `{Model} :
+  Proper (InS_eq ==> eq ==> eq ==> iff) satisfaction_exists.
 Proof.
   intros Phi1 Phi2 H1 f1 f2 H2 a1 a2 H3.
   subst.
@@ -667,7 +746,7 @@ Definition satisfaction_conseq `{S : Signature} :
 
 Lemma satisfaction_conseq_empty `{Signature} :
   forall ls rs phi,
-    In (pair nil phi) rs ->
+    InS (pair nil phi) rs ->
     satisfaction_conseq ls rs.
 Proof.
   intros * H1.
@@ -679,9 +758,9 @@ Qed.
 
 Lemma satisfaction_conseq_id `{Signature} :
       forall ls rs ns1 ns2 p args,
-        In (pair ns1 (Pred p args)) ls ->
-        In (pair ns2 (Pred p args)) rs ->
-        In_eq ns1 ns2 ->
+        InS (pair ns1 (Pred p args)) ls ->
+        InS (pair ns2 (Pred p args)) rs ->
+        InS_eq ns1 ns2 ->
         satisfaction_conseq ls rs.
 Proof.
   intros * H1 H2 H3.
@@ -704,8 +783,8 @@ Qed.
 
 Lemma satisfaction_conseq_Bot_l `{Signature} :
   forall ls rs n ns x,
-    In (pair ns (Bot x)) ls ->
-    In n ns ->
+    InS (pair ns (Bot x)) ls ->
+    InS n ns ->
     satisfaction_conseq ls rs.
 Proof.
   intros * H1 H2.
@@ -714,7 +793,7 @@ Proof.
     (x := pair ns (Bot x))
     in H3; try assumption.
   specialize (H3 (f n)).
-  apply In_iff_inb_false in H3.
+  apply InS_iff_inb_false in H3.
   exfalso.
   apply H3.
   apply in_map.
@@ -723,9 +802,9 @@ Qed.
 
 Lemma satisfaction_conseq_Pred_r `{Signature} :
   forall ls rs ns p args,
-    In (pair ns (Pred p args)) rs ->
+    InS (pair ns (Pred p args)) rs ->
     (forall n,
-      In n ns ->
+      InS n ns ->
       satisfaction_conseq ls
       (
         (pair (n :: nil) (Pred p args)) :: rs
@@ -735,7 +814,7 @@ Lemma satisfaction_conseq_Pred_r `{Signature} :
 Proof.
   intros * H1 H2.
   intros M f a H3.
-  destruct (classic (exists psi, psi <> (pair ns (Pred p args)) /\ In psi rs /\ satisfaction f a psi)) as [H4|H4].
+  destruct (classic (exists psi, psi <> (pair ns (Pred p args)) /\ InS psi rs /\ satisfaction f a psi)) as [H4|H4].
   {
     destruct H4 as [psi [_ [H4 H5]]].
     apply Exists_exists.
@@ -746,7 +825,7 @@ Proof.
   eexists.
   split; try exact H1.
   intros w H5.
-  apply In_iff_inb_true in H5 as H6.
+  apply InS_iff_inb_true in H5 as H6.
   simpl in H6.
   apply in_map_iff in H6 as [n [H6 H7]].
   subst w.
@@ -773,8 +852,8 @@ Qed.
 
 Lemma satisfaction_conseq_Pred_l `{Signature} :
   forall ls rs ns1 ns2 p args,
-    In (pair ns1 (Pred p args)) ls ->
-    In_sublist ns2 ns1 ->
+    InS (pair ns1 (Pred p args)) ls ->
+    InS_sublist ns2 ns1 ->
     satisfaction_conseq ((pair ns2 (Pred p args)) :: ls) rs ->
     satisfaction_conseq ls rs.
 Proof.
@@ -798,9 +877,9 @@ Qed.
 
 Lemma satisfaction_conseq_Impl_r `{Signature} :
   forall ls rs ns phi psi,
-    In (pair ns <{phi -> psi}>) rs ->
+    InS (pair ns <{phi -> psi}>) rs ->
     (forall ns',
-      In_sublist ns' ns ->
+      InS_sublist ns' ns ->
       satisfaction_conseq
       (
         (pair ns' phi) :: ls
@@ -817,7 +896,7 @@ Proof.
     classic (
       exists chi,
         chi <> (pair ns <{phi -> psi}>) /\
-        In chi rs /\
+        InS chi rs /\
         satisfaction f a chi
     )
   ) as [H4|H4].
@@ -875,8 +954,8 @@ Qed.
 
 Lemma satisfaction_conseq_Impl_l `{Signature} :
   forall ls rs ns1 ns2 phi psi,
-    In (pair ns1 <{phi -> psi}>) ls ->
-    In_sublist ns2 ns1 ->
+    InS (pair ns1 <{phi -> psi}>) ls ->
+    InS_sublist ns2 ns1 ->
     satisfaction_conseq ls ((pair ns2 phi) :: rs) ->
     satisfaction_conseq ((pair ns2 psi) :: ls) rs ->
     satisfaction_conseq ls rs.
@@ -908,7 +987,7 @@ Qed.
 
 Lemma satisfaction_conseq_Conj_r `{Signature} :
   forall ls rs ns phi psi,
-    In (pair ns <{phi /\ psi}>) rs ->
+    InS (pair ns <{phi /\ psi}>) rs ->
     satisfaction_conseq ls ((pair ns phi) :: rs) ->
     satisfaction_conseq ls ((pair ns psi) :: rs) ->
     satisfaction_conseq ls rs.
@@ -940,7 +1019,7 @@ Qed.
 
 Lemma satisfaction_conseq_Conj_l `{Signature} :
   forall ls rs ns phi psi,
-    In (pair ns <{phi /\ psi}>) ls ->
+    InS (pair ns <{phi /\ psi}>) ls ->
     satisfaction_conseq
     (
       (pair ns phi) :: (pair ns psi) :: ls
@@ -967,7 +1046,7 @@ Qed.
 
 Lemma satisfaction_conseq_Idisj_r `{Signature} :
   forall ls rs ns phi psi,
-    In (pair ns <{phi \\/ psi}>) rs ->
+    InS (pair ns <{phi \\/ psi}>) rs ->
     satisfaction_conseq ls
     (
       (pair ns phi) :: (pair ns psi) :: rs
@@ -998,7 +1077,7 @@ Qed.
 
 Lemma satisfaction_conseq_Idisj_l `{Signature} :
   forall ls rs ns phi psi,
-    In (pair ns <{phi \\/ psi}>) ls ->
+    InS (pair ns <{phi \\/ psi}>) ls ->
     satisfaction_conseq ((pair ns phi) :: ls) rs ->
     satisfaction_conseq ((pair ns psi) :: ls) rs ->
     satisfaction_conseq ls rs.
@@ -1029,7 +1108,7 @@ Qed.
 
 Lemma satisfaction_conseq_Forall_r `{Signature} :
   forall ls rs ns phi,
-    In (pair ns <{forall phi}>) rs ->
+    InS (pair ns <{forall phi}>) rs ->
     satisfaction_conseq
     (
       map (fun x => pair (fst x) (snd x).|[ren (+1)]) ls
@@ -1047,7 +1126,7 @@ Proof.
     classic (
       exists chi,
         chi <> (pair ns <{forall phi}>) /\
-        In chi rs /\
+        InS chi rs /\
         satisfaction f a chi
     )
   ) as [H4|H4].
@@ -1086,7 +1165,7 @@ Qed.
 
 Lemma satisfaction_conseq_Forall_l `{Signature} :
   forall ls rs ns phi t,
-    In (pair ns <{forall phi}>) ls ->
+    InS (pair ns <{forall phi}>) ls ->
     rigid_term t ->
     satisfaction_conseq
     (
@@ -1137,7 +1216,7 @@ Qed.
 
 Lemma satisfaction_conseq_Iexists_r `{Signature} :
   forall ls rs ns phi t,
-    In (pair ns <{iexists phi}>) rs ->
+    InS (pair ns <{iexists phi}>) rs ->
     rigid_term t ->
     satisfaction_conseq ls
     (
@@ -1182,7 +1261,7 @@ Qed.
 
 Lemma satisfaction_conseq_Iexists_l `{Signature} :
   forall ls rs ns phi,
-    In (pair ns <{iexists phi}>) ls ->
+    InS (pair ns <{iexists phi}>) ls ->
     satisfaction_conseq
     (
       (pair ns phi) ::
@@ -1214,8 +1293,8 @@ Qed.
 
 Lemma satisfaction_conseq_cut `{Signature} :
   forall ls1 ls2 ls rs1 rs2 rs ns phi,
-    In_sublist (ls1 ++ ls2) ls ->
-    In_sublist (rs1 ++ rs2) rs ->
+    InS_sublist (ls1 ++ ls2) ls ->
+    InS_sublist (rs1 ++ rs2) rs ->
     satisfaction_conseq ls1 ((pair ns phi) :: rs1) ->
     satisfaction_conseq ((pair ns phi) :: ls2) rs2 ->
     satisfaction_conseq ls rs.
@@ -1315,8 +1394,8 @@ Print Assumptions soundness.
 
 Proposition Seq_mon `{Signature} :
   forall ls rs ns1 ns2 phi,
-    In (pair ns1 phi) ls ->
-    In_sublist ns2 ns1 ->
+    InS (pair ns1 phi) ls ->
+    InS_sublist ns2 ns1 ->
     Seq ((pair ns2 phi) :: ls) rs ->
     Seq ls rs.
 Proof.

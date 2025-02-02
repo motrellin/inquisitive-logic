@@ -9,23 +9,16 @@ From Coq Require Export Bool.
    set of worlds in a model.
  *)
 
-Record state `{Model} : Type :=
-  {
-    state_fun : World -> bool;
-    state_Proper :: Proper (equiv ==> eq) state_fun
-  }.
+Print Instances Setoid.
 
-Coercion state_fun : state >-> Funclass.
+Definition state `{Model} := Morph World bool.
 
 (**
    As we typically just care whether two states behave the
    same, we introduce this as a relation [state_eq], which
    is indeed an equivalence relation.
  *)
-Definition state_eq `{Model} : relation state :=
-  fun s t =>
-  forall w,
-    s w = t w.
+Definition state_eq `{Model} : relation state := Morph_eq.
 
 Instance state_eq_Equiv `{Model} : Equivalence state_eq.
 Proof.
@@ -52,7 +45,7 @@ Qed.
 
 Program Definition empty_state `{Model} : state :=
   {|
-    state_fun := fun _ => false
+    morph := fun _ => false
   |}.
 
 Next Obligation.
@@ -63,7 +56,7 @@ Qed.
 
 Program Definition singleton `{Model} (w : World) : state :=
   {|
-    state_fun :=
+    morph :=
       fun w' =>
       if w' == w
       then true
@@ -112,7 +105,7 @@ Qed.
 
 Program Definition complement `{Model} (s : state) : state :=
   {|
-    state_fun := fun w => negb (s w)
+    morph := fun w => negb (s w)
   |}.
 
 Next Obligation.
@@ -147,17 +140,37 @@ Proof.
   apply negb_involutive.
 Qed.
 
-(*
 (** ** Mapping states *)
 
-Definition mapping_state
+Program Definition mapping_state
   `{Model}
   (f : nat -> World)
   (ns : list nat) :
   state :=
 
-  fun w =>
-  inb World_deceq w (map f ns).
+  {|
+    morph :=
+    fun w =>
+    inbS w (map f ns)
+  |}.
+
+Next Obligation.
+  induction ns as [|n ns' IH].
+  all: intros w1 w2 H1.
+  -
+    reflexivity.
+  -
+    simpl.
+    unfold "_ ==b _".
+    destruct (w1 == f n) as [H2|H2].
+    all: destruct (w2 == f n) as [H3|H3].
+    all: simpl.
+    all: try (rewrite H1 in H2; contradiction).
+    all: try reflexivity.
+
+    apply IH.
+    exact H1.
+Qed.
 
 Lemma mapping_state_nil `{Model} :
   forall f,
@@ -168,33 +181,70 @@ Proof.
 Qed.
 
 Lemma mapping_state_cons `{Model} :
-  forall f n ns',
-    (mapping_state f (n :: ns')) =
-    (fun w => if World_deceq (f n) w then true else mapping_state f ns' w).
+  forall f n ns' w,
+    mapping_state f (n :: ns') w =
+    (w ==b (f n)) ||
+    mapping_state f ns' w.
 Proof.
+  intros f n ns' w.
   reflexivity.
 Qed.
 
 Instance mapping_state_Proper `{Model} :
-  forall f,
-    Proper (In_eq ==> state_eq) (mapping_state f).
+  forall (f : Morph nat World),
+    Proper (InS_eq ==> state_eq) (mapping_state f).
 Proof.
-  intros f ns1 ns2 H1 w.
-  apply In_iff_inb.
-  split.
-  all: intros H2.
-  all: apply in_map_iff in H2 as [n [H2 H3]].
-  all: subst w.
-  all: apply in_map.
-  all: apply H1.
-  all: exact H3.
+  intros f ns1.
+  induction ns1 as [|n1 ns1' IH].
+  all: intros ns2 [H2 H3].
+  -
+    apply InS_sublist_nil in H3.
+    subst ns2.
+    reflexivity.
+  -
+    intros w.
+    simpl.
+    unfold "_ ==b _".
+    destruct (w == f n1) as [H4|H4].
+    +
+      simpl.
+      symmetry.
+      apply InS_iff_inbS_true.
+      rewrite H4.
+      apply InS_map_iff; try exact H1.
+      exists n1; split; try reflexivity.
+      apply H2.
+      left.
+      reflexivity.
+    +
+      simpl.
+      apply InS_iff_inbS.
+      split.
+      all: intros H5.
+      all: apply InS_map_iff in H5 as [n2 [H5 H6]]; try exact H1.
+      all: apply InS_map_iff; try exact H1.
+      all: exists n2.
+      all: split; try exact H5.
+      *
+        apply H2.
+        right.
+        exact H6.
+      *
+        apply H3 in H6.
+        apply InS_cons in H6 as [H6|H6].
+        --
+           rewrite H6 in H5.
+           symmetry in H5.
+           contradiction.
+        --
+           exact H6.
 Qed.
- *)
+
 (** ** Excluding states *)
 
 Program Definition excluding_state `{Model} (s : state) (w : World) : state :=
   {|
-    state_fun :=
+    morph :=
       fun w' =>
       if w == w'
       then false
@@ -346,7 +396,8 @@ Proof.
     destruct (t w') eqn:H3.
     +
       symmetry.
-      auto.
+      apply H1.
+      exact H3.
     +
       symmetry.
       apply singleton_false.
@@ -587,7 +638,7 @@ Program Definition restricted_state
   @state _ (restricted_Model s) :=
 
   {|
-    state_fun := fun w =>
+    morph := fun w =>
       s (proj1_sig w) && t (proj1_sig w)
   |}.
 
@@ -638,7 +689,7 @@ Proof.
       intros b1 b2 w1 w2 H1 H2 H3 H4.
       destruct b1, b2; try congruence.
       -
-        apply state_Proper.
+        apply (@morph_Proper _ _ World_Setoid (eq_setoid bool)).
         exact H4.
       -
         reflexivity.
@@ -713,7 +764,7 @@ Proof.
     intros b w H1 H2.
     destruct b.
     -
-      apply state_Proper.
+      apply (@morph_Proper _ _ World_Setoid (eq_setoid bool)).
       simpl.
       reflexivity.
     -

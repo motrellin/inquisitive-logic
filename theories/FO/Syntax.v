@@ -16,6 +16,127 @@ Inductive term `{Signature} :=
   | Var : var -> term
   | Func : forall (f : FSymb), (FAri f -> term) -> term.
 
+Fixpoint term_eq `{Signature} (t : term) : term -> Prop.
+Proof.
+  destruct t as [x1|f1 args1].
+  all: intros [x2|f2 args2].
+  -
+    exact (x1 = x2).
+  -
+    exact False.
+  -
+    exact False.
+  -
+    destruct (f1 == f2) as [H1|H1].
+    +
+      simpl in H1.
+      subst f2.
+      exact (forall arg, term_eq _ (args1 arg) (args2 arg)).
+    +
+      exact False.
+Defined.
+
+Program Instance term_Setoid `{Signature} : Setoid term :=
+  {|
+    equiv := term_eq
+  |}.
+
+Next Obligation.
+  constructor.
+  -
+    intros t.
+    induction t as [x|f args IH].
+    +
+      reflexivity.
+    +
+      simpl.
+      unfold eq_rect.
+      destruct (f == f) as [H1|H1].
+      *
+        simpl in *.
+        admit.
+      *
+        apply H1.
+        reflexivity.
+  -
+    intros t.
+    induction t as [x1|f1 args1 IH].
+    all: intros [x2|f2 args2] H1.
+    all: try easy.
+    +
+      simpl in *.
+      destruct (f2 == f1) as [H2|H2].
+      all: destruct (f1 == f2) as [H3|H3].
+      all: try easy + congruence.
+      *
+        simpl in *.
+        subst f1.
+        red.
+        red in H1.
+        admit.
+  -
+    intros t.
+    induction t as [x1|f1 args1 IH].
+    all: intros [x2|f2 args2] [x3|f3 args3] H1 H2.
+    all: try easy.
+    +
+      simpl in *.
+      congruence.
+    +
+      simpl in *.
+      destruct
+        (f1 == f2) as [H3|H3],
+        (f2 == f3) as [H4|H4],
+        (f1 == f3) as [H5|H5].
+      all: try (simpl in *; congruence + easy).
+      *
+        simpl in *.
+        subst f2 f3.
+        red.
+        red in H1.
+        red in H2.
+        admit.
+Admitted.
+
+Instance term_EqDec `{Signature} : EqDec term_Setoid.
+Proof.
+  intros t1.
+  induction t1 as [x1|f1 args1 IH].
+  all: intros [x2|f2 args2].
+  all: try (right; easy).
+  -
+    destruct (PeanoNat.Nat.eq_dec x1 x2) as [H1|H1].
+    all: left + right; congruence.
+  -
+    unfold complement.
+    simpl.
+    unfold eq_rect.
+    destruct (f1 == f2) as [H1|H1].
+    +
+      simpl in H1.
+      subst f2.
+      enough (H2 :
+        {forall arg, term_eq (args1 arg) (args2 arg)} +
+        {exists arg, ~ term_eq (args1 arg) (args2 arg)}).
+      {
+        destruct H2 as [H2|H2].
+        -
+          left.
+          exact H2.
+        -
+          right.
+          intros H3.
+          destruct H2 as [arg H2].
+          apply H2.
+          apply H3.
+      }
+      admit. (* TODO: Should be doable *)
+    +
+      right.
+      intros H2.
+      congruence.
+Admitted.
+
 Print var.
 (**
    [var] is defined as [nat] via [Autosubst] which is a
@@ -110,6 +231,146 @@ Inductive form `{Signature} :=
   (* first-order connectives *)
   | Forall : {bind term in form} -> form
   | Iexists : {bind term in form} -> form.
+
+Fixpoint form_eq `{Signature} (f : form) : form -> Prop.
+Proof.
+  destruct f as
+  [p1 args1
+  |?
+  |f1 f2
+  |f1 f2
+  |f1 f2
+  |f1
+  |f1
+  ] eqn:eq1.
+  all: intros f'.
+  all: destruct f' as
+  [p2 args2
+  |?
+  |f3 f4
+  |f3 f4
+  |f3 f4
+  |f3
+  |f3
+  ] eqn:eq2.
+  -
+    destruct (p1 == p2) as [H1|H1].
+    +
+      simpl in H1.
+      subst p2.
+      exact (forall arg, term_eq (args1 arg) (args2 arg)).
+    +
+      exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact True.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact (form_eq _ f1 f3 /\ form_eq _ f2 f4).
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact (form_eq _ f1 f3 /\ form_eq _ f2 f4).
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact (form_eq _ f1 f3 /\ form_eq _ f2 f4).
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact (form_eq _ f1 f3).
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact False.
+  -
+    exact (form_eq _ f1 f3).
+Defined.
+
+Program Instance form_Setoid `{Signature} : Setoid form :=
+  {|
+    equiv := form_eq
+  |}.
+
+Next Obligation.
+Admitted.
+
+Instance form_EqDec `{Signature} : EqDec form_Setoid.
+Proof.
+  red.
+Admitted.
 
 (**
    Let us introduce some notation. It is not necessary to

@@ -1,6 +1,6 @@
 From InqLog.FO Require Export Signatures.
 
-From Coq Require Export Classical_Prop SetoidDec.
+From Coq Require Export Classical_Prop.
 
 (**
    To interpret formulas, we need a suitable model. We will
