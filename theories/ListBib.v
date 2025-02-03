@@ -8,16 +8,42 @@ From InqLog Require Export SetoidLib.
 
 Generalizable Variables X Y.
 
+(** * [InS] *)
+
 Definition InS `{Setoid X} := InA equiv.
 
-Lemma InS_nil `{Setoid X} :
+(** ** [nil] *)
+
+Fact InS_nil_E `{Setoid X} :
   forall x,
     ~ InS x nil.
 Proof.
   inversion 1.
 Qed.
 
-Lemma InS_cons `{Setoid X} :
+(** ** [cons] *)
+
+Fact InS_cons_I_hd `{Setoid X} :
+  forall x x' xs,
+    x == x' ->
+    InS x (x' :: xs).
+Proof.
+  intros * H1.
+  left.
+  exact H1.
+Qed.
+
+Fact InS_cons_I_tl `{Setoid X} :
+  forall x x' xs,
+    InS x xs ->
+    InS x (x' :: xs).
+Proof.
+  intros * H1.
+  right.
+  exact H1.
+Qed.
+
+Fact InS_cons_E `{Setoid X} :
   forall x x' xs,
     InS x (x' :: xs) ->
     x == x' \/
@@ -25,6 +51,138 @@ Lemma InS_cons `{Setoid X} :
 Proof.
   inversion 1; firstorder.
 Qed.
+
+(** ** [app] **)
+
+Lemma InS_app_I_1 `{Setoid X} :
+  forall x xs1 xs2,
+    InS x xs1 ->
+    InS x (xs1 ++ xs2).
+Proof.
+  induction xs1 as [|x' xs1' IH].
+  all: intros xs2 H1.
+  -
+    contradict H1.
+    apply InS_nil_E.
+  -
+    apply InS_cons_E in H1 as [H1|H1].
+    +
+      apply InS_cons_I_hd.
+      exact H1.
+    +
+      simpl.
+      apply InS_cons_I_tl.
+      apply IH.
+      exact H1.
+Qed.
+
+Lemma InS_app_I_2 `{Setoid X} :
+  forall x xs1 xs2,
+    InS x xs2 ->
+    InS x (xs1 ++ xs2).
+Proof.
+  induction xs1 as [|x' xs1' IH].
+  all: intros xs2 H1.
+  -
+    exact H1.
+  -
+    simpl.
+    apply IH in H1.
+    apply InS_cons_I_tl.
+    exact H1.
+Qed.
+
+Lemma InS_app_E `{Setoid X} :
+  forall x xs1 xs2,
+    InS x (xs1 ++ xs2) ->
+    InS x xs1 \/
+    InS x xs2.
+Proof.
+  induction xs1 as [|x' xs1' IH].
+  all: intros xs2 H1.
+  -
+    right.
+    exact H1.
+  -
+    simpl in H1.
+    apply InS_cons_E in H1 as [H1|H1].
+    +
+      left.
+      left.
+      exact H1.
+    +
+      apply IH in H1 as [H1|H1].
+      *
+        left.
+        right.
+        exact H1.
+      *
+        right.
+        exact H1.
+Qed.
+
+(** ** Mapping **)
+
+Lemma InS_map_I `{Setoid X} `{Setoid Y} :
+  forall (f : Morph X Y) (xs : list X) (x : X),
+    InS x xs ->
+    InS (f x) (map f xs).
+Proof.
+  induction xs as [|x1 xs' IH].
+  all: intros x H1.
+  -
+    contradict H1.
+    apply InS_nil_E.
+  -
+    apply InS_cons_E in H1 as [H1|H1].
+    +
+      apply InS_cons_I_hd.
+      rewrite H1.
+      reflexivity.
+    +
+      simpl.
+      apply InS_cons_I_tl.
+      apply IH.
+      exact H1.
+Qed.
+
+Lemma InS_map_E `{Setoid X} `{Setoid Y} :
+  forall (f : Morph X Y) (xs : list X) (y : Y),
+    InS y (map f xs) ->
+    exists x,
+      f x == y /\
+      InS x xs.
+Proof.
+  intros f.
+  induction xs as [|x xs' IH].
+  all: intros y H1.
+  -
+    contradict H1; apply InS_nil_E.
+  -
+    simpl in H1.
+    apply InS_cons_E in H1 as [H1|H1].
+    +
+      exists x.
+      split.
+      *
+        symmetry.
+        exact H1.
+      *
+        apply InS_cons_I_hd.
+        reflexivity.
+    +
+      specialize (IH _ H1).
+      destruct IH as [x' [H2 H3]].
+      exists x'.
+      split.
+      --
+         exact H2.
+      --
+         apply InS_cons_I_tl.
+         exact H3.
+Qed.
+
+(** ** Reflection via [inbS] *)
 
 Definition inbS `{EqDec X} (x : X) : list X -> bool :=
   existsb (equiv_decb x).
@@ -36,14 +194,14 @@ Proof.
   induction xs as [|x' xs' IH].
   -
     right.
-    inversion 1.
+    apply InS_nil_E.
   -
     simpl.
     destruct IH as [IH|IH].
     +
       rewrite orb_true_r.
       left.
-      right.
+      apply InS_cons_I_tl.
       exact IH.
     +
       rewrite orb_false_r.
@@ -51,21 +209,12 @@ Proof.
       destruct (x == x') as [H1|H1].
       *
         left.
-        left.
+        apply InS_cons_I_hd.
         exact H1.
       *
         right.
         intros H2.
-        apply InA_cons in H2 as [H2|H2]; contradiction.
-Qed.
-
-Proposition InS_dec `{EqDec X} :
-  forall x xs,
-    {InS x xs} + {~ InS x xs}.
-Proof.
-  intros x xs.
-  eapply reflect_dec.
-  apply InS_reflect_inbS.
+        apply InS_cons_E in H2 as [H2|H2]; contradiction.
 Qed.
 
 Corollary InS_iff_inbS_true `{EqDec X} :
@@ -133,13 +282,66 @@ Proof.
       exact H2.
 Qed.
 
+(** ** Decidability *)
+
+Corollary InS_dec `{EqDec X} :
+  forall x xs,
+    {InS x xs} + {~ InS x xs}.
+Proof.
+  intros x xs.
+  eapply reflect_dec.
+  apply InS_reflect_inbS.
+Qed.
+
+(** ** Miscellaneous *)
+
+Lemma In_InS `{Setoid X} :
+  forall (xs : list X) x,
+    In x xs ->
+    InS x xs.
+Proof.
+  induction xs as [|x1 xs' IH].
+  all: intros x2 H1.
+  -
+    contradiction.
+  -
+    destruct H1 as [H1|H1].
+    +
+      subst x2.
+      apply InS_cons_I_hd.
+      reflexivity.
+    +
+      apply InS_cons_I_tl.
+      apply IH.
+      exact H1.
+Qed.
+
+(** * [InS_sublist] *)
+
 Definition InS_sublist `{Setoid X} : relation (list X) :=
   fun xs1 xs2 =>
   forall x,
     InS x xs1 ->
     InS x xs2.
 
-Lemma InS_sublist_nil `{Setoid X} :
+Instance InS_sublist_PreOrder `{Setoid X} :
+  PreOrder InS_sublist.
+Proof.
+  firstorder.
+Qed.
+
+(** ** [nil] *)
+
+Fact nil_InS_sublist_I `{Setoid X} :
+  forall xs,
+    InS_sublist nil xs.
+Proof.
+  intros xs x H1.
+  contradict H1.
+  apply InS_nil_E.
+Qed.
+
+Fact InS_sublist_nil_E `{Setoid X} :
   forall (xs : list X),
     InS_sublist xs nil ->
     xs = nil.
@@ -147,119 +349,93 @@ Proof.
   intros [|x xs'] H1.
   all: try reflexivity.
   exfalso.
-  eapply InS_nil.
+  eapply InS_nil_E.
   apply H1.
   left.
   reflexivity.
 Qed.
 
-Instance InS_sublist_PreOrder `{Setoid X} :
-  PreOrder InS_sublist.
+(** ** [cons] *)
+
+Fact cons_InS_sublist_I `{Setoid X} :
+  forall x xs1 xs2,
+    InS x xs2 ->
+    InS_sublist xs1 xs2 ->
+    InS_sublist (x :: xs1) xs2.
 Proof.
-  split.
+  intros * H1 H2 x H3.
+  apply InS_cons_E in H3 as [H3|H3].
   -
-    intros xs x H1.
+    rewrite H3.
     exact H1.
   -
-    intros xs1 xs2 xs3 H1 H2 x H3.
     apply H2.
-    apply H1.
     exact H3.
 Qed.
 
-Lemma cons_In_sublist_cons `{Setoid X} :
-  forall (x : X) xs1 xs2,
+Fact cons_InS_sublist_E_hd `{Setoid X} :
+  forall x xs1 xs2,
+    InS_sublist (x :: xs1) xs2 ->
+    InS x xs2.
+Proof.
+  intros * H1.
+  apply H1.
+  apply InS_cons_I_hd.
+  reflexivity.
+Qed.
+
+Fact cons_InS_sublist_E_tl `{Setoid X} :
+  forall x xs1 xs2,
+    InS_sublist (x :: xs1) xs2 ->
+    InS_sublist xs1 xs2.
+Proof.
+  intros * H1 x H2.
+  apply H1.
+  apply InS_cons_I_tl.
+  exact H2.
+Qed.
+
+Fact InS_sublist_cons_I `{Setoid X} :
+  forall x xs1 xs2,
     InS_sublist xs1 xs2 ->
-    InS_sublist (x :: xs1) (x :: xs2).
+    InS_sublist xs1 (x :: xs2).
 Proof.
-  intros x1 xs1 xs2 H1 x2 H2.
-  apply InS_cons in H2 as [H2|H2].
+  intros * H1 x H2.
+  right.
+  apply H1.
+  exact H2.
+Qed.
+
+Instance cons_Proper_InS_sublist `{Setoid X} :
+  Proper (equiv ==> InS_sublist ==> InS_sublist) cons.
+Proof.
+  intros x1 x2 H1 xs1 xs2 H2.
+  apply cons_InS_sublist_I.
   -
-    left.
+    apply InS_cons_I_hd.
+    exact H1.
+  -
+    apply InS_sublist_cons_I.
     exact H2.
-  -
-    right.
-    apply H1.
-    exact H2.
 Qed.
 
-Lemma InS_map `{Setoid X} `{Setoid Y} :
-  forall (f : Morph X Y) (xs : list X) (x : X),
-    InS x xs ->
-    InS (f x) (map f xs).
-Proof.
-  induction xs as [|x1 xs' IH].
-  all: intros x H1.
-  -
-    contradict H1.
-    apply InS_nil.
-  -
-    apply InS_cons in H1 as [H1|H1].
-    +
-      left.
-      rewrite H1.
-      reflexivity.
-    +
-      simpl.
-      right.
-      apply IH; assumption.
-Qed.
+(** ** [map] *)
 
-Lemma InS_map_iff `{Setoid X} `{Setoid Y} :
-  forall (f : Morph X Y) (xs : list X) (y : Y),
-    InS y (map f xs) <->
-    exists x,
-      f x == y /\
-      InS x xs.
+Instance map_Proper_In_sublist `{Setoid X} `{Setoid Y} :
+  forall (f : Morph X Y),
+    Proper (InS_sublist ==> InS_sublist) (map f).
 Proof.
-  intros f xs y.
-  split.
-  -
-    intros H1.
-    induction xs as [|x xs' IH].
-    +
-      contradict H1; apply InS_nil.
-    +
-      simpl in H1.
-      apply InS_cons in H1 as [H1|H1].
-      *
-        exists x.
-        split.
-        --
-           symmetry.
-           exact H1.
-        --
-           left; reflexivity.
-      *
-        specialize (IH H1).
-        destruct IH as [x' [H2 H3]].
-        exists x'.
-        split.
-        --
-           exact H2.
-        --
-           right.
-           exact H3.
-  -
-    intros [x [H1 H2]].
-    rewrite <- H1.
-    apply InS_map; assumption.
-Qed.
-
-Lemma map_In_sublist_map `(f : Morph X Y) :
-  forall xs1 xs2,
-    InS_sublist xs1 xs2 ->
-    InS_sublist (map f xs1) (map f xs2).
-Proof.
-  intros xs1 xs2 H1 y H2.
-  apply InS_map_iff in H2 as [x [H2 H3]].
+  intros f xs1 xs2 H1 y H2.
+  apply InS_map_E in H2 as [x [H2 H3]].
   rewrite <- H2.
-  apply InS_map.
+  apply InS_map_I.
   apply H1.
   exact H3.
 Qed.
 
-Lemma In_sublist_dec {X} `{EqDec X} :
+(** ** Decidablity *)
+
+Proposition InS_sublist_dec {X} `{EqDec X} :
   forall (xs1 xs2 : list X),
     {InS_sublist xs1 xs2} +
     {exists x, InS x xs1 /\ ~ InS x xs2}.
@@ -268,26 +444,18 @@ Proof.
   induction xs1 as [|x xs1' [IH|IH]].
   -
     left.
-    easy.
+    apply nil_InS_sublist_I.
   -
-    simpl.
     destruct (InS_dec x xs2) as [H2|H2].
     +
       left.
-      intros x' H3.
-      apply InS_cons in H3 as [H3|H3].
-      *
-        rewrite H3.
-        exact H2.
-      *
-        apply IH.
-        exact H3.
+      apply cons_InS_sublist_I; assumption.
     +
       right.
       exists x.
       split.
       *
-        left.
+        apply InS_cons_I_hd.
         reflexivity.
       *
         exact H2.
@@ -297,11 +465,13 @@ Proof.
     exists x'.
     split.
     +
-      right.
+      apply InS_cons_I_tl.
       exact H2.
     +
       exact H3.
 Qed.
+
+(** * [InS_eq] *)
 
 Definition InS_eq `{Setoid X} : relation (list X) :=
   fun ls rs =>
@@ -313,75 +483,30 @@ Proof.
   firstorder.
 Qed.
 
-Lemma InS_eq_nil `{Setoid X} :
+Program Instance InS_eq_Setoid `{Setoid X} : Setoid (list X).
+
+(** ** [nil] *)
+
+Fact InS_eq_nil `{Setoid X} :
   forall (xs : list X),
     InS_eq xs nil ->
     xs = nil.
 Proof.
-  destruct xs as [|x xs'].
-  -
-    reflexivity.
-  -
-    intros [H1 H2].
-    apply InS_sublist_nil.
-    exact H1.
+  intros xs [H1 H2].
+  apply InS_sublist_nil_E.
+  exact H1.
 Qed.
 
-Instance cons_Proper `{Setoid X} :
+(** ** [cons] *)
+
+Instance cons_Proper_InS_eq `{Setoid X} :
   Proper (equiv ==> InS_eq ==> InS_eq) cons.
 Proof.
-  intros x1 x2 H1 xs1 xs2 H2.
+  intros x1 x2 H1 xs1 xs2 [H2 H3].
   split.
-  all: intros x3 H3.
-  all: apply InS_cons in H3 as [H3|H3].
-  -
-    left.
-    rewrite H3.
-    exact H1.
-  -
-    right.
-    apply H2.
-    exact H3.
-  -
-    left.
-    rewrite H1.
-    exact H3.
-  -
-    right.
-    apply H2.
-    exact H3.
-Qed.
-
-Lemma InS_sublist_singleton `{EqDec X} :
-  forall x (xs : list X),
-    InS_sublist xs (x :: nil) ->
-    xs = nil \/
-    InS_eq xs (x :: nil).
-Proof.
-  intros x xs H1.
-  destruct (InS_dec x xs) as [H2|H2].
-  -
-    right.
-    split; try assumption.
-    intros x' H3.
-    apply InS_cons in H3 as [H3|H3].
-    +
-      rewrite H3.
-      exact H2.
-    +
-      contradict H3.
-      apply InS_nil.
-  -
-    left.
-    destruct xs as [|x' xs']; try reflexivity.
-    exfalso.
-    assert (H3 : x =/= x') by (intros H3; apply H2; left; exact H3).
-    assert (H4 : InS x' (x :: nil)) by (apply H1; left; reflexivity).
-    apply InS_cons in H4 as [H4|H4].
-    +
-      symmetry in H4; contradiction.
-    +
-      eapply InS_nil; exact H4.
+  all: rewrite H1.
+  all: rewrite H2 + rewrite H3.
+  all: reflexivity.
 Qed.
 
 Lemma In_eq_cons_cons `{Setoid X} :
@@ -391,61 +516,12 @@ Proof.
   intros *.
   split.
   all: intros x H1.
-  all: apply InS_cons in H1 as [H1|H1].
-  all: try apply InS_cons in H1 as [H1|H1].
+  all: apply InS_cons_E in H1 as [H1|H1].
+  all: try apply InS_cons_E in H1 as [H1|H1].
   all: (left + (right; left + right); exact H1).
 Qed.
 
-Lemma InS_app_iff `{Setoid X} :
-  forall xs1 xs2 x,
-    InS x (xs1 ++ xs2) <->
-    InS x xs1 \/ InS x xs2.
-Proof.
-  induction xs1 as [|x1 xs1' IH].
-  all: intros xs2 x.
-  -
-    split.
-    +
-      intros H1.
-      right.
-      exact H1.
-    +
-      intros [H1|H1]; easy.
-  -
-    simpl.
-    split.
-    +
-      intros H1.
-      apply InS_cons in H1 as [H1|H1].
-      left.
-      left.
-      exact H1.
-      apply IH in H1 as [H1|H1].
-      *
-        left.
-        right.
-        exact H1.
-      *
-        right.
-        exact H1.
-    +
-      intros [H1|H1].
-      *
-        apply InS_cons in H1 as [H1|H1].
-        --
-           left.
-           exact H1.
-        --
-           right.
-           apply IH.
-           left.
-           exact H1.
-      *
-        right.
-        apply IH.
-        right.
-        exact H1.
-Qed.
+(** ** [app] *)
 
 Instance app_Proper `{Setoid X} :
   Proper (InS_eq ==> InS_eq ==> InS_eq) (@app X).
@@ -453,10 +529,9 @@ Proof.
   intros xs1 xs2 H1 ys1 ys2 H2.
   split.
   all: intros x H3.
-  all: apply InS_app_iff.
-  all: apply InS_app_iff in H3 as [H3|H3].
+  all: apply InS_app_E in H3 as [H3|H3].
   all: apply H1 in H3 + apply H2 in H3.
-  all: left + right; exact H3.
+  all: apply InS_app_I_1 + apply InS_app_I_2; exact H3.
 Qed.
 
 Lemma In_eq_app_comm `{Setoid X} :
@@ -466,77 +541,116 @@ Proof.
   intros xs1 xs2.
   split.
   all: intros x H1.
-  all: apply InS_app_iff.
-  all: apply InS_app_iff in H1 as [H1|H1].
-  all: left + right; exact H1.
+  all: apply InS_app_E in H1 as [H1|H1].
+  all: apply InS_app_I_1 + apply InS_app_I_2; exact H1.
 Qed.
 
-Lemma In_Sublist_singleton `{EqDec X} :
+(** ** [map] *)
+
+Instance map_Proper_In_eq `{Setoid X} `{Setoid Y} :
+  forall (f : Morph X Y),
+    Proper (InS_eq ==> InS_eq) (map f).
+Proof.
+  intros f xs1 xs2 [H1 H2].
+  split.
+  all: rewrite H1 + rewrite H2.
+  all: reflexivity.
+Qed.
+
+(** ** Decidability *)
+
+Instance InS_eq_dec `{EqDec X} : EqDec InS_eq_Setoid.
+Proof.
+  intros xs1 xs2.
+  destruct (InS_sublist_dec xs1 xs2) as [H1|H1].
+  -
+    destruct (InS_sublist_dec xs2 xs1) as [H2|H2].
+    +
+      left.
+      split; assumption.
+    +
+      right.
+      destruct H2 as [x [H2 H3]].
+      intros [H4 H5].
+      apply H3.
+      apply H5.
+      exact H2.
+  -
+    right.
+    destruct H1 as [x [H1 H2]].
+    intros [H3 H4].
+    apply H2.
+    apply H3.
+    exact H1.
+Qed.
+
+(** ** Miscellaneous *)
+
+Lemma InS_sublist_singleton_E `{EqDec X} :
   forall (xs : list X) (x : X),
     InS_sublist xs (x :: nil) ->
     InS_eq xs (x :: nil) \/
-    xs = nil.
+    InS_eq xs nil.
 Proof.
   intros xs x1 H1.
   destruct (InS_dec x1 xs) as [H2|H2].
   -
     left.
-    split.
+    split; try exact H1.
+    apply cons_InS_sublist_I.
     +
-      auto.
+      exact H2.
     +
-      intros x2 H3.
-      apply InS_cons in H3 as [H3|H3].
-      *
-        rewrite H3.
-        exact H2.
-      *
-        exfalso.
-        eapply InS_nil.
-        exact H3.
+      apply nil_InS_sublist_I.
   -
     right.
-    destruct xs as [|x2 xs'].
+    destruct xs as [|x2 xs']; try reflexivity.
+    exfalso.
+    apply H2.
+    apply cons_InS_sublist_E_hd in H1 as H3.
+    apply cons_InS_sublist_E_tl in H1 as H4.
+    apply InS_cons_E in H3 as [H3|H3].
     +
-      reflexivity.
+      apply InS_cons_I_hd.
+      symmetry.
+      exact H3.
     +
-      exfalso.
-      assert (H3 : InS x2 (x2 :: xs')). left; reflexivity.
-      apply H1 in H3 as H4.
-      apply InS_cons in H4 as [H4|H4].
-      *
-        rewrite H4 in H3 at 1.
-        contradiction.
-      *
-        eapply InS_nil.
-        exact H4.
+      contradict H3.
+      apply InS_nil_E.
 Qed.
+
+(** * Well-Founded Relations on Lists *)
+(** ** [length_order] *)
 
 Definition length_order {X} : relation (@list X) :=
   fun xs1 xs2 =>
   length xs1 < length xs2.
 
+Lemma length_order_Acc {X} :
+  forall s (xs : list X),
+    length xs <= s ->
+    Acc length_order xs.
+Proof.
+  induction s as [|s' IH].
+  all: intros xs1 H1.
+  all: constructor.
+  all: intros xs2 H2.
+  all: red in H2.
+  all: try apply IH.
+  all: lia.
+Qed.
+
 Proposition length_order_wf {X} :
   well_founded (@length_order X).
 Proof.
-  red.
-  assert (H1 :
-    forall s (xs : list X),
-      length xs <= s -> Acc length_order xs
-  ).
-  {
-    induction s as [|s' IH].
-    all: intros xs1 H1.
-    all: constructor.
-    all: intros xs2 H2.
-    all: red in H2.
-    all: try apply IH.
-    all: lia.
-  }
-  intros xs.
-  eapply H1.
+  intro.
+  eapply length_order_Acc.
   reflexivity.
 Qed.
+
+Definition length_order_ind {X} := well_founded_ind (@length_order_wf X).
+
+(** ** [InS_sublist_order] *)
 
 Definition InS_sublist_order `{Setoid X} : relation (@list X) :=
   fun xs1 xs2 =>
@@ -545,146 +659,346 @@ Definition InS_sublist_order `{Setoid X} : relation (@list X) :=
     InS x xs2 /\
     ~ InS x xs1.
 
+Lemma InS_sublist_order_Acc `{EqDec X} :
+  forall xs1 xs2,
+    InS_sublist xs2 xs1 ->
+    Acc InS_sublist_order xs2.
+Proof.
+  induction xs1 as [xs1 IH] using (well_founded_ind length_order_wf).
+  intros xs2 H2.
+  constructor.
+  intros xs3 [H3 H4].
+  destruct H4 as [x1 [H4 H5]].
+  eapply IH with
+    (y := filter (nequiv_decb x1) xs1).
+  -
+    apply H2 in H4 as H6.
+    clear dependent xs3.
+    clear dependent xs2.
+    clear IH.
+    rename H6 into H2.
+    (* TODO extract? *)
+    induction xs1 as [|x2 xs1' IH].
+    +
+      easy.
+    +
+      unfold length_order in *.
+      unfold "_ <>b _" in *.
+      unfold "_ ==b _" in *.
+      simpl in *.
+      apply InS_cons_E in H2 as [H2|H2].
+      *
+        destruct (InS_dec x1 xs1') as [H3|H3].
+        --
+           specialize (IH H3).
+           destruct (x1 == x2) as [_|H4]; try contradiction.
+           simpl.
+           lia.
+        --
+           clear IH.
+           destruct (x1 == x2) as [_|H4]; try contradiction.
+           simpl.
+           (* TODO extract? *)
+           assert (H4 :
+            filter
+            (fun y : X => negb (if x1 == y then true else false))
+            xs1' =
+            xs1'
+          ).
+          {
+            clear dependent x2.
+            rename xs1' into xs1.
+            (* TODO extract? *)
+            induction xs1 as [|x2 xs1' IH].
+            -
+              reflexivity.
+            -
+              simpl.
+              destruct (x1 == x2) as [H4|H4].
+              +
+                simpl.
+                exfalso.
+                apply H3.
+                left.
+                exact H4.
+              +
+                simpl.
+                f_equal.
+                apply IH.
+                intros H5.
+                apply H3.
+                right.
+                exact H5.
+          }
+          rewrite H4.
+          lia.
+      *
+        specialize (IH H2).
+        destruct (x1 == x2) as [H3|H3].
+        --
+           simpl.
+           lia.
+        --
+           simpl.
+           lia.
+  -
+    intros x2 H6.
+    apply filter_InA.
+    {
+      intros x3 x4 H7.
+      unfold "_ <>b _".
+      unfold "_ ==b _".
+      destruct (x1 == x3) as [H8|H8].
+      all: destruct (x1 == x4) as [H9|H9].
+      all: reflexivity + rewrite H7 in H8; contradiction.
+    }
+    split.
+    +
+      apply H2.
+      apply H3.
+      exact H6.
+    +
+      unfold "_ <>b _".
+      unfold "_ ==b _".
+      destruct (x1 == x2) as [H7|H7].
+      *
+        rewrite H7 in H5.
+        contradiction.
+      *
+        reflexivity.
+Qed.
+
 Proposition InS_sublist_order_wf `{EqDec X} :
   well_founded InS_sublist_order.
 Proof.
-  red.
-  assert (H2 :
-    forall (xs1 xs2 : list X),
-      InS_sublist xs2 xs1 ->
-      Acc InS_sublist_order xs2
-  ).
-  {
-    induction xs1 as [xs1 IH] using (well_founded_ind length_order_wf).
-    intros xs2 H2.
-    constructor.
-    intros xs3 [H3 H4].
-    destruct H4 as [x1 [H4 H5]].
-    eapply IH with
-      (y := filter (nequiv_decb x1) xs1).
-    -
-      apply H2 in H4 as H6.
-      clear dependent xs3.
-      clear dependent xs2.
-      clear IH.
-      rename H6 into H2.
-      induction xs1 as [|x2 xs1' IH].
-      +
-        easy.
-      +
-        unfold length_order in *.
-        unfold "_ <>b _" in *.
-        unfold "_ ==b _" in *.
-        simpl in *.
-        apply InS_cons in H2 as [H2|H2].
-        *
-          destruct (InS_dec x1 xs1') as [H3|H3].
-          --
-             specialize (IH H3).
-             destruct (x1 == x2) as [_|H4]; try contradiction.
-             simpl.
-             lia.
-          --
-             clear IH.
-             destruct (x1 == x2) as [_|H4]; try contradiction.
-             simpl.
-             assert (H4 :
-              filter
-              (fun y : X => negb (if x1 == y then true else false))
-              xs1' =
-              xs1'
-            ).
-            {
-              clear dependent x2.
-              rename xs1' into xs1.
-              induction xs1 as [|x2 xs1' IH].
-              -
-                reflexivity.
-              -
-                simpl.
-                destruct (x1 == x2) as [H4|H4].
-                +
-                  simpl.
-                  exfalso.
-                  apply H3.
-                  left.
-                  exact H4.
-                +
-                  simpl.
-                  f_equal.
-                  apply IH.
-                  intros H5.
-                  apply H3.
-                  right.
-                  exact H5.
-            }
-            rewrite H4.
-            lia.
-        *
-          specialize (IH H2).
-          destruct (x1 == x2) as [H3|H3].
-          --
-             simpl.
-             lia.
-          --
-             simpl.
-             lia.
-    -
-      intros x2 H6.
-      apply filter_InA.
-      {
-        intros x3 x4 H7.
-        unfold "_ <>b _".
-        unfold "_ ==b _".
-        destruct (x1 == x3) as [H8|H8].
-        all: destruct (x1 == x4) as [H9|H9].
-        all: reflexivity + rewrite H7 in H8; contradiction.
-      }
-      split.
-      +
-        apply H2.
-        apply H3.
-        exact H6.
-      +
-        unfold "_ <>b _".
-        unfold "_ ==b _".
-        destruct (x1 == x2) as [H7|H7].
-        *
-          rewrite H7 in H5.
-          contradiction.
-        *
-          reflexivity.
-  }
-  intros xs.
-  eapply H2.
+  intro.
+  eapply InS_sublist_order_Acc.
   reflexivity.
 Qed.
 
-Lemma cons_InS_sublist_cons `{EqDec X} :
-  forall x xs1 xs2,
-    InS_sublist xs1 xs2 ->
-    InS_sublist (x :: xs1) (x :: xs2).
+Definition InS_sublist_order_ind `{EqDec X} :=
+  well_founded InS_sublist_order.
+
+(** * [mult] *)
+
+Definition mult `{Setoid X} (P : Morph X Prop) (xs : list X) : Prop :=
+  forall x,
+    InS x xs ->
+    P x.
+
+Instance mult_Proper_InS_eq `{Setoid X} :
+  Proper (Morph_eq ==> InS_eq ==> iff) mult.
 Proof.
-  intros x1 xs1 xs2 H1 x2 H2.
-  apply InS_cons in H2 as [H2|H2].
+  intros f1 f2 H1 xs1 xs2 H2.
+  split.
+  all: intros H3 x H4.
+  all: apply H1.
+  all: apply H3.
+  all: apply H2.
+  all: exact H4.
+Qed.
+
+(** ** [nil] *)
+
+Fact mult_nil_I `{Setoid X} :
+  forall P,
+    mult P nil.
+Proof.
+  intros P x H1.
+  contradict H1.
+  apply InS_nil_E.
+Qed.
+
+(** ** [cons] *)
+
+Fact mult_cons_I `{Setoid X} :
+  forall (P : Morph X Prop) x xs,
+    P x ->
+    mult P xs ->
+    mult P (x :: xs).
+Proof.
+  intros P x1 xs H1 H2 x2 H3.
+  apply InS_cons_E in H3 as [H3|H3].
+  -
+    rewrite H3.
+    exact H1.
+  -
+    apply H2.
+    exact H3.
+Qed.
+
+Fact mult_cons_E_hd `{Setoid X} :
+  forall P x xs,
+    mult P (x :: xs) ->
+    P x.
+Proof.
+  intros P x xs H1.
+  apply H1.
+  apply InS_cons_I_hd.
+  reflexivity.
+Qed.
+
+Fact mult_cons_E_tl `{Setoid X} :
+  forall P x xs,
+    mult P (x :: xs) ->
+    mult P xs.
+Proof.
+  intros P x1 xs H1 x2 H2.
+  apply H1.
+  apply InS_cons_I_tl.
+  exact H2.
+Qed.
+
+(** ** [app] *)
+
+Lemma mult_app_I `{Setoid X} :
+  forall P xs1 xs2,
+    mult P xs1 ->
+    mult P xs2 ->
+    mult P (xs1 ++ xs2).
+Proof.
+  intros * H1 H2 x H3.
+  apply InS_app_E in H3 as [H3|H3].
+  all: apply H1 + apply H2; exact H3.
+Qed.
+
+Lemma mult_app_E_1 `{Setoid X} :
+  forall P xs1 xs2,
+    mult P (xs1 ++ xs2) ->
+    mult P xs1.
+Proof.
+  intros * H1 x H2.
+  apply H1.
+  apply InS_app_I_1.
+  exact H2.
+Qed.
+
+Lemma mult_app_E_2 `{Setoid X} :
+  forall P xs1 xs2,
+    mult P (xs1 ++ xs2) ->
+    mult P xs2.
+Proof.
+  intros * H1 x H2.
+  apply H1.
+  apply InS_app_I_2.
+  exact H2.
+Qed.
+
+(** * [some] *)
+
+Definition some `{Setoid X} (P : Morph X Prop) (xs : list X) : Prop :=
+  exists x,
+    InS x xs /\
+    P x.
+
+Instance some_Proper_InS_eq `{Setoid X} :
+  Proper (Morph_eq ==> InS_eq ==> iff) some.
+Proof.
+  intros P1 P2 H1 xs1 xs2 H2.
+  split.
+  all: intros [x [H3 H4]].
+  all: exists x.
+  all: apply H1 in H4.
+  all: apply H2 in H3.
+  all: split.
+  all: assumption.
+Qed.
+
+(** ** [nil] *)
+
+Fact some_nil_E `{Setoid X} :
+  forall P,
+    ~ some P nil.
+Proof.
+  intros P [x [H1 H2]].
+  contradict H1.
+  apply InS_nil_E.
+Qed.
+
+(** ** [cons] *)
+
+Fact some_cons_I_hd `{Setoid X} :
+  forall (P : Morph X Prop) x xs,
+    P x ->
+    some P (x :: xs).
+Proof.
+  intros * H1.
+  eexists.
+  split; try exact H1.
+  apply InS_cons_I_hd.
+  reflexivity.
+Qed.
+
+Fact some_cons_I_tl `{Setoid X} :
+  forall P x xs,
+    some P xs ->
+    some P (x :: xs).
+Proof.
+  intros * [x [H1 H2]].
+  eexists.
+  split; try exact H2.
+  apply InS_cons_I_tl.
+  exact H1.
+Qed.
+
+Fact some_cons_E `{Setoid X} :
+  forall P x xs,
+    some P (x :: xs) ->
+    P x \/
+    some P xs.
+Proof.
+  intros * [x [H1 H2]].
+  apply InS_cons_E in H1 as [H1|H1].
   -
     left.
+    rewrite H1 in H2.
     exact H2.
   -
     right.
-    apply H1.
-    exact H2.
+    eexists.
+    split; eassumption.
 Qed.
 
-Lemma map_InS_sublist_map `{EqDec X} `{EqDec Y} :
-  forall (f : Morph X Y) xs1 xs2,
-    InS_sublist xs1 xs2 ->
-    InS_sublist (map f xs1) (map f xs2).
+(** ** [app] *)
+
+Lemma some_app_I_1 `{Setoid X} :
+  forall P xs1 xs2,
+    some P xs1 ->
+    some P (xs1 ++ xs2).
 Proof.
-  intros f xs1 xs2 H1 y H2.
-  apply InS_map_iff in H2 as [x [H2 H3]].
-  rewrite <- H2.
-  apply InS_map.
-  apply H1.
-  exact H3.
+  intros * [x [H1 H2]].
+  exists x.
+  split; try exact H2.
+  apply InS_app_I_1.
+  exact H1.
+Qed.
+
+Lemma some_app_I_2 `{Setoid X} :
+  forall P xs1 xs2,
+    some P xs2 ->
+    some P (xs1 ++ xs2).
+Proof.
+  intros * [x [H1 H2]].
+  exists x.
+  split; try exact H2.
+  apply InS_app_I_2.
+  exact H1.
+Qed.
+
+Lemma some_app_E `{Setoid X} :
+  forall P xs1 xs2,
+    some P (xs1 ++ xs2) ->
+    some P xs1 \/
+    some P xs2.
+Proof.
+  intros * [x [H1 H2]].
+  apply InS_app_E in H1 as [H1|H1].
+  -
+    left.
+    eexists.
+    split; eassumption.
+  -
+    right.
+    eexists.
+    split; eassumption.
 Qed.

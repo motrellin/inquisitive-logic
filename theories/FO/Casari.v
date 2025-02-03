@@ -478,7 +478,7 @@ Module Casari_fails.
   Lemma not_contains_any_contains_all_complement :
     forall p s,
       ~ contains_any p s ->
-      contains_all p (complement s).
+      contains_all p (States.complement s).
   Proof.
     intros p s H1 w H2.
     apply complement_true.
@@ -582,8 +582,8 @@ Module Casari_fails.
   Qed.
 
   Local Definition E (s : state) : Prop :=
-    contains_any (? ~ even ?) (complement s) \/
-    infinitely_many even (complement s).
+    contains_any (? ~ even ?) (States.complement s) \/
+    infinitely_many even (States.complement s).
 
   Lemma substate_E :
     forall s t,
@@ -639,7 +639,7 @@ Module Casari_fails.
   Proposition support_IES_even :
     forall (s : state) (a : assignment),
       even (a 0) = true ->
-      contains_any (? (~ even) || even && ltb (a 0) ?) (complement s) ->
+      contains_any (? (~ even) || even && ltb (a 0) ?) (States.complement s) ->
       s, a |= IES.
   Proof.
     intros s a H1 [n [H2 H3]].
@@ -658,6 +658,7 @@ Module Casari_fails.
     -
       destruct (n =? w) eqn:H5; try reflexivity.
       apply eqb_eq in H5.
+      simpl in *.
       congruence.
     -
       apply orb_true_iff in H2 as [H2|H2].
@@ -728,7 +729,7 @@ Module Casari_fails.
     forall (s : state) (a : assignment),
       even (a 0) = true ->
       s, a |= IES ->
-      contains_any (? (~ even) || ltb (a 0) ?) (complement s).
+      contains_any (? (~ even) || ltb (a 0) ?) (States.complement s).
   Proof.
     intros s a H1 H2.
     pose proof (support_IES_even_other_direction') as H3.
@@ -788,7 +789,7 @@ Module Casari_fails.
           exact H2.
         *
           exists e.
-          simpl.
+          simpl in *.
           rewrite H3,H4,H5.
           split; reflexivity.
     -
@@ -801,18 +802,21 @@ Module Casari_fails.
      (even) number greater than [e]. By this, it contains at least one odd number
      and its complement can only contain infinitely many even numbers.
    *)
-  Local Definition counter_state (e : nat) : state :=
-    fun w =>
-    if even w
-    then e <? w
-    else true.
+  Local Program Definition counter_state (e : nat) : state :=
+    {|
+      morph :=
+        fun w =>
+        if even w
+        then e <? w
+        else true
+    |}.
 
   Fact counter_state_contains_all_odds :
     forall e,
       contains_all (? ~ even ?) (counter_state e).
   Proof.
     intros e w H1.
-    unfold counter_state.
+    simpl.
     destruct (even w); easy.
   Qed.
 
@@ -821,12 +825,8 @@ Module Casari_fails.
       contains_all (? ltb e ?) (counter_state e).
   Proof.
     intros e w H1.
-    unfold counter_state.
-    destruct (even w).
-    -
-      exact H1.
-    -
-      reflexivity.
+    simpl.
+    destruct (even w); easy.
   Qed.
 
   Lemma support_CasariSuc_IES_other_direction' :
@@ -923,8 +923,8 @@ Module Casari_fails.
     forall (s : state) (a : assignment),
       even (a 0) = true ->
       contains_all (? ~ even ?) s ->
-      finitely_many (? even ?) (complement s) ->
-      contains_any (? ltb (a 0) ?) (complement s) ->
+      finitely_many (? even ?) (States.complement s) ->
+      contains_any (? ltb (a 0) ?) (States.complement s) ->
       ~ (s, a |= <{CasariImpl IES}>).
   Proof.
     intros s a H1 H2 [e1 H3] [e2 [H4 H5]] H6.
@@ -975,8 +975,8 @@ Module Casari_fails.
       exists t,
         substate t s /\
         contains_all (? ~ even ?) t /\
-        finitely_many (? even ?) (complement t) /\
-        contains_any (? ltb (a x) ?) (complement t).
+        finitely_many (? even ?) (States.complement t) /\
+        contains_any (? ltb (a x) ?) (States.complement t).
   Proof.
     intros s a x H1 H2.
     apply Decidable.not_or in H2 as [H2 H3].
@@ -989,15 +989,25 @@ Module Casari_fails.
        there also exists a greatest even number not in [t] and
        with one even number contained greater than [a x].
      *)
-    eexists (
-      fun w =>
-      if even w
-      then S (S ((a x) + e)) <? w
-      else true
-    ).
+    unshelve eexists.
+    {
+      unshelve econstructor.
+      exact (
+        fun w =>
+        if even w
+        then S (S ((a x) + e)) <? w
+        else true
+      ).
+      repeat intro.
+      simpl in *.
+      subst.
+      reflexivity.
+    }
+    simpl.
     repeat split.
     -
       intros w H5.
+      simpl in H5.
       destruct (even w) eqn:H4.
       +
         specialize (H3 _ H4).
@@ -1012,14 +1022,16 @@ Module Casari_fails.
     -
       intros w H4.
       rewrite negb_true_iff in H4.
+      simpl.
       rewrite H4.
       reflexivity.
     -
       exists (S (S (a x + e))).
       intros w H4 H5.
-      rewrite complement_true in H5.
+      simpl in H5.
       rewrite H4 in H5.
       apply leb_le.
+      rewrite negb_true_iff in H5.
       apply ltb_nlt in H5.
       lia.
     -
@@ -1135,22 +1147,22 @@ Proposition Seq_CasariAnt_CasariSuc `{Signature} :
     ((pair ns (CasariSuc phi).|[sigma]) :: nil).
 Proof.
   induction ns as [ns IH] using
-    (well_founded_ind (In_sublist_order_wf nat_eq_dec)).
+    (well_founded_ind InS_sublist_order_wf).
 
   intros phi sigma H1.
   eapply Seq_Forall_r.
   -
-    left; reflexivity.
+    left; asimpl; reflexivity.
   -
     eapply Seq_Forall_l with (t := Var 0).
     +
-      left; reflexivity.
+      left; asimpl; reflexivity.
     +
       exact I.
     +
       eapply Seq_Impl_l.
       *
-        left; reflexivity.
+        left; asimpl; reflexivity.
       *
         reflexivity.
       *
@@ -1159,16 +1171,23 @@ Proof.
            left; reflexivity.
         --
            intros ns' H2.
-           destruct (In_sublist_dec nat_eq_dec ns ns') as [H3|H3].
+           destruct (InS_sublist_dec ns ns') as [H3|H3].
            ++
               eapply prop_4_6.
               **
                  left; reflexivity.
               **
-                 right.
-                 right.
-                 left.
-                 autosubst.
+                 apply InS_cons_I_tl.
+                 apply InS_cons_I_tl.
+                 apply InS_cons_I_hd.
+                 asimpl.
+                 split.
+                 ---
+                     simpl.
+                     reflexivity.
+                 ---
+                     asimpl.
+                     admit.
               **
                  exact H3.
            ++
@@ -1176,19 +1195,41 @@ Proof.
                 (ls1 := (pair ns (CasariAnt phi).|[sigma].|[ren (+1)]) :: nil)
                 (rs1 := (pair ns' (CasariSuc phi).|[sigma].|[ren (+1)]) :: nil).
               **
-                 intros psi [H4|H4]; contradiction + subst psi.
-                 right.
-                 right.
-                 left.
-                 reflexivity.
+                 intros psi H4.
+                 apply InS_cons_E in H4 as [H4|H4].
+                 ---
+                     apply InS_cons_I_tl.
+                     apply InS_cons_I_tl.
+                     apply InS_cons_I_hd.
+                     rewrite H4.
+                     reflexivity.
+                 ---
+                     contradict H4.
+                     apply InS_nil_E.
               **
-                 intros psi [H4|H4]; contradiction + subst psi.
+                 intros psi H4.
+                 apply InS_cons_E in H4 as [H4|H4].
+                 ---
+                     apply InS_cons_I_hd.
+                     rewrite H4.
+                     asimpl.
+                     split.
+                     +++
+                         reflexivity.
+                     +++
+                         asimpl.
+                         admit.
+                         (*
                  left.
                  f_equal.
                  asimpl.
                  f_equal.
                  apply H1.
                  inversion 1; reflexivity.
+                          *)
+                 ---
+                     contradict H4.
+                     apply InS_nil_E.
               **
                  eapply Seq_mon.
                  ---
@@ -1199,7 +1240,12 @@ Proof.
                      eapply Seq_weakening with
                        (ls1 := (pair ns' (CasariAnt phi).|[sigma].|[ren (+1)]) :: nil).
                      +++
-                         firstorder.
+                         apply cons_InS_sublist_I.
+                         ***
+                             apply InS_cons_I_hd.
+                             reflexivity.
+                         ***
+                             apply nil_InS_sublist_I.
                      +++
                          reflexivity.
                      +++
@@ -1225,11 +1271,19 @@ Proof.
               left.
               f_equal.
               asimpl.
+              split.
+              **
+                 simpl.
+                 reflexivity.
+              **
+                 (*
               apply H1.
               inversion 1; reflexivity.
+                  *)
+                 admit.
            ++
               reflexivity.
-Qed.
+Admitted.
 
 Corollary Seq_Casari `{Signature} :
   forall phi ns,
@@ -1239,7 +1293,15 @@ Proof.
   intros phi ns H1.
   eapply Seq_Impl_r.
   -
-    left; reflexivity.
+    left.
+    split.
+    +
+      simpl.
+      reflexivity.
+    +
+      simpl snd.
+      unfold Casari.
+      reflexivity.
   -
     intros ns' H2.
     eapply Seq_weakening with
@@ -1249,9 +1311,15 @@ Proof.
       asimpl.
       reflexivity.
     +
-      intros psi [H3|H3]; contradiction + subst psi.
-      left.
-      asimpl; reflexivity.
+      intros psi H3.
+      apply InS_cons_E in H3 as [H3|H3].
+      *
+        apply InS_cons_I_hd.
+        rewrite H3.
+        split; asimpl; reflexivity.
+      *
+        contradict H3.
+        apply InS_nil_E.
     +
       eapply Seq_CasariAnt_CasariSuc.
       exact H1.
@@ -1266,13 +1334,13 @@ Proof.
   intros phi ns H1 M f a.
   pose proof (Seq_Casari phi ns H1) as H2.
   apply soundness in H2.
-  specialize (H2 _ f a (Forall_nil _)).
-  apply Exists_exists in H2 as [psi [[H2|H2] H3]].
+  specialize (H2 _ f a (mult_nil_I _)).
+  apply some_cons_E in H2 as [H2|H2].
   -
-    subst psi.
-    exact H3.
+    exact H2.
   -
-    contradiction.
+    contradict H2.
+    apply some_nil_E.
 Qed.
 
 Print Assumptions support_valid_Casari_bd.

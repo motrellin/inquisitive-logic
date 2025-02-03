@@ -144,7 +144,7 @@ Qed.
 
 Program Definition mapping_state
   `{Model}
-  (f : nat -> World)
+  (f : Morph nat World)
   (ns : list nat) :
   state :=
 
@@ -172,6 +172,24 @@ Next Obligation.
     exact H1.
 Qed.
 
+Instance mapping_state_Proper `{Model} :
+  Proper (Morph_eq ==> InS_eq ==> state_eq) mapping_state.
+Proof.
+  intros f1 f2 H1 ns1 ns2 H2.
+  intros w.
+  simpl.
+  apply InS_iff_inbS.
+  red in H1.
+  split.
+  all: intros H3.
+  all: apply InS_map_E in H3 as [n [H3 H4]].
+  all: rewrite <- H3.
+  all: rewrite H1 + rewrite <- H1.
+  all: apply InS_map_I.
+  all: apply H2.
+  all: exact H4.
+Qed.
+
 Lemma mapping_state_nil `{Model} :
   forall f,
     state_eq (mapping_state f nil) empty_state.
@@ -188,56 +206,6 @@ Lemma mapping_state_cons `{Model} :
 Proof.
   intros f n ns' w.
   reflexivity.
-Qed.
-
-Instance mapping_state_Proper `{Model} :
-  forall (f : Morph nat World),
-    Proper (InS_eq ==> state_eq) (mapping_state f).
-Proof.
-  intros f ns1.
-  induction ns1 as [|n1 ns1' IH].
-  all: intros ns2 [H2 H3].
-  -
-    apply InS_sublist_nil in H3.
-    subst ns2.
-    reflexivity.
-  -
-    intros w.
-    simpl.
-    unfold "_ ==b _".
-    destruct (w == f n1) as [H4|H4].
-    +
-      simpl.
-      symmetry.
-      apply InS_iff_inbS_true.
-      rewrite H4.
-      apply InS_map_iff; try exact H1.
-      exists n1; split; try reflexivity.
-      apply H2.
-      left.
-      reflexivity.
-    +
-      simpl.
-      apply InS_iff_inbS.
-      split.
-      all: intros H5.
-      all: apply InS_map_iff in H5 as [n2 [H5 H6]]; try exact H1.
-      all: apply InS_map_iff; try exact H1.
-      all: exists n2.
-      all: split; try exact H5.
-      *
-        apply H2.
-        right.
-        exact H6.
-      *
-        apply H3 in H6.
-        apply InS_cons in H6 as [H6|H6].
-        --
-           rewrite H6 in H5.
-           symmetry in H5.
-           contradiction.
-        --
-           exact H6.
 Qed.
 
 (** ** Excluding states *)
@@ -454,29 +422,19 @@ Proof.
   destruct (w == w') as [H2|H2]; easy.
 Qed.
 
-(*
-Lemma substate_mapping_state `{Model} :
-  forall f ns1 ns2,
-    (forall n,
-      In n ns2 ->
-      In n ns1
-    ) ->
-    substate (mapping_state f ns2) (mapping_state f ns1).
+Instance mapping_state_Proper_substate `{Model} :
+  Proper (Morph_eq ==> InS_sublist ==> substate) mapping_state.
 Proof.
-  intros f ns1 ns2 H1 w H2.
-  unfold mapping_state in *.
-  simpl.
-  apply In_iff_inb_true in H2.
-  apply in_map_iff in H2 as [n [H2 H3]].
-  apply In_iff_inb_true.
-  apply in_map_iff.
-  exists n.
-  split.
-  -
-    exact H2.
-  -
-    apply H1.
-    exact H3.
+  intros f1 f2 H1 ns1 ns2 H2 w H3.
+  apply InS_iff_inbS_true.
+  apply InS_iff_inbS_true in H3.
+  apply InS_map_E in H3 as [n [H3 H4]].
+  red in H1.
+  rewrite H1 in H3.
+  rewrite <- H3.
+  apply InS_map_I.
+  apply H2.
+  exact H4.
 Qed.
 
 Lemma unnamed_helper_States_2 `{Model} :
@@ -484,17 +442,20 @@ Lemma unnamed_helper_States_2 `{Model} :
     substate t (mapping_state f (n :: ns)) ->
     substate (excluding_state t (f n)) (mapping_state f ns).
 Proof.
-  unfold mapping_state, excluding_state.
   intros t f n ns H1 w H2.
-  destruct (World_deceq (f n) w) as [H3|H3].
+  simpl in H2.
+  destruct ((f n) == w) as [H3|H3].
   -
     discriminate.
   -
     apply H1 in H2 as H4.
-    apply In_iff_inb_true.
-    apply In_iff_inb_true in H4 as [H4|H4].
+    apply InS_iff_inbS_true.
+    apply InS_iff_inbS_true in H4.
+    simpl in H4.
+    apply InS_cons_E in H4 as [H4|H4].
     +
-      congruence.
+      symmetry in H4.
+      contradiction.
     +
       exact H4.
 Qed.
@@ -504,9 +465,7 @@ Lemma substate_mapping_state_iff `{Model} :
   substate t (mapping_state f ns) <->
   exists ns',
     state_eq t (mapping_state f ns') /\
-    forall n,
-      In n ns' ->
-      In n ns.
+    InS_sublist ns' ns.
 Proof.
   intros f ns1 t.
   split.
@@ -542,13 +501,30 @@ Proof.
            rewrite mapping_state_cons.
            rewrite <- H3.
            unfold excluding_state.
-           destruct (World_deceq (f n) w); congruence.
+           simpl.
+           unfold "_ ==b _".
+           destruct (w == f n) as [H5|H5].
+           ++
+              simpl.
+              rewrite H5.
+              exact H2.
+           ++
+              simpl.
+              destruct (f n == w) as [H6|H6].
+              **
+                 symmetry in H6; contradiction.
+              **
+                 reflexivity.
         --
-           intros n' [H5|H5].
+           intros n' H5.
+           apply InS_cons_E in H5 as [H5|H5].
            ++
-              left; congruence.
+              apply InS_cons_I_hd.
+              exact H5.
            ++
-              right; auto.
+              apply InS_cons_I_tl.
+              apply H4.
+              exact H5.
       *
         specialize IH with
           (t := t).
@@ -556,11 +532,14 @@ Proof.
         {
           intros w H3.
           apply H1 in H3 as H4.
-          apply In_iff_inb_true in H4 as [H4|H4].
+          apply InS_iff_inbS_true in H4.
+          simpl in H4.
+          apply InS_cons_E in H4 as [H4|H4].
           -
+            rewrite H4 in H3.
             congruence.
           -
-            apply In_iff_inb_true.
+            apply InS_iff_inbS_true.
             exact H4.
         }
         exists ns'.
@@ -568,14 +547,13 @@ Proof.
         --
            exact H3.
         --
-           firstorder.
+           apply InS_sublist_cons_I.
+           exact H4.
   -
     intros [ns2 [H1 H2]].
-    rewrite H1.
-    apply substate_mapping_state.
-    exact H2.
+    rewrite H1, H2.
+    reflexivity.
 Qed.
- *)
 
 Program Definition restricted_Model `{M : Model} (s : state) : Model :=
   {|

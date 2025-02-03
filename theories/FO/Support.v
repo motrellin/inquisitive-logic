@@ -29,30 +29,39 @@ Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
   end.
 
 Instance referent_Proper `{Model} :
-  Proper (eq ==> equiv ==> eq ==> eq) referent.
+  Proper (term_eq ==> equiv ==> eq ==> eq) referent.
 Proof.
   intros t1 t2 H1 w1 w2 H2 a1 a2 H3.
   subst.
   revert a2.
   generalize dependent w2.
   revert w1.
-  induction t2 as [x|f args IH].
-  all: intros w1 w2 H1 a.
+  generalize dependent t2.
+  induction t1 as [x1|f1 args1 IH].
+  all: intros [x2|f2 args2] H1 w1 w2 H2 a.
+  all: try contradiction.
   -
-    reflexivity.
+    simpl in *.
+    congruence.
   -
-    simpl.
-    assert (H2 : FInterpretation w1 = FInterpretation w2).
+    simpl in *.
+    destruct (f1 == f2) as [H3|H3]; try contradiction.
+    simpl in H3.
+    subst f2.
+    assert (H4 : FInterpretation w1 = FInterpretation w2).
     {
-      rewrite H1.
+      rewrite H2.
       reflexivity.
     }
-    rewrite H2.
+    rewrite H4.
     f_equal.
     apply functional_extensionality.
     intros arg.
     apply IH.
-    exact H1.
+    +
+      apply H1.
+    +
+      exact H2.
 Qed.
 
 Lemma restricted_referent `{M : Model} :
@@ -255,59 +264,94 @@ Proof. reflexivity. Qed.
  *)
 
 Instance support_Proper `{M : Model} :
-  forall phi,
-    Proper (state_eq ==> eq ==> iff) (support phi).
-Proof.
-  intros phi s1 s2 H1 a1 a2 H2.
+  Proper (form_eq ==> state_eq ==> eq ==> iff) support.
+Proof with (try contradiction).
+  intros phi1 phi2 H1 s1 s2 H2 a1 a2 H3.
   subst a2.
   generalize dependent a1.
-  induction phi as
-  [p args
+  generalize dependent s2.
+  revert s1.
+  generalize dependent phi2.
+  induction phi1 as
+  [p1 args1
   |?
   |phi1 IH1 phi2 IH2
   |phi1 IH1 phi2 IH2
   |phi1 IH1 phi2 IH2
   |phi1 IH1
   |phi1 IH1].
+  all: intros psi H1 s1 s2 H2 a.
+  all: destruct psi as
+  [p2 args2
+  |?
+  |psi1 psi2
+  |psi1 psi2
+  |psi1 psi2
+  |psi1
+  |psi1]...
+  all: simpl in H1.
   -
-    simpl.
-    intros a.
+    destruct (p1 == p2) as [H3|H3]; try contradiction.
+    simpl in H3.
+    subst p2.
     split.
-    all: intros H2 w H3.
-    all: rewrite H1 in H3 + rewrite <- H1 in H3.
-    all: apply H2 in H3.
-    all: exact H3.
+    all: intros H3 w H4.
+    all: rewrite H2 in H4 + rewrite <- H2 in H4.
+    all: apply H3 in H4.
+    all: red in H1.
+    all: rewrite <- H4.
+    all: f_equal.
+    all: apply functional_extensionality.
+    all: intros arg.
+    all: rewrite H1.
+    all: reflexivity.
   -
     simpl.
     firstorder.
     all: congruence.
   -
-    intros a1.
+    destruct H1 as [H11 H12].
     do 2 rewrite support_Impl.
     split.
     all: intros H3 s3 H4 H5.
     +
+      eapply IH2; try eassumption + reflexivity.
       apply H3.
       *
-        rewrite H1.
+        rewrite H2.
         exact H4.
       *
-        exact H5.
+        eapply IH1; eassumption + reflexivity.
     +
+      eapply IH2; try eassumption + reflexivity.
       apply H3.
       *
-        rewrite <- H1.
+        rewrite <- H2.
         exact H4.
       *
-        exact H5.
+        eapply IH1; eassumption + reflexivity.
   -
-    firstorder.
+    destruct H1 as [H11 H12].
+    split.
+    all: intros [H3 H4].
+    all: split.
+    all: eapply IH1 + eapply IH2; eassumption + reflexivity.
   -
-    firstorder.
+    destruct H1 as [H11 H12].
+    split.
+    all: intros [H3|H3].
+    all: left + right; eapply IH1 + eapply IH2; eassumption + reflexivity.
   -
-    firstorder.
+    split.
+    all: intros H3 i.
+    all: rewrite support_Forall in H3.
+    all: specialize (H3 i).
+    all: eapply IH1; eassumption.
   -
-    firstorder.
+    split.
+    all: intros [i H3].
+    all: exists i.
+    all: eapply IH1; eassumption.
 Qed.
 
 (** ** Basic properties *)
@@ -484,9 +528,16 @@ Proof.
         }
         exact H4.
   -
-    firstorder.
+    split.
+    all: intros [H2 H3].
+    all: split.
+    all: eapply IH1 + eapply IH2.
+    all: eassumption.
   -
-    firstorder.
+    split.
+    all: intros [H2|H2].
+    all: eapply IH1 in H2 + eapply IH2 in H2.
+    all: try (left + right); eassumption.
   -
     split.
     all: intros H2 i.

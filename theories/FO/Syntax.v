@@ -36,12 +36,8 @@ Proof.
       exact False.
 Defined.
 
-Program Instance term_Setoid `{Signature} : Setoid term :=
-  {|
-    equiv := term_eq
-  |}.
-
-Next Obligation.
+Instance term_eq_Equiv `{Signature} : Equivalence term_eq.
+Proof.
   constructor.
   -
     intros t.
@@ -97,6 +93,8 @@ Next Obligation.
         red in H2.
         admit.
 Admitted.
+
+Program Instance term_Setoid `{Signature} : Setoid term.
 
 Instance term_EqDec `{Signature} : EqDec term_Setoid.
 Proof.
@@ -359,13 +357,11 @@ Proof.
     exact (form_eq _ f1 f3).
 Defined.
 
-Program Instance form_Setoid `{Signature} : Setoid form :=
-  {|
-    equiv := form_eq
-  |}.
-
-Next Obligation.
+Instance form_eq_Equiv `{Signature} : Equivalence form_eq.
+Proof.
 Admitted.
+
+Program Instance form_Setoid `{Signature} : Setoid form.
 
 Instance form_EqDec `{Signature} : EqDec form_Setoid.
 Proof.
