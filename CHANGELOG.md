@@ -1,5 +1,28 @@
 # Changelog
 
+## inqlog-v0.13.0 (2025-02-05)
+
+### New
+
+* Finished adaptions to the new model def. [Max Ole Elliger]
+
+* Defined `form_eq` and proved its decidability. [Max Ole Elliger]
+
+* Defined `term_eq` and proved its decidability. [Max Ole Elliger]
+
+* Proved `finite_choice` [Max Ole Elliger]
+
+### Changes
+
+* Polished definitions and so on. [Max Ole Elliger]
+
+  Here are some patterns that have changed:
+  - Increased the use of the standard library regarding lists
+  - Names of substition lemmas match better to Autosubst-library (`_hsubst`)
+  - Moved `support_conseq` to new file `FO/Consequence.v`
+
+* Moved `support_valid_Casari_bd` from Seq.v to Casari.v. [Max Ole Elliger]
+
 ## inqlog-v0.12.0 (2025-01-23)
 
 ### New
