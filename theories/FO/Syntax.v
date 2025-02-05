@@ -149,6 +149,36 @@ Proof. derive. Defined.
 Instance SubstLemmas_term `{Signature} : SubstLemmas term.
 Proof. derive. Qed.
 
+(** It is worth to check, whether [subst] respects our
+   equality on terms.
+*)
+
+Program Definition term_subst
+  `{Signature}
+  (sigma : var -> term) : Morph term term :=
+  {|
+    morph := subst sigma
+  |}.
+
+Next Obligation.
+  intros t1.
+  induction t1 as [x1|f1 args1 IH].
+  all: intros [x2|f2 args2] H1; try contradiction.
+  -
+    simpl in *.
+    subst x2.
+    reflexivity.
+  -
+    simpl in *.
+    destruct (f1 == f2) as [H2|H2]; try contradiction.
+    simpl in *.
+    subst f2.
+    intros arg.
+    apply IH.
+    apply H1.
+Qed.
+
+
 (** ** Rigidity *)
 
 Fixpoint rigid_term `{Signature} (t : term) : Prop :=
@@ -415,7 +445,7 @@ Notation "'iexists' phi" := (Iexists phi)
 
 Open Scope form_scope.
 
-(**
+(** ** Substitutions
    And again, we need to derive some [Autosubst]-[Instance]s.
  *)
 
@@ -439,6 +469,44 @@ Proof. derive. Qed.
 
 Instance SubstLemmas_form `{Signature} : SubstLemmas form.
 Proof. derive. Qed.
+
+Program Definition form_hsubst
+  `{Signature}
+  (sigma : var -> term) : Morph form form :=
+  {|
+    morph := hsubst sigma
+  |}.
+
+Next Obligation.
+  intros f1.
+  revert sigma.
+  induction f1 as
+  [p1 args1
+  |?
+  |f11 IH1 f12 IH2
+  |f11 IH1 f12 IH2
+  |f11 IH1 f12 IH2
+  |f11 IH1
+  |f11 IH1].
+  all: intros sigma
+  [p2 args2
+  |?
+  |f21 f22
+  |f21 f22
+  |f21 f22
+  |f21
+  |f21].
+  all: intros H1; try (now firstorder).
+
+  simpl in *.
+  destruct (p1 == p2); try contradiction.
+  simpl in *.
+  subst p2.
+  simpl in *.
+  intros arg.
+  apply term_subst.
+  apply H1.
+Qed.
 
 (** ** Defined connectives
 

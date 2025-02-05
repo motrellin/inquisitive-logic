@@ -273,16 +273,13 @@ Module Casari_fails.
     highest_occ_free_var IES 0.
   Proof.
     intros sigma1 sigma2 H1.
+
     asimpl.
-    f_equal.
-    f_equal.
+    do 2 f_equal.
     apply functional_extensionality.
-    intros [|].
-    -
-      cbv.
-      rewrite H1; reflexivity.
-    -
-      reflexivity.
+    intros [|]; try reflexivity.
+    cbv.
+    rewrite H1; reflexivity.
   Qed.
 
   (** ** The Model *)
@@ -1186,8 +1183,13 @@ Proof.
                      simpl.
                      reflexivity.
                  ---
-                     asimpl.
-                     admit.
+                     simpl.
+                     enough (H4 :
+                      phi.|[Var 0 .: sigma >> ren (+1)] = phi.|[up sigma]
+                     ) by (rewrite H4; reflexivity).
+
+                     apply H1.
+                     inversion 1; reflexivity.
               **
                  exact H3.
            ++
@@ -1218,15 +1220,12 @@ Proof.
                          reflexivity.
                      +++
                          asimpl.
-                         admit.
-                         (*
-                 left.
-                 f_equal.
-                 asimpl.
-                 f_equal.
-                 apply H1.
-                 inversion 1; reflexivity.
-                          *)
+                         enough (H5 :
+                         phi.|[ids 0 .: sigma >> ren (+2)] = phi.|[upn 2 sigma]
+                         ) by (rewrite H5; reflexivity).
+
+                         apply H1.
+                         inversion 1; reflexivity.
                  ---
                      contradict H4.
                      apply InS_nil_E.
@@ -1276,14 +1275,15 @@ Proof.
                  simpl.
                  reflexivity.
               **
-                 (*
-              apply H1.
-              inversion 1; reflexivity.
-                  *)
-                 admit.
+                 simpl.
+                 enough (H2 :
+                  phi.|[Var 0 .: up sigma] = phi.|[up sigma]
+                 ) by (rewrite H2; reflexivity).
+                 apply H1.
+                 inversion 1; reflexivity.
            ++
               reflexivity.
-Admitted.
+Qed.
 
 Corollary Seq_Casari `{Signature} :
   forall phi ns,

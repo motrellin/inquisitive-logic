@@ -82,7 +82,9 @@ Next Obligation.
     exact H1.
   -
     simpl in *.
-Admitted.
+    apply form_hsubst.
+    exact H2.
+Qed.
 
 (**
    Now, we are in a position to define the rules of the
