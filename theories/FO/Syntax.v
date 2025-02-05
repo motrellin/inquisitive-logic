@@ -1,8 +1,9 @@
+From InqLog Require Export ListBib.
 From InqLog.FO Require Export Signatures.
 
 From Autosubst Require Export Autosubst.
 
-From Coq Require Export Bool FunctionalExtensionality.
+From Coq Require Export Bool FunctionalExtensionality Eqdep_dec.
 
 (** * Terms
 
@@ -16,124 +17,116 @@ Inductive term `{Signature} :=
   | Var : var -> term
   | Func : forall (f : FSymb), (FAri f -> term) -> term.
 
-Fixpoint term_eq `{Signature} (t : term) : term -> Prop.
-Proof.
-  destruct t as [x1|f1 args1].
-  all: intros [x2|f2 args2].
-  -
-    exact (x1 = x2).
-  -
-    exact False.
-  -
-    exact False.
-  -
-    destruct (f1 == f2) as [H1|H1].
-    +
-      simpl in H1.
-      subst f2.
-      exact (forall arg, term_eq _ (args1 arg) (args2 arg)).
-    +
-      exact False.
-Defined.
+(** ** Decidable Equality
+
+   As [Func] has a dependent type, it is problematic to use
+   standard equality to syntactically compare [term]s.
+   That's why we define a suitable decidable equivalence
+   relation on terms to which we will refer as equality on
+   terms. The definition of this relation [term_eq] is
+   rather complex so we split its definition up in
+   two parts.
+ *)
+
+Definition term_eq_Func_Func_EqDec
+  `{S : Signature}
+  (rec : relation term)
+  (f1 : FSymb)
+  (args1 : FAri f1 -> term)
+  (f2 : FSymb)
+  (args2 : FAri f2 -> term)
+  (is_equal : (f1 == f2)%type) : Prop :=
+
+  eq_rect
+  f1
+  (fun f => (FAri f -> term) -> Prop)
+  (fun args =>
+    forall arg,
+      rec (args1 arg) (args arg)
+  )
+  f2
+  is_equal
+  args2.
+
+Fixpoint term_eq `{S : Signature} (t : term) : term -> Prop :=
+  match t with
+  | Var x1 =>
+      fun t2 =>
+      match t2 with
+      | Var x2 => (x1 == x2)%type
+      | _ => False
+      end
+  | Func f1 args1 =>
+      fun t2 =>
+      match t2 with
+      | Func f2 args2 =>
+          match equiv_dec f1 f2 with
+          | left is_equal =>
+              term_eq_Func_Func_EqDec term_eq f1 args1 f2 args2 is_equal
+          | _ => False
+          end
+      | _ => False
+      end
+  end.
 
 Instance term_eq_Equiv `{Signature} : Equivalence term_eq.
-Proof.
+Proof with (try (now firstorder) + congruence + exact FSymb_EqDec).
   constructor.
   -
     intros t.
-    induction t as [x|f args IH].
-    +
-      reflexivity.
-    +
-      simpl.
-      unfold eq_rect.
-      destruct (f == f) as [H1|H1].
-      *
-        simpl in *.
-        admit.
-      *
-        apply H1.
-        reflexivity.
+    induction t as [x|f args IH]...
+
+    simpl.
+    destruct (f == f)...
+    rewrite UIP_dec with (p2 := eq_refl)...
   -
     intros t.
     induction t as [x1|f1 args1 IH].
-    all: intros [x2|f2 args2] H1.
-    all: try easy.
-    +
-      simpl in *.
-      destruct (f2 == f1) as [H2|H2].
-      all: destruct (f1 == f2) as [H3|H3].
-      all: try easy + congruence.
-      *
-        simpl in *.
-        subst f1.
-        red.
-        red in H1.
-        admit.
+    all: intros [x2|f2 args2] H1...
+
+    simpl in *.
+    destruct (f1 == f2), (f2 == f1)...
+    simpl in *.
+    subst.
+    rewrite UIP_dec with (p2 := eq_refl)...
   -
     intros t.
     induction t as [x1|f1 args1 IH].
-    all: intros [x2|f2 args2] [x3|f3 args3] H1 H2.
-    all: try easy.
-    +
-      simpl in *.
-      congruence.
-    +
-      simpl in *.
-      destruct
-        (f1 == f2) as [H3|H3],
-        (f2 == f3) as [H4|H4],
-        (f1 == f3) as [H5|H5].
-      all: try (simpl in *; congruence + easy).
-      *
-        simpl in *.
-        subst f2 f3.
-        red.
-        red in H1.
-        red in H2.
-        admit.
-Admitted.
+    all: intros [x2|f2 args2] [x3|f3 args3] H1 H2...
+
+    simpl in *.
+    destruct (f1 == f2), (f2 == f3), (f1 == f3)...
+    simpl in *.
+    subst.
+    rewrite UIP_dec with (p2 := eq_refl)...
+Qed.
+
+Print Assumptions term_eq_Equiv.
 
 Program Instance term_Setoid `{Signature} : Setoid term.
 
 Instance term_EqDec `{Signature} : EqDec term_Setoid.
-Proof.
+Proof with (try (right; easy)).
   intros t1.
   induction t1 as [x1|f1 args1 IH].
-  all: intros [x2|f2 args2].
-  all: try (right; easy).
+  all: intros [x2|f2 args2]...
   -
     destruct (PeanoNat.Nat.eq_dec x1 x2) as [H1|H1].
     all: left + right; congruence.
   -
-    unfold complement.
-    simpl.
-    unfold eq_rect.
-    destruct (f1 == f2) as [H1|H1].
-    +
-      simpl in H1.
-      subst f2.
-      enough (H2 :
-        {forall arg, term_eq (args1 arg) (args2 arg)} +
-        {exists arg, ~ term_eq (args1 arg) (args2 arg)}).
-      {
-        destruct H2 as [H2|H2].
-        -
-          left.
-          exact H2.
-        -
-          right.
-          intros H3.
-          destruct H2 as [arg H2].
-          apply H2.
-          apply H3.
-      }
-      admit. (* TODO: Should be doable *)
-    +
-      right.
-      intros H2.
-      congruence.
-Admitted.
+    unfold complement in *.
+    simpl in *.
+    destruct (f1 == f2)...
+    simpl in *.
+    subst f2.
+    apply finite_choice with (xs := FAri_enum f1).
+    all: intro.
+    all: apply FAri_enum_charac + apply IH.
+Qed.
+
+Print Assumptions term_EqDec.
+
+(** ** Variables and Substitutions *)
 
 Print var.
 (**
@@ -155,6 +148,8 @@ Proof. derive. Defined.
 
 Instance SubstLemmas_term `{Signature} : SubstLemmas term.
 Proof. derive. Qed.
+
+(** ** Rigidity *)
 
 Fixpoint rigid_term `{Signature} (t : term) : Prop :=
   match t with
