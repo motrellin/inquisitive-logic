@@ -1002,3 +1002,62 @@ Proof.
     eexists.
     split; eassumption.
 Qed.
+
+(** * Finiteness and Decidablity
+
+   The contents of this section where discussed in a Stack Exchange Post:
+   https://proofassistants.stackexchange.com/questions/4690/prove-decidability-on-finite-types
+ *)
+
+
+Lemma list_choose {X} (P Q : X -> Prop) :
+  forall xs,
+    (forall x, In x xs -> {P x} + {Q x}) ->
+    {x | In x xs /\ P x} + {forall x, In x xs -> Q x}.
+Proof.
+  induction xs as [|x xs' IH].
+  all: intros H1.
+  -
+    right.
+    intros x H2.
+    contradiction.
+  -
+    destruct (H1 x (or_introl eq_refl)) as [H2|H2].
+    +
+      left.
+      exists x.
+      firstorder.
+    +
+      destruct IH as [IH|IH].
+      {
+        firstorder.
+      }
+      *
+        destruct IH as [x' [H3 H4]].
+        left.
+        exists x'.
+        firstorder.
+      *
+        right.
+        firstorder.
+        congruence.
+Qed.
+
+Proposition finite_choice {X} (P : X -> Prop) :
+  forall (xs : list X),
+    (forall x, In x xs) ->
+    (forall x, {P x} + {~ P x}) ->
+    {forall x, P x} + {~ forall x, P x}.
+Proof.
+  intros xs H1 H2.
+  destruct (list_choose (fun x => ~ P x) P xs) as [H3|H3].
+  {
+    firstorder.
+  }
+  -
+    right.
+    firstorder.
+  -
+    left.
+    firstorder.
+Qed.
