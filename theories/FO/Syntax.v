@@ -225,145 +225,149 @@ Inductive form `{Signature} :=
   | Forall : {bind term in form} -> form
   | Iexists : {bind term in form} -> form.
 
-Fixpoint form_eq `{Signature} (f : form) : form -> Prop.
-Proof.
-  destruct f as
-  [p1 args1
-  |?
-  |f1 f2
-  |f1 f2
-  |f1 f2
-  |f1
-  |f1
-  ] eqn:eq1.
-  all: intros f'.
-  all: destruct f' as
-  [p2 args2
-  |?
-  |f3 f4
-  |f3 f4
-  |f3 f4
-  |f3
-  |f3
-  ] eqn:eq2.
-  -
-    destruct (p1 == p2) as [H1|H1].
-    +
-      simpl in H1.
-      subst p2.
-      exact (forall arg, term_eq (args1 arg) (args2 arg)).
-    +
-      exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact True.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact (form_eq _ f1 f3 /\ form_eq _ f2 f4).
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact (form_eq _ f1 f3 /\ form_eq _ f2 f4).
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact (form_eq _ f1 f3 /\ form_eq _ f2 f4).
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact (form_eq _ f1 f3).
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact False.
-  -
-    exact (form_eq _ f1 f3).
-Defined.
+(** ** Decidable Equality *)
+
+Definition form_eq_Pred_Pred_EqDec
+  `{Signature}
+  (rec : relation term)
+  (p1 : PSymb)
+  (args1 : PAri p1 -> term)
+  (p2 : PSymb)
+  (args2 : PAri p2 -> term)
+  (is_equal : (p1 == p2)%type) : Prop :=
+
+  eq_rect
+  p1
+  (fun p => (PAri p -> term) -> Prop)
+  (fun args =>
+    forall arg,
+      rec (args1 arg) (args arg)
+  )
+  p2
+  is_equal
+  args2.
+
+Fixpoint form_eq `{Signature} (f : form) : form -> Prop :=
+  match f with
+  | Pred p1 args1 =>
+      fun f2 =>
+      match f2 with
+      | Pred p2 args2 =>
+          match equiv_dec p1 p2 with
+          | left is_equal =>
+              form_eq_Pred_Pred_EqDec term_eq p1 args1 p2 args2 is_equal
+          | _ => False
+          end
+      | _ => False
+      end
+  | Bot _ =>
+      fun f2 =>
+      match f2 with
+      | Bot _ => True
+      | _ => False
+      end
+  | Impl f11 f12 =>
+      fun f2 =>
+      match f2 with
+      | Impl f21 f22 =>
+          form_eq f11 f21 /\ form_eq f12 f22
+      | _ => False
+      end
+  | Conj f11 f12 =>
+      fun f2 =>
+      match f2 with
+      | Conj f21 f22 =>
+          form_eq f11 f21 /\ form_eq f12 f22
+      | _ => False
+      end
+  | Idisj f11 f12 =>
+      fun f2 =>
+      match f2 with
+      | Idisj f21 f22 =>
+          form_eq f11 f21 /\ form_eq f12 f22
+      | _ => False
+      end
+  | Forall f11 =>
+      fun f2 =>
+      match f2 with
+      | Forall f21 =>
+          form_eq f11 f21
+      | _ => False
+      end
+  | Iexists f11 =>
+      fun f2 =>
+      match f2 with
+      | Iexists f21 =>
+          form_eq f11 f21
+      | _ => False
+      end
+  end.
 
 Instance form_eq_Equiv `{Signature} : Equivalence form_eq.
-Proof.
-Admitted.
+Proof with (try (now firstorder) + congruence + exact PSymb_EqDec).
+  constructor.
+  -
+    intros f.
+    induction f as [p args| | | | | |]...
+
+    simpl.
+    destruct (p == p)...
+    rewrite UIP_dec with (p2 := eq_refl)...
+
+    simpl.
+    reflexivity.
+  -
+    intros f1.
+    induction f1 as [p1 args1| | | | | |].
+    all: intros [p2 args2| | | | | |] H1...
+
+    simpl in *.
+    destruct (p1 == p2), (p2 == p1)...
+    simpl in *.
+    subst.
+    rewrite UIP_dec with (p2 := eq_refl)...
+
+    simpl.
+    symmetry.
+    apply H1.
+  -
+    intros f1.
+    induction f1 as [p1 args1| | | | | |].
+    all: intros [p2 args2| | | | | |] [p3 args3| | | | | |] H1 H2...
+
+    simpl in *.
+    destruct (p1 == p2), (p2 == p3), (p1 == p3)...
+    simpl in *.
+    subst.
+    rewrite UIP_dec with (p2 := eq_refl)...
+
+    simpl.
+    etransitivity; eauto.
+Qed.
+
+Print Assumptions term_eq_Equiv.
 
 Program Instance form_Setoid `{Signature} : Setoid form.
 
 Instance form_EqDec `{Signature} : EqDec form_Setoid.
-Proof.
-  red.
-Admitted.
+Proof with (try (right; easy) + now firstorder).
+  intros f1.
+  induction f1 as [p1 args1| | | | | |].
+  all: intros [p2 args2| | | | | |]...
 
-(**
+  unfold complement in *.
+  simpl.
+  destruct (p1 == p2)...
+  simpl in *.
+  subst p2.
+  apply finite_choice with (xs := PAri_enum p1).
+  all: intro.
+  all: apply PAri_enum_charac + apply term_EqDec.
+Qed.
+
+Print Assumptions form_EqDec.
+
+(** ** Notation
    Let us introduce some notation. It is not necessary to
    understand the technical details. For more information,
    please refer to the Coq documentation.
