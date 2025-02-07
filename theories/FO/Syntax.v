@@ -899,6 +899,65 @@ Module Syntax_single_unary_predicate.
     reflexivity.
   Qed.
 
+  (** ** Cardinality formula
+     based on Ciardelli/Griletti
+   *)
+
+  Program Fixpoint seq_sig (start len : nat) {struct len} :
+    list {n : nat | start <= n < start + len} :=
+
+    match len with
+    | 0 => nil
+    | S len' =>
+        (exist _ start _) ::
+        map
+        (fun nH =>
+          exist _ (proj1_sig nH) _
+        )
+        (seq_sig (S start) len')
+    end.
+
+  Next Obligation.
+    lia.
+  Defined.
+
+  Next Obligation.
+    lia.
+  Defined.
+
+  Equations card (n : nat) : form by wf n lt :=
+  card 0 := Bot 0;
+  card 1 := <{forall ? Pred' (Var 0)}>;
+  card (S (S n')) :=
+    Iexists
+    (
+      fold_right Idisj (Bot 0)
+      (
+        map
+        (
+          fun i =>
+          <{
+            (
+              Pred' (Var 0) ->
+              hsubst (ren (+1)) (card (proj1_sig i))
+            ) /\
+            (
+              ~ Pred' (Var 0) ->
+              hsubst (ren (+1))
+              (card ((S n') + 1 - (proj1_sig i)))
+            )
+          }>
+        )
+        (seq_sig 1 (S n'))
+      )
+    ).
+
+  Next Obligation.
+    destruct i as [|i']; lia.
+  Qed.
+
+  Check card.
+
 End Syntax_single_unary_predicate.
 
 (** * Syntax for the Binary Predicate Symbol Signature *)

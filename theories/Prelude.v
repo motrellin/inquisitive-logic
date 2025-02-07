@@ -1,3 +1,6 @@
+From Equations Require Export
+  Equations.
+
 From Coq Require Export
   Bool
   Nat
