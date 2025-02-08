@@ -1592,4 +1592,14 @@ Module Seq_single_unary_predicate.
     eauto using Seq_Pred_l.
   Qed.
 
+  Example Seq_card_0 :
+    Seq nil ((pair nil (card 0)) :: nil).
+  Proof.
+    eapply Seq_empty.
+    {
+      apply InS_cons_I_hd.
+      reflexivity.
+    }
+  Qed.
+
 End Seq_single_unary_predicate.
