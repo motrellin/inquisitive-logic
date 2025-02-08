@@ -1602,4 +1602,55 @@ Module Seq_single_unary_predicate.
     }
   Qed.
 
+  Opaque Pred'.
+
+  Example Seq_card_1 :
+    forall n1,
+      Seq nil ((pair (n1 :: nil) (card 1)) :: nil).
+  Proof.
+    intros n1.
+    simp card.
+    eapply Seq_Forall_r.
+    {
+      apply InS_cons_I_hd.
+      reflexivity.
+    }
+    unfold Iquest at 1.
+    eapply Seq_Idisj_r.
+    {
+      apply InS_cons_I_hd.
+      reflexivity.
+    }
+    unfold Neg at 1.
+    eapply Seq_Impl_r.
+    {
+      apply InS_cons_I_tl.
+      apply InS_cons_I_hd.
+      reflexivity.
+    }
+    intros ns' H1.
+    apply InS_sublist_singleton_E in H1 as [H1|H1].
+    -
+      eapply Seq_id'.
+      {
+        apply InS_cons_I_hd.
+        reflexivity.
+      }
+      {
+        apply InS_cons_I_tl.
+        apply InS_cons_I_hd.
+        reflexivity.
+      }
+      {
+        exact H1.
+      }
+    -
+      eapply Seq_empty.
+      {
+        apply InS_cons_I_hd.
+        rewrite H1.
+        reflexivity.
+      }
+  Qed.
+
 End Seq_single_unary_predicate.
