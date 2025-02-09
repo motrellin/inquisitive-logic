@@ -31,7 +31,7 @@ Class Signature :=
    Here are a few examples:
  *)
 
-Module single_unary_predicate_signature.
+Module Signature_single_unary_predicate.
 
   Program Instance signature : Signature :=
     {|
@@ -74,9 +74,9 @@ Module single_unary_predicate_signature.
 
   Solve All Obligations with easy.
 
-End single_unary_predicate_signature.
+End Signature_single_unary_predicate.
 
-Module single_binary_predicate_signature.
+Module Signature_single_binary_predicate.
 
   Program Instance signature : Signature :=
     {|
@@ -108,4 +108,4 @@ Module single_binary_predicate_signature.
 
   Solve All Obligations with easy.
 
-End single_binary_predicate_signature.
+End Signature_single_binary_predicate.

@@ -30,7 +30,7 @@ Qed.
 
 Module Casari_with_atoms.
 
-  Import single_unary_predicate_signature.
+  Import Signature_single_unary_predicate.
 
   Definition Pred' (t : term) := Pred tt (fun arg => t).
 
@@ -260,7 +260,7 @@ Module Casari_fails.
 
   (** ** Signature and Syntax *)
 
-  Import single_binary_predicate_signature.
+  Import Signature_single_binary_predicate.
 
   Definition Pred' (l r : term) :=
     Pred tt (fun arg => if arg then l else r).
