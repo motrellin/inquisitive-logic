@@ -1555,3 +1555,19 @@ Proof.
     }
     exact H2.
 Qed.
+
+Module Seq_single_unary_predicate.
+
+  Import Syntax_single_unary_predicate.
+
+  Lemma Seq_id' :
+    forall ls rs ns1 ns2 t,
+      InS (pair ns1 (Pred' t)) ls ->
+      InS (pair ns2 (Pred' t)) rs ->
+      InS_eq ns1 ns2 ->
+      Seq ls rs.
+  Proof.
+    eauto using Seq_id.
+  Qed.
+
+End Seq_single_unary_predicate.
