@@ -834,3 +834,49 @@ Definition highest_occ_free_var `{Signature}
   forall sigma1 sigma2,
     (forall y, y <= x -> sigma1 y = sigma2 y) ->
     phi.|[sigma1] = phi.|[sigma2].
+
+(** * Syntax for the Unary Predicate Symbol Signature *)
+
+Module Syntax_single_unary_predicate.
+
+  Export Signature_single_unary_predicate.
+
+  Definition Pred' (t : term) :=
+    Pred tt (fun arg => match arg with tt => t end).
+
+  Lemma hsubst_Pred' :
+    forall t sigma,
+      (Pred' t).|[sigma] == Pred' t.[sigma].
+  Proof.
+    intros t sigma.
+    simpl.
+    red.
+    rewrite <- eq_rect_eq_dec; try exact PSymb_EqDec.
+    intros [].
+    reflexivity.
+  Qed.
+
+End Syntax_single_unary_predicate.
+
+(** * Syntax for the Binary Predicate Symbol Signature *)
+
+Module Syntax_single_binary_predicate.
+
+  Export Signature_single_binary_predicate.
+
+  Definition Pred' (t1 t2 : term) :=
+    Pred tt (fun arg => if arg then t1 else t2).
+
+  Lemma hsubst_Pred' :
+    forall t1 t2 sigma,
+      (Pred' t1 t2).|[sigma] == Pred' t1.[sigma] t2.[sigma].
+  Proof.
+    intros t1 t2 sigma.
+    simpl.
+    red.
+    rewrite <- eq_rect_eq_dec; try exact PSymb_EqDec.
+    intros [|].
+    all: reflexivity.
+  Qed.
+
+End Syntax_single_binary_predicate.
