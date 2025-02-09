@@ -1,9 +1,3 @@
-From Coq Require Export
-  Bool
-  List
-  Lia
-  SetoidList.
-
 From InqLog Require Export SetoidLib.
 
 Generalizable Variables X Y.

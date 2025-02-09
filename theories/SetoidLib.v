@@ -1,4 +1,4 @@
-From Coq Require Export Setoid SetoidDec.
+From InqLog Require Export Prelude.
 
 Generalizable Variables X Y.
 

@@ -1,8 +1,6 @@
 From InqLog Require Export ListBib.
 From InqLog.FO Require Export Models.
 
-From Coq Require Export Bool.
-
 (** * Basic definitions
 
    We now introduce the notion of a [state] which is just a

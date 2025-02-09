@@ -1,10 +1,6 @@
 From InqLog Require Export ListBib.
 From InqLog.FO Require Export Signatures.
 
-From Autosubst Require Export Autosubst.
-
-From Coq Require Export Bool FunctionalExtensionality Eqdep_dec.
-
 (** * Terms
 
    Let's start by recursively defining _terms_ over a

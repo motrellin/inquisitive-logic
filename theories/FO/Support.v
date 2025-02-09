@@ -1,5 +1,3 @@
-From Coq Require Export FunctionalExtensionality.
-
 From InqLog.FO Require Export States Syntax.
 
 (** * Support satisfaction

@@ -1,8 +1,5 @@
 From InqLog.FO Require Export Consequence Seq.
 
-From Coq Require Import Nat Lia PeanoNat Classical_Prop.
-Import PeanoNat.Nat.
-
 (** * The Casari Scheme *)
 
 Definition CasariSuc `{Signature} (phi : form) : form :=
@@ -258,6 +255,8 @@ End Casari_with_atoms.
 
 (** * The Casari "counter-example" *)
 Module Casari_fails.
+
+  Import PeanoNat.Nat.
 
   (** ** Signature and Syntax *)
 

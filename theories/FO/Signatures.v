@@ -1,5 +1,3 @@
-From Coq Require Export List.
-
 From InqLog Require Export SetoidLib.
 
 (**
