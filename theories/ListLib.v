@@ -613,6 +613,88 @@ Proof.
       apply InS_nil_E.
 Qed.
 
+Lemma InS_sublist_double_E `{EqDec X} :
+  forall xs x1 x2,
+    InS_sublist xs (x1 :: x2 :: nil) ->
+    InS_eq xs (x1 :: x2 :: nil)  \/
+    InS_eq xs (x1 :: nil) \/
+    InS_eq xs (x2 :: nil) \/
+    InS_eq xs nil.
+Proof.
+  intros xs x1 x2 H1.
+  destruct (InS_dec x1 xs) as [H2|H2].
+  all: destruct (InS_dec x2 xs) as [H3|H3].
+  -
+    left.
+    split; try exact H1.
+    apply cons_InS_sublist_I; try exact H2.
+    apply cons_InS_sublist_I; try exact H3.
+    apply nil_InS_sublist_I.
+  -
+    right; left.
+    split.
+    +
+      intros x H4.
+      apply H1 in H4 as H5.
+      repeat apply InS_cons_E in H5 as [H5|H5].
+      *
+        apply InS_cons_I_hd.
+        exact H5.
+      *
+        rewrite H5 in H4.
+        contradiction.
+      *
+        apply InS_cons_I_tl.
+        exact H5.
+    +
+      apply cons_InS_sublist_I.
+      *
+        exact H2.
+      *
+        apply nil_InS_sublist_I.
+  -
+    right; right; left.
+    split.
+    +
+      intros x H4.
+      apply H1 in H4 as H5.
+      repeat apply InS_cons_E in H5 as [H5|H5].
+      *
+        rewrite H5 in H4.
+        contradiction.
+      *
+        apply InS_cons_I_hd.
+        exact H5.
+      *
+        apply InS_cons_I_tl.
+        exact H5.
+    +
+      apply cons_InS_sublist_I.
+      *
+        exact H3.
+      *
+        apply nil_InS_sublist_I.
+  -
+    right; right; right.
+    destruct xs as [|x xs']; try reflexivity.
+    exfalso.
+    apply cons_InS_sublist_E_hd in H1 as H4.
+    repeat apply InS_cons_E in H4 as [H4|H4].
+    +
+      apply H2.
+      apply InS_cons_I_hd.
+      symmetry.
+      exact H4.
+    +
+      apply H3.
+      apply InS_cons_I_hd.
+      symmetry.
+      exact H4.
+    +
+      eapply InS_nil_E.
+      exact H4.
+Qed.
+
 (** * Well-Founded Relations on Lists *)
 (** ** [length_order] *)
 
