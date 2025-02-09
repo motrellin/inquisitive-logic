@@ -18,23 +18,26 @@ Definition label : Type := list nat.
 
 Definition lb_form `{Signature} : Type := (list nat)*form.
 
-Definition lb_form_eq `{Signature} : relation lb_form :=
-  fun phi psi =>
-  InS_eq (fst phi) (fst psi) /\
-  (snd phi) == (snd psi).
+Inductive lb_form_eq `{Signature} : relation lb_form :=
+  | lb_form_eq_1 :
+      forall ns1 ns2 phi1 phi2,
+        InS_eq ns1 ns2 ->
+        form_eq phi1 phi2 ->
+        lb_form_eq (pair ns1 phi1) (pair ns2 phi2).
 
 Instance lb_form_eq_Equiv `{Signature} :
   Equivalence lb_form_eq.
 Proof.
   constructor.
   -
-    intros [l1 phi1].
+    intros [].
     split; reflexivity.
   -
-    intros [l1 phi1] [l2 phi2] [H1 H2].
+    inversion 1.
     split; easy.
   -
-    intros [l1 phi1] [l2 phi2] [l3 phi3] [H1 H2] [H3 H4].
+    inversion 1.
+    inversion 1.
     split; etransitivity; eassumption.
 Qed.
 
@@ -51,19 +54,32 @@ Proof.
       split; assumption.
     +
       right.
-      intros [H3 H4].
+      inversion 1.
       contradiction.
   -
     right.
-    intros [H2 H3].
+    inversion 1.
     contradiction.
 Qed.
 
 Instance lb_form_Proper `{Signature} :
   Proper (InS_eq ==> form_eq ==> lb_form_eq) pair.
 Proof.
-  intros ns1 ns2 H1 phi1 phi2 H2.
   easy.
+Qed.
+
+Instance fst_Proper `{Signature} :
+  Proper (lb_form_eq ==> InS_eq) fst.
+Proof.
+  inversion 1.
+  assumption.
+Qed.
+
+Instance snd_Proper `{Signature} :
+  Proper (lb_form_eq ==> form_eq) snd.
+Proof.
+  inversion 1.
+  assumption.
 Qed.
 
 Program Definition lb_form_hsubst `{Signature} (sigma : var -> term) :
@@ -76,14 +92,14 @@ Program Definition lb_form_hsubst `{Signature} (sigma : var -> term) :
   |}.
 
 Next Obligation.
-  intros phi1 phi2 [H1 H2].
+  inversion 1.
   split.
   -
-    exact H1.
+    assumption.
   -
     simpl in *.
     apply form_hsubst.
-    exact H2.
+    assumption.
 Qed.
 
 (**
@@ -676,8 +692,8 @@ Program Definition satisfaction
   |}.
 
 Next Obligation.
-  intros [ns1 phi1] [ns2 phi2] [H1 H2].
-  rewrite H1, H2.
+  intros phi1 phi2 H1.
+  rewrite H1.
   reflexivity.
 Qed.
 
