@@ -1582,4 +1582,14 @@ Module Seq_single_unary_predicate.
     eauto using Seq_Pred_r.
   Qed.
 
+  Lemma Seq_Pred'_l :
+    forall ls rs ns1 ns2 t,
+      InS (pair ns1 (Pred' t)) ls ->
+      InS_sublist ns2 ns1 ->
+      Seq ((pair ns2 (Pred' t)) :: ls) rs ->
+      Seq ls rs.
+  Proof.
+    eauto using Seq_Pred_l.
+  Qed.
+
 End Seq_single_unary_predicate.
