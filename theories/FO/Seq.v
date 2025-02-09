@@ -249,11 +249,6 @@ Inductive Seq `{Signature} :
 
 (** ** Properties of [Seq] *)
 
-Program Canonical nat_Setoid : Setoid nat :=
-  {|
-    equiv := @eq nat
-  |}.
-
 Proposition Seq_weakening `{Signature} :
   forall ls1 ls2,
     InS_sublist ls1 ls2 ->
