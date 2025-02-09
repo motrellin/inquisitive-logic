@@ -1653,4 +1653,46 @@ Module Seq_single_unary_predicate.
       }
   Qed.
 
+  Example Seq_card_2 :
+    forall n1 n2,
+      Seq nil ((pair (n1 :: n2 :: nil) (card 2)) :: nil).
+  Proof.
+    intros n1 n2.
+    simp card.
+    eapply Seq_Iexists_r with (t := Var 0); try exact I.
+    {
+      apply InS_cons_I_hd.
+      reflexivity.
+    }
+    asimpl.
+    eapply Seq_Idisj_r.
+    {
+      apply InS_cons_I_hd.
+      reflexivity.
+    }
+    eapply Seq_Conj_r.
+    {
+      apply InS_cons_I_hd.
+      reflexivity.
+    }
+    -
+      eapply Seq_Impl_r.
+      {
+        apply InS_cons_I_hd.
+        reflexivity.
+      }
+      intros ns' H1.
+      Fail rewrite hsubst_Pred'.
+      admit.
+    -
+      eapply Seq_Impl_r.
+      {
+        apply InS_cons_I_hd.
+        reflexivity.
+      }
+      intros ns' H1.
+      Fail rewrite hsubst_Pred'.
+      admit.
+  Admitted.
+
 End Seq_single_unary_predicate.
