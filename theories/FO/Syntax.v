@@ -1,4 +1,4 @@
-From InqLog Require Export ListBib.
+From InqLog Require Export ListLib.
 From InqLog.FO Require Export Signatures.
 
 (** * Terms
