@@ -28,7 +28,7 @@
 <h1 class="libtitle">InqLog.FO.Syntax</h1>
 
 <div class="code">
-<span class="id" title="keyword">From</span> <span class="id" title="var">InqLog</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="InqLog.ListBib.html#"><span class="id" title="library">ListBib</span></a>.<br/>
+<span class="id" title="keyword">From</span> <span class="id" title="var">InqLog</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="InqLog.ListLib.html#"><span class="id" title="library">ListLib</span></a>.<br/>
 <span class="id" title="keyword">From</span> <span class="id" title="var">InqLog.FO</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="InqLog.FO.Signatures.html#"><span class="id" title="library">Signatures</span></a>.<br/>
 
 <br/>
@@ -173,7 +173,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<span class="id" title="var">f1</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidDec.html#12489c9c79e91749bd1f337dd0c899e9"><span class="id" title="notation">==</span></a> <span class="id" title="var">f2</span>)...<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">subst</span> <span class="id" title="var">f2</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListBib.html#finite_choice"><span class="id" title="lemma">finite_choice</span></a> <span class="id" title="keyword">with</span> (<span class="id" title="var">xs</span> := <a class="idref" href="InqLog.FO.Signatures.html#FAri_enum"><span class="id" title="method">FAri_enum</span></a> <span class="id" title="var">f1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#finite_choice"><span class="id" title="lemma">finite_choice</span></a> <span class="id" title="keyword">with</span> (<span class="id" title="var">xs</span> := <a class="idref" href="InqLog.FO.Signatures.html#FAri_enum"><span class="id" title="method">FAri_enum</span></a> <span class="id" title="var">f1</span>).<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">intro</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Signatures.html#FAri_enum_charac"><span class="id" title="method">FAri_enum_charac</span></a> + <span class="id" title="tactic">apply</span> <span class="id" title="var">IH</span>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
@@ -524,7 +524,7 @@ It is worth to check, whether <span class="inlinecode"><span class="id" title="t
 &nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<span class="id" title="var">p1</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidDec.html#12489c9c79e91749bd1f337dd0c899e9"><span class="id" title="notation">==</span></a> <span class="id" title="var">p2</span>)...<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">subst</span> <span class="id" title="var">p2</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListBib.html#finite_choice"><span class="id" title="lemma">finite_choice</span></a> <span class="id" title="keyword">with</span> (<span class="id" title="var">xs</span> := <a class="idref" href="InqLog.FO.Signatures.html#PAri_enum"><span class="id" title="method">PAri_enum</span></a> <span class="id" title="var">p1</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#finite_choice"><span class="id" title="lemma">finite_choice</span></a> <span class="id" title="keyword">with</span> (<span class="id" title="var">xs</span> := <a class="idref" href="InqLog.FO.Signatures.html#PAri_enum"><span class="id" title="method">PAri_enum</span></a> <span class="id" title="var">p1</span>).<br/>
 &nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">intro</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Signatures.html#PAri_enum_charac"><span class="id" title="method">PAri_enum_charac</span></a> + <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Syntax.html#term_EqDec"><span class="id" title="instance">term_EqDec</span></a>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
