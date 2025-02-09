@@ -1602,8 +1602,6 @@ Module Seq_single_unary_predicate.
     }
   Qed.
 
-  Opaque Pred'.
-
   Example Seq_card_1 :
     forall n1,
       Seq nil ((pair (n1 :: nil) (card 1)) :: nil).
@@ -1682,8 +1680,64 @@ Module Seq_single_unary_predicate.
         reflexivity.
       }
       intros ns' H1.
-      Fail rewrite hsubst_Pred'.
-      admit.
+      apply InS_sublist_double_E in H1 as [H1|[H1|[H1|H1]]].
+      +
+        eapply Seq_id.
+        {
+          apply InS_cons_I_hd.
+          asimpl.
+          admit.
+        }
+        {
+          apply InS_cons_I_tl.
+          apply InS_cons_I_hd.
+          asimpl.
+          admit.
+        }
+        {
+          reflexivity.
+        }
+      +
+        apply Seq_weakening with
+          (ls1 := nil)
+          (rs1 := ((pair ns' (card 1)) :: nil)).
+        {
+          apply nil_InS_sublist_I.
+        }
+        {
+          apply cons_InS_sublist_I.
+          -
+            apply InS_cons_I_hd.
+            reflexivity.
+          -
+            apply nil_InS_sublist_I.
+        }
+        rewrite H1.
+        apply Seq_card_1.
+      +
+        apply Seq_weakening with
+          (ls1 := nil)
+          (rs1 := ((pair ns' (card 1)) :: nil)).
+        {
+          apply nil_InS_sublist_I.
+        }
+        {
+          apply cons_InS_sublist_I.
+          -
+            apply InS_cons_I_hd.
+            reflexivity.
+          -
+            apply nil_InS_sublist_I.
+        }
+        rewrite H1.
+        apply Seq_card_1.
+      +
+        eapply Seq_empty.
+        {
+          apply InS_cons_I_hd.
+          rewrite H1.
+          reflexivity.
+        }
     -
       eapply Seq_Impl_r.
       {
@@ -1694,5 +1748,65 @@ Module Seq_single_unary_predicate.
       Fail rewrite hsubst_Pred'.
       admit.
   Admitted.
+
+  Proposition Seq_card :
+    forall len ls rs ns,
+      length ns <= len ->
+      Seq ls ((pair ns (card len)) :: rs).
+  Proof.
+    intros len.
+    funelim (card len).
+    all: intros ls rs ns H1.
+    -
+      assert (eq1 : ns = nil).
+      {
+        destruct ns as [|n ns']; try reflexivity.
+        simpl in H1.
+        lia.
+      }
+      subst ns.
+      eapply Seq_empty.
+      apply InS_cons_I_hd.
+      reflexivity.
+    -
+      assert (ns = nil \/ exists n1, ns = n1 :: nil) as [eq1|[n1 eq1]].
+      {
+        destruct ns as [|n1 [|n2 ns']].
+        -
+          left; reflexivity.
+        -
+          right.
+          exists n1.
+          reflexivity.
+        -
+          simpl in H1.
+          lia.
+      }
+      all: subst ns.
+      +
+        eapply Seq_empty.
+        apply InS_cons_I_hd.
+        reflexivity.
+      +
+        apply Seq_weakening with
+          (ls1 := nil)
+          (rs1 := ((pair (n1 :: nil) <{forall ? (Pred' (Var 0))}>) :: nil)).
+        {
+          apply nil_InS_sublist_I.
+        }
+        {
+          apply cons_InS_sublist_I.
+          -
+            apply InS_cons_I_hd.
+            reflexivity.
+          -
+            apply nil_InS_sublist_I.
+        }
+        apply Seq_card_1.
+    -
+      rename H into IH1.
+      rename H0 into IH2.
+  Admitted.
+
 
 End Seq_single_unary_predicate.
