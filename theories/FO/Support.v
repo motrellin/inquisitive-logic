@@ -1,37 +1,37 @@
 From InqLog.FO Require Export States Syntax.
 
-(** * Support satisfaction
-   In this section, we will introduce the notion of a state
-   _supporting_ a formula (with respect to a variable
-   assignment function).
+(** * Variable Assignments
 
    We refer to a variable assignment function by the short
    name [assignment].
  *)
 
-Definition assignment `{Model} : Type := var -> Individual.
+Definition assignment `{Model} : Type :=
+  var -> Individual.
 
-(**
-   To interpret a term, we define the [referent] of a term in
-   a world which is an [Individual].
+(** * Referent of a term
+
+   To interpret a term, we define the [referent] of a term
+   in a world which is an [Individual].
  *)
 
 Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
   match t with
   | Var v =>
-      fun _ g =>
-      g v
+      fun _ a =>
+      a v
   | Func f args =>
-      fun w g =>
-      FInterpretation w f (fun arg => referent (args arg) w g)
+      fun w a =>
+      FInterpretation w f
+      (fun arg => referent (args arg) w a)
   end.
 
 Instance referent_Proper `{Model} :
   Proper (term_eq ==> equiv ==> eq ==> eq) referent.
 Proof.
   intros t1 t2 H1 w1 w2 H2 a1 a2 H3.
-  subst.
-  revert a2.
+  subst a2.
+  revert a1.
   generalize dependent w2.
   revert w1.
   generalize dependent t2.
@@ -138,18 +138,23 @@ Proof.
     apply referent_subst_var.
 Qed.
 
-(**
-   Now, we're in a position to define the [support] relation
-   as Ciardelli did.
+(** * Support satisfaction
+
+   We will now introduce the notion of a state
+   _supporting_ a formula (with respect to a variable
+   assignment function).
  *)
 
-Fixpoint support `{Model} (phi : form) : state -> assignment -> Prop :=
+Fixpoint support `{Model} (phi : form) :
+  state -> assignment -> Prop :=
+
   match phi with
   | Pred p args =>
       fun s a =>
       forall (w : World),
         s w = true ->
-        PInterpretation w p (fun arg => referent (args arg) w a) = true
+        PInterpretation w p
+        (fun arg => referent (args arg) w a) = true
 
   | Bot _ =>
       fun s a =>
@@ -196,7 +201,9 @@ Notation "M , s , a |= phi" := (@support _ M phi s a)
 Notation "s , a |= phi" := (support phi s a)
     (at level 95)
     : form_scope.
-(* TODO: Why can't I increase the level to anythin higher? *)
+(* TODO:
+   Why can't I increase the level to anything higher?
+ *)
 
 (**
    In order to make future proofs more readable, we restate
@@ -209,15 +216,20 @@ Fact support_Pred `{Model} :
     s, a |= <{Pred p args}> <->
     forall w,
       s w = true ->
-      PInterpretation w p (fun arg => referent (args arg) w a) = true.
-Proof. reflexivity. Qed.
+      PInterpretation w p
+      (fun arg => referent (args arg) w a) = true.
+Proof.
+  reflexivity.
+Qed.
 
 Fact support_Bot `{Model} :
   forall x s a,
     s, a |= <{Bot x}> <->
     forall w,
       s w = false.
-Proof. reflexivity. Qed.
+Proof.
+  reflexivity.
+Qed.
 
 Fact support_Impl `{Model} :
   forall phi1 phi2 s a,
@@ -226,35 +238,45 @@ Fact support_Impl `{Model} :
       substate t s ->
       t, a |= phi1 ->
       t, a |= phi2.
-Proof. reflexivity. Qed.
+Proof.
+  reflexivity.
+Qed.
 
 Fact support_Conj `{Model} :
   forall phi1 phi2 s a,
     s, a |= <{phi1 /\ phi2}> <->
     (s, a |= phi1) /\
     (s, a |= phi2).
-Proof. reflexivity. Qed.
+Proof.
+  reflexivity.
+Qed.
 
 Fact support_Idisj `{Model} :
   forall phi1 phi2 s a,
     s, a |= <{phi1 \\/ phi2}> <->
     (s, a |= phi1) \/
     (s, a |= phi2).
-Proof. reflexivity. Qed.
+Proof.
+  reflexivity.
+Qed.
 
 Fact support_Forall `{Model} :
   forall phi1 s a,
   s, a |= <{forall phi1}> <->
     forall i,
       s, i.: a |= phi1.
-Proof. reflexivity. Qed.
+Proof.
+  reflexivity.
+Qed.
 
 Fact support_Iexists `{Model} :
   forall phi1 s a,
     s, a |= <{iexists phi1}> <->
     exists i,
       s, i .: a |= phi1.
-Proof. reflexivity. Qed.
+Proof.
+  reflexivity.
+Qed.
 
 (**
    Next, we observe, that [state_eq] is a congruence with
@@ -338,7 +360,9 @@ Proof with (try contradiction).
     destruct H1 as [H11 H12].
     split.
     all: intros [H3|H3].
-    all: left + right; eapply IH1 + eapply IH2; eassumption + reflexivity.
+    all:
+      left + right;
+      eapply IH1 + eapply IH2; eassumption + reflexivity.
   -
     split.
     all: intros H3 i.
@@ -356,7 +380,7 @@ Qed.
 
 Proposition persistency `{Model} :
   forall s t a phi,
-  s, a |= phi ->
+    s, a |= phi ->
     substate t s ->
     t, a |= phi.
 Proof.
@@ -793,6 +817,7 @@ Qed.
 
 (** ** Support for multiple formulas *)
 
+(* TODO Adapt to ListLib? *)
 Definition support_mult
   `{Model}
   (s : state)
