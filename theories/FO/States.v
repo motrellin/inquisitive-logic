@@ -18,26 +18,6 @@ Definition state `{Model} := Morph World bool.
  *)
 Definition state_eq `{Model} : relation state := Morph_eq.
 
-Instance state_eq_Equiv `{Model} : Equivalence state_eq.
-Proof.
-  split.
-  -
-    (* Reflexivity *)
-    intros s w.
-    reflexivity.
-  -
-    (* Symmetry *)
-    intros s t H1 w.
-    rewrite H1.
-    reflexivity.
-  -
-    (* Transitivity *)
-    intros s t u H1 H2 w.
-    rewrite H1.
-    rewrite H2.
-    reflexivity.
-Qed.
-
 (** * Example states *)
 (** ** The empty state *)
 
@@ -132,7 +112,7 @@ Qed.
 
 Fact complement_complement `{Model} :
   forall s,
-    state_eq (complement (complement s)) s.
+    (complement (complement s)) == s.
 Proof.
   intros s w.
   apply negb_involutive.
@@ -190,7 +170,7 @@ Qed.
 
 Lemma mapping_state_nil `{Model} :
   forall f,
-    state_eq (mapping_state f nil) empty_state.
+    (mapping_state f nil) == empty_state.
 Proof.
   intros f w.
   reflexivity.
@@ -227,7 +207,7 @@ Qed.
 Lemma unnamed_helper_States_1 `{Model} :
   forall (s : state) w,
     s w = false ->
-    state_eq (excluding_state s w) s.
+    (excluding_state s w) == s.
 Proof.
   intros s w H1 w'.
   simpl.
@@ -245,7 +225,7 @@ Definition consistent `{Model} (s : state) : Prop := exists w, s w = true.
 
 Fact empty_state_not_consistent `{Model} :
   forall s,
-    state_eq s empty_state <->
+    s == empty_state <->
     ~ consistent s.
 Proof.
   intros s.
@@ -338,7 +318,7 @@ Qed.
 Lemma substate_empty_state `{Model} :
   forall t,
     substate t empty_state ->
-    state_eq t empty_state.
+    t == empty_state.
 Proof.
   intros t H1 w.
   destruct (t w) eqn:H2; try reflexivity.
@@ -350,8 +330,8 @@ Lemma substate_singleton `{Model} :
   forall w t,
     substate t (singleton w) ->
     (
-      state_eq t empty_state \/
-      state_eq t (singleton w)
+      t == empty_state \/
+      t == (singleton w)
     ).
 Proof.
   intros w t H1.
@@ -462,7 +442,7 @@ Lemma substate_mapping_state_iff `{Model} :
   forall f ns t,
   substate t (mapping_state f ns) <->
   exists ns',
-    state_eq t (mapping_state f ns') /\
+    t == (mapping_state f ns') /\
     InS_sublist ns' ns.
 Proof.
   intros f ns1 t.
@@ -774,7 +754,7 @@ Qed.
 
 Lemma unnamed_States_helper_3 `{Model}:
   forall s t,
-    state_eq t (restricted_state s (unrestricted_state s t)).
+    t == (restricted_state s (unrestricted_state s t)).
 Proof.
   intros s t [w H1].
   symmetry.
