@@ -210,20 +210,20 @@ Program Definition term_subst
 
    Next, we extend the definition of rigidity to terms.
  *)
-Fixpoint rigid_term `{Signature} (t : term) : Prop :=
+Fixpoint term_rigid `{Signature} (t : term) : Prop :=
   match t with
   | Var x => True
   | Func f args =>
       rigid f = true /\
       forall arg,
-        rigid_term (args arg)
+        term_rigid (args arg)
   end.
 
-Lemma rigid_term_subst `{Signature} :
+Lemma term_rigid_subst `{Signature} :
   forall t (sigma : var -> term),
-  (forall x, rigid_term (sigma x)) ->
-    rigid_term t ->
-    rigid_term t.[sigma].
+  (forall x, term_rigid (sigma x)) ->
+    term_rigid t ->
+    term_rigid t.[sigma].
 Proof.
   induction t as [x|f args IH].
   -
@@ -235,16 +235,16 @@ Qed.
 
 Lemma unnamed_helper_Syntax_3 `{Signature} :
   forall sigma,
-    (forall x, rigid_term (sigma x)) ->
+    (forall x, term_rigid (sigma x)) ->
     forall x,
-      rigid_term (up sigma x).
+      term_rigid (up sigma x).
 Proof.
   intros sigma H1 [|x'].
   -
     exact I.
   -
     asimpl.
-    apply rigid_term_subst.
+    apply term_rigid_subst.
     +
       intros x.
       exact I.

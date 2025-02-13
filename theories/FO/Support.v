@@ -82,7 +82,7 @@ Qed.
 
 Lemma rigidity_referent `{Model} :
   forall t w w' a,
-    rigid_term t ->
+    term_rigid t ->
     referent t w a =
     referent t w' a.
 Proof.
@@ -658,7 +658,7 @@ Qed.
 
 Lemma support_hsubst `{Model} :
   forall phi s a sigma w,
-    (forall x, rigid_term (sigma x)) ->
+    (forall x, term_rigid (sigma x)) ->
     (s, (fun x => referent (sigma x) w a) |= phi) <->
     (s, a |= phi.|[sigma]).
 Proof.

@@ -203,7 +203,7 @@ Inductive Seq `{Signature} :
   | Seq_Forall_l :
       forall ls rs ns phi t,
         InS (pair ns <{forall phi}>) ls ->
-        rigid_term t ->
+        term_rigid t ->
         Seq
         (
           (pair ns phi.|[t/]) ::
@@ -216,7 +216,7 @@ Inductive Seq `{Signature} :
   | Seq_Iexists_r :
       forall ls rs ns phi t,
         InS (pair ns <{iexists phi}>) rs ->
-        rigid_term t ->
+        term_rigid t ->
         Seq ls
         (
           (pair ns phi.|[t/]) ::
@@ -704,7 +704,7 @@ Qed.
 
 Lemma satisfaction_hsubst `{Model} :
   forall phi f a sigma w,
-    (forall x, rigid_term (sigma x)) ->
+    (forall x, term_rigid (sigma x)) ->
     satisfaction f (fun x => referent (sigma x) w a) phi <->
     satisfaction f a (pair (fst phi) (snd phi).|[sigma]).
 Proof.
@@ -1229,7 +1229,7 @@ Qed.
 Lemma satisfaction_conseq_Forall_l `{Signature} :
   forall ls rs ns phi t,
     InS (pair ns <{forall phi}>) ls ->
-    rigid_term t ->
+    term_rigid t ->
     satisfaction_conseq
     (
       (pair ns phi.|[t/]) ::
@@ -1279,7 +1279,7 @@ Qed.
 Lemma satisfaction_conseq_Iexists_r `{Signature} :
   forall ls rs ns phi t,
     InS (pair ns <{iexists phi}>) rs ->
-    rigid_term t ->
+    term_rigid t ->
     satisfaction_conseq ls
     (
       (pair ns phi.|[t/]) ::

@@ -271,7 +271,7 @@ Qed.
 
 Lemma support_conseq_Forall_E_rigid `{Signature} :
   forall cxt phi t,
-    rigid_term t ->
+    term_rigid t ->
     support_conseq cxt <{forall phi}> ->
     support_conseq cxt phi.|[t/].
 Proof.
@@ -308,7 +308,7 @@ Qed.
 
 Lemma support_conseq_Iexists_I `{S : Signature} :
   forall cxt phi t,
-    rigid_term t ->
+    term_rigid t ->
     support_conseq cxt phi.|[t .: ids] ->
     support_conseq cxt <{iexists phi}>.
 Proof.
