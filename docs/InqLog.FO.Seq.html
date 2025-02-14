@@ -37,7 +37,7 @@
 </div>
 
 <div class="doc">
-<a id="lab71"></a><h1 class="section">Defining the Sequent Calculus</h1>
+<a id="lab77"></a><h1 class="section">Defining the Sequent Calculus</h1>
 
 
 <div class="paragraph"> </div>
@@ -270,7 +270,7 @@
 &nbsp;&nbsp;| <a id="Seq_Forall_l" class="idref" href="#Seq_Forall_l"><span class="id" title="constructor">Seq_Forall_l</span></a> :<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="ls:83" class="idref" href="#ls:83"><span class="id" title="binder">ls</span></a> <a id="rs:84" class="idref" href="#rs:84"><span class="id" title="binder">rs</span></a> <a id="ns:85" class="idref" href="#ns:85"><span class="id" title="binder">ns</span></a> <a id="phi:86" class="idref" href="#phi:86"><span class="id" title="binder">phi</span></a> <a id="t:87" class="idref" href="#t:87"><span class="id" title="binder">t</span></a>,<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.ListLib.html#InS"><span class="id" title="definition">InS</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns:85"><span class="id" title="variable">ns</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">&lt;{</span></a><a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:'forall'_x"><span class="id" title="notation">forall</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:86"><span class="id" title="variable">phi</span></a><a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">}&gt;</span></a>) <a class="idref" href="InqLog.FO.Seq.html#ls:83"><span class="id" title="variable">ls</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#rigid_term"><span class="id" title="definition">rigid_term</span></a> <a class="idref" href="InqLog.FO.Seq.html#t:87"><span class="id" title="variable">t</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#term_rigid"><span class="id" title="definition">term_rigid</span></a> <a class="idref" href="InqLog.FO.Seq.html#t:87"><span class="id" title="variable">t</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Seq.html#Seq:19"><span class="id" title="inductive">Seq</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">(</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns:85"><span class="id" title="variable">ns</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:86"><span class="id" title="variable">phi</span></a><span class="id" title="notation">.|[</span><a class="idref" href="InqLog.FO.Seq.html#t:87"><span class="id" title="variable">t</span></a><span class="id" title="notation">/]</span><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a><br/>
@@ -283,7 +283,7 @@
 &nbsp;&nbsp;| <a id="Seq_Iexists_r" class="idref" href="#Seq_Iexists_r"><span class="id" title="constructor">Seq_Iexists_r</span></a> :<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="ls:88" class="idref" href="#ls:88"><span class="id" title="binder">ls</span></a> <a id="rs:89" class="idref" href="#rs:89"><span class="id" title="binder">rs</span></a> <a id="ns:90" class="idref" href="#ns:90"><span class="id" title="binder">ns</span></a> <a id="phi:91" class="idref" href="#phi:91"><span class="id" title="binder">phi</span></a> <a id="t:92" class="idref" href="#t:92"><span class="id" title="binder">t</span></a>,<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.ListLib.html#InS"><span class="id" title="definition">InS</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns:90"><span class="id" title="variable">ns</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">&lt;{</span></a><a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:'iexists'_x"><span class="id" title="notation">iexists</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:91"><span class="id" title="variable">phi</span></a><a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">}&gt;</span></a>) <a class="idref" href="InqLog.FO.Seq.html#rs:89"><span class="id" title="variable">rs</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#rigid_term"><span class="id" title="definition">rigid_term</span></a> <a class="idref" href="InqLog.FO.Seq.html#t:92"><span class="id" title="variable">t</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#term_rigid"><span class="id" title="definition">term_rigid</span></a> <a class="idref" href="InqLog.FO.Seq.html#t:92"><span class="id" title="variable">t</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Seq.html#Seq:19"><span class="id" title="inductive">Seq</span></a> <a class="idref" href="InqLog.FO.Seq.html#ls:88"><span class="id" title="variable">ls</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">(</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns:90"><span class="id" title="variable">ns</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:91"><span class="id" title="variable">phi</span></a><span class="id" title="notation">.|[</span><a class="idref" href="InqLog.FO.Seq.html#t:92"><span class="id" title="variable">t</span></a><span class="id" title="notation">/]</span><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a><br/>
@@ -322,7 +322,7 @@
 </div>
 
 <div class="doc">
-<a id="lab72"></a><h2 class="section">Properties of <span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#Seq"><span class="id" title="inductive">Seq</span></a></span></h2>
+<a id="lab78"></a><h2 class="section">Properties of <span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#Seq"><span class="id" title="inductive">Seq</span></a></span></h2>
 
 </div>
 <div class="code">
@@ -638,7 +638,7 @@
 </div>
 
 <div class="doc">
-<a id="lab73"></a><h2 class="section">Some example derivations</h2>
+<a id="lab79"></a><h2 class="section">Some example derivations</h2>
 
 </div>
 <div class="code">
@@ -758,7 +758,7 @@
 </div>
 
 <div class="doc">
-<a id="lab74"></a><h1 class="section">Corresponding semantic</h1>
+<a id="lab80"></a><h1 class="section">Corresponding semantic</h1>
 
 
 <div class="paragraph"> </div>
@@ -810,7 +810,7 @@
 <br/>
 <span class="id" title="keyword">Lemma</span> <a id="satisfaction_hsubst" class="idref" href="#satisfaction_hsubst"><span class="id" title="lemma">satisfaction_hsubst</span></a> `{<a id="H0:138" class="idref" href="#H0:138"><span class="id" title="binder">Model</span></a>} :<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="phi:139" class="idref" href="#phi:139"><span class="id" title="binder">phi</span></a> <a id="f:140" class="idref" href="#f:140"><span class="id" title="binder">f</span></a> <a id="a:141" class="idref" href="#a:141"><span class="id" title="binder">a</span></a> <a id="sigma:142" class="idref" href="#sigma:142"><span class="id" title="binder">sigma</span></a> <a id="w:143" class="idref" href="#w:143"><span class="id" title="binder">w</span></a>,<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><span class="id" title="keyword">forall</span> <a id="x:144" class="idref" href="#x:144"><span class="id" title="binder">x</span></a>, <a class="idref" href="InqLog.FO.Syntax.html#rigid_term"><span class="id" title="definition">rigid_term</span></a> (<a class="idref" href="InqLog.FO.Seq.html#sigma:142"><span class="id" title="variable">sigma</span></a> <a class="idref" href="InqLog.FO.Seq.html#x:144"><span class="id" title="variable">x</span></a>)<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><span class="id" title="keyword">forall</span> <a id="x:144" class="idref" href="#x:144"><span class="id" title="binder">x</span></a>, <a class="idref" href="InqLog.FO.Syntax.html#term_rigid"><span class="id" title="definition">term_rigid</span></a> (<a class="idref" href="InqLog.FO.Seq.html#sigma:142"><span class="id" title="variable">sigma</span></a> <a class="idref" href="InqLog.FO.Seq.html#x:144"><span class="id" title="variable">x</span></a>)<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Seq.html#satisfaction"><span class="id" title="definition">satisfaction</span></a> <a class="idref" href="InqLog.FO.Seq.html#f:140"><span class="id" title="variable">f</span></a> (<span class="id" title="keyword">fun</span> <a id="x:145" class="idref" href="#x:145"><span class="id" title="binder">x</span></a> =&gt; <a class="idref" href="InqLog.FO.Support.html#referent"><span class="id" title="definition">referent</span></a> (<a class="idref" href="InqLog.FO.Seq.html#sigma:142"><span class="id" title="variable">sigma</span></a> <a class="idref" href="InqLog.FO.Seq.html#x:145"><span class="id" title="variable">x</span></a>) <a class="idref" href="InqLog.FO.Seq.html#w:143"><span class="id" title="variable">w</span></a> <a class="idref" href="InqLog.FO.Seq.html#a:141"><span class="id" title="variable">a</span></a>) <a class="idref" href="InqLog.FO.Seq.html#phi:139"><span class="id" title="variable">phi</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'&lt;-&gt;'_x"><span class="id" title="notation">&lt;-&gt;</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Seq.html#satisfaction"><span class="id" title="definition">satisfaction</span></a> <a class="idref" href="InqLog.FO.Seq.html#f:140"><span class="id" title="variable">f</span></a> <a class="idref" href="InqLog.FO.Seq.html#a:141"><span class="id" title="variable">a</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#fst"><span class="id" title="definition">fst</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:139"><span class="id" title="variable">phi</span></a>) <span class="id" title="notation">(</span><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#snd"><span class="id" title="definition">snd</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:139"><span class="id" title="variable">phi</span></a><span class="id" title="notation">).|[</span><a class="idref" href="InqLog.FO.Seq.html#sigma:142"><span class="id" title="variable">sigma</span></a><span class="id" title="notation">]</span>).<br/>
 <span class="id" title="keyword">Proof</span>.<br/>
@@ -833,7 +833,7 @@
 </div>
 
 <div class="doc">
-<a id="lab75"></a><h2 class="section"><span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#satisfaction_mult"><span class="id" title="definition">satisfaction_mult</span></a></span></h2>
+<a id="lab81"></a><h2 class="section"><span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#satisfaction_mult"><span class="id" title="definition">satisfaction_mult</span></a></span></h2>
 
 </div>
 <div class="code">
@@ -885,7 +885,7 @@
 </div>
 
 <div class="doc">
-<a id="lab76"></a><h2 class="section"><span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#satisfaction_some"><span class="id" title="definition">satisfaction_some</span></a></span></h2>
+<a id="lab82"></a><h2 class="section"><span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#satisfaction_some"><span class="id" title="definition">satisfaction_some</span></a></span></h2>
 
 </div>
 <div class="code">
@@ -942,7 +942,7 @@
 </div>
 
 <div class="doc">
-<a id="lab77"></a><h1 class="section"><span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#satisfaction_conseq"><span class="id" title="definition">satisfaction_conseq</span></a></span></h1>
+<a id="lab83"></a><h1 class="section"><span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#satisfaction_conseq"><span class="id" title="definition">satisfaction_conseq</span></a></span></h1>
 
 </div>
 <div class="code">
@@ -959,7 +959,7 @@
 </div>
 
 <div class="doc">
-<a id="lab78"></a><h2 class="section">Soundness lemmata for <span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#Seq"><span class="id" title="inductive">Seq</span></a></span></h2>
+<a id="lab84"></a><h2 class="section">Soundness lemmata for <span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#Seq"><span class="id" title="inductive">Seq</span></a></span></h2>
 
 </div>
 <div class="code">
@@ -1400,7 +1400,7 @@
 <span class="id" title="keyword">Lemma</span> <a id="satisfaction_conseq_Forall_l" class="idref" href="#satisfaction_conseq_Forall_l"><span class="id" title="lemma">satisfaction_conseq_Forall_l</span></a> `{<a id="H:264" class="idref" href="#H:264"><span class="id" title="binder">Signature</span></a>} :<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="ls:265" class="idref" href="#ls:265"><span class="id" title="binder">ls</span></a> <a id="rs:266" class="idref" href="#rs:266"><span class="id" title="binder">rs</span></a> <a id="ns:267" class="idref" href="#ns:267"><span class="id" title="binder">ns</span></a> <a id="phi:268" class="idref" href="#phi:268"><span class="id" title="binder">phi</span></a> <a id="t:269" class="idref" href="#t:269"><span class="id" title="binder">t</span></a>,<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.ListLib.html#InS"><span class="id" title="definition">InS</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns:267"><span class="id" title="variable">ns</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">&lt;{</span></a><a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:'forall'_x"><span class="id" title="notation">forall</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:268"><span class="id" title="variable">phi</span></a><a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">}&gt;</span></a>) <a class="idref" href="InqLog.FO.Seq.html#ls:265"><span class="id" title="variable">ls</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#rigid_term"><span class="id" title="definition">rigid_term</span></a> <a class="idref" href="InqLog.FO.Seq.html#t:269"><span class="id" title="variable">t</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#term_rigid"><span class="id" title="definition">term_rigid</span></a> <a class="idref" href="InqLog.FO.Seq.html#t:269"><span class="id" title="variable">t</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Seq.html#satisfaction_conseq"><span class="id" title="definition">satisfaction_conseq</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;(<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">(</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns:267"><span class="id" title="variable">ns</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:268"><span class="id" title="variable">phi</span></a><span class="id" title="notation">.|[</span><a class="idref" href="InqLog.FO.Seq.html#t:269"><span class="id" title="variable">t</span></a><span class="id" title="notation">/]</span><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a><br/>
@@ -1452,7 +1452,7 @@
 <span class="id" title="keyword">Lemma</span> <a id="satisfaction_conseq_Iexists_r" class="idref" href="#satisfaction_conseq_Iexists_r"><span class="id" title="lemma">satisfaction_conseq_Iexists_r</span></a> `{<a id="H:272" class="idref" href="#H:272"><span class="id" title="binder">Signature</span></a>} :<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="ls:273" class="idref" href="#ls:273"><span class="id" title="binder">ls</span></a> <a id="rs:274" class="idref" href="#rs:274"><span class="id" title="binder">rs</span></a> <a id="ns:275" class="idref" href="#ns:275"><span class="id" title="binder">ns</span></a> <a id="phi:276" class="idref" href="#phi:276"><span class="id" title="binder">phi</span></a> <a id="t:277" class="idref" href="#t:277"><span class="id" title="binder">t</span></a>,<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.ListLib.html#InS"><span class="id" title="definition">InS</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns:275"><span class="id" title="variable">ns</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">&lt;{</span></a><a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:'iexists'_x"><span class="id" title="notation">iexists</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:276"><span class="id" title="variable">phi</span></a><a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">}&gt;</span></a>) <a class="idref" href="InqLog.FO.Seq.html#rs:274"><span class="id" title="variable">rs</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#rigid_term"><span class="id" title="definition">rigid_term</span></a> <a class="idref" href="InqLog.FO.Seq.html#t:277"><span class="id" title="variable">t</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Syntax.html#term_rigid"><span class="id" title="definition">term_rigid</span></a> <a class="idref" href="InqLog.FO.Seq.html#t:277"><span class="id" title="variable">t</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Seq.html#satisfaction_conseq"><span class="id" title="definition">satisfaction_conseq</span></a> <a class="idref" href="InqLog.FO.Seq.html#ls:273"><span class="id" title="variable">ls</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;(<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">(</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns:275"><span class="id" title="variable">ns</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:276"><span class="id" title="variable">phi</span></a><span class="id" title="notation">.|[</span><a class="idref" href="InqLog.FO.Seq.html#t:277"><span class="id" title="variable">t</span></a><span class="id" title="notation">/]</span><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a><br/>
@@ -1584,7 +1584,7 @@
 </div>
 
 <div class="doc">
-<a id="lab79"></a><h2 class="section">Soundness</h2>
+<a id="lab85"></a><h2 class="section">Soundness</h2>
 
 </div>
 <div class="code">
@@ -1638,7 +1638,7 @@
 </div>
 
 <div class="doc">
-<a id="lab80"></a><h1 class="section">More derivable rules</h1>
+<a id="lab86"></a><h1 class="section">More derivable rules</h1>
 
 </div>
 <div class="code">
