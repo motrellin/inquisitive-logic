@@ -886,7 +886,7 @@ Module Syntax_single_unary_predicate.
      predicate symbol and show certain properties about it.
    *)
   Definition Pred' (t : term) :=
-    Pred tt (fun arg => match arg with tt => t end).
+    Pred tt (fun arg => t).
 
   Lemma hsubst_Pred' :
     forall t sigma,
@@ -896,7 +896,6 @@ Module Syntax_single_unary_predicate.
     simpl.
     red.
     rewrite <- eq_rect_eq_dec; try exact PSymb_EqDec.
-    intros [].
     reflexivity.
   Qed.
 
