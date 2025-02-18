@@ -976,8 +976,7 @@ Proof.
 Qed.
 
 Lemma satisfaction_conseq_Impl_r `{Signature} :
-  forall ls rs ns phi psi,
-    InS (pair ns <{phi -> psi}>) rs ->
+  forall ls rs ns phi psi, InS (pair ns <{phi -> psi}>) rs ->
     (forall ns',
       InS_sublist ns' ns ->
       satisfaction_conseq
@@ -1485,4 +1484,74 @@ Proof.
       exact H2.
   -
     exact H3.
+Qed.
+
+Proposition Seq_Bot_r `{Signature} :
+  forall ls rs ns phi,
+    InS (pair ns <{~ phi}>) rs ->
+    (forall n,
+      InS n ns ->
+      Seq ((pair (n :: nil) phi) :: ls) rs
+    ) ->
+    Seq ls rs.
+Proof.
+  intros * H1 H2.
+  eapply Seq_Impl_r.
+  {
+    exact H1.
+  }
+  intros [|n ns'] H3.
+  -
+    eapply Seq_empty.
+    apply InS_cons_I_hd.
+    reflexivity.
+  -
+    assert (H4 : InS n ns).
+    {
+      apply H3.
+      apply InS_cons_I_hd.
+      reflexivity.
+    }
+    specialize (H2 n H4).
+    apply Seq_weakening with
+      (ls1 := (pair (n :: ns') phi) :: ls)
+      (rs1 := rs).
+    {
+      easy.
+    }
+    {
+      apply InS_sublist_cons_I.
+      reflexivity.
+    }
+    eapply Seq_mon with
+      (ns2 := n :: nil).
+    {
+      apply InS_cons_I_hd.
+      reflexivity.
+    }
+    {
+      apply cons_InS_sublist_I.
+      -
+        apply InS_cons_I_hd.
+        reflexivity.
+      -
+        apply nil_InS_sublist_I.
+    }
+    apply Seq_weakening with
+      (ls1 := (pair (n :: nil) phi) :: ls)
+      (rs1 := rs).
+    {
+      apply cons_InS_sublist_I.
+      -
+        apply InS_cons_I_hd.
+        reflexivity.
+      -
+        apply InS_sublist_cons_I.
+        apply InS_sublist_cons_I.
+        reflexivity.
+    }
+    {
+      reflexivity.
+    }
+    exact H2.
 Qed.
