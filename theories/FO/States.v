@@ -118,7 +118,12 @@ Proof.
   apply negb_involutive.
 Qed.
 
-(** ** Mapping states *)
+(** ** Mapping states
+
+   Mapping states implement the idea that we can describe
+   finite states via (finite) lists of natural numbers and a
+   mapping function.
+ *)
 
 Program Definition mapping_state
   `{Model}
@@ -150,6 +155,7 @@ Next Obligation.
     exact H1.
 Qed.
 
+(** [mapping_state] respects [Morph_eq] and [InS_eq]. *)
 Instance mapping_state_Proper `{Model} :
   Proper (Morph_eq ==> InS_eq ==> state_eq) mapping_state.
 Proof.
@@ -186,7 +192,11 @@ Proof.
   reflexivity.
 Qed.
 
-(** ** Excluding states *)
+(** ** Excluding states
+
+   Excluding states implement the idea that we want to be
+   able to exclude a world from a state.
+ *)
 
 Program Definition excluding_state `{Model} (s : state) (w : World) : state :=
   {|
@@ -204,7 +214,11 @@ Next Obligation.
   all: rewrite H1 in *; reflexivity + contradiction.
 Qed.
 
-Lemma unnamed_helper_States_1 `{Model} :
+(**
+   If the original state [s] does not contain a World [w],
+   then excluding [w] from [s] has no effect.
+ *)
+Lemma excluding_state_irrelevance `{Model} :
   forall (s : state) w,
     s w = false ->
     (excluding_state s w) == s.
@@ -219,11 +233,18 @@ Proof.
     reflexivity.
 Qed.
 
-(** * Consistent states *)
+(** * Consistent states
 
+   A state is called _consistent_ if it contains at least
+   one world.
+ *)
 Definition consistent `{Model} (s : state) : Prop := exists w, s w = true.
 
-Fact empty_state_not_consistent `{Model} :
+(**
+   It it quite obvious that the empty state is the only
+   inconsistent state.
+ *)
+Remark empty_state_not_consistent `{Model} :
   forall s,
     s == empty_state <->
     ~ consistent s.
@@ -253,7 +274,11 @@ Proof.
   reflexivity.
 Qed.
 
-(** * Substates *)
+(** * Substates
+
+   This section implements the notion of substates in a
+   typical set-theoretic way.
+ *)
 
 Definition substate `{Model} : relation state :=
   fun t s =>
@@ -297,24 +322,21 @@ Qed.
    We can also prove that [state_eq] is a congruence relation
    with respect to [substate]:
  *)
-Instance substate_Proper `{Model} : Proper (state_eq ==> state_eq ==> iff) substate.
+Instance substate_Proper `{Model} :
+  Proper (state_eq ==> state_eq ==> iff) substate.
 Proof.
   intros s1 s2 H1 t1 t2 H2.
   split.
-  -
-    intros H3 w H4.
-    rewrite <- H2.
-    apply H3.
-    rewrite H1.
-    exact H4.
-  -
-    intros H3 w H4.
-    rewrite H2.
-    apply H3.
-    rewrite <- H1.
-    exact H4.
+  all: intros H3 w H4.
+  all: rewrite <- H2 + rewrite H2.
+  all: apply H3.
+  all: rewrite H1 + rewrite <- H1.
+  all: exact H4.
 Qed.
 
+(**
+   The only substate of the empty state is the empty state.
+ *)
 Lemma substate_empty_state `{Model} :
   forall t,
     substate t empty_state ->
@@ -326,6 +348,10 @@ Proof.
   discriminate.
 Qed.
 
+(**
+   If a state is substate of a [singleton] state then it
+   must be the singleton state itself or the empty state.
+ *)
 Lemma substate_singleton `{Model} :
   forall w t,
     substate t (singleton w) ->
@@ -335,6 +361,10 @@ Lemma substate_singleton `{Model} :
     ).
 Proof.
   intros w t H1.
+  (**
+     Case distinction whether the world [w] is part of [t]
+     or not.
+   *)
   destruct (t w) eqn:H2.
   -
     right.
@@ -360,6 +390,9 @@ Proof.
     congruence.
 Qed.
 
+(**
+   [singleton w] is substate of every state containing [w].
+ *)
 Lemma singleton_substate `{Model} :
   forall (s : state) w,
     s w = true ->
@@ -371,6 +404,10 @@ Proof.
   exact H1.
 Qed.
 
+(**
+   The [substate] relation turns around for [complement]
+   states.
+ *)
 Lemma substate_complement `{Model} :
   forall s t,
     substate t s <->
@@ -391,6 +428,10 @@ Proof.
     all: eassumption.
 Qed.
 
+(**
+   An excluding state is always a substate of its original
+   state.
+ *)
 Lemma substate_excluding_state `{Model} :
   forall s w,
     substate (excluding_state s w) s.
@@ -400,6 +441,10 @@ Proof.
   destruct (w == w') as [H2|H2]; easy.
 Qed.
 
+(**
+   [mapping_state] also respects [Morph_eq] and
+   [InS_sublist].
+ *)
 Instance mapping_state_Proper_substate `{Model} :
   Proper (Morph_eq ==> InS_sublist ==> substate) mapping_state.
 Proof.
@@ -533,6 +578,8 @@ Proof.
     reflexivity.
 Qed.
 
+(** * Restricting a [Model] to a [state] *)
+
 Program Definition restricted_Model `{M : Model} (s : state) : Model :=
   {|
     World := {w : World | s w = true};
@@ -552,42 +599,66 @@ Program Definition restricted_Model `{M : Model} (s : state) : Model :=
  |}.
 
 Next Obligation.
+  (**
+     We need to show tht our new type of [World]s forms a
+     setoid which means that we need to show that its
+     equality relation is indeed an equivalence relation.
+   *)
   constructor.
-  -
+  - (* Reflexivity *)
     intros x.
     reflexivity.
-  -
+  - (* Symmetry *)
     intros x y H1.
     symmetry. exact H1.
-  -
+  - (* Transitivity *)
     intros x y z H1 H2.
     rewrite H1.
     exact H2.
 Qed.
 
 Next Obligation.
+  (**
+     In addition, the equality still needs to be decidable
+     which is also easy derivable.
+   *)
   intros x y.
   simpl.
   apply equiv_dec.
 Qed.
 
 Next Obligation.
+  (**
+     [PInterpretation] has to respect the defined equality
+     for worlds.
+   *)
   repeat intro.
   apply PInterpretation_Proper.
   assumption.
 Qed.
 
 Next Obligation.
+  (**
+     [FInterpretation] has to respect the defined equality
+     for worlds.
+   *)
   repeat intro.
   apply FInterpretation_Proper.
   assumption.
 Qed.
 
 Next Obligation.
+  (**
+     Rigidity is directly gained from the original model.
+   *)
   apply rigidity.
   assumption.
 Qed.
 
+(**
+   Next step: We define how we can translate states from the
+   original model to our defined restricted model.
+ *)
 Program Definition restricted_state
   `{Model}
   (s t : state) :
@@ -605,22 +676,40 @@ Next Obligation.
   reflexivity.
 Qed.
 
+(**
+   We also need the other direction. For this, we use
+   directly the proof mode as this makes the technical
+   construction more clear.
+ *)
 Definition unrestricted_state
   `{Model}
   (s : state)
   (t : @state _ (restricted_Model s)) : state.
 Proof.
   unshelve econstructor.
-  -
+  - (* Definition of the state *)
     intros w.
     destruct (s w) eqn:H1.
     +
       exact (t (exist _ _ H1)).
     +
       exact false.
-  -
+  - (* Prove that this states respect the equality on
+       Worlds. *)
     intros w1 w2 H1.
     simpl.
+    (**
+       It is quite interesting to see that we cannot do some
+       easy case distinction whether [w1] is in  [s] or not.
+       For this, it is quite instructive to step inside the
+       proof to look at the proof goal: [s w1] (which would
+       be destructed) appears multiple times. This would
+       lead us to an ill-typed term.
+     *)
+    Fail destruct (s w1).
+    (**
+       We solves this by some sort of generalization.
+     *)
     set (f :=
       (
         fun (b' : bool) (w : World) =>
@@ -735,13 +824,6 @@ Lemma unrestricted_substate `{Model} :
     substate (unrestricted_state s1 s3) s2.
 Proof.
   intros * H1 w H2.
-  (*
-  enough (H3 : s1 w && s2 w = true).
-  {
-    apply andb_true_iff in H3 as [H3 H4].
-    exact H4.
-  }
-   *)
   destruct (s1 w) eqn:H3.
   -
     rewrite unnamed_States_helper_2 with (H1 := H3) in H2.
