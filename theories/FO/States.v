@@ -35,14 +35,12 @@ Qed.
 Program Definition singleton `{Model} (w : World) : state :=
   {|
     morph :=
-      fun w' =>
-      if w' == w
-      then true
-      else false
+      fun w' => w' ==b w
    |}.
 
 Next Obligation.
   intros w1 w2 H1.
+  unfold "_ ==b _".
   destruct (w1 == w) as [H2|H2].
   all: destruct (w2 == w) as [H3|H3].
   all: reflexivity + rewrite H1 in H2; contradiction.
@@ -55,6 +53,7 @@ Proposition singleton_true `{Model} :
 Proof.
   intros w w'.
   simpl.
+  unfold "_ ==b _".
   destruct (w' == w) as [H1|H1].
   all: easy.
 Qed.
@@ -66,6 +65,7 @@ Proposition singleton_false `{Model} :
 Proof.
   intros w w'.
   simpl.
+  unfold "_ ==b _".
   destruct (w' == w) as [H1|H1].
   all: easy.
 Qed.
