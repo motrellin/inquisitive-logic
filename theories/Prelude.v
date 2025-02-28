@@ -12,7 +12,6 @@ From Coq Require Export
 
   Eqdep_dec
 
-  FunctionalExtensionality
   Classical_Prop.
 
 From Autosubst Require Export

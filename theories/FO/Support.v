@@ -27,39 +27,36 @@ Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
   end.
 
 Instance referent_Proper `{Model} :
-  Proper (term_eq ==> equiv ==> eq ==> eq) referent.
+  Proper (term_eq ==> equiv ==> ext_eq ==> eq)
+  referent.
 Proof.
-  intros t1 t2 H1 w1 w2 H2 a1 a2 H3.
-  subst a2.
-  revert a1.
-  generalize dependent w2.
-  revert w1.
-  generalize dependent t2.
+  intros t1.
   induction t1 as [x1|f1 args1 IH].
-  all: intros [x2|f2 args2] H1 w1 w2 H2 a.
+  all: intros [x2|f2 args2] H1 w1 w2 H2 a1 a2 H3.
   all: try contradiction.
   -
     simpl in *.
     congruence.
   -
     simpl in *.
-    destruct (f1 == f2) as [H3|H3]; try contradiction.
-    simpl in H3.
+    destruct (f1 == f2) as [H4|H4]; try contradiction.
+    simpl in H4.
     subst f2.
-    assert (H4 : FInterpretation w1 = FInterpretation w2).
+    assert (H5 : FInterpretation w1 = FInterpretation w2).
     {
       rewrite H2.
       reflexivity.
     }
-    rewrite H4.
-    f_equal.
-    apply functional_extensionality.
+    rewrite H5.
+    f_equiv.
     intros arg.
     apply IH.
     +
       apply H1.
     +
       exact H2.
+    +
+      exact H3.
 Qed.
 
 Lemma restricted_referent `{M : Model} :
@@ -74,8 +71,7 @@ Proof.
     reflexivity.
   -
     simpl.
-    f_equal.
-    apply functional_extensionality.
+    apply FInterpretation_Proper_inner.
     intros arg.
     apply IH.
 Qed.
@@ -94,10 +90,14 @@ Proof.
     destruct H1 as [H1 H2].
     simpl.
 
-    erewrite rigidity; try assumption.
-    f_equal.
-    eauto using functional_extensionality.
+    rewrite rigidity with (w' := w'); try assumption.
+    f_equiv.
+    intros arg.
+    apply IH.
+    apply H2.
 Qed.
+
+Print Assumptions rigidity_referent.
 
 Lemma referent_subst `{Model} :
   forall t w a sigma,
@@ -110,9 +110,12 @@ Proof.
   -
     intros a w sigma.
     asimpl.
-    f_equal.
-    eauto using functional_extensionality.
+    f_equiv.
+    intros arg.
+    apply IH.
 Qed.
+
+Print Assumptions referent_subst.
 
 Remark referent_subst_var `{Model} :
   forall t w a sigma,
@@ -123,20 +126,28 @@ Proof.
   reflexivity.
 Qed.
 
+Print Assumptions referent_subst.
+
 Lemma unnamed_helper_Support_24 `{Model} :
   forall w a i sigma,
-    (fun x => referent (up sigma x) w (i .: a)) =
+    (fun x => referent (up sigma x) w (i .: a)) ==
     i .: (fun x => referent (sigma x) w a).
 Proof.
-  intros.
-  apply functional_extensionality.
-  intros [|x'].
+  intros * x.
+  revert w a i sigma.
+  induction x as [|x' IH].
+  all: intros w a i sigma.
   -
-    autosubst.
+    reflexivity.
   -
-    asimpl.
+    simpl.
+    assert (H1 : up sigma (S x') == (sigma x').[ren (+1)])
+    by apply rename_subst'.
+    rewrite H1.
     apply referent_subst_var.
 Qed.
+
+Print Assumptions unnamed_helper_Support_24.
 
 (** * Support satisfaction
 
@@ -284,14 +295,10 @@ Qed.
  *)
 
 Instance support_Proper `{M : Model} :
-  Proper (form_eq ==> state_eq ==> eq ==> iff) support.
+  Proper (form_eq ==> state_eq ==> ext_eq ==> iff)
+  support.
 Proof with (try contradiction).
-  intros phi1 phi2 H1 s1 s2 H2 a1 a2 H3.
-  subst a2.
-  generalize dependent a1.
-  generalize dependent s2.
-  revert s1.
-  generalize dependent phi2.
+  intros phi1.
   induction phi1 as
   [p1 args1
   |?
@@ -300,7 +307,7 @@ Proof with (try contradiction).
   |phi1 IH1 phi2 IH2
   |phi1 IH1
   |phi1 IH1].
-  all: intros psi H1 s1 s2 H2 a.
+  all: intros psi H1 s1 s2 H2 a1 a2 H3.
   all: destruct psi as
   [p2 args2
   |?
@@ -311,19 +318,20 @@ Proof with (try contradiction).
   |psi1]...
   all: simpl in H1.
   -
-    destruct (p1 == p2) as [H3|H3]; try contradiction.
-    simpl in H3.
+    destruct (p1 == p2) as [H4|H4]; try contradiction.
+    simpl in H4.
     subst p2.
     split.
-    all: intros H3 w H4.
-    all: rewrite H2 in H4 + rewrite <- H2 in H4.
-    all: apply H3 in H4.
+    all: intros H4 w H5.
+    all: rewrite H2 in H5 + rewrite <- H2 in H5.
+    all: apply H4 in H5.
     all: red in H1.
-    all: rewrite <- H4.
-    all: f_equal.
-    all: apply functional_extensionality.
+    all: rewrite <- H5.
+    all: f_equiv.
     all: intros arg.
-    all: rewrite H1.
+    all: simpl in H1.
+    all: rewrite H3.
+    all: rewrite <- H1.
     all: reflexivity.
   -
     simpl.
@@ -333,47 +341,45 @@ Proof with (try contradiction).
     destruct H1 as [H11 H12].
     do 2 rewrite support_Impl.
     split.
-    all: intros H3 s3 H4 H5.
-    +
-      eapply IH2; try eassumption + reflexivity.
-      apply H3.
-      *
-        rewrite H2.
-        exact H4.
-      *
-        eapply IH1; eassumption + reflexivity.
-    +
-      eapply IH2; try eassumption + reflexivity.
-      apply H3.
-      *
-        rewrite <- H2.
-        exact H4.
-      *
-        eapply IH1; eassumption + reflexivity.
+    all: intros H4 s3 H5 H6.
+    all: eapply IH2.
+    all: try eassumption + reflexivity.
+    all: try apply H4.
+    all: try (rewrite H2 + rewrite <- H2; exact H5).
+    all: eapply IH1.
+    all: eassumption + reflexivity.
   -
     destruct H1 as [H11 H12].
     split.
-    all: intros [H3 H4].
+    all: intros [H4 H5].
     all: split.
     all: eapply IH1 + eapply IH2; eassumption + reflexivity.
   -
     destruct H1 as [H11 H12].
     split.
-    all: intros [H3|H3].
-    all:
-      left + right;
-      eapply IH1 + eapply IH2; eassumption + reflexivity.
+    all: intros [H4|H4]; [left|right].
+    all: eapply IH1 + eapply IH2; eassumption + reflexivity.
   -
     split.
-    all: intros H3 i.
-    all: rewrite support_Forall in H3.
-    all: specialize (H3 i).
-    all: eapply IH1; eassumption.
+    all: intros H4 i.
+    all: rewrite support_Forall in H4.
+    all: specialize (H4 i).
+    all: eapply IH1.
+    all: try eassumption.
+    (* TODO: This could be extracted. *)
+    all: intros [|x'].
+    all: try reflexivity.
+    all: apply H3.
   -
     split.
-    all: intros [i H3].
+    all: intros [i H4].
     all: exists i.
-    all: eapply IH1; eassumption.
+    all: eapply IH1.
+    all: try eassumption.
+    (* TODO: This could be extracted. *)
+    all: intros [|x'].
+    all: try reflexivity.
+    all: apply H3.
 Qed.
 
 (** ** Basic properties *)
@@ -418,6 +424,8 @@ Proof.
     eauto.
 Qed.
 
+Print Assumptions persistency.
+
 Proposition empty_state_property `{Model} :
   forall (a : assignment) (phi : form),
     empty_state, a |= phi.
@@ -455,6 +463,8 @@ Proof.
     exact Individual_inh.
 Qed.
 
+Print Assumptions empty_state_property.
+
 Proposition locality `{M : Model} :
   forall phi s a t,
     substate t s ->
@@ -478,8 +488,7 @@ Proof.
       apply H2 in H3.
       simpl.
       rewrite <- H3.
-      f_equal.
-      apply functional_extensionality.
+      eapply PInterpretation_Proper_inner.
       intros arg.
       apply restricted_referent.
     +
@@ -488,9 +497,8 @@ Proof.
 
       specialize (H2 (exist _ _ H4)).
       rewrite <- H2.
-      simpl.
-      f_equal.
-      apply functional_extensionality.
+
+      f_equiv.
       intros arg.
       rewrite restricted_referent.
       reflexivity.
@@ -601,7 +609,7 @@ Notation "s , a _||_ phi" := (ruling_out s phi a)
 
 (** ** Support conditions for defined connectives *)
 
-Proposition support_Neg `{Model} :
+Lemma support_Neg `{Model} :
   forall phi s a,
     s, a |= <{~ phi}> <->
     (s, a _||_ phi).
@@ -625,7 +633,7 @@ Proof.
     all: firstorder.
 Qed.
 
-Proposition support_Top `{Model} :
+Lemma support_Top `{Model} :
   forall s a,
     s, a |= <{Top}>.
 Proof.
@@ -637,7 +645,7 @@ Proof.
   congruence.
 Qed.
 
-Proposition support_Disj `{Model} :
+Lemma support_Disj `{Model} :
   forall phi1 phi2 s a,
     s, a |= <{phi1 \/ phi2}> <->
     ~ exists t,
@@ -667,7 +675,7 @@ Proof.
     auto.
 Qed.
 
-Proposition support_Iff `{Model} :
+Lemma support_Iff `{Model} :
   forall phi1 phi2 s a,
     s, a |= <{phi1 <-> phi2}> <->
     forall t,
@@ -700,16 +708,14 @@ Proof.
     all: intros H2 w' H3.
     all: specialize (H2 w' H3).
     all: rewrite <- H2.
-    all: f_equal.
-    all: apply functional_extensionality.
+    all: f_equiv.
     all: intros arg.
     +
       etransitivity.
       *
         apply referent_subst.
       *
-        do 2 f_equal.
-        apply functional_extensionality.
+        f_equiv.
         intros x.
         apply rigidity_referent.
         exact (H1 x).
@@ -719,8 +725,7 @@ Proof.
       *
         apply referent_subst.
       *
-        do 2 f_equal.
-        apply functional_extensionality.
+        f_equiv.
         intros x.
         apply rigidity_referent.
         exact (H1 x).
@@ -730,7 +735,7 @@ Proof.
     split.
     all: intros H2 t H3 H4.
     all: eapply IH2; try eassumption.
-    all: asimpl in H2.
+    all: simpl in H2.
     all: apply H2; try assumption.
     all: eapply IH1; eassumption.
   -
@@ -751,7 +756,7 @@ Proof.
   -
     split.
     all: intros H2 i.
-    all: asimpl in H2.
+    all: simpl in H2.
     all: specialize (H2 i).
     +
       eapply IH1.
@@ -790,6 +795,8 @@ Proof.
         apply unnamed_helper_Syntax_3.
         exact H1.
 Qed.
+
+Print Assumptions support_hsubst.
 
 Remark support_hsubst_var `{Model} :
   forall phi s a sigma,
@@ -897,6 +904,8 @@ Proof.
       eapply IH; eassumption.
 Qed.
 
+Print Assumptions persistency_support_mult.
+
 (** ** Support for some formulas *)
 
 Definition support_some
@@ -974,6 +983,8 @@ Proof.
       right.
       apply IH; assumption.
 Qed.
+
+Print Assumptions persistency_support_some.
 
 (** * Support validity *)
 

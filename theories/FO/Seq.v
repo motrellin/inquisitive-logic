@@ -97,9 +97,8 @@ Next Obligation.
   -
     assumption.
   -
-    simpl in *.
-    apply form_hsubst.
-    assumption.
+    rewrite H2.
+    reflexivity.
 Qed.
 
 (**
@@ -375,6 +374,8 @@ Proof with eauto.
     all: eassumption.
 Qed.
 
+Print Assumptions Seq_weakening.
+
 Instance Seq_Proper `{Signature} :
   Proper (InS_eq ==> InS_eq ==> iff) Seq.
 Proof.
@@ -384,6 +385,8 @@ Proof.
   all: eapply Seq_weakening.
   all: eassumption.
 Qed.
+
+Print Assumptions Seq_Proper.
 
 Proposition prop_4_6 `{Signature} :
   forall ls rs ns1 ns2 phi,
@@ -521,8 +524,15 @@ Proof.
         eapply IH1.
         --
            apply InS_cons_I_hd.
-           asimpl.
-           reflexivity.
+           f_equiv.
+           rewrite hsubst_comp'.
+           transitivity (phi1.|[ids]).
+           ++
+              symmetry.
+              apply hsubst_id'.
+           ++
+              apply hsubst_Proper; try reflexivity.
+              intros [|x']; reflexivity.
         --
            apply InS_cons_I_hd.
            reflexivity.
@@ -547,11 +557,20 @@ Proof.
            left; reflexivity.
         --
            apply InS_cons_I_hd.
-           asimpl.
-           reflexivity.
+           f_equiv.
+           transitivity (phi1.|[ids]).
+           ++
+              symmetry.
+              apply hsubst_id'.
+           ++
+              rewrite hsubst_comp'.
+              apply hsubst_Proper; try reflexivity.
+              intros [|x']; reflexivity.
         --
            exact H3.
 Qed.
+
+Print Assumptions prop_4_6.
 
 (** ** Some example derivations *)
 
@@ -677,7 +696,7 @@ Qed.
 
 Program Definition satisfaction
   `{Model}
-  (f : Morph nat World)
+  (f : nat -> World)
   (a : assignment) :
   Morph lb_form Prop :=
   {|
@@ -693,7 +712,7 @@ Next Obligation.
 Qed.
 
 Instance satisfaction_Proper `{Model} :
-  Proper (Morph_eq ==> eq ==> Morph_eq) satisfaction.
+  Proper (ext_eq ==> eq ==> Morph_eq) satisfaction.
 Proof.
   intros f1 f2 H1 a1 a2 H2 phi.
   simpl.
@@ -713,6 +732,8 @@ Proof.
   exact H1.
 Qed.
 
+Print Assumptions support_hsubst_var.
+
 Lemma satisfaction_hsubst_var `{Model} :
   forall phi f a sigma,
     satisfaction f (sigma >>> a) phi <->
@@ -722,12 +743,14 @@ Proof.
   apply support_hsubst_var.
 Qed.
 
+Print Assumptions satisfaction_hsubst_var.
+
 (** ** [satisfaction_mult] *)
 
 Definition satisfaction_mult
   `{Model}
   (Phi : list lb_form)
-  (f : Morph nat World)
+  (f : nat -> World)
   (a : assignment) :
   Prop :=
   mult (satisfaction f a) Phi.
@@ -735,7 +758,7 @@ Definition satisfaction_mult
 Arguments satisfaction_mult _ /.
 
 Instance satisfaction_mult_Proper `{Model} :
-  Proper (InS_eq ==> Morph_eq ==> eq ==> iff) satisfaction_mult.
+  Proper (InS_eq ==> ext_eq ==> eq ==> iff) satisfaction_mult.
 Proof.
   intros Phi1 Phi2 H1 f1 f2 H2 a1 a2 H3.
   simpl.
@@ -768,7 +791,7 @@ Qed.
 Definition satisfaction_some
   `{Model}
   (Phi : list lb_form)
-  (f : Morph nat World)
+  (f : nat -> World)
   (a : assignment) :
   Prop :=
 
@@ -777,7 +800,7 @@ Definition satisfaction_some
 Arguments satisfaction_some _ /.
 
 Instance satisfaction_some_Proper `{Model} :
-  Proper (InS_eq ==> Morph_eq ==> eq ==> iff) satisfaction_some.
+  Proper (InS_eq ==> ext_eq ==> eq ==> iff) satisfaction_some.
 Proof.
   intros Phi1 Phi2 H1 f1 f2 H2 a1 a2 H3.
   simpl.
@@ -814,7 +837,7 @@ Qed.
 Definition satisfaction_conseq `{S : Signature} :
   relation (list lb_form) :=
   fun Phi Psi =>
-  forall `(M : @Model S) (f : Morph nat World) (a : assignment),
+  forall `(M : @Model S) (f : nat -> World) (a : assignment),
     satisfaction_mult Phi f a ->
     satisfaction_some Psi f a.
 
@@ -909,8 +932,7 @@ Proof.
     assert (H9 : PInterpretation w = PInterpretation (f n))
       by (rewrite H6; reflexivity).
     rewrite H9.
-    f_equal.
-    apply functional_extensionality.
+    f_equiv.
     intros arg.
     rewrite H6.
     reflexivity.
@@ -936,8 +958,7 @@ Proof.
       by (rewrite H6; reflexivity).
 
     rewrite HB.
-    f_equal.
-    apply functional_extensionality.
+    f_equiv.
     intros arg.
     rewrite H6.
     reflexivity.
@@ -1262,11 +1283,10 @@ Proof.
         intros [|]; easy.
       *
         assert (H6 :
-          (fun x => referent ((t .: ids) x) (f n) a) =
+          (fun x => referent ((t .: ids) x) (f n) a) ==
           referent t (f n) a .: a
         ).
         {
-          apply functional_extensionality.
           intros [|x']; autosubst.
         }
         rewrite H6.
@@ -1307,11 +1327,10 @@ Proof.
         in H5.
       *
         assert (H6 :
-          referent t (f n) a .: a =
+          referent t (f n) a .: a ==
           fun x => referent ((t .: ids) x) (f n) a
         ).
         {
-          apply functional_extensionality.
           intros [|x']; reflexivity.
         }
         rewrite H6.
@@ -1486,6 +1505,8 @@ Proof.
     exact H3.
 Qed.
 
+Print Assumptions Seq_mon.
+
 Proposition Seq_Bot_r `{Signature} :
   forall ls rs ns phi,
     InS (pair ns <{~ phi}>) rs ->
@@ -1555,3 +1576,5 @@ Proof.
     }
     exact H2.
 Qed.
+
+Print Assumptions Seq_Bot_r.

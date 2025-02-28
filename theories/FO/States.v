@@ -46,7 +46,7 @@ Next Obligation.
   all: reflexivity + rewrite H1 in H2; contradiction.
 Qed.
 
-Proposition singleton_true `{Model} :
+Lemma singleton_true `{Model} :
   forall w w',
     singleton w w' = true <->
     w' == w.
@@ -58,7 +58,7 @@ Proof.
   all: easy.
 Qed.
 
-Proposition singleton_false `{Model} :
+Lemma singleton_false `{Model} :
   forall w w',
     singleton w w' = false <->
     w' =/= w.
@@ -70,7 +70,7 @@ Proof.
   all: easy.
 Qed.
 
-Proposition singleton_refl `{Model} :
+Lemma singleton_refl `{Model} :
   forall w,
     singleton w w = true.
 Proof.
@@ -127,7 +127,7 @@ Qed.
 
 Program Definition mapping_state
   `{Model}
-  (f : Morph nat World)
+  (f : nat -> World)
   (ns : list nat) :
   state :=
 
@@ -157,18 +157,17 @@ Qed.
 
 (** [mapping_state] respects [Morph_eq] and [InS_eq]. *)
 Instance mapping_state_Proper `{Model} :
-  Proper (Morph_eq ==> InS_eq ==> state_eq) mapping_state.
+  Proper (ext_eq ==> InS_eq ==> state_eq) mapping_state.
 Proof.
   intros f1 f2 H1 ns1 ns2 H2.
   intros w.
-  simpl.
   apply InS_iff_inbS.
-  red in H1.
   split.
   all: intros H3.
   all: apply InS_map_E in H3 as [n [H3 H4]].
   all: rewrite <- H3.
-  all: rewrite H1 + rewrite <- H1.
+  all: specialize (H1 n).
+  all: rewrite <- H1 + rewrite H1.
   all: apply InS_map_I.
   all: apply H2.
   all: exact H4.
@@ -446,15 +445,15 @@ Qed.
    [InS_sublist].
  *)
 Instance mapping_state_Proper_substate `{Model} :
-  Proper (Morph_eq ==> InS_sublist ==> substate) mapping_state.
+  Proper (ext_eq ==> InS_sublist ==> substate) mapping_state.
 Proof.
   intros f1 f2 H1 ns1 ns2 H2 w H3.
   apply InS_iff_inbS_true.
   apply InS_iff_inbS_true in H3.
   apply InS_map_E in H3 as [n [H3 H4]].
-  red in H1.
-  rewrite H1 in H3.
   rewrite <- H3.
+  specialize (H1 n).
+  rewrite H1.
   apply InS_map_I.
   apply H2.
   exact H4.
@@ -501,7 +500,6 @@ Proof.
       exists nil.
       split.
       *
-        rewrite mapping_state_nil in H1.
         apply substate_empty_state in H1.
         rewrite H1, mapping_state_nil.
         reflexivity.
@@ -633,7 +631,7 @@ Next Obligation.
      for worlds.
    *)
   repeat intro.
-  apply PInterpretation_Proper.
+  apply PInterpretation_Proper_outer.
   assumption.
 Qed.
 
@@ -643,7 +641,7 @@ Next Obligation.
      for worlds.
    *)
   repeat intro.
-  apply FInterpretation_Proper.
+  apply FInterpretation_Proper_outer.
   assumption.
 Qed.
 

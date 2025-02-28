@@ -135,6 +135,8 @@ Module Casari_with_atoms.
       apply support_valid_DNE_Pred.
   Qed.
 
+  Print Assumptions support_conseq_CasariSuc_DNA_CasariSuc_Atomic.
+
   Proposition support_conseq_CasariSuc_Atomic_CasariSuc_DNA :
     support_conseq (CasariSuc Atomic :: nil) (CasariSuc DNA).
   Proof.
@@ -153,6 +155,8 @@ Module Casari_with_atoms.
     -
       apply support_conseq_weakening_cons_hd.
   Qed.
+
+  Print Assumptions support_conseq_CasariSuc_Atomic_CasariSuc_DNA.
 
   Proposition support_conseq_CasariAnt_Atomic_CasariAnt_DNA :
     support_conseq (CasariAnt Atomic :: nil) (CasariAnt DNA).
@@ -205,6 +209,8 @@ Module Casari_with_atoms.
       exact support_conseq_CasariSuc_Atomic_CasariSuc_DNA.
   Qed.
 
+  Print Assumptions support_conseq_CasariAnt_Atomic_CasariAnt_DNA.
+
   Proposition support_conseq_Casari_DNA_Casari_Atomic :
     support_conseq (Casari DNA :: nil) (Casari Atomic).
   Proof.
@@ -234,6 +240,8 @@ Module Casari_with_atoms.
       exact support_conseq_CasariSuc_DNA_CasariSuc_Atomic.
   Qed.
 
+  Print Assumptions support_conseq_Casari_DNA_Casari_Atomic.
+
   Corollary support_valid_Casari_Atomic :
     support_valid (Casari Atomic).
   Proof.
@@ -248,6 +256,8 @@ Module Casari_with_atoms.
     -
       exact support_conseq_Casari_DNA_Casari_Atomic.
   Qed.
+
+  Print Assumptions support_valid_Casari_Atomic.
 
 End Casari_with_atoms.
 
@@ -267,14 +277,19 @@ Module Casari_fails.
     highest_occ_free_var IES 0.
   Proof.
     intros sigma1 sigma2 H1.
-
-    asimpl.
-    do 2 f_equal.
-    apply functional_extensionality.
+    simpl.
+    red.
+    rewrite <- eq_rect_eq_dec; try exact PSymb_EqDec.
     intros [|]; try reflexivity.
-    cbv.
+    unfold mmap.
+    unfold MMap_fun.
+    unfold up.
+    simpl.
+    do 2 rewrite rename_subst'.
     rewrite H1; reflexivity.
   Qed.
+
+  Print Assumptions highest_occ_free_var_IES.
 
   (** ** The Model *)
 
@@ -311,16 +326,24 @@ Module Casari_fails.
   Program Instance M : Model :=
     {|
       World := nat;
+      World_Setoid := eq_setoid nat;
       Individual := nat;
       Individual_inh := 42;
       PInterpretation :=
-        fun w p =>
-        match p with
-        | tt =>
-            fun args =>
-            rel w (args true) (args false)
-        end
+        fun w p args =>
+        rel w (args true) (args false)
     |}.
+
+  Next Obligation.
+    intros w p args1 args2 H1.
+    repeat rewrite H1.
+    reflexivity.
+  Qed.
+
+  Next Obligation.
+    intros w1 w2 H1.
+    reflexivity.
+  Qed.
 
   (** ** Some state properties *)
 
@@ -622,6 +645,8 @@ Module Casari_fails.
     reflexivity.
   Qed.
 
+  Print Assumptions support_IES_odd.
+
   (**
      [support_IES_even], [support_IES_even_other_direction']
      and [support_IES_even_other_direction] represent
@@ -661,6 +686,8 @@ Module Casari_fails.
         rewrite H21,H22.
         reflexivity.
   Qed.
+
+  Print Assumptions support_IES_even.
 
   Lemma unnamed_helper_2 :
     forall (s : state) (m : nat),
@@ -750,6 +777,8 @@ Module Casari_fails.
       exact H2.
   Qed.
 
+  Print Assumptions support_IES_even_other_direction.
+
   (** ** Support for [CasariSuc IES] *)
 
   Proposition support_CasariSuc_IES :
@@ -787,6 +816,8 @@ Module Casari_fails.
       eapply support_IES_odd.
       exact H2.
   Qed.
+
+  Print Assumptions support_CasariSuc_IES.
 
   (**
      [counter_state e] is a state that contains every odd number and every
@@ -1143,17 +1174,17 @@ Proof.
   intros phi sigma H1.
   eapply Seq_Forall_r.
   -
-    left; asimpl; reflexivity.
+    left; simpl; reflexivity.
   -
     eapply Seq_Forall_l with (t := Var 0).
     +
-      left; asimpl; reflexivity.
+      left; simpl; reflexivity.
     +
       exact I.
     +
       eapply Seq_Impl_l.
       *
-        left; asimpl; reflexivity.
+        left; simpl; reflexivity.
       *
         reflexivity.
       *
@@ -1171,7 +1202,7 @@ Proof.
                  apply InS_cons_I_tl.
                  apply InS_cons_I_tl.
                  apply InS_cons_I_hd.
-                 asimpl.
+                 simpl.
                  split.
                  ---
                      simpl.
@@ -1179,9 +1210,14 @@ Proof.
                  ---
                      simpl.
                      enough (H4 :
-                      phi.|[Var 0 .: sigma >> ren (+1)] = phi.|[up sigma]
-                     ) by (rewrite H4; reflexivity).
-
+                      phi.|[Var 0 .: sigma >> ren (+1)] ==
+                      phi.|[up sigma]
+                     ).
+                     {
+                       repeat rewrite hsubst_comp'.
+                       apply H1.
+                       intros [|y'] H5; lia + reflexivity.
+                     }
                      apply H1.
                      inversion 1; reflexivity.
               **
@@ -1208,15 +1244,25 @@ Proof.
                  ---
                      apply InS_cons_I_hd.
                      rewrite H4.
-                     asimpl.
+                     simpl.
                      split.
                      +++
                          reflexivity.
                      +++
-                         asimpl.
+                         simpl.
                          enough (H5 :
-                         phi.|[ids 0 .: sigma >> ren (+2)] = phi.|[upn 2 sigma]
+                           phi.|[ids 0 .: sigma >> ren (+2)] ==
+                           phi.|[upn 2 sigma]
+                         ).
+                         {
+                           repeat rewrite hsubst_comp'.
+                           apply H1.
+                           intros [|y'] H6; try lia.
+                           reflexivity.
+                         }
+                         (*
                          ) by (rewrite H5; reflexivity).
+                          *)
 
                          apply H1.
                          inversion 1; reflexivity.
@@ -1242,7 +1288,7 @@ Proof.
                      +++
                          reflexivity.
                      +++
-                         do 2 rewrite hsubst_comp.
+                         do 2 rewrite hsubst_comp'.
                          eapply IH; try assumption.
                          simpl in H2.
                          split.
@@ -1262,22 +1308,31 @@ Proof.
               left; reflexivity.
            ++
               left.
-              f_equal.
-              asimpl.
+              simpl.
               split.
               **
-                 simpl.
                  reflexivity.
               **
-                 simpl.
                  enough (H2 :
-                  phi.|[Var 0 .: up sigma] = phi.|[up sigma]
+                  phi.|[Var 0 .: up sigma] == phi.|[up sigma]
+                 ).
+                 {
+                   red in H1.
+                   repeat rewrite hsubst_comp'.
+                   apply H1.
+                   intros [|y'] H3; try lia.
+                   reflexivity.
+                 }
+                 (*
                  ) by (rewrite H2; reflexivity).
+                  *)
                  apply H1.
                  inversion 1; reflexivity.
            ++
               reflexivity.
 Qed.
+
+Print Assumptions Seq_CasariAnt_CasariSuc.
 
 Corollary Seq_Casari `{Signature} :
   forall phi ns,
@@ -1302,15 +1357,56 @@ Proof.
       (ls1 := (pair ns' (CasariAnt phi).|[ids] :: nil))
       (rs1 := (pair ns' (CasariSuc phi).|[ids] :: nil)).
     +
-      asimpl.
-      reflexivity.
+      apply cons_InS_sublist_I.
+      *
+        apply InS_cons_I_hd.
+        split; try reflexivity.
+        simpl.
+        repeat split.
+        --
+           transitivity (phi.|[ids]).
+           ++
+              apply H1.
+              intros [|y'] H3; try lia.
+              reflexivity.
+           ++
+              apply hsubst_id'.
+        --
+           transitivity (phi.|[ids]).
+           ++
+              apply H1.
+              intros [|y'] H3; try lia.
+              reflexivity.
+           ++
+              apply hsubst_id'.
+        --
+           transitivity (phi.|[ids]).
+           ++
+              apply H1.
+              intros [|y'] H3; try lia.
+              reflexivity.
+           ++
+              apply hsubst_id'.
+      *
+        apply nil_InS_sublist_I.
     +
       intros psi H3.
       apply InS_cons_E in H3 as [H3|H3].
       *
         apply InS_cons_I_hd.
         rewrite H3.
-        split; asimpl; reflexivity.
+        split.
+        --
+           reflexivity.
+        --
+           simpl.
+           transitivity (phi.|[ids]).
+           ++
+              apply H1.
+              intros [|y'] H4; try lia.
+              reflexivity.
+           ++
+              apply hsubst_id'.
       *
         contradict H3.
         apply InS_nil_E.
@@ -1318,6 +1414,8 @@ Proof.
       eapply Seq_CasariAnt_CasariSuc.
       exact H1.
 Qed.
+
+Print Assumptions Seq_Casari.
 
 Corollary support_valid_Casari_bd `{S : Signature} :
   forall phi ns,

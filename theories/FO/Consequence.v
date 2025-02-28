@@ -291,11 +291,10 @@ Proof.
       intros [|x']; easy.
     +
       assert (H5 :
-        (fun x => referent ((t .: ids) x) w a) =
+        (fun x => referent ((t .: ids) x) w a) ==
         referent t w a .: a
       ).
       {
-        apply functional_extensionality.
         intros [|x']; autosubst.
       }
       rewrite H5.
@@ -326,11 +325,10 @@ Proof.
       in H2.
     +
       assert (H5 :
-        (fun x => referent ((t .: ids) x) w a) =
+        (fun x => referent ((t .: ids) x) w a) ==
         referent t w a .: a
       ).
       {
-        apply functional_extensionality.
         intros [|x']; autosubst.
       }
       rewrite H5 in H2.
@@ -391,7 +389,7 @@ Lemma support_conseq_KF `{S : Signature} :
 Proof.
 Admitted.
 
-Corollary support_conseq_Forall_E_classical `{S : Signature} :
+Lemma support_conseq_Forall_E_classical `{S : Signature} :
   forall cxt phi t,
     classical phi = true ->
     support_conseq cxt <{forall phi}> ->
@@ -412,11 +410,10 @@ Proof.
       (s := s).
     +
       assert (H5 :
-        (fun x => referent ((t .: ids) x) w a) =
+        (fun x => referent ((t .: ids) x) w a) ==
         referent t w a .: a
       ).
       {
-        apply functional_extensionality.
         intros [|x']; autosubst.
       }
       rewrite H5.
@@ -425,7 +422,7 @@ Proof.
       exact H4.
 Qed.
 
-Corollary support_conseq_CRAA `{S : Signature} :
+Lemma support_conseq_CRAA `{S : Signature} :
   forall cxt phi,
     classical phi = true ->
     support_conseq (<{~ phi}> :: cxt) (Bot 0) ->

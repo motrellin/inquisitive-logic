@@ -43,7 +43,11 @@ Class Model `{Signature} :=
       forall (p : PSymb),
         (PAri p -> Individual) ->
         bool;
-    PInterpretation_Proper :: Proper (equiv ==> eq) PInterpretation;
+    PInterpretation_Proper_outer ::
+      Proper (equiv ==> eq) PInterpretation;
+    PInterpretation_Proper_inner ::
+      forall w p,
+        Proper (ext_eq ==> eq) (PInterpretation w p);
 
     (**
        We proceed the same way for function symbols.
@@ -53,7 +57,11 @@ Class Model `{Signature} :=
       forall (f : FSymb),
         (FAri f -> Individual) ->
         Individual;
-    FInterpretation_Proper :: Proper (equiv ==> eq) FInterpretation;
+    FInterpretation_Proper_outer ::
+      Proper (equiv ==> eq) FInterpretation;
+    FInterpretation_Proper_inner ::
+      forall w f,
+        Proper (ext_eq ==> eq) (FInterpretation w f);
 
     (**
        Lastly, a model needs to ensure [rigidity]. This means,

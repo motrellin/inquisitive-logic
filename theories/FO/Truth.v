@@ -28,8 +28,7 @@ Proof.
       reflexivity.
     }
     rewrite H3.
-    f_equal.
-    apply functional_extensionality.
+    f_equiv.
     intros arg.
     rewrite H2.
     reflexivity.
@@ -241,6 +240,8 @@ Proof.
     all: apply IH1.
     all: exact H1.
 Qed.
+
+Print Assumptions truth_classical_variant.
 
 (** ** Truth of multiple formulas *)
 
@@ -468,15 +469,12 @@ Proof.
     all: apply truth_Pred.
     all: apply truth_Pred in H1.
     all: rewrite <- H1.
-    all: f_equal.
+    all: f_equiv.
+    all: intros arg.
     +
-      apply functional_extensionality.
-      intros arg.
       apply referent_subst.
     +
       symmetry.
-      apply functional_extensionality.
-      intros arg.
       apply referent_subst.
   -
     reflexivity.
@@ -509,10 +507,12 @@ Proof.
     all: specialize (H1 i).
     +
       apply IH1.
+      red.
       rewrite unnamed_helper_Support_24.
       exact H1.
     +
       apply IH1 in H1.
+      red.
       rewrite <- unnamed_helper_Support_24.
       exact H1.
   -
@@ -523,10 +523,12 @@ Proof.
     all: exists i.
     +
       apply IH1.
+      red.
       rewrite unnamed_helper_Support_24.
       exact H1.
     +
       apply IH1 in H1.
+      red.
       rewrite <- unnamed_helper_Support_24.
       exact H1.
 Qed.

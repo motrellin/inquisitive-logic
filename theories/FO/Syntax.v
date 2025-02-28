@@ -168,43 +168,204 @@ Proof. derive. Defined.
 Instance Rename_term `{Signature} : Rename term.
 Proof. derive. Defined.
 
+(**
+   It is worth to check, whether [rename] respects our
+   equality on terms.
+*)
+Instance rename_Proper `{Signature} :
+  Proper (ext_eq ==> term_eq ==> term_eq) rename.
+Proof.
+  intros sigma1 sigma2 H1 t1.
+  generalize dependent sigma2.
+  revert sigma1.
+  induction t1 as [x1|f1 args1 IH].
+  all: intros * H1 [x2|f2 args2] H2.
+  all: try contradiction.
+  -
+    simpl in *.
+    subst x2.
+    apply H1.
+  -
+    simpl in *.
+    destruct (f1 == f2) as [H3|H3]; try contradiction.
+    simpl in H3.
+    subst f2.
+    simpl in *.
+    intros arg.
+    apply IH.
+    +
+      exact H1.
+    +
+      apply H2.
+Qed.
+
+Print Assumptions rename.
+
 Instance Subst_term `{Signature} : Subst term.
 Proof. derive. Defined.
-
-Instance SubstLemmas_term `{Signature} : SubstLemmas term.
-Proof. derive. Qed.
 
 (**
    It is worth to check, whether [subst] respects our
    equality on terms.
 *)
 Instance subst_Proper `{Signature} :
-  forall sigma,
-    Proper (term_eq ==> term_eq) (subst sigma).
+  Proper (ext_eq ==> term_eq ==> term_eq) subst.
 Proof.
-  intros sigma t1.
+  intros sigma1 sigma2 H1 t1.
+  generalize dependent sigma2.
+  revert sigma1.
   induction t1 as [x1|f1 args1 IH].
-  all: intros [x2|f2 args2] H1; try contradiction.
+  all: intros sigma1 sigma2 H1 [x2|f2 args2] H2.
+  all: try contradiction.
   -
     simpl in *.
     subst x2.
-    reflexivity.
+    apply H1.
   -
     simpl in *.
-    destruct (f1 == f2) as [H2|H2]; try contradiction.
+    destruct (f1 == f2) as [H3|H3]; try contradiction.
     simpl in *.
     subst f2.
     intros arg.
     apply IH.
-    apply H1.
+    +
+      apply H1.
+    +
+      apply H2.
 Qed.
 
-Program Definition term_subst
-  `{Signature}
-  (sigma : var -> term) : Morph term term :=
-  {|
-    morph := subst sigma
-  |}.
+Print Assumptions subst_Proper.
+
+Instance up_Proper `{Signature} :
+  Proper (ext_eq ==> ext_eq) up.
+Proof.
+  intros sigma1 sigma2 H1 [|x'].
+  -
+    reflexivity.
+  -
+    simpl.
+    unfold up.
+    simpl.
+    rewrite (H1 x').
+    reflexivity.
+Qed.
+
+Print Assumptions up_Proper.
+
+Instance SubstLemmas_term `{Signature} : SubstLemmas term.
+Proof. derive. Qed.
+
+Lemma rename_subst' `{Signature} :
+  forall sigma t,
+    rename sigma t == t.[ren sigma].
+Proof.
+  induction t as [x|f args IH].
+  -
+    reflexivity.
+  -
+    simpl.
+    destruct (f == f) as [H1|H1].
+    +
+      red.
+      rewrite <- eq_rect_eq_dec; try exact FSymb_EqDec.
+      exact IH.
+    +
+      apply H1.
+      reflexivity.
+Qed.
+
+Lemma subst_id' `{Signature} :
+  forall t,
+    t.[ids] == t.
+Proof.
+  induction t as [x|f args IH].
+  -
+    simpl.
+    reflexivity.
+  -
+    simpl.
+    destruct (f == f) as [H1|H1].
+    +
+      red.
+      rewrite <- eq_rect_eq_dec; try exact FSymb_EqDec.
+      exact IH.
+    +
+      apply H1.
+      reflexivity.
+Qed.
+
+Lemma id_subst' `{Signature} :
+  forall sigma x,
+    (ids x).[sigma] == sigma x.
+Proof.
+  reflexivity.
+Qed.
+
+Lemma subst_comp' `{Signature} :
+  forall sigma1 sigma2 t,
+    t.[sigma1].[sigma2] == t.[sigma1 >> sigma2].
+Proof.
+  induction t as [x|f args IH].
+  -
+    reflexivity.
+  -
+    simpl.
+    destruct (f == f) as [H1|H1].
+    +
+      red.
+      rewrite <- eq_rect_eq_dec; try exact FSymb_EqDec.
+      exact IH.
+    +
+      apply H1.
+      reflexivity.
+Qed.
+
+Print Assumptions subst_comp'.
+
+Local Fixpoint repeater {A} (op : A -> A) (n : nat) : A -> A :=
+  match n with
+  | 0 => id
+  | S n' => fun a => op (repeater op n' a)
+  end.
+
+Local Lemma repeater_up_ids `{Signature} :
+  forall n,
+    ext_eq (repeater up n ids) ids.
+Proof.
+  induction n as [|n' IH].
+  -
+    reflexivity.
+  -
+    simpl repeater.
+    rewrite IH.
+    intros [|x']; reflexivity.
+Qed.
+
+Print Assumptions repeater_up_ids.
+
+Lemma scomp_up `{Signature} :
+  forall sigma1 sigma2,
+    (up sigma1) >> (up sigma2) ==
+    up (sigma1 >> sigma2).
+Proof.
+  intros * [|x'].
+  -
+    reflexivity.
+  -
+    intros *.
+    simpl scomp.
+    unfold up at 3.
+    unfold up at 2.
+    simpl.
+    repeat rewrite rename_subst'.
+    repeat rewrite subst_comp'.
+    apply subst_Proper.
+    +
+      intros x.
+      apply rename_subst'.
+    +
+      reflexivity.
+Qed.
 
 (** ** Rigidity
 
@@ -218,6 +379,29 @@ Fixpoint term_rigid `{Signature} (t : term) : Prop :=
       forall arg,
         term_rigid (args arg)
   end.
+
+Instance term_rigid_Proper `{Signature} :
+  Proper (term_eq ==> iff) term_rigid.
+Proof.
+  intros t1.
+  induction t1 as [x1|f1 args1 IH].
+  all: intros [x2|f2 args2] H1.
+  all: try contradiction.
+  -
+    reflexivity.
+  -
+    simpl in H1.
+    destruct (f1 == f2) as [H2|H2]; try contradiction.
+    simpl in *.
+    subst f2.
+    split.
+    all: intros [H3 H4].
+    all: split.
+    all: try exact H3.
+    all: intros arg.
+    all: eapply IH; try exact (H4 arg).
+    all: apply H1.
+Qed.
 
 Lemma term_rigid_subst `{Signature} :
   forall t (sigma : var -> term),
@@ -233,23 +417,24 @@ Proof.
     split; eauto.
 Qed.
 
+Print Assumptions term_rigid_subst.
+
 Lemma unnamed_helper_Syntax_3 `{Signature} :
   forall sigma,
     (forall x, term_rigid (sigma x)) ->
     forall x,
       term_rigid (up sigma x).
 Proof.
-  intros sigma H1 [|x'].
+  intros sigma H1 x.
+  destruct x as [|x'].
   -
     exact I.
   -
-    asimpl.
+    assert (H2 : up sigma (S x') == (sigma x').[ren (+1)])
+    by apply rename_subst'.
+    rewrite H2.
     apply term_rigid_subst.
-    +
-      intros x.
-      exact I.
-    +
-      apply H1.
+    all: easy.
 Qed.
 
 (** * Formulas
@@ -486,6 +671,77 @@ Open Scope form_scope.
 Instance HSubst_form `{Signature} : HSubst term form.
 Proof. derive. Defined.
 
+Instance hsubst_Proper `{Signature} :
+  Proper (ext_eq ==> form_eq ==> form_eq) hsubst.
+Proof.
+  intros sigma1 sigma2 H1 f1.
+  generalize dependent sigma2.
+  revert sigma1.
+  induction f1 as
+  [p1 args1
+  |?
+  |f11 IH1 f12 IH2
+  |f11 IH1 f12 IH2
+  |f11 IH1 f12 IH2
+  |f11 IH1
+  |f11 IH1].
+  all: intros sigma1 sigma2 H1
+  [p2 args2
+  |?
+  |f21 f22
+  |f21 f22
+  |f21 f22
+  |f21
+  |f21].
+  all: intros H2; try (now firstorder).
+  -
+    simpl in *.
+    destruct (p1 == p2) as [H3|H3]; try contradiction.
+    simpl in H3.
+    subst p2.
+    simpl in *.
+    intros arg.
+    apply subst_Proper.
+    +
+      exact H1.
+    +
+      apply H2.
+  -
+    simpl in *.
+    apply IH1.
+    +
+      intros [|x'].
+      *
+        reflexivity.
+      *
+        unfold up.
+        simpl.
+        do 2 rewrite rename_subst'.
+        red in H1.
+        rewrite H1.
+        reflexivity.
+    +
+      exact H2.
+  -
+    simpl in *.
+    apply IH1.
+    +
+      intros [|x'].
+      *
+        reflexivity.
+      *
+        unfold up.
+        simpl.
+        do 2 rewrite rename_subst'.
+        red in H1.
+        rewrite H1.
+        reflexivity.
+    +
+      exact H2.
+Qed.
+
+Print Assumptions hsubst_Proper.
+
 Instance Ids_form `{Signature} : Ids form.
 Proof. derive. Defined.
 
@@ -498,52 +754,107 @@ Proof. derive. Defined.
 Instance HSubstLemmas_form `{Signature} : HSubstLemmas term form.
 Proof. derive. Qed.
 
+(**
+   We provide lemmas similar lemmas for our defined
+   equality [form_eq].
+ *)
+Lemma hsubst_id' `{Signature} :
+  forall phi,
+    phi.|[ids] == phi.
+Proof.
+  induction phi as
+  [p args
+  |?
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1
+  |phi1 IH1].
+  all: try now firstorder.
+  -
+    simpl.
+    destruct (p == p) as [H1|H1].
+    +
+      red.
+      rewrite <- eq_rect_eq_dec; try exact PSymb_EqDec.
+      intros arg.
+      apply subst_id'.
+    +
+      apply H1.
+      reflexivity.
+  -
+    simpl.
+    rewrite <- IH1 at 2.
+    apply hsubst_Proper.
+    +
+      exact (repeater_up_ids 1).
+    +
+      reflexivity.
+  -
+    simpl.
+    rewrite <- IH1 at 2.
+    apply hsubst_Proper.
+    +
+      exact (repeater_up_ids 1).
+    +
+      reflexivity.
+Qed.
+
+Print Assumptions hsubst_id'.
+
+Lemma id_hsubst' `{Signature} :
+  forall sigma x,
+    (ids x).|[sigma] == ids x.
+Proof.
+  reflexivity.
+Qed.
+
+Print Assumptions id_hsubst'.
+
+Lemma hsubst_comp' `{Signature} :
+  forall sigma1 sigma2 phi,
+    phi.|[sigma1].|[sigma2] == phi.|[sigma1 >> sigma2].
+Proof.
+  intros sigma1 sigma2 phi.
+  revert sigma1 sigma2.
+  induction phi as
+  [p args
+  |?
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1 phi2 IH2
+  |phi1 IH1
+  |phi1 IH1].
+  all: intros sigma1 sigma2.
+  all: try now firstorder.
+  -
+    simpl.
+    destruct (p == p) as [H1|H1].
+    +
+      red.
+      rewrite <- eq_rect_eq_dec; try exact PSymb_EqDec.
+      intros arg.
+      apply subst_comp'.
+    +
+      apply H1.
+      reflexivity.
+  -
+    simpl.
+    rewrite IH1.
+    apply hsubst_Proper; try reflexivity.
+    apply scomp_up.
+  -
+    simpl.
+    rewrite IH1.
+    apply hsubst_Proper; try reflexivity.
+    apply scomp_up.
+Qed.
+
 Instance SubstHSubstComp_term_form `{Signature} : SubstHSubstComp term form.
 Proof. derive. Qed.
 
 Instance SubstLemmas_form `{Signature} : SubstLemmas form.
 Proof. derive. Qed.
-
-Instance hsubst_Proper `{Signature} :
-  forall sigma,
-    Proper (form_eq ==> form_eq) (hsubst sigma).
-Proof.
-  intros sigma f1.
-  revert sigma.
-  induction f1 as
-  [p1 args1
-  |?
-  |f11 IH1 f12 IH2
-  |f11 IH1 f12 IH2
-  |f11 IH1 f12 IH2
-  |f11 IH1
-  |f11 IH1].
-  all: intros sigma
-  [p2 args2
-  |?
-  |f21 f22
-  |f21 f22
-  |f21 f22
-  |f21
-  |f21].
-  all: intros H1; try (now firstorder).
-
-  simpl in *.
-  destruct (p1 == p2); try contradiction.
-  simpl in *.
-  subst p2.
-  simpl in *.
-  intros arg.
-  apply term_subst.
-  apply H1.
-Qed.
-
-Program Definition form_hsubst
-  `{Signature}
-  (sigma : var -> term) : Morph form form :=
-  {|
-    morph := hsubst sigma
-  |}.
 
 (** ** Defined connectives
 
@@ -856,6 +1167,8 @@ Proof.
   all: reflexivity.
 Qed.
 
+Print Assumptions classical_variant_is_classical.
+
 (** ** Free Variables
 
    For later purposes, we need a predicate to indicate the
@@ -872,8 +1185,8 @@ Definition highest_occ_free_var `{Signature}
   Prop :=
 
   forall sigma1 sigma2,
-    (forall y, y <= x -> sigma1 y = sigma2 y) ->
-    phi.|[sigma1] = phi.|[sigma2].
+    (forall y, y <= x -> sigma1 y == sigma2 y) ->
+    phi.|[sigma1] == phi.|[sigma2].
 
 (** * Syntax for the Unary Predicate Symbol Signature *)
 
