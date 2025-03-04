@@ -35,7 +35,7 @@
 </div>
 
 <div class="doc">
-<a id="lab37"></a><h1 class="section">Basic definitions</h1>
+<a id="lab39"></a><h1 class="section">Basic definitions</h1>
 
 
 <div class="paragraph"> </div>
@@ -68,8 +68,8 @@
 </div>
 
 <div class="doc">
-<a id="lab38"></a><h1 class="section">Example states</h1>
-<a id="lab39"></a><h2 class="section">The empty state</h2>
+<a id="lab40"></a><h1 class="section">Example states</h1>
+<a id="lab41"></a><h2 class="section">The empty state</h2>
 
 </div>
 <div class="code">
@@ -89,7 +89,7 @@
 </div>
 
 <div class="doc">
-<a id="lab40"></a><h2 class="section">Singleton states</h2>
+<a id="lab42"></a><h2 class="section">Singleton states</h2>
 
 </div>
 <div class="code">
@@ -111,7 +111,7 @@
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Proposition</span> <a id="singleton_true" class="idref" href="#singleton_true"><span class="id" title="lemma">singleton_true</span></a> `{<a id="H0:12" class="idref" href="#H0:12"><span class="id" title="binder">Model</span></a>} :<br/>
+<span class="id" title="keyword">Lemma</span> <a id="singleton_true" class="idref" href="#singleton_true"><span class="id" title="lemma">singleton_true</span></a> `{<a id="H0:12" class="idref" href="#H0:12"><span class="id" title="binder">Model</span></a>} :<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="w:13" class="idref" href="#w:13"><span class="id" title="binder">w</span></a> <a id="w':14" class="idref" href="#w':14"><span class="id" title="binder">w'</span></a>,<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.States.html#singleton"><span class="id" title="definition">singleton</span></a> <a class="idref" href="InqLog.FO.States.html#w:13"><span class="id" title="variable">w</span></a> <a class="idref" href="InqLog.FO.States.html#w':14"><span class="id" title="variable">w'</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'&lt;-&gt;'_x"><span class="id" title="notation">&lt;-&gt;</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.States.html#w':14"><span class="id" title="variable">w'</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidClass.html#2596316c6f2ff161cb03e25fd8914390"><span class="id" title="notation">==</span></a> <a class="idref" href="InqLog.FO.States.html#w:13"><span class="id" title="variable">w</span></a>.<br/>
@@ -124,7 +124,7 @@
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Proposition</span> <a id="singleton_false" class="idref" href="#singleton_false"><span class="id" title="lemma">singleton_false</span></a> `{<a id="H0:16" class="idref" href="#H0:16"><span class="id" title="binder">Model</span></a>} :<br/>
+<span class="id" title="keyword">Lemma</span> <a id="singleton_false" class="idref" href="#singleton_false"><span class="id" title="lemma">singleton_false</span></a> `{<a id="H0:16" class="idref" href="#H0:16"><span class="id" title="binder">Model</span></a>} :<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="w:17" class="idref" href="#w:17"><span class="id" title="binder">w</span></a> <a id="w':18" class="idref" href="#w':18"><span class="id" title="binder">w'</span></a>,<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.States.html#singleton"><span class="id" title="definition">singleton</span></a> <a class="idref" href="InqLog.FO.States.html#w:17"><span class="id" title="variable">w</span></a> <a class="idref" href="InqLog.FO.States.html#w':18"><span class="id" title="variable">w'</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'&lt;-&gt;'_x"><span class="id" title="notation">&lt;-&gt;</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.States.html#w':18"><span class="id" title="variable">w'</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidClass.html#b04d2f51eff2bafde1111e1dfb84e208"><span class="id" title="notation">=/=</span></a> <a class="idref" href="InqLog.FO.States.html#w:17"><span class="id" title="variable">w</span></a>.<br/>
@@ -137,7 +137,7 @@
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Proposition</span> <a id="singleton_refl" class="idref" href="#singleton_refl"><span class="id" title="lemma">singleton_refl</span></a> `{<a id="H0:20" class="idref" href="#H0:20"><span class="id" title="binder">Model</span></a>} :<br/>
+<span class="id" title="keyword">Lemma</span> <a id="singleton_refl" class="idref" href="#singleton_refl"><span class="id" title="lemma">singleton_refl</span></a> `{<a id="H0:20" class="idref" href="#H0:20"><span class="id" title="binder">Model</span></a>} :<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="w:21" class="idref" href="#w:21"><span class="id" title="binder">w</span></a>,<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.States.html#singleton"><span class="id" title="definition">singleton</span></a> <a class="idref" href="InqLog.FO.States.html#w:21"><span class="id" title="variable">w</span></a> <a class="idref" href="InqLog.FO.States.html#w:21"><span class="id" title="variable">w</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>.<br/>
 <span class="id" title="keyword">Proof</span>.<br/>
@@ -150,7 +150,7 @@
 </div>
 
 <div class="doc">
-<a id="lab41"></a><h2 class="section">Complement states</h2>
+<a id="lab43"></a><h2 class="section">Complement states</h2>
 
 </div>
 <div class="code">
@@ -201,7 +201,7 @@
 </div>
 
 <div class="doc">
-<a id="lab42"></a><h2 class="section">Mapping states</h2>
+<a id="lab44"></a><h2 class="section">Mapping states</h2>
 
 
 <div class="paragraph"> </div>
@@ -216,7 +216,7 @@
 <br/>
 <span class="id" title="keyword">Program Definition</span> <a id="mapping_state" class="idref" href="#mapping_state"><span class="id" title="definition">mapping_state</span></a><br/>
 &nbsp;&nbsp;`{<a id="H0:38" class="idref" href="#H0:38"><span class="id" title="binder">Model</span></a>}<br/>
-&nbsp;&nbsp;(<a id="f:39" class="idref" href="#f:39"><span class="id" title="binder">f</span></a> : <a class="idref" href="InqLog.SetoidLib.html#Morph"><span class="id" title="record">Morph</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="InqLog.FO.Models.html#World"><span class="id" title="method">World</span></a>)<br/>
+&nbsp;&nbsp;(<a id="f:39" class="idref" href="#f:39"><span class="id" title="binder">f</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Models.html#World"><span class="id" title="method">World</span></a>)<br/>
 &nbsp;&nbsp;(<a id="ns:40" class="idref" href="#ns:40"><span class="id" title="binder">ns</span></a> : <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) :<br/>
 &nbsp;&nbsp;<a class="idref" href="InqLog.FO.States.html#state"><span class="id" title="definition">state</span></a> :=<br/>
 <br/>
@@ -254,18 +254,17 @@
 </div>
 <div class="code">
 <span class="id" title="keyword">Instance</span> <a id="mapping_state_Proper" class="idref" href="#mapping_state_Proper"><span class="id" title="instance">mapping_state_Proper</span></a> `{<a id="H0:43" class="idref" href="#H0:43"><span class="id" title="binder">Model</span></a>} :<br/>
-&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.Morphisms.html#Proper"><span class="id" title="class">Proper</span></a> (<a class="idref" href="InqLog.SetoidLib.html#Morph_eq"><span class="id" title="definition">Morph_eq</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="InqLog.ListLib.html#InS_eq"><span class="id" title="definition">InS_eq</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="InqLog.FO.States.html#state_eq"><span class="id" title="definition">state_eq</span></a>) <a class="idref" href="InqLog.FO.States.html#mapping_state"><span class="id" title="definition">mapping_state</span></a>.<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.Morphisms.html#Proper"><span class="id" title="class">Proper</span></a> (<a class="idref" href="InqLog.SetoidLib.html#ext_eq"><span class="id" title="definition">ext_eq</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="InqLog.ListLib.html#InS_eq"><span class="id" title="definition">InS_eq</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="InqLog.FO.States.html#state_eq"><span class="id" title="definition">state_eq</span></a>) <a class="idref" href="InqLog.FO.States.html#mapping_state"><span class="id" title="definition">mapping_state</span></a>.<br/>
 <span class="id" title="keyword">Proof</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f1</span> <span class="id" title="var">f2</span> <span class="id" title="var">H1</span> <span class="id" title="var">ns1</span> <span class="id" title="var">ns2</span> <span class="id" title="var">H2</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_iff_inbS"><span class="id" title="lemma">InS_iff_inbS</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">red</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">intros</span> <span class="id" title="var">H3</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_map_E"><span class="id" title="lemma">InS_map_E</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H3</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">n</span> [<span class="id" title="var">H3</span> <span class="id" title="var">H4</span>]].<br/>
 &nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H3</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span> + <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">specialize</span> (<span class="id" title="var">H1</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H1</span> + <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_map_I"><span class="id" title="lemma">InS_map_I</span></a>.<br/>
 &nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">apply</span> <span class="id" title="var">H2</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">exact</span> <span class="id" title="var">H4</span>.<br/>
@@ -295,7 +294,7 @@
 </div>
 
 <div class="doc">
-<a id="lab43"></a><h2 class="section">Excluding states</h2>
+<a id="lab45"></a><h2 class="section">Excluding states</h2>
 
 
 <div class="paragraph"> </div>
@@ -352,7 +351,7 @@
 </div>
 
 <div class="doc">
-<a id="lab44"></a><h1 class="section">Consistent states</h1>
+<a id="lab46"></a><h1 class="section">Consistent states</h1>
 
 
 <div class="paragraph"> </div>
@@ -408,7 +407,7 @@
 </div>
 
 <div class="doc">
-<a id="lab45"></a><h1 class="section">Substates</h1>
+<a id="lab47"></a><h1 class="section">Substates</h1>
 
 
 <div class="paragraph"> </div>
@@ -635,15 +634,15 @@
 </div>
 <div class="code">
 <span class="id" title="keyword">Instance</span> <a id="mapping_state_Proper_substate" class="idref" href="#mapping_state_Proper_substate"><span class="id" title="instance">mapping_state_Proper_substate</span></a> `{<a id="H0:106" class="idref" href="#H0:106"><span class="id" title="binder">Model</span></a>} :<br/>
-&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.Morphisms.html#Proper"><span class="id" title="class">Proper</span></a> (<a class="idref" href="InqLog.SetoidLib.html#Morph_eq"><span class="id" title="definition">Morph_eq</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="InqLog.ListLib.html#InS_sublist"><span class="id" title="definition">InS_sublist</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="InqLog.FO.States.html#substate"><span class="id" title="definition">substate</span></a>) <a class="idref" href="InqLog.FO.States.html#mapping_state"><span class="id" title="definition">mapping_state</span></a>.<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.Morphisms.html#Proper"><span class="id" title="class">Proper</span></a> (<a class="idref" href="InqLog.SetoidLib.html#ext_eq"><span class="id" title="definition">ext_eq</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="InqLog.ListLib.html#InS_sublist"><span class="id" title="definition">InS_sublist</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="InqLog.FO.States.html#substate"><span class="id" title="definition">substate</span></a>) <a class="idref" href="InqLog.FO.States.html#mapping_state"><span class="id" title="definition">mapping_state</span></a>.<br/>
 <span class="id" title="keyword">Proof</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f1</span> <span class="id" title="var">f2</span> <span class="id" title="var">H1</span> <span class="id" title="var">ns1</span> <span class="id" title="var">ns2</span> <span class="id" title="var">H2</span> <span class="id" title="var">w</span> <span class="id" title="var">H3</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_iff_inbS_true"><span class="id" title="lemma">InS_iff_inbS_true</span></a>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_iff_inbS_true"><span class="id" title="lemma">InS_iff_inbS_true</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H3</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_map_E"><span class="id" title="lemma">InS_map_E</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H3</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">n</span> [<span class="id" title="var">H3</span> <span class="id" title="var">H4</span>]].<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">red</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H3</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H3</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">H1</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_map_I"><span class="id" title="lemma">InS_map_I</span></a>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H2</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H4</span>.<br/>
@@ -692,7 +691,6 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.States.html#mapping_state_nil"><span class="id" title="lemma">mapping_state_nil</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#substate_empty_state"><span class="id" title="lemma">substate_empty_state</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span>, <a class="idref" href="InqLog.FO.States.html#mapping_state_nil"><span class="id" title="lemma">mapping_state_nil</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
@@ -773,7 +771,7 @@
 </div>
 
 <div class="doc">
-<a id="lab46"></a><h1 class="section">Restricting a <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#Model"><span class="id" title="record">Model</span></a></span> to a <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#state"><span class="id" title="record">state</span></a></span></h1>
+<a id="lab48"></a><h1 class="section">Restricting a <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#Model"><span class="id" title="record">Model</span></a></span> to a <span class="inlinecode"><a class="idref" href="InqLog.Prop.Models.html#state"><span class="id" title="record">state</span></a></span></h1>
 
 </div>
 <div class="code">
@@ -847,7 +845,7 @@
 </div>
 <div class="code">
 &nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">intro</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Models.html#PInterpretation_Proper"><span class="id" title="method">PInterpretation_Proper</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Models.html#PInterpretation_Proper_outer"><span class="id" title="method">PInterpretation_Proper_outer</span></a>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
 
@@ -862,7 +860,7 @@
 </div>
 <div class="code">
 &nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">intro</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Models.html#FInterpretation_Proper"><span class="id" title="method">FInterpretation_Proper</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Models.html#FInterpretation_Proper_outer"><span class="id" title="method">FInterpretation_Proper_outer</span></a>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
 

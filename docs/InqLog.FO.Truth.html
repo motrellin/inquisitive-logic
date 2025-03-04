@@ -34,7 +34,7 @@
 </div>
 
 <div class="doc">
-<a id="lab71"></a><h1 class="section">Truth satisfaction</h1>
+<a id="lab73"></a><h1 class="section">Truth satisfaction</h1>
 
 </div>
 <div class="code">
@@ -47,7 +47,7 @@
 </div>
 
 <div class="doc">
-<a id="lab72"></a><h2 class="section">Truth satisfaction for basic connectives</h2>
+<a id="lab74"></a><h2 class="section">Truth satisfaction for basic connectives</h2>
 
 </div>
 <div class="code">
@@ -74,8 +74,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H3</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">f_equal</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Logic.FunctionalExtensionality.html#functional_extensionality"><span class="id" title="lemma">functional_extensionality</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f_equiv</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">arg</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H2</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
@@ -161,7 +160,7 @@
 </div>
 
 <div class="doc">
-<a id="lab73"></a><h2 class="section">Truth satisfaction for defined connectives</h2>
+<a id="lab75"></a><h2 class="section">Truth satisfaction for defined connectives</h2>
 
 </div>
 <div class="code">
@@ -263,7 +262,7 @@
 </div>
 
 <div class="doc">
-<a id="lab74"></a><h2 class="section">Other Truth satisfaction rules</h2>
+<a id="lab76"></a><h2 class="section">Other Truth satisfaction rules</h2>
 
 </div>
 <div class="code">
@@ -316,10 +315,13 @@
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
+<span class="id" title="keyword">Print</span> <span class="id" title="keyword">Assumptions</span> <a class="idref" href="InqLog.FO.Truth.html#truth_classical_variant"><span class="id" title="lemma">truth_classical_variant</span></a>.<br/>
+
+<br/>
 </div>
 
 <div class="doc">
-<a id="lab75"></a><h2 class="section">Truth of multiple formulas</h2>
+<a id="lab77"></a><h2 class="section">Truth of multiple formulas</h2>
 
 </div>
 <div class="code">
@@ -346,7 +348,7 @@
 </div>
 
 <div class="doc">
-<a id="lab76"></a><h2 class="section">Truth of some formulas</h2>
+<a id="lab78"></a><h2 class="section">Truth of some formulas</h2>
 
 </div>
 <div class="code">
@@ -373,7 +375,7 @@
 </div>
 
 <div class="doc">
-<a id="lab77"></a><h1 class="section">Truth-conditional formulas</h1>
+<a id="lab79"></a><h1 class="section">Truth-conditional formulas</h1>
 
 </div>
 <div class="code">
@@ -580,15 +582,12 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Truth.html#truth_Pred"><span class="id" title="lemma">truth_Pred</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Truth.html#truth_Pred"><span class="id" title="lemma">truth_Pred</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H1</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">f_equal</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="var">f_equiv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">intros</span> <span class="id" title="var">arg</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Logic.FunctionalExtensionality.html#functional_extensionality"><span class="id" title="lemma">functional_extensionality</span></a>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">arg</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#referent_subst"><span class="id" title="lemma">referent_subst</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">symmetry</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Logic.FunctionalExtensionality.html#functional_extensionality"><span class="id" title="lemma">functional_extensionality</span></a>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">arg</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#referent_subst"><span class="id" title="lemma">referent_subst</span></a>.<br/>
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
@@ -621,10 +620,12 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">specialize</span> (<span class="id" title="var">H1</span> <span class="id" title="var">i</span>).<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">IH1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Support.html#unnamed_helper_Support_24"><span class="id" title="lemma">unnamed_helper_Support_24</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">IH1</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <a class="idref" href="InqLog.FO.Support.html#unnamed_helper_Support_24"><span class="id" title="lemma">unnamed_helper_Support_24</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;-<br/>
@@ -635,10 +636,12 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">exists</span> <span class="id" title="var">i</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">IH1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Support.html#unnamed_helper_Support_24"><span class="id" title="lemma">unnamed_helper_Support_24</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">IH1</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <a class="idref" href="InqLog.FO.Support.html#unnamed_helper_Support_24"><span class="id" title="lemma">unnamed_helper_Support_24</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H1</span>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>

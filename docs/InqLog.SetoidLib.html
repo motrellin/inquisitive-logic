@@ -34,6 +34,22 @@
 <span class="id" title="keyword">Generalizable Variables</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>.<br/>
 
 <br/>
+</div>
+
+<div class="doc">
+<a id="lab1"></a><h1 class="section">Morphisms</h1>
+
+
+<div class="paragraph"> </div>
+
+   We want to have morphisms between arbitrary setoids.
+   Such morphisms are functions which respect the carried
+   equivalence relations by the setoids.
+ 
+</div>
+<div class="code">
+
+<br/>
 <span class="id" title="keyword">Record</span> <a id="Morph" class="idref" href="#Morph"><span class="id" title="record">Morph</span></a> (<a id="X:1" class="idref" href="#X:1"><span class="id" title="binder">X</span></a> <a id="Y:2" class="idref" href="#Y:2"><span class="id" title="binder">Y</span></a> : <span class="id" title="keyword">Type</span>) `{<a id="H:3" class="idref" href="#H:3"><span class="id" title="binder">Setoid</span></a> <a id="H:3" class="idref" href="#H:3"><span class="id" title="binder">X</span></a>} `{<a id="H0:4" class="idref" href="#H0:4"><span class="id" title="binder">Setoid</span></a> <a id="H0:4" class="idref" href="#H0:4"><span class="id" title="binder">Y</span></a>} :=<br/>
 &nbsp;&nbsp;{<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a id="morph" class="idref" href="#morph"><span class="id" title="projection">morph</span></a> : <a class="idref" href="InqLog.SetoidLib.html#X:1"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.SetoidLib.html#Y:2"><span class="id" title="variable">Y</span></a>;<br/>
@@ -41,22 +57,41 @@
 &nbsp;&nbsp;}.<br/>
 
 <br/>
+</div>
+
+<div class="doc">
+   We define the projection <span class="inlinecode"><a class="idref" href="InqLog.SetoidLib.html#morph"><span class="id" title="projection">morph</span></a></span> to be a <span class="inlinecode"><span class="id" title="keyword">Coercion</span></span>. By
+   this, it get's easier to use morphisms as standard
+   functions.
+ 
+</div>
+<div class="code">
 <span class="id" title="keyword">Coercion</span> <a class="idref" href="InqLog.SetoidLib.html#morph"><span class="id" title="projection">morph</span></a> <a class="idref" href="InqLog.SetoidLib.html#morph"><span class="id" title="projection">:</span></a> <a class="idref" href="InqLog.SetoidLib.html#morph"><span class="id" title="projection">Morph</span></a> <a class="idref" href="InqLog.SetoidLib.html#morph"><span class="id" title="projection">&gt;-&gt;</span></a> <a class="idref" href="InqLog.SetoidLib.html#morph"><span class="id" title="projection">Funclass</span></a>.<br/>
 
 <br/>
-<span class="id" title="keyword">Definition</span> <a id="Morph_eq" class="idref" href="#Morph_eq"><span class="id" title="definition">Morph_eq</span></a><br/>
-&nbsp;&nbsp;`{<a id="H:9" class="idref" href="#H:9"><span class="id" title="binder">Setoid</span></a> <a id="X:8" class="idref" href="#X:8"><span class="id" title="binder"><span id="H:9" class="id">X</span></span></a>}<br/>
-&nbsp;&nbsp;`{<a id="H0:11" class="idref" href="#H0:11"><span class="id" title="binder">Setoid</span></a> <a id="Y:10" class="idref" href="#Y:10"><span class="id" title="binder"><span id="H0:11" class="id">Y</span></span></a>}<br/>
-&nbsp;&nbsp;`(<a id="f:12" class="idref" href="#f:12"><span class="id" title="binder">f</span></a> : <a class="idref" href="InqLog.SetoidLib.html#Morph"><span class="id" title="record">Morph</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:8"><span class="id" title="variable">X</span></a> <a class="idref" href="InqLog.SetoidLib.html#Y:10"><span class="id" title="variable">Y</span></a>)<br/>
-&nbsp;&nbsp;`(<a id="g:13" class="idref" href="#g:13"><span class="id" title="binder">g</span></a> : <a class="idref" href="InqLog.SetoidLib.html#Morph"><span class="id" title="record">Morph</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:8"><span class="id" title="variable">X</span></a> <a class="idref" href="InqLog.SetoidLib.html#Y:10"><span class="id" title="variable">Y</span></a>) : <span class="id" title="keyword">Prop</span> :=<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="x:14" class="idref" href="#x:14"><span class="id" title="binder">x</span></a>,<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.SetoidLib.html#f:12"><span class="id" title="variable">f</span></a> <a class="idref" href="InqLog.SetoidLib.html#x:14"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidClass.html#2596316c6f2ff161cb03e25fd8914390"><span class="id" title="notation">==</span></a> <a class="idref" href="InqLog.SetoidLib.html#g:13"><span class="id" title="variable">g</span></a> <a class="idref" href="InqLog.SetoidLib.html#x:14"><span class="id" title="variable">x</span></a>.<br/>
+</div>
+
+<div class="doc">
+<a id="lab2"></a><h1 class="section">Extensional Equality</h1>
+
+
+<div class="paragraph"> </div>
+
+   We often need function to be extensional equal. This
+   meaning is captured by the following definition.
+ 
+</div>
+<div class="code">
 
 <br/>
-<span class="id" title="keyword">Instance</span> <a id="Morph_eq_Equiv" class="idref" href="#Morph_eq_Equiv"><span class="id" title="instance">Morph_eq_Equiv</span></a><br/>
-&nbsp;&nbsp;`{<a id="H:16" class="idref" href="#H:16"><span class="id" title="binder">Setoid</span></a> <a id="X:15" class="idref" href="#X:15"><span class="id" title="binder"><span id="H:16" class="id">X</span></span></a>}<br/>
-&nbsp;&nbsp;`{<a id="H0:18" class="idref" href="#H0:18"><span class="id" title="binder">Setoid</span></a> <a id="Y:17" class="idref" href="#Y:17"><span class="id" title="binder"><span id="H0:18" class="id">Y</span></span></a>}<br/>
-&nbsp;&nbsp;: <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.RelationClasses.html#Equivalence"><span class="id" title="class">Equivalence</span></a> (@<a class="idref" href="InqLog.SetoidLib.html#Morph_eq"><span class="id" title="definition">Morph_eq</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:15"><span class="id" title="variable">X</span></a> <span class="id" title="var">_</span> <a class="idref" href="InqLog.SetoidLib.html#Y:17"><span class="id" title="variable">Y</span></a> <span class="id" title="var">_</span>).<br/>
+<span class="id" title="keyword">Definition</span> <a id="ext_eq" class="idref" href="#ext_eq"><span class="id" title="definition">ext_eq</span></a> {<a id="X:8" class="idref" href="#X:8"><span class="id" title="binder">X</span></a>} `{<a id="H:10" class="idref" href="#H:10"><span class="id" title="binder">Setoid</span></a> <a id="Y:9" class="idref" href="#Y:9"><span class="id" title="binder"><span id="H:10" class="id">Y</span></span></a>} : <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Relations.Relation_Definitions.html#relation"><span class="id" title="definition">relation</span></a> (<a class="idref" href="InqLog.SetoidLib.html#X:8"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.SetoidLib.html#Y:9"><span class="id" title="variable">Y</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <a id="f:11" class="idref" href="#f:11"><span class="id" title="binder">f</span></a> <a id="g:12" class="idref" href="#g:12"><span class="id" title="binder">g</span></a> =&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="x:13" class="idref" href="#x:13"><span class="id" title="binder">x</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.SetoidLib.html#f:11"><span class="id" title="variable">f</span></a> <a class="idref" href="InqLog.SetoidLib.html#x:13"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidClass.html#2596316c6f2ff161cb03e25fd8914390"><span class="id" title="notation">==</span></a> <a class="idref" href="InqLog.SetoidLib.html#g:12"><span class="id" title="variable">g</span></a> <a class="idref" href="InqLog.SetoidLib.html#x:13"><span class="id" title="variable">x</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="ext_eq_Equiv" class="idref" href="#ext_eq_Equiv"><span class="id" title="instance">ext_eq_Equiv</span></a> {<a id="X:14" class="idref" href="#X:14"><span class="id" title="binder">X</span></a>} `{<a id="H:16" class="idref" href="#H:16"><span class="id" title="binder">Setoid</span></a> <a id="Y:15" class="idref" href="#Y:15"><span class="id" title="binder"><span id="H:16" class="id">Y</span></span></a>} :<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.RelationClasses.html#Equivalence"><span class="id" title="class">Equivalence</span></a> (@<a class="idref" href="InqLog.SetoidLib.html#ext_eq"><span class="id" title="definition">ext_eq</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:14"><span class="id" title="variable">X</span></a> <a class="idref" href="InqLog.SetoidLib.html#Y:15"><span class="id" title="variable">Y</span></a> <span class="id" title="var">_</span>).<br/>
 <span class="id" title="keyword">Proof</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">constructor</span>.<br/>
 &nbsp;&nbsp;-<br/>
@@ -64,24 +99,48 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">H1</span> <span class="id" title="var">x</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">symmetry</span>.<br/>
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span> <span class="id" title="var">x</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>, <span class="id" title="var">H2</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span>, <span class="id" title="var">H2</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="var">etransitivity</span>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Instance</span> <a id="Morph_Setoid" class="idref" href="#Morph_Setoid"><span class="id" title="instance">Morph_Setoid</span></a><br/>
-&nbsp;&nbsp;`{<a id="H:20" class="idref" href="#H:20"><span class="id" title="binder">Setoid</span></a> <a id="X:19" class="idref" href="#X:19"><span class="id" title="binder"><span id="H:20" class="id">X</span></span></a>}<br/>
-&nbsp;&nbsp;`{<a id="H0:22" class="idref" href="#H0:22"><span class="id" title="binder">Setoid</span></a> <a id="Y:21" class="idref" href="#Y:21"><span class="id" title="binder"><span id="H0:22" class="id">Y</span></span></a>}<br/>
-&nbsp;&nbsp;: <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidClass.html#Setoid"><span class="id" title="class">Setoid</span></a> (<a class="idref" href="InqLog.SetoidLib.html#Morph"><span class="id" title="record">Morph</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:19"><span class="id" title="variable">X</span></a> <a class="idref" href="InqLog.SetoidLib.html#Y:21"><span class="id" title="variable">Y</span></a>) :=<br/>
+<span class="id" title="keyword">Program Instance</span> <a id="ext_eq_Setoid" class="idref" href="#ext_eq_Setoid"><span class="id" title="instance">ext_eq_Setoid</span></a> {<a id="X:17" class="idref" href="#X:17"><span class="id" title="binder">X</span></a>} `{<a id="H:19" class="idref" href="#H:19"><span class="id" title="binder">Setoid</span></a> <a id="Y:18" class="idref" href="#Y:18"><span class="id" title="binder"><span id="H:19" class="id">Y</span></span></a>} :<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidClass.html#Setoid"><span class="id" title="class">Setoid</span></a> (<a class="idref" href="InqLog.SetoidLib.html#X:17"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.SetoidLib.html#Y:18"><span class="id" title="variable">Y</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="Morph_eq" class="idref" href="#Morph_eq"><span class="id" title="definition">Morph_eq</span></a> `{<a id="H:21" class="idref" href="#H:21"><span class="id" title="binder">Setoid</span></a> <a id="X:20" class="idref" href="#X:20"><span class="id" title="binder"><span id="H:21" class="id">X</span></span></a>} `{<a id="H0:23" class="idref" href="#H0:23"><span class="id" title="binder">Setoid</span></a> <a id="Y:22" class="idref" href="#Y:22"><span class="id" title="binder"><span id="H0:23" class="id">Y</span></span></a>} :<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Relations.Relation_Definitions.html#relation"><span class="id" title="definition">relation</span></a> (<a class="idref" href="InqLog.SetoidLib.html#Morph"><span class="id" title="record">Morph</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:20"><span class="id" title="variable">X</span></a> <a class="idref" href="InqLog.SetoidLib.html#Y:22"><span class="id" title="variable">Y</span></a>) :=<br/>
+<br/>
+&nbsp;&nbsp;<a class="idref" href="InqLog.SetoidLib.html#ext_eq"><span class="id" title="definition">ext_eq</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="Morph_eq_Equiv" class="idref" href="#Morph_eq_Equiv"><span class="id" title="instance">Morph_eq_Equiv</span></a> `{<a id="H:25" class="idref" href="#H:25"><span class="id" title="binder">Setoid</span></a> <a id="X:24" class="idref" href="#X:24"><span class="id" title="binder"><span id="H:25" class="id">X</span></span></a>} `{<a id="H0:27" class="idref" href="#H0:27"><span class="id" title="binder">Setoid</span></a> <a id="Y:26" class="idref" href="#Y:26"><span class="id" title="binder"><span id="H0:27" class="id">Y</span></span></a>} :<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.RelationClasses.html#Equivalence"><span class="id" title="class">Equivalence</span></a> (@<a class="idref" href="InqLog.SetoidLib.html#Morph_eq"><span class="id" title="definition">Morph_eq</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:24"><span class="id" title="variable">X</span></a> <span class="id" title="var">_</span> <a class="idref" href="InqLog.SetoidLib.html#Y:26"><span class="id" title="variable">Y</span></a> <span class="id" title="var">_</span>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">H1</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">symmetry</span>.<br/>
+&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="var">etransitivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Program Instance</span> <a id="Morph_Setoid" class="idref" href="#Morph_Setoid"><span class="id" title="instance">Morph_Setoid</span></a> `{<a id="H:29" class="idref" href="#H:29"><span class="id" title="binder">Setoid</span></a> <a id="X:28" class="idref" href="#X:28"><span class="id" title="binder"><span id="H:29" class="id">X</span></span></a>} `{<a id="H0:31" class="idref" href="#H0:31"><span class="id" title="binder">Setoid</span></a> <a id="Y:30" class="idref" href="#Y:30"><span class="id" title="binder"><span id="H0:31" class="id">Y</span></span></a>} :<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidClass.html#Setoid"><span class="id" title="class">Setoid</span></a> (<a class="idref" href="InqLog.SetoidLib.html#Morph"><span class="id" title="record">Morph</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:28"><span class="id" title="variable">X</span></a> <a class="idref" href="InqLog.SetoidLib.html#Y:30"><span class="id" title="variable">Y</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Program Canonical</span> <a id="to_Morph" class="idref" href="#to_Morph"><span class="id" title="definition">to_Morph</span></a> {<a id="X:32" class="idref" href="#X:32"><span class="id" title="binder">X</span></a>} `{<a id="H:34" class="idref" href="#H:34"><span class="id" title="binder">Setoid</span></a> <a id="Y:33" class="idref" href="#Y:33"><span class="id" title="binder"><span id="H:34" class="id">Y</span></span></a>} (<a id="f:35" class="idref" href="#f:35"><span class="id" title="binder">f</span></a> : <a class="idref" href="InqLog.SetoidLib.html#X:32"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.SetoidLib.html#Y:33"><span class="id" title="variable">Y</span></a>) :<br/>
+&nbsp;&nbsp;@<a class="idref" href="InqLog.SetoidLib.html#Morph"><span class="id" title="record">Morph</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:32"><span class="id" title="variable">X</span></a> <a class="idref" href="InqLog.SetoidLib.html#Y:33"><span class="id" title="variable">Y</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidDec.html#eq_setoid"><span class="id" title="instance">eq_setoid</span></a> <span class="id" title="var">_</span>) <span class="id" title="var">_</span> :=<br/>
+<br/>
 &nbsp;&nbsp;{|<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidClass.html#equiv"><span class="id" title="method">equiv</span></a> := <a class="idref" href="InqLog.SetoidLib.html#Morph_eq"><span class="id" title="definition">Morph_eq</span></a>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidClass.html#setoid_equiv"><span class="id" title="method">setoid_equiv</span></a> := <a class="idref" href="InqLog.SetoidLib.html#Morph_eq_Equiv"><span class="id" title="instance">Morph_eq_Equiv</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.SetoidLib.html#morph"><span class="id" title="projection">morph</span></a> := <a class="idref" href="InqLog.SetoidLib.html#f:35"><span class="id" title="variable">f</span></a><br/>
 &nbsp;&nbsp;|}.<br/>
 </div>
 </div>
