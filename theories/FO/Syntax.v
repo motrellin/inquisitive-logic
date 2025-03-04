@@ -1181,11 +1181,18 @@ Print Assumptions classical_variant_is_classical.
 
 Definition highest_occ_free_var `{Signature}
   (phi : form)
-  (x : var) :
+  (ox : option var) :
   Prop :=
 
   forall sigma1 sigma2,
-    (forall y, y <= x -> sigma1 y == sigma2 y) ->
+    (
+      forall y,
+        match ox with
+        | Some x => y <= x
+        | None => True
+        end ->
+        sigma1 y == sigma2 y
+    ) ->
     phi.|[sigma1] == phi.|[sigma2].
 
 (** * Syntax for the Unary Predicate Symbol Signature *)

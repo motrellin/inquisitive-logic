@@ -274,7 +274,7 @@ Module Casari_fails.
     <{iexists (Pred' (Var 1) (Var 0))}>.
 
   Remark highest_occ_free_var_IES :
-    highest_occ_free_var IES 0.
+    highest_occ_free_var IES (Some 0).
   Proof.
     intros sigma1 sigma2 H1.
     simpl.
@@ -1163,7 +1163,7 @@ Scheme Equality for nat.
 
 Proposition Seq_CasariAnt_CasariSuc `{Signature} :
   forall ns (phi : form) sigma,
-    highest_occ_free_var phi 0 ->
+    highest_occ_free_var phi (Some 0) ->
     Seq
     ((pair ns (CasariAnt phi).|[sigma]) :: nil)
     ((pair ns (CasariSuc phi).|[sigma]) :: nil).
@@ -1336,7 +1336,7 @@ Print Assumptions Seq_CasariAnt_CasariSuc.
 
 Corollary Seq_Casari `{Signature} :
   forall phi ns,
-    highest_occ_free_var phi 0 ->
+    highest_occ_free_var phi (Some 0) ->
     Seq nil ((pair ns (Casari phi)) :: nil).
 Proof.
   intros phi ns H1.
@@ -1419,7 +1419,7 @@ Print Assumptions Seq_Casari.
 
 Corollary support_valid_Casari_bd `{S : Signature} :
   forall phi ns,
-    highest_occ_free_var phi 0 ->
+    highest_occ_free_var phi (Some 0) ->
     forall (M : @Model S) f a,
       mapping_state f ns, a |= Casari phi.
 Proof.
