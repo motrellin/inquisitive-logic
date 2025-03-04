@@ -1,5 +1,66 @@
 # Changelog
 
+## inqlog-v0.14.0 (2025-03-04)
+
+### New
+
+* Proved `Seq_Bot_r` [Max Ole Elliger]
+
+* Syntax-Modules for example signatures. [Max Ole Elliger]
+
+  New Models:
+  - `Syntax_single_unary_predicate`
+  - `Syntax_single_binary_predicate`
+
+### Changes
+
+* Removed axiom of functional extensionality. [Max Ole Elliger]
+
+  This was gained by multiple steps:
+  - Defined the notion of extensional equality of functions.
+  - Used this notion for congruence properties.
+  - Proved similar Autosubst-Lemmas with respect to `term_eq` and `form_eq`.
+
+  In addition, some `Print Assumptions`-lines were added, at least for
+  every proposition, theorem and corollary.
+
+* Documentation for States.v. [Max Ole Elliger]
+
+* Simplified `singleton` by `==b` [Max Ole Elliger]
+
+* Simplified Pred' and used it for Casari.v. [Max Ole Elliger]
+
+* Updated documentation on FO/Support.v. [Max Ole Elliger]
+
+  Just some small improvements
+
+* Renamed `rigid_term` to `term_rigid` [Max Ole Elliger]
+
+* Replaced `state_eq` by `==` in FO/States.v. [Max Ole Elliger]
+
+* Updated documentation on FO/Syntax.v. [Max Ole Elliger]
+
+  Just some small improvements
+
+* Updated documentation on FO/Signatures.v. [Max Ole Elliger]
+
+  Just some small improvements
+
+* Renamed Module-names in Signature.v. [Max Ole Elliger]
+
+* Redefined `lb_form_eq` [Max Ole Elliger]
+
+  This is now done by a `Inductive` as this might make stuff somehow
+  smoother.
+
+* Renamed ListBib.v -> ListLib.v. [Max Ole Elliger]
+
+* Added a prelude to manage Imports more easily. [Max Ole Elliger]
+
+### Fix
+
+* Rm unnecessary Setoid instance for nat. [Max Ole Elliger]
+
 ## inqlog-v0.13.0 (2025-02-05)
 
 ### New
