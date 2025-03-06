@@ -260,7 +260,7 @@ Qed.
 
 Lemma support_conseq_Forall_I `{S : Signature} :
   forall cxt phi,
-    support_conseq (map (fun psi => psi.|[ren (+1)]) cxt) phi ->
+    support_conseq (map (hsubst (ren (+1))) cxt) phi ->
     support_conseq cxt <{forall phi}>.
 Proof.
   intros cxt phi H1 M s a H2 i.
@@ -344,7 +344,7 @@ Qed.
 Lemma support_conseq_Iexists_E `{S : Signature} :
   forall cxt phi psi,
     support_conseq cxt <{iexists phi}> ->
-    support_conseq (phi :: map (fun chi => chi.|[ren (+1)]) cxt) psi.|[ren (+1)] ->
+    support_conseq (phi :: map (hsubst (ren (+1))) cxt) psi.|[ren (+1)] ->
     support_conseq cxt psi.
 Proof.
   intros cxt phi psi H1 H2 M s a H3.
