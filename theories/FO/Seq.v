@@ -856,6 +856,8 @@ Proof.
   apply empty_state_property.
 Qed.
 
+Print Assumptions satisfaction_conseq_empty.
+
 Lemma satisfaction_conseq_id `{Signature} :
       forall ls rs ns1 ns2 p args,
         InS (pair ns1 (Pred p args)) ls ->
@@ -870,6 +872,8 @@ Proof.
   rewrite H3 in H1.
   exact H1.
 Qed.
+
+Print Assumptions satisfaction_conseq_id.
 
 Lemma satisfaction_conseq_Bot_l `{Signature} :
   forall ls rs n ns x,
@@ -886,6 +890,8 @@ Proof.
   apply InS_map_I.
   exact H2.
 Qed.
+
+Print Assumptions satisfaction_conseq_Bot_l.
 
 Lemma satisfaction_conseq_Pred_r `{Signature} :
   forall ls rs ns p args,
@@ -969,6 +975,8 @@ Proof.
     exact H7.
 Qed.
 
+Print Assumptions satisfaction_conseq_Pred_r.
+
 Lemma satisfaction_conseq_Pred_l `{Signature} :
   forall ls rs ns1 ns2 p args,
     InS (pair ns1 (Pred p args)) ls ->
@@ -995,6 +1003,8 @@ Proof.
     apply H4.
     exact H5.
 Qed.
+
+Print Assumptions satisfaction_conseq_Pred_l.
 
 Lemma satisfaction_conseq_Impl_r `{Signature} :
   forall ls rs ns phi psi, InS (pair ns <{phi -> psi}>) rs ->
@@ -1075,6 +1085,8 @@ Proof.
       exact H7.
 Qed.
 
+Print Assumptions satisfaction_conseq_Impl_r.
+
 Lemma satisfaction_conseq_Impl_l `{Signature} :
   forall ls rs ns1 ns2 phi psi,
     InS (pair ns1 <{phi -> psi}>) ls ->
@@ -1106,6 +1118,8 @@ Proof.
     exact H3.
 Qed.
 
+Print Assumptions satisfaction_conseq_Impl_l.
+
 Lemma satisfaction_conseq_Conj_r `{Signature} :
   forall ls rs ns phi psi,
     InS (pair ns <{phi /\ psi}>) rs ->
@@ -1129,6 +1143,8 @@ Proof.
     exact H5.
 Qed.
 
+Print Assumptions satisfaction_conseq_Conj_r.
+
 Lemma satisfaction_conseq_Conj_l `{Signature} :
   forall ls rs ns phi psi,
     InS (pair ns <{phi /\ psi}>) ls ->
@@ -1146,6 +1162,8 @@ Proof.
   repeat apply mult_cons_I.
   all: assumption.
 Qed.
+
+Print Assumptions satisfaction_conseq_Conj_l.
 
 Lemma satisfaction_conseq_Idisj_r `{Signature} :
   forall ls rs ns phi psi,
@@ -1172,6 +1190,8 @@ Proof.
     exact H4.
 Qed.
 
+Print Assumptions satisfaction_conseq_Idisj_r.
+
 Lemma satisfaction_conseq_Idisj_l `{Signature} :
   forall ls rs ns phi psi,
     InS (pair ns <{phi \\/ psi}>) ls ->
@@ -1190,6 +1210,8 @@ Proof.
     apply H3.
     apply mult_cons_I; assumption.
 Qed.
+
+Print Assumptions satisfaction_conseq_Idisj_l.
 
 Lemma satisfaction_conseq_Forall_r `{Signature} :
   forall ls rs ns phi,
@@ -1246,6 +1268,8 @@ Proof.
     exact H3.
 Qed.
 
+Print Assumptions satisfaction_conseq_Forall_r.
+
 Lemma satisfaction_conseq_Forall_l `{Signature} :
   forall ls rs ns phi t,
     InS (pair ns <{forall phi}>) ls ->
@@ -1295,6 +1319,8 @@ Proof.
     apply H4.
 Qed.
 
+Print Assumptions satisfaction_conseq_Forall_l.
+
 Lemma satisfaction_conseq_Iexists_r `{Signature} :
   forall ls rs ns phi t,
     InS (pair ns <{iexists phi}>) rs ->
@@ -1341,6 +1367,8 @@ Proof.
     exact H5.
 Qed.
 
+Print Assumptions satisfaction_conseq_Iexists_r.
+
 Lemma satisfaction_conseq_Iexists_l `{Signature} :
   forall ls rs ns phi,
     InS (pair ns <{iexists phi}>) ls ->
@@ -1371,6 +1399,8 @@ Proof.
       apply satisfaction_mult_hsubst_var.
       exact H3.
 Qed.
+
+Print Assumptions satisfaction_conseq_Iexists_l.
 
 Lemma satisfaction_conseq_cut `{Signature} :
   forall ls1 ls2 ls rs1 rs2 rs ns phi,
@@ -1419,6 +1449,8 @@ Proof.
     apply some_app_I_1.
     exact H6.
 Qed.
+
+Print Assumptions satisfaction_conseq_cut.
 
 (** ** Soundness *)
 
