@@ -907,6 +907,11 @@ Lemma satisfaction_conseq_Pred_r `{Signature} :
 Proof.
   intros * H1 H2.
   intros M f a H3.
+  (**
+     The key idea of this proof is a case distinction
+     whether another formula in [rs] is satisfied or not.
+     For this, we use classical logic.
+   *)
   destruct (
     classic (
       exists psi,
@@ -915,10 +920,17 @@ Proof.
         satisfaction f a psi)
   ) as [H4|H4].
   {
+    (**
+       If there is such a formula, we can easily finish.
+     *)
     destruct H4 as [psi [_ [H4 H5]]].
     exists psi.
     split; assumption.
   }
+  (**
+     In the other case, we know that [(ns, Pred p args)] is
+     the only formula that can be satisfied here.
+   *)
   eexists; split; try exact H1.
   intros w H5.
   apply InS_iff_inbS_true in H5 as H6.
@@ -931,6 +943,7 @@ Proof.
     specialize (H2 (f n)).
     unfold "_ ==b _" in H2.
     destruct (f n == f n) as [H8|H8].
+    all: try (exfalso; apply H8; reflexivity).
 
     specialize (H2 eq_refl).
     rewrite <- H2.
@@ -941,10 +954,6 @@ Proof.
     f_equiv.
     intros arg.
     rewrite H6.
-    reflexivity.
-
-    exfalso.
-    apply H8.
     reflexivity.
   +
     destruct H2 as [psi [H21 H22]].
