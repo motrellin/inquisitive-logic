@@ -938,7 +938,7 @@ Proof.
   apply InS_map_E in H6 as [n [H6 H7]].
   specialize (H2 n H7 M f a H3).
   apply some_cons_E in H2 as [H2|H2].
-  +
+  -
     simpl in H2.
     specialize (H2 (f n)).
     unfold "_ ==b _" in H2.
@@ -955,33 +955,32 @@ Proof.
     intros arg.
     rewrite H6.
     reflexivity.
-  +
+  -
     destruct H2 as [psi [H21 H22]].
-    assert (HA : psi == pair ns (Pred p args)).
-    {
-      apply NNPP.
-      intros HA.
+    destruct (psi == pair ns (Pred p args)) as [HA|HA].
+    +
+      simpl in H5.
+      rewrite HA in H22.
+      specialize (H22 (f n)).
+      rewrite <- H22.
+
+      assert (HB : PInterpretation w = PInterpretation (f n))
+        by (rewrite H6; reflexivity).
+
+      rewrite HB.
+      f_equiv.
+      intros arg.
+      rewrite H6.
+      reflexivity.
+
+      simpl.
+      apply InS_iff_inbS_true.
+      apply InS_map_I.
+      exact H7.
+    +
+      exfalso.
       apply H4.
       eexists; repeat split; eassumption.
-    }
-    simpl in H5.
-    rewrite HA in H22.
-    specialize (H22 (f n)).
-    rewrite <- H22.
-
-    assert (HB : PInterpretation w = PInterpretation (f n))
-      by (rewrite H6; reflexivity).
-
-    rewrite HB.
-    f_equiv.
-    intros arg.
-    rewrite H6.
-    reflexivity.
-
-    simpl.
-    apply InS_iff_inbS_true.
-    apply InS_map_I.
-    exact H7.
 Qed.
 
 Print Assumptions satisfaction_conseq_Pred_r.
@@ -1034,7 +1033,7 @@ Proof.
   destruct (
     classic (
       exists chi,
-        chi <> (pair ns <{phi -> psi}>) /\
+        chi =/= (pair ns <{phi -> psi}>) /\
         InS chi rs /\
         satisfaction f a chi
     )
@@ -1076,22 +1075,21 @@ Proof.
     exact H2.
   -
     destruct H2 as [chi [H21 H22]].
-    assert (H9 : chi = pair ns <{phi -> psi}>).
-    {
-      apply NNPP.
-      intros H9.
+    destruct (chi == pair ns <{phi -> psi}>) as [H9|H9].
+    +
+      rewrite H9 in *; clear H9.
+      asimpl in H22.
+      apply H22.
+      *
+        rewrite H6.
+        reflexivity.
+      *
+        exact H7.
+    +
+      exfalso.
       apply H4.
       exists chi.
       easy.
-    }
-    subst chi.
-    asimpl in H22.
-    apply H22.
-    +
-      rewrite H6.
-      reflexivity.
-    +
-      exact H7.
 Qed.
 
 Print Assumptions satisfaction_conseq_Impl_r.
@@ -1241,7 +1239,7 @@ Proof.
   destruct (
     classic (
       exists chi,
-        chi <> (pair ns <{forall phi}>) /\
+        chi =/= (pair ns <{forall phi}>) /\
         InS chi rs /\
         satisfaction f a chi
     )
@@ -1264,14 +1262,13 @@ Proof.
     rewrite <- H211 in H22.
     apply satisfaction_hsubst_var in H22.
 
-    assert (H9 : chi = pair ns (Forall phi)).
-    {
-      apply NNPP.
-      intros H9.
+    destruct (chi == pair ns (Forall phi)) as [H9|H9].
+    +
+      rewrite H9 in *; clear H9.
+      apply H22.
+    +
+      exfalso.
       apply H4; eexists; repeat split; eassumption.
-    }
-    subst chi.
-    apply H22.
   -
     apply satisfaction_mult_hsubst_var.
     exact H3.
