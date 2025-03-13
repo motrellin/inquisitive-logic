@@ -86,3 +86,6 @@ Class Model `{Signature} :=
 
 Definition assignment `{Model} : Type :=
   var -> Individual.
+
+Definition pointed_assignment `{Model} : assignment :=
+  fun _ => Individual_inh.
