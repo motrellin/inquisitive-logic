@@ -1545,7 +1545,7 @@ Qed.
 
 Print Assumptions Seq_mon.
 
-Proposition Seq_Bot_r `{Signature} :
+Proposition Seq_Neg_r `{Signature} :
   forall ls rs ns phi,
     InS (pair ns <{~ phi}>) rs ->
     (forall n,
@@ -1615,4 +1615,4 @@ Proof.
     exact H2.
 Qed.
 
-Print Assumptions Seq_Bot_r.
+Print Assumptions Seq_Neg_r.
