@@ -273,6 +273,17 @@ Proof.
   reflexivity.
 Qed.
 
+Program Definition most_inconsistent `{Model} :
+  state :=
+
+  {|
+    morph := fun _ => true
+  |}.
+
+Next Obligation.
+  repeat intro; reflexivity.
+Qed.
+
 (** * Substates
 
    This section implements the notion of substates in a
@@ -574,6 +585,14 @@ Proof.
     intros [ns2 [H1 H2]].
     rewrite H1, H2.
     reflexivity.
+Qed.
+
+Lemma substate_most_inconsistent `{Model} :
+  forall s,
+    substate s most_inconsistent.
+Proof.
+  intros s w H1.
+  reflexivity.
 Qed.
 
 (** * Restricting a [Model] to a [state] *)
