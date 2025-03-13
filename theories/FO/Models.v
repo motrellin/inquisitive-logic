@@ -78,6 +78,27 @@ Class Model `{Signature} :=
 
 (* TODO Examples? *)
 
+Program Definition two_Worlds_Model `{Signature} : Model :=
+  {|
+    World := bool;
+    Individual := unit;
+    Individual_inh := tt;
+    PInterpretation := fun w _ _ => w;
+    FInterpretation := fun _ _ _ => tt
+  |}.
+
+Next Obligation.
+  decide equality.
+Qed.
+
+Next Obligation.
+  repeat intro; reflexivity.
+Qed.
+
+Next Obligation.
+  repeat intro; reflexivity.
+Qed.
+
 (** * Variable Assignments
 
    We refer to a variable assignment function by the short
