@@ -77,3 +77,12 @@ Class Model `{Signature} :=
 
 
 (* TODO Examples? *)
+
+(** * Variable Assignments
+
+   We refer to a variable assignment function by the short
+   name [assignment].
+ *)
+
+Definition assignment `{Model} : Type :=
+  var -> Individual.

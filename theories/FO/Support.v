@@ -1,14 +1,5 @@
 From InqLog.FO Require Export States Syntax.
 
-(** * Variable Assignments
-
-   We refer to a variable assignment function by the short
-   name [assignment].
- *)
-
-Definition assignment `{Model} : Type :=
-  var -> Individual.
-
 (** * Referent of a term
 
    To interpret a term, we define the [referent] of a term
