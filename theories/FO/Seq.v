@@ -1616,3 +1616,29 @@ Proof.
 Qed.
 
 Print Assumptions Seq_Neg_r.
+
+Proposition Seq_Neg_l `{Signature} :
+  forall ls rs ns1 ns2 n phi,
+    InS (pair ns1 <{~ phi}>) ls ->
+    InS_sublist ns2 ns1 ->
+    InS n ns2 ->
+    Seq ls ((pair ns2 phi) :: rs) ->
+    Seq ls rs.
+Proof.
+  intros * H1 H2 H3 H4.
+  eapply Seq_Impl_l.
+  -
+    exact H1.
+  -
+    exact H2.
+  -
+    exact H4.
+  -
+    eapply Seq_Bot_l.
+    +
+      apply InS_cons_I_hd; reflexivity.
+    +
+      exact H3.
+Qed.
+
+Print Assumptions Seq_Neg_l.
