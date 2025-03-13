@@ -916,6 +916,9 @@ Example EM `{Signature} (phi : form) : form :=
 Example DNE `{Signature} (phi : form) : form :=
   <{ (~ (~ phi)) -> phi }>.
 
+Example Kuroda `{Signature} (phi : form) : form :=
+  <{(forall (~ ~ phi)) -> ~ ~ forall phi}>.
+
 (** ** Classic formulas
 
    We want to introduce the notion of a _classical formula_.
