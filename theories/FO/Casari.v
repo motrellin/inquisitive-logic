@@ -261,18 +261,36 @@ Module Casari_with_atoms.
 
 End Casari_with_atoms.
 
-(** * The Casari "counter-example" *)
+(** * The Casari "counter-example"
+
+   We will now provide a counter-example to show that the
+   Casari Scheme isn't schematically valid. For this, we
+   need a concrete signature, a concret instance of the
+   scheme via a formula [phi], a suitable model [M], a state
+   [s] and a variable assignment [a] s.t. [M], [s] and [a]
+   do not support [phi].
+ *)
 Module Casari_fails.
 
   Import PeanoNat.Nat.
 
-  (** ** Signature and Syntax *)
+  (** ** Signature and Syntax
 
+     We will use our signature with a single binary
+     predicate symbol for the counter example.
+   *)
   Import Syntax_single_binary_predicate.
 
+  (**
+     The following formula will serve as our instance for
+     the Casari Scheme:
+   *)
   Definition IES : form :=
     <{iexists (Pred' (Var 1) (Var 0))}>.
 
+  (**
+     We can verify that [IES] has only one free variable.
+   *)
   Remark highest_occ_free_var_IES :
     highest_occ_free_var IES (Some 0).
   Proof.
@@ -291,8 +309,13 @@ Module Casari_fails.
 
   Print Assumptions highest_occ_free_var_IES.
 
-  (** ** The Model *)
+  (** ** The Model
 
+     For our model, we decide on natural numbers to serve as
+     our type of Worlds and Individuals. By this,
+     [PInterpretation] becomes a ternary relation which we
+     define before:
+   *)
   Definition rel (w m j : nat) : bool :=
     (
       negb (even m) &&
@@ -307,17 +330,9 @@ Module Casari_fails.
       )
     ).
 
-  Lemma unnamed_helper_1 :
-    forall w m,
-      even m = true ->
-      rel w m w = false.
-  Proof.
-    intros w m H1.
-    unfold rel.
-    rewrite H1.
-    rewrite eqb_refl.
-    reflexivity.
-  Qed.
+  (**
+     We will now instantiate the model.
+   *)
 
   Local Obligation Tactic :=
     try decide equality;
@@ -345,7 +360,7 @@ Module Casari_fails.
     reflexivity.
   Qed.
 
-  (** ** Some state properties *)
+  (** ** Intermezzo: Some classical logic properties *)
 
   Lemma not_exists_forall_not {X} :
     forall (P : X -> Prop),
@@ -356,14 +371,6 @@ Module Casari_fails.
     firstorder.
   Qed.
 
-  (**
-     CLA
-
-     [not_forall_exists_not] depends on classical logic.
-
-     Descendants:
-     - [not_infinitely_many_finitely_many]
-   *)
   Lemma not_forall_exists_not {X} :
     forall (P : X -> Prop),
       ~ (forall x, P x) ->
@@ -379,6 +386,12 @@ Module Casari_fails.
     apply NNPP.
     exact H2.
   Qed.
+
+  (** ** Some state properties
+
+     We start by defining some notation for state
+     properties.
+   *)
 
   Declare Custom Entry boolpred.
 
@@ -415,6 +428,13 @@ Module Casari_fails.
     (in custom boolpred at level 75)
     : form_scope.
 
+  (**
+     We define [contains_all p] to say that s contains all
+     worlds with property [p]. Note that this is in fact a
+     duplicate of [substate] which is intended to
+     distinguish between properties of worlds and states.
+   *)
+
   Definition contains_all (p : nat -> bool) (s : state) : Prop :=
     forall w,
       p w = true ->
@@ -450,6 +470,10 @@ Module Casari_fails.
     exact H3.
   Qed.
 
+  (**
+     Next, we implement the notion that a state contains at
+     least one world with property [p].
+   *)
   Definition contains_any (p : nat -> bool) (s : state) : Prop :=
     exists w,
       p w = true /\
@@ -502,12 +526,25 @@ Module Casari_fails.
     all: firstorder.
   Qed.
 
+  (**
+     We also define the property to have at most finitely
+     many worlds with property [p]. We do this by stating
+     that there exists a maximal world with property [p].
+   *)
+
+  Definition is_border
+    (p : nat -> bool)
+    (s : state)
+    (e : nat) : Prop :=
+
+    forall w,
+      p w = true ->
+      s w = true ->
+      w <=? e = true.
+
   Definition finitely_many (p : nat -> bool) (s : state) : Prop :=
     exists e,
-      forall w,
-        p w = true ->
-        s w = true ->
-        w <=? e = true.
+      is_border p s e.
 
   Instance finitely_many_Proper :
     forall p,
@@ -545,12 +582,55 @@ Module Casari_fails.
       exact H4.
   Qed.
 
+  (**
+     We also implement the converse notion of having
+     infinitely many worlds with property [p].
+   *)
+
+  Definition successor
+    (p : nat -> bool)
+    (s : state)
+    (w e : nat) : Prop :=
+
+    p e = true /\
+    s e = true /\
+    w <? e = true.
+
+  Instance successor_Proper :
+    Proper (ext_eq ==> state_eq ==> Logic.eq ==> Logic.eq ==> iff)
+    successor.
+  Proof.
+    intros p1 p2 H1 s1 s2 H2 w1 w2 H3 e1 e2 H4.
+    simpl in *.
+    subst w2 e2.
+    unfold successor.
+    rewrite H1,H2.
+    reflexivity.
+  Qed.
+
   Definition infinitely_many (p : nat -> bool) (s : state) : Prop :=
     forall w,
       exists e,
-        p e = true /\
-        s e = true /\
-        w <? e = true.
+        successor p s w e.
+
+  Instance infinitely_many_Proper :
+    Proper (ext_eq ==> state_eq ==> iff) infinitely_many.
+  Proof.
+    intros p1 p2 H1 s1 s2 H2.
+    unfold infinitely_many.
+    split.
+    all: intros H3 w.
+    all: specialize (H3 w) as [e H3].
+    all: exists e.
+    all: rewrite H1,H2 in *.
+    all: easy.
+  Qed.
+
+  (**
+     It is worth to note that we need classic logic to show
+     the we conclude finiteness from missing infiniteness
+     and infiniteness from missing finiteness.
+   *)
 
   Lemma not_infinitely_many_finitely_many :
     forall p s,
@@ -558,29 +638,15 @@ Module Casari_fails.
       finitely_many p s.
   Proof.
     intros p s H1.
-    unfold infinitely_many in H1.
-    red.
     apply not_forall_exists_not in H1 as [n H1].
     exists n.
     intros w H2 H3.
     apply not_exists_forall_not with (x := w) in H1.
+    unfold successor in H1.
     rewrite ltb_lt in H1.
     rewrite leb_le.
     destruct (p w), (s w).
     all: lia.
-  Qed.
-
-  Instance infinitely_many_Proper :
-    forall p,
-      Proper (state_eq ==> iff) (infinitely_many p).
-  Proof.
-    intros p s1 s2 H1.
-    split.
-    all: intros H2 w.
-    all: specialize (H2 w) as [e H2].
-    all: exists e.
-    all: rewrite H1 in *.
-    all: easy.
   Qed.
 
   Lemma substate_infinitely_many :
@@ -592,9 +658,14 @@ Module Casari_fails.
     intros p s t H1 H2 n.
     destruct (H2 n) as [e [H3 [H4 H5]]].
     exists e.
+    red.
     eauto using substate_contrapos.
   Qed.
 
+  (**
+     Last, we define a state property which will be needed
+     later.
+   *)
   Local Definition E (s : state) : Prop :=
     contains_any (? ~ even ?) (States.complement s) \/
     infinitely_many even (States.complement s).
@@ -624,9 +695,157 @@ Module Casari_fails.
         exact H2.
   Qed.
 
-  (** ** Support for [IES] *)
+  Lemma not_E_contains_all :
+    forall s,
+      ~ E s ->
+      contains_all (? ~ even ?) s.
+  Proof.
+    intros * H1.
+    apply Decidable.not_or in H1 as [H1 _].
+    apply not_contains_any_contains_all_complement in H1.
+    rewrite complement_complement in H1.
+    exact H1.
+  Qed.
 
-  (** [support_IES_odd] represents Claim 3.7. *)
+  Lemma not_E_finitely_many_complement :
+    forall s,
+      ~ E s ->
+      finitely_many even (States.complement s).
+  Proof.
+    intros * H1.
+    apply Decidable.not_or in H1 as [_ H1].
+    apply not_infinitely_many_finitely_many in H1.
+    exact H1.
+  Qed.
+
+  (**
+     We prove some helper lemmas which do not have any
+     meaningful names yet.
+   *)
+
+  Lemma unnamed_helper_Casari_1 :
+    forall w m,
+      even m = true ->
+      rel w m w = false.
+  Proof.
+    intros w m H1.
+    unfold rel.
+    rewrite H1.
+    rewrite eqb_refl.
+    reflexivity.
+  Qed.
+
+  Print Assumptions unnamed_helper_Casari_1.
+
+  Lemma unnamed_helper_Casari_2 :
+    forall (s : state) (m : nat),
+      even m = true ->
+      contains_all (? ~ even ?) s ->
+      contains_all (? ltb m ?) s ->
+      forall w j,
+        rel w m j = true ->
+        s j = true.
+  Proof.
+    intros s m H1 H2 H3 w j H4.
+
+    unfold rel in H4.
+    rewrite H1 in H4.
+    simpl in H4.
+    destruct (j =? w) eqn:H6; try discriminate.
+    simpl in H4.
+    apply orb_true_iff in H4 as [H4|H4].
+    all: auto.
+  Qed.
+
+  Print Assumptions unnamed_helper_Casari_2.
+
+  Local Program Definition unnamed_helper_Casari_3_state
+    (a : assignment)
+    (x : var)
+    (e : nat) : state :=
+
+    {|
+      morph :=
+        fun w =>
+        (S (S ((a x) + e)) <? w) || negb (even w)
+    |}.
+
+  Lemma unnamed_helper_Casari_3 :
+    forall (s : state) (a : assignment) (x : var),
+      even (a x) = true ->
+      contains_all (? ~ even ?) s ->
+      finitely_many (? even ?) (States.complement s) ->
+      exists t,
+        substate t s /\
+        contains_all (? ~ even ?) t /\
+        finitely_many (? even ?) (States.complement t) /\
+        contains_any (? ltb (a x) ?) (States.complement t).
+  Proof.
+    intros s a x H1 H2 [e H3].
+    (**
+       [e] is the greatest even number not in [s].
+       We're looking for a [substate] [t] of [s], s.t.
+       there also exists a greatest even number not in [t] and
+       with one even number contained greater than [a x].
+     *)
+    exists (unnamed_helper_Casari_3_state a x e).
+    repeat split.
+    -
+      intros w H5.
+      simpl in H5.
+      destruct (even w) eqn:H4.
+      +
+        specialize (H3 _ H4).
+        rewrite complement_true in H3.
+        rewrite leb_le in H3.
+        rewrite orb_false_r in H5.
+        rewrite ltb_lt in H5.
+        destruct (s w); lia.
+      +
+        apply H2.
+        rewrite H4.
+        reflexivity.
+    -
+      intros w H4.
+      rewrite negb_true_iff in H4.
+      simpl.
+      rewrite H4.
+      apply orb_true_r.
+    -
+      exists (S (S (a x + e))).
+      intros w H4 H5.
+      simpl in H5.
+      rewrite H4 in H5.
+      apply leb_le.
+      rewrite negb_true_iff in H5.
+      rewrite orb_false_r in H5.
+      apply ltb_nlt in H5.
+      lia.
+    -
+      exists (S (S (a x))).
+      rewrite complement_true.
+      simpl.
+      rewrite H1.
+      split.
+      +
+        apply ltb_lt.
+        lia.
+      +
+        rewrite orb_false_r.
+        apply ltb_nlt.
+        lia.
+  Qed.
+
+  Print Assumptions unnamed_helper_Casari_3.
+
+  (** ** Support for [IES]
+
+     We start by analysing support for [IES] itself.
+   *)
+
+  (**
+     [support_IES_odd] represents Claim 3.7. in Litak/Sano
+   *)
   Proposition support_IES_odd :
     forall (s : state) (a : assignment),
       even (a 0) = false ->
@@ -648,22 +867,29 @@ Module Casari_fails.
   Print Assumptions support_IES_odd.
 
   (**
-     [support_IES_even], [support_IES_even_other_direction']
-     and [support_IES_even_other_direction] represent
-     Claim 3.8.
+     [support_IES_even] and
+     [support_IES_even_other_direction] represent Claim 3.8.
    *)
   Proposition support_IES_even :
     forall (s : state) (a : assignment),
       even (a 0) = true ->
-      contains_any (? (~ even) || even && ltb (a 0) ?) (States.complement s) ->
+      contains_any (? (~ even) || ltb (a 0) ?) (States.complement s) ->
       s, a |= IES.
   Proof.
     intros s a H1 [n [H2 H3]].
 
+    (**
+       For preparation, just remove the notion of a
+       complement.
+     *)
     apply complement_true in H3.
 
-    exists n.
     simpl.
+    (**
+       The obvious candidate is n which can be easily
+       observed by the definition of [rel].
+     *)
+    exists n.
     intros w H4.
 
     unfold rel.
@@ -674,7 +900,9 @@ Module Casari_fails.
     -
       destruct (n =? w) eqn:H5; try reflexivity.
       apply eqb_eq in H5.
-      simpl in *.
+      subst w.
+      Fail congruence.
+      simpl in H3. (* Why is this needed? *)
       congruence.
     -
       apply orb_true_iff in H2 as [H2|H2].
@@ -682,34 +910,13 @@ Module Casari_fails.
         rewrite H2.
         reflexivity.
       +
-        apply andb_true_iff in H2 as [H21 H22].
-        rewrite H21,H22.
-        reflexivity.
+        rewrite H2.
+        apply orb_true_r.
   Qed.
 
   Print Assumptions support_IES_even.
 
-  Lemma unnamed_helper_2 :
-    forall (s : state) (m : nat),
-      even m = true ->
-      contains_all (? ~ even ?) s ->
-      contains_all (? ltb m ?) s ->
-      forall w j,
-        rel w m j = true ->
-        s j = true.
-  Proof.
-    intros s m H1 H2 H3 w j H4.
-
-    unfold rel in H4.
-    rewrite H1 in H4.
-    simpl in H4.
-    destruct (j =? w) eqn:H6; try discriminate.
-    simpl in H4.
-    apply orb_true_iff in H4 as [H4|H4].
-    all: auto.
-  Qed.
-
-  Lemma support_IES_even_other_direction' :
+  Proposition support_IES_even_other_direction :
     forall (s : state) (a : assignment),
       even (a 0) = true ->
       contains_all (? ~ even ?) s ->
@@ -717,10 +924,10 @@ Module Casari_fails.
       ~ (s, a |= IES).
   Proof.
     intros s a H1 H2 H3 [i H4].
-    asimpl in H4.
+    simpl in H4.
 
-    pose proof (unnamed_helper_1 i _ H1) as H5.
-    pose proof (unnamed_helper_2 _ _ H1 H2 H3) as H6.
+    pose proof (unnamed_helper_Casari_1 i _ H1) as H5.
+    pose proof (unnamed_helper_Casari_2 _ _ H1 H2 H3) as H6.
 
     assert (H7 : s i = true).
     {
@@ -730,56 +937,17 @@ Module Casari_fails.
       reflexivity.
     }
     specialize (H4 _ H7).
-    simpl in *.
     congruence.
   Qed.
 
-  (**
-     CLA
+  (** ** Support for [CasariSuc IES]
 
-     [support_IES_even_other_direction] depends on classical
-     logic.
-
-     Descendants:
-     - []
+     We will now prove helpful support properties for
+     [CasariSuc IES]. In fact, we get
+     [E s <-> s, a |= <{CasariSuc IES}>]. The two directions
+     are proven in [support_CasariSuc_IES] and
+     [support_CasariSuc_IES_other_direction].
    *)
-  Proposition support_IES_even_other_direction :
-    forall (s : state) (a : assignment),
-      even (a 0) = true ->
-      s, a |= IES ->
-      contains_any (? (~ even) || ltb (a 0) ?) (States.complement s).
-  Proof.
-    intros s a H1 H2.
-    pose proof (support_IES_even_other_direction') as H3.
-    specialize (H3 s a H1).
-
-    apply NNPP.
-    intros H4.
-
-    apply not_contains_any_contains_all_complement in H4.
-    rewrite complement_complement in H4.
-
-    apply H3.
-    -
-      intros w H5.
-      specialize (H4 w).
-      rewrite orb_true_iff in H4.
-      apply H4.
-      left.
-      exact H5.
-    -
-      intros w H5.
-      apply H4.
-      rewrite H5.
-      rewrite orb_true_r.
-      reflexivity.
-    -
-      exact H2.
-  Qed.
-
-  Print Assumptions support_IES_even_other_direction.
-
-  (** ** Support for [CasariSuc IES] *)
 
   Proposition support_CasariSuc_IES :
     forall (s : state) (a : assignment),
@@ -787,8 +955,16 @@ Module Casari_fails.
       s, a |= <{ CasariSuc IES }>.
   Proof.
     intros s a H1 i.
+    (**
+       We start by a case distinction whether [i] is [even].
+     *)
     destruct (even i) eqn:H2.
     -
+      (**
+         For the first case, we just destruct the property
+         of [s] being a member of [E], as it is a
+         disjunctive property.
+       *)
       destruct H1 as [[n [H11 H12]]|H1].
       +
         apply support_IES_even.
@@ -820,38 +996,10 @@ Module Casari_fails.
   Print Assumptions support_CasariSuc_IES.
 
   (**
-     [counter_state e] is a state that contains every odd number and every
-     (even) number greater than [e]. By this, it contains at least one odd number
-     and its complement can only contain infinitely many even numbers.
+     For the other direction, we prove a version which can
+     be gained by contraposition.
    *)
-  Local Program Definition counter_state (e : nat) : state :=
-    {|
-      morph :=
-        fun w =>
-        if even w
-        then e <? w
-        else true
-    |}.
-
-  Fact counter_state_contains_all_odds :
-    forall e,
-      contains_all (? ~ even ?) (counter_state e).
-  Proof.
-    intros e w H1.
-    simpl.
-    destruct (even w); easy.
-  Qed.
-
-  Fact counter_state_contains_all_ltb :
-    forall e,
-      contains_all (? ltb e ?) (counter_state e).
-  Proof.
-    intros e w H1.
-    simpl.
-    destruct (even w); easy.
-  Qed.
-
-  Lemma support_CasariSuc_IES_other_direction' :
+  Proposition support_CasariSuc_IES_other_direction :
     forall (s : state) (a : assignment) (e : nat),
       contains_all (? ~ even ?) s ->
       contains_all (? ltb e ?) s ->
@@ -862,8 +1010,12 @@ Module Casari_fails.
     unfold CasariSuc in H3.
     rewrite support_Forall in H3.
 
-    eapply support_IES_even_other_direction' with
-      (s := s)
+    (**
+       Note the chosen [a] for applying
+       [support_IES_even_other_direction]. By this, [a 0]
+       is for sure even.
+     *)
+    eapply support_IES_even_other_direction with
       (a := (if even e then e else S e) .: a).
     -
       destruct (even e) eqn:H4.
@@ -871,7 +1023,7 @@ Module Casari_fails.
         exact H4.
       +
         remember ((S e .: a) 0) as n eqn:eq1.
-        asimpl in eq1.
+        simpl in eq1.
         subst n.
 
         rewrite even_succ.
@@ -885,268 +1037,206 @@ Module Casari_fails.
       apply H2.
       apply ltb_lt in H4.
       apply ltb_lt.
-      asimpl in H4.
-      destruct (even e).
-      all: lia.
+      simpl in H4.
+      destruct (even e); [exact H4|lia].
     -
       apply H3.
   Qed.
 
-  Print Assumptions support_CasariSuc_IES_other_direction'.
-
-  (**
-     CLA
-
-     [support_CasariSuc_IES_other_direction] depends on classical logic.
-
-     Descendants:
-     - [support_CasariImpl_IES_other_direction]
-   *)
-  Proposition support_CasariSuc_IES_other_direction :
-    forall (s : state) (a : assignment),
-      s, a |= <{ CasariSuc IES }> ->
-      E s.
-  Proof.
-    intros s a H1.
-    apply NNPP.
-    intros H2.
-    apply Decidable.not_or in H2 as [H2 H3].
-    apply not_contains_any_contains_all_complement in H2.
-    rewrite complement_complement in H2.
-
-    apply not_infinitely_many_finitely_many in H3 as [e H3].
-
-    eapply support_CasariSuc_IES_other_direction' with
-      (e := e).
-    -
-      exact H2.
-    -
-      intros w H4.
-      destruct (even w) eqn:H5.
-      +
-        specialize (H3 _ H5).
-        rewrite complement_true in H3.
-        rewrite ltb_lt in H4.
-        rewrite leb_le in H3.
-        destruct (s w); lia.
-      +
-        apply H2.
-        rewrite H5.
-        reflexivity.
-    -
-      exact H1.
-  Qed.
-
   Print Assumptions support_CasariSuc_IES_other_direction.
 
-  (** ** Support for [CasariImpl IES] *)
+  (** ** Support for [CasariImpl IES]
 
-  Lemma support_CasariImpl_IES_even_other_direction' :
-    forall (s : state) (a : assignment),
-      even (a 0) = true ->
-      contains_all (? ~ even ?) s ->
-      finitely_many (? even ?) (States.complement s) ->
-      contains_any (? ltb (a 0) ?) (States.complement s) ->
-      ~ (s, a |= <{CasariImpl IES}>).
-  Proof.
-    intros s a H1 H2 [e1 H3] [e2 [H4 H5]] H6.
-
-    eapply support_CasariSuc_IES_other_direction' with
-      (e := e1).
-    -
-      exact H2.
-    -
-      intros w H7.
-      destruct (even w) eqn:H8.
-      +
-        specialize (H3 _ H8).
-        rewrite complement_true in H3.
-        rewrite leb_le in H3.
-        rewrite ltb_lt in H7.
-        destruct (s w); lia.
-      +
-        apply H2.
-        rewrite H8.
-        reflexivity.
-    -
-      unfold CasariImpl in H6.
-      rewrite support_Impl in H6.
-      apply H6.
-      +
-        reflexivity.
-      +
-        apply support_IES_even.
-        *
-          exact H1.
-        *
-          exists e2.
-          rewrite H4.
-          split.
-          --
-             destruct (even e2); reflexivity.
-          --
-             exact H5.
-  Qed.
-
-  Print Assumptions support_CasariImpl_IES_even_other_direction'.
-
-  Lemma unnamed_helper_3 :
-    forall (s : state) (a : assignment) (x : var),
-      even (a x) = true ->
-      ~ E s ->
-      exists t,
-        substate t s /\
-        contains_all (? ~ even ?) t /\
-        finitely_many (? even ?) (States.complement t) /\
-        contains_any (? ltb (a x) ?) (States.complement t).
-  Proof.
-    intros s a x H1 H2.
-    apply Decidable.not_or in H2 as [H2 H3].
-    apply not_contains_any_contains_all_complement in H2.
-    rewrite complement_complement in H2.
-    apply not_infinitely_many_finitely_many in H3 as [e H3].
-    (**
-       [e] is the greatest even number not in [s].
-       We're looking for a [substate] [t] of [s], s.t.
-       there also exists a greatest even number not in [t] and
-       with one even number contained greater than [a x].
-     *)
-    unshelve eexists.
-    {
-      unshelve econstructor.
-      exact (
-        fun w =>
-        if even w
-        then S (S ((a x) + e)) <? w
-        else true
-      ).
-      repeat intro.
-      simpl in *.
-      subst.
-      reflexivity.
-    }
-    simpl.
-    repeat split.
-    -
-      intros w H5.
-      simpl in H5.
-      destruct (even w) eqn:H4.
-      +
-        specialize (H3 _ H4).
-        rewrite complement_true in H3.
-        rewrite leb_le in H3.
-        rewrite ltb_lt in H5.
-        destruct (s w); lia.
-      +
-        apply H2.
-        rewrite H4.
-        reflexivity.
-    -
-      intros w H4.
-      rewrite negb_true_iff in H4.
-      simpl.
-      rewrite H4.
-      reflexivity.
-    -
-      exists (S (S (a x + e))).
-      intros w H4 H5.
-      simpl in H5.
-      rewrite H4 in H5.
-      apply leb_le.
-      rewrite negb_true_iff in H5.
-      apply ltb_nlt in H5.
-      lia.
-    -
-      exists (S (S (a x))).
-      rewrite complement_true.
-      simpl.
-      rewrite H1.
-      split.
-      +
-        apply ltb_lt.
-        lia.
-      +
-        apply ltb_nlt.
-        lia.
-  Qed.
-
-  Print Assumptions unnamed_helper_3.
-
-  (**
-     CLA
-
-     [support_CasariImpl_IES_other_direction] depends on classical logic.
-
-     Descendants:
-     - [support_CasariAnt_IES]
+     In this section, we will prove needed support
+     properties for [CasariImpl IES]. The main result is
+     [support_CasariImpl_IES_other_direction].
    *)
   Proposition support_CasariImpl_IES_other_direction :
     forall (s : state) (a : assignment),
-      s, a |= <{CasariImpl IES}> ->
-      E s.
+      contains_all (? ~ even ?) s ->
+      finitely_many even (States.complement s) ->
+      ~ (s, a |= CasariImpl IES).
   Proof.
-    intros s a H1.
-    destruct (even (a 0)) eqn:H2.
+    intros s a H1 H2 H3.
+    destruct (even (a 0)) eqn:H4.
     -
-      apply NNPP.
-      intros H3.
-      eapply (unnamed_helper_3 _ _ _ H2) in H3.
-      destruct H3 as [t [H3 [H4 [H5 H6]]]].
-      eapply support_CasariImpl_IES_even_other_direction'.
-      all: eauto using persistency.
+      pose proof (unnamed_helper_Casari_3 _ _ _ H4 H1 H2) as
+        [t [H5 [H6 [H7 H8]]]].
+      destruct H7 as [e1 H7].
+      eapply support_CasariSuc_IES_other_direction with
+        (e := e1).
+      +
+        exact H6.
+      +
+        intros w H9.
+        destruct (even w) eqn:HA.
+        *
+          specialize (H7 _ HA).
+          rewrite complement_true in H7.
+          rewrite leb_le in H7.
+          rewrite ltb_lt in H9.
+          destruct (t w); lia.
+        *
+          apply H6.
+          rewrite HA.
+          reflexivity.
+      +
+        unfold CasariImpl in H3.
+        rewrite support_Impl in H3.
+        apply H3.
+        *
+          exact H5.
+        *
+          apply support_IES_even.
+          --
+             exact H4.
+          --
+             destruct H8 as [e2 [H81 H82]].
+             exists e2.
+             split.
+             ++
+                rewrite H81.
+                apply orb_true_r.
+             ++
+                exact H82.
     -
-      unfold CasariImpl in H1.
-      rewrite support_Impl in H1.
+      unfold CasariImpl in H3.
+      rewrite support_Impl in H3.
 
-      eapply support_CasariSuc_IES_other_direction.
+      destruct H2 as [e H2].
 
-      apply H1.
+      eapply support_CasariSuc_IES_other_direction with
+        (e := e).
       +
-        reflexivity.
+        exact H1.
       +
-        apply support_IES_odd.
-        exact H2.
+        intros w H5.
+        apply ltb_lt in H5.
+        destruct (even w) eqn:H6.
+        *
+          destruct (s w) eqn:H7; try reflexivity.
+          specialize (H2 _ H6).
+          rewrite complement_true in H2.
+          specialize (H2 H7).
+          apply leb_le in H2.
+          lia.
+        *
+          apply H1.
+          rewrite H6.
+          reflexivity.
+      +
+        apply H3.
+        *
+          reflexivity.
+        *
+          apply support_IES_odd.
+          exact H4.
   Qed.
 
   Print Assumptions support_CasariImpl_IES_other_direction.
 
-  (** ** Support for [CasariAnt IES] *)
+  (** ** Support for [CasariAnt IES]
 
+     Now, we can stick our previously proved propositions
+     together. By this, we get that [CasariAnt IES] is
+     valid in our instantiated model [M].
+
+     For this, we use classical logic in two points:
+     - In order to apply contraposition via [NNPP] and
+     - when we are applying
+       [not_E_finitely_many_complement].
+   *)
   Proposition support_CasariAnt_IES :
     forall (s : state) (a : assignment),
       s, a |= <{CasariAnt IES}>.
   Proof.
     intros s a i t H1 H2.
     apply support_CasariSuc_IES.
+
+    apply NNPP.
+    intros H3.
     eapply support_CasariImpl_IES_other_direction.
-    exact H2.
+    -
+      apply not_E_contains_all.
+      exact H3.
+    -
+      apply not_E_finitely_many_complement.
+      exact H3.
+    -
+      exact H2.
   Qed.
 
   Print Assumptions support_CasariAnt_IES.
 
-  (** ** Support for [Casari IES] *)
+  (** ** Support for [Casari IES]
+
+     We now conclude that we have indeed found a suitable
+     counter-example. For this, we still need to define a
+     suitable state. We would also need a concrete
+     [assignment] but this can be done one the fly.
+
+     [counter_state e] is a state that contains every odd
+     number and every (even) number greater than [e]. By
+     this, it contains at least one odd number and its
+     complement can only contain infinitely many even
+     numbers.
+   *)
+  Local Program Definition counter_state (e : nat) : state :=
+    {|
+      morph :=
+        fun w =>
+        (e <? w) || negb (even w)
+    |}.
+
+  Fact counter_state_contains_all_odds :
+    forall e,
+      contains_all (? ~ even ?) (counter_state e).
+  Proof.
+    intros e w H1.
+    simpl.
+    rewrite H1.
+    apply orb_true_r.
+  Qed.
+
+  Fact counter_state_contains_all_ltb :
+    forall e,
+      contains_all (? ltb e ?) (counter_state e).
+  Proof.
+    intros e w H1.
+    simpl.
+    rewrite H1.
+    reflexivity.
+  Qed.
 
   Theorem not_support_valid_Casari_IES :
     ~ support_valid <{Casari IES}>.
   Proof.
     intros H1.
 
-    eapply support_CasariSuc_IES_other_direction'.
+    (**
+       As [Casari IES] is an implication with conclusion
+       [CasariSuc IES], we try to falsify this.
+     *)
+    eapply support_CasariSuc_IES_other_direction.
     -
       apply counter_state_contains_all_odds.
     -
       apply counter_state_contains_all_ltb.
     -
-      unfold Casari in H1.
       eapply H1.
       +
         reflexivity.
       +
         fold support.
         apply support_CasariAnt_IES.
+
+    (**
+       We still need to instantiate some existential
+       variables.
+     *)
     Unshelve.
-    exact (fun _ => 25).
-    exact 24.
+    exact (fun _ => 25). (* any variable [assignment] *)
+    exact 24. (* concrete instance of [counter_state] *)
   Qed.
 
   Print Assumptions not_support_valid_Casari_IES.
@@ -1157,179 +1247,153 @@ Module Casari_fails.
 
 End Casari_fails.
 
-(** * Bounded Casari *)
+(** * Bounded Casari
 
-Scheme Equality for nat.
+   We will now prove that the Casari Scheme is valid for
+   every formula with the property that the highest occuring
+   free variable is at most 0. We will proceed by providing
+   a derivation using [Seq] and its [soundness].
+ *)
 
-Proposition Seq_CasariAnt_CasariSuc `{Signature} :
+Theorem Seq_CasariAnt_CasariSuc `{Signature} :
   forall ns (phi : form) sigma,
     highest_occ_free_var phi (Some 0) ->
     Seq
     ((pair ns (CasariAnt phi).|[sigma]) :: nil)
     ((pair ns (CasariSuc phi).|[sigma]) :: nil).
 Proof.
+  (**
+     Proof by induction on the size of the label [ns].
+   *)
   induction ns as [ns IH] using
     (well_founded_ind InS_sublist_order_wf).
-
   intros phi sigma H1.
   eapply Seq_Forall_r.
+  {
+    apply InS_cons_I_hd.
+    simpl.
+    reflexivity.
+  }
+  eapply Seq_Forall_l with (t := Var 0).
+  {
+    apply InS_cons_I_hd.
+    simpl.
+    reflexivity.
+  }
+  {
+    exact I.
+  }
+  eapply Seq_Impl_l.
+  {
+    apply InS_cons_I_hd.
+    simpl.
+    reflexivity.
+  }
+  {
+    reflexivity.
+  }
   -
-    left; simpl; reflexivity.
+    eapply Seq_Impl_r.
+    {
+      apply InS_cons_I_hd.
+      reflexivity.
+    }
+    intros ns' H2.
+    destruct (InS_sublist_dec ns ns') as [H3|H3].
+    +
+      eapply prop_4_6.
+      {
+        apply InS_cons_I_hd.
+        reflexivity.
+      }
+      {
+        apply InS_cons_I_tl.
+        apply InS_cons_I_tl.
+        apply InS_cons_I_hd.
+        split.
+        -
+          reflexivity.
+        -
+          repeat rewrite hsubst_comp'.
+          apply H1.
+          inversion 1; reflexivity.
+      }
+      exact H3.
+    +
+      apply Seq_weakening with
+        (ls1 := (pair ns (CasariAnt phi).|[sigma].|[ren (+1)]) :: nil)
+        (rs1 := (pair ns' (CasariSuc phi).|[sigma].|[ren (+1)]) :: nil).
+      {
+        intros psi H4.
+        apply InS_cons_E in H4 as [H4|H4].
+        -
+          apply InS_cons_I_tl.
+          apply InS_cons_I_tl.
+          apply InS_cons_I_hd.
+          rewrite H4.
+          reflexivity.
+        -
+          now apply InS_nil_E in H4.
+      }
+      {
+        intros psi H4.
+        apply InS_cons_E in H4 as [H4|H4].
+        -
+          apply InS_cons_I_hd.
+          rewrite H4.
+          f_equiv.
+          simpl.
+          repeat rewrite hsubst_comp'.
+          apply H1.
+          inversion 1; reflexivity.
+        -
+          now apply InS_nil_E in H4.
+      }
+      eapply Seq_mon.
+      {
+        apply InS_cons_I_hd.
+        reflexivity.
+      }
+      {
+        exact H2.
+      }
+      eapply Seq_weakening with
+        (ls1 := (pair ns' (CasariAnt phi).|[sigma].|[ren (+1)]) :: nil).
+      {
+        apply cons_InS_sublist_I.
+        -
+          apply InS_cons_I_hd.
+          reflexivity.
+        -
+          apply nil_InS_sublist_I.
+      }
+      {
+        reflexivity.
+      }
+      do 2 rewrite hsubst_comp'.
+      eapply IH; try assumption.
+      split; assumption.
   -
     eapply Seq_Forall_l with (t := Var 0).
-    +
-      left; simpl; reflexivity.
-    +
+    {
+      apply InS_cons_I_hd.
+      reflexivity.
+    }
+    {
       exact I.
-    +
-      eapply Seq_Impl_l.
-      *
-        left; simpl; reflexivity.
-      *
-        reflexivity.
-      *
-        eapply Seq_Impl_r.
-        --
-           left; reflexivity.
-        --
-           intros ns' H2.
-           destruct (InS_sublist_dec ns ns') as [H3|H3].
-           ++
-              eapply prop_4_6.
-              **
-                 left; reflexivity.
-              **
-                 apply InS_cons_I_tl.
-                 apply InS_cons_I_tl.
-                 apply InS_cons_I_hd.
-                 simpl.
-                 split.
-                 ---
-                     simpl.
-                     reflexivity.
-                 ---
-                     simpl.
-                     enough (H4 :
-                      phi.|[Var 0 .: sigma >> ren (+1)] ==
-                      phi.|[up sigma]
-                     ).
-                     {
-                       repeat rewrite hsubst_comp'.
-                       apply H1.
-                       intros [|y'] H5; lia + reflexivity.
-                     }
-                     apply H1.
-                     inversion 1; reflexivity.
-              **
-                 exact H3.
-           ++
-              apply Seq_weakening with
-                (ls1 := (pair ns (CasariAnt phi).|[sigma].|[ren (+1)]) :: nil)
-                (rs1 := (pair ns' (CasariSuc phi).|[sigma].|[ren (+1)]) :: nil).
-              **
-                 intros psi H4.
-                 apply InS_cons_E in H4 as [H4|H4].
-                 ---
-                     apply InS_cons_I_tl.
-                     apply InS_cons_I_tl.
-                     apply InS_cons_I_hd.
-                     rewrite H4.
-                     reflexivity.
-                 ---
-                     contradict H4.
-                     apply InS_nil_E.
-              **
-                 intros psi H4.
-                 apply InS_cons_E in H4 as [H4|H4].
-                 ---
-                     apply InS_cons_I_hd.
-                     rewrite H4.
-                     simpl.
-                     split.
-                     +++
-                         reflexivity.
-                     +++
-                         simpl.
-                         enough (H5 :
-                           phi.|[ids 0 .: sigma >> ren (+2)] ==
-                           phi.|[upn 2 sigma]
-                         ).
-                         {
-                           repeat rewrite hsubst_comp'.
-                           apply H1.
-                           intros [|y'] H6; try lia.
-                           reflexivity.
-                         }
-                         (*
-                         ) by (rewrite H5; reflexivity).
-                          *)
-
-                         apply H1.
-                         inversion 1; reflexivity.
-                 ---
-                     contradict H4.
-                     apply InS_nil_E.
-              **
-                 eapply Seq_mon.
-                 ---
-                     left; reflexivity.
-                 ---
-                     exact H2.
-                 ---
-                     eapply Seq_weakening with
-                       (ls1 := (pair ns' (CasariAnt phi).|[sigma].|[ren (+1)]) :: nil).
-                     +++
-                         apply cons_InS_sublist_I.
-                         ***
-                             apply InS_cons_I_hd.
-                             reflexivity.
-                         ***
-                             apply nil_InS_sublist_I.
-                     +++
-                         reflexivity.
-                     +++
-                         do 2 rewrite hsubst_comp'.
-                         eapply IH; try assumption.
-                         simpl in H2.
-                         split.
-                         ***
-                             exact H2.
-                         ***
-                             exact H3.
-      *
-        eapply Seq_Forall_l with (t := Var 0).
-        --
-           left; reflexivity.
-        --
-           exact I.
-        --
-           eapply prop_4_6.
-           ++
-              left; reflexivity.
-           ++
-              left.
-              simpl.
-              split.
-              **
-                 reflexivity.
-              **
-                 enough (H2 :
-                  phi.|[Var 0 .: up sigma] == phi.|[up sigma]
-                 ).
-                 {
-                   red in H1.
-                   repeat rewrite hsubst_comp'.
-                   apply H1.
-                   intros [|y'] H3; try lia.
-                   reflexivity.
-                 }
-                 (*
-                 ) by (rewrite H2; reflexivity).
-                  *)
-                 apply H1.
-                 inversion 1; reflexivity.
-           ++
-              reflexivity.
+    }
+    eapply prop_4_6.
+    {
+      left; reflexivity.
+    }
+    {
+      left.
+      f_equiv.
+      repeat rewrite hsubst_comp'.
+      apply H1.
+      inversion 1; reflexivity.
+    }
+    reflexivity.
 Qed.
 
 Print Assumptions Seq_CasariAnt_CasariSuc.
@@ -1341,78 +1405,35 @@ Corollary Seq_Casari `{Signature} :
 Proof.
   intros phi ns H1.
   eapply Seq_Impl_r.
-  -
-    left.
-    split.
-    +
-      simpl.
+  {
+    apply InS_cons_I_hd.
+    f_equiv.
+    split; reflexivity.
+  }
+  intros ns' H2.
+  eapply Seq_weakening with
+    (ls1 := (pair ns' (CasariAnt phi).|[ids] :: nil))
+    (rs1 := (pair ns' (CasariSuc phi).|[ids] :: nil)).
+  {
+    apply cons_InS_sublist_I.
+    -
+      apply InS_cons_I_hd.
+      rewrite hsubst_id'.
       reflexivity.
-    +
-      simpl snd.
-      unfold Casari.
+    -
+      apply nil_InS_sublist_I.
+  }
+  {
+    apply cons_InS_sublist_I.
+    -
+      apply InS_cons_I_hd.
+      rewrite hsubst_id'.
       reflexivity.
-  -
-    intros ns' H2.
-    eapply Seq_weakening with
-      (ls1 := (pair ns' (CasariAnt phi).|[ids] :: nil))
-      (rs1 := (pair ns' (CasariSuc phi).|[ids] :: nil)).
-    +
-      apply cons_InS_sublist_I.
-      *
-        apply InS_cons_I_hd.
-        split; try reflexivity.
-        simpl.
-        repeat split.
-        --
-           transitivity (phi.|[ids]).
-           ++
-              apply H1.
-              intros [|y'] H3; try lia.
-              reflexivity.
-           ++
-              apply hsubst_id'.
-        --
-           transitivity (phi.|[ids]).
-           ++
-              apply H1.
-              intros [|y'] H3; try lia.
-              reflexivity.
-           ++
-              apply hsubst_id'.
-        --
-           transitivity (phi.|[ids]).
-           ++
-              apply H1.
-              intros [|y'] H3; try lia.
-              reflexivity.
-           ++
-              apply hsubst_id'.
-      *
-        apply nil_InS_sublist_I.
-    +
-      intros psi H3.
-      apply InS_cons_E in H3 as [H3|H3].
-      *
-        apply InS_cons_I_hd.
-        rewrite H3.
-        split.
-        --
-           reflexivity.
-        --
-           simpl.
-           transitivity (phi.|[ids]).
-           ++
-              apply H1.
-              intros [|y'] H4; try lia.
-              reflexivity.
-           ++
-              apply hsubst_id'.
-      *
-        contradict H3.
-        apply InS_nil_E.
-    +
-      eapply Seq_CasariAnt_CasariSuc.
-      exact H1.
+    -
+      apply nil_InS_sublist_I.
+  }
+  eapply Seq_CasariAnt_CasariSuc.
+  exact H1.
 Qed.
 
 Print Assumptions Seq_Casari.
@@ -1431,8 +1452,7 @@ Proof.
   -
     exact H2.
   -
-    contradict H2.
-    apply some_nil_E.
+    now apply some_nil_E in H2.
 Qed.
 
 Print Assumptions support_valid_Casari_bd.
