@@ -1,5 +1,48 @@
 # Changelog
 
+## inqlog-v0.15.0 (2025-03-14)
+
+### New
+
+* Analysed the support validity of DNE. [Max Ole Elliger]
+
+  DNE is truth-valid, but not support-valid. It is valid for every
+  classical formula.
+
+* Defined the most inconsistent state. [Max Ole Elliger]
+
+* Defined example model `two_Worlds_Model` [Max Ole Elliger]
+
+* Defined `pointed_assignment` [Max Ole Elliger]
+
+* Defined Kuroda and derived it via `Seq` [Max Ole Elliger]
+
+* Proved `Seq_Neg_l` [Max Ole Elliger]
+
+### Changes
+
+* Moved assignments from Support.v -> Models.v. [Max Ole Elliger]
+
+* Removed unnecessary uses of NNPP in Seq.v. [Max Ole Elliger]
+
+* Simplified and comment `satisfaction_conseq_Pred_r` [Max Ole Elliger]
+
+* More `Print Assumptions` for soundness. [Max Ole Elliger]
+
+  This makes the use of classical logic more transparent.
+
+* Replaced some anonymous functions in Consequence.v. [Max Ole Elliger]
+
+* Redefined the highest occ variable. [Max Ole Elliger]
+
+  By using the `option`-type, we can also state that a formula doesn't
+  have any free variable. This means, that is is invariant under
+  substitutions.
+
+### Fix
+
+* Renamed `Seq_Bot_r` to `Seq_Neg_r` [Max Ole Elliger]
+
 ## inqlog-v0.14.0 (2025-03-04)
 
 ### New
