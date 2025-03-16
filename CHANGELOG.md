@@ -1,5 +1,24 @@
 # Changelog
 
+## inqlog-v0.16.0 (2025-03-16)
+
+### Changes
+
+* Optimized Casari.v with multiple changes. [Max Ole Elliger]
+
+  - Simplified `counter_state` in Casari
+  - Moved all assumptions of classical logic for the Casari
+    Counter-Example to `support_CasariAnt_IES`
+  - By this, all real `_other_direction`-proofs were eliminated.
+  - The contraposition variants of them were renamed.
+  - Used the keywords `Lemma`, `Proposition`, `Theorem`, `Corollary` more
+    consistently.
+  - Simplified proofs.
+  - Extracted state construction for `unnamed_helper_Casari_3` to a local
+    definition.
+  - Improved documentation
+  - Simplified proofs for the bounded validity of the Casari Scheme
+
 ## inqlog-v0.15.0 (2025-03-14)
 
 ### New
