@@ -1,5 +1,17 @@
 # Changelog
 
+## inqlog-v0.16.1 (2025-03-17)
+
+### Changes
+
+* Simplified the proof of `support_CasariImpl_IES_other_direction` [Max Ole Elliger]
+
+  This was possible by the new definition of `unnamed_helper_Casari_3`.
+
+* Simplified `unnamed_helper_Casari_3` [Max Ole Elliger]
+
+  new state definition and less assumptions
+
 ## inqlog-v0.16.0 (2025-03-16)
 
 ### Changes
