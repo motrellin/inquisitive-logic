@@ -760,80 +760,92 @@ Module Casari_fails.
   Print Assumptions unnamed_helper_Casari_2.
 
   Local Program Definition unnamed_helper_Casari_3_state
-    (a : assignment)
-    (x : var)
-    (e : nat) : state :=
+    (n e : nat) : state :=
 
     {|
       morph :=
         fun w =>
-        (S (S ((a x) + e)) <? w) || negb (even w)
+        (S (S (max n e)) <? w) || negb (even w)
     |}.
 
   Lemma unnamed_helper_Casari_3 :
-    forall (s : state) (a : assignment) (x : var),
-      even (a x) = true ->
+    forall (s : state) (n : nat),
       contains_all (? ~ even ?) s ->
       finitely_many (? even ?) (States.complement s) ->
       exists t,
         substate t s /\
         contains_all (? ~ even ?) t /\
         finitely_many (? even ?) (States.complement t) /\
-        contains_any (? ltb (a x) ?) (States.complement t).
+        contains_any (? ltb n ?) (States.complement t).
   Proof.
-    intros s a x H1 H2 [e H3].
+    intros s n H1 [e H2].
     (**
        [e] is the greatest even number not in [s].
        We're looking for a [substate] [t] of [s], s.t.
        there also exists a greatest even number not in [t] and
        with one even number contained greater than [a x].
      *)
-    exists (unnamed_helper_Casari_3_state a x e).
+    exists (unnamed_helper_Casari_3_state n e).
     repeat split.
     -
-      intros w H5.
-      simpl in H5.
-      destruct (even w) eqn:H4.
+      intros w H4.
+      simpl in H4.
+      destruct (even w) eqn:H3.
       +
-        specialize (H3 _ H4).
-        rewrite complement_true in H3.
-        rewrite leb_le in H3.
-        rewrite orb_false_r in H5.
-        rewrite ltb_lt in H5.
-        destruct (s w); lia.
+        rewrite orb_false_r in H4.
+        specialize (H2 _ H3).
+        destruct (s w) eqn:H5; try reflexivity.
+        rewrite complement_true in H2.
+        specialize (H2 H5).
+        apply leb_le in H2.
+        apply ltb_lt in H4.
+        lia.
       +
-        apply H2.
-        rewrite H4.
+        apply H1.
+        rewrite H3.
         reflexivity.
     -
-      intros w H4.
-      rewrite negb_true_iff in H4.
+      intros w H3.
       simpl.
-      rewrite H4.
+      rewrite H3.
       apply orb_true_r.
     -
-      exists (S (S (a x + e))).
-      intros w H4 H5.
-      simpl in H5.
-      rewrite H4 in H5.
+      exists (S (S (max n e))).
+      intros w H3 H4.
+      rewrite complement_true in H4.
+      apply orb_false_iff in H4 as [H4 H5].
+      apply ltb_nlt in H4.
       apply leb_le.
-      rewrite negb_true_iff in H5.
-      rewrite orb_false_r in H5.
-      apply ltb_nlt in H5.
       lia.
     -
-      exists (S (S (a x))).
-      rewrite complement_true.
-      simpl.
-      rewrite H1.
+      exists (
+        if even (max n e)
+        then S (S (max n e))
+        else S (max n e)
+      ).
       split.
       +
-        apply ltb_lt.
-        lia.
+        destruct (even (max n e)).
+        all: apply ltb_lt.
+        all: lia.
       +
-        rewrite orb_false_r.
-        apply ltb_nlt.
-        lia.
+        rewrite complement_true.
+        apply orb_false_iff.
+        split.
+        *
+          apply ltb_nlt.
+          destruct (even (max n e)).
+          all: lia.
+        *
+          destruct (even (max n e)) eqn:H3.
+          --
+             simpl.
+             rewrite H3.
+             reflexivity.
+          --
+             rewrite negb_even.
+             rewrite odd_succ.
+             exact H3.
   Qed.
 
   Print Assumptions unnamed_helper_Casari_3.
@@ -1060,7 +1072,7 @@ Module Casari_fails.
     intros s a H1 H2 H3.
     destruct (even (a 0)) eqn:H4.
     -
-      pose proof (unnamed_helper_Casari_3 _ _ _ H4 H1 H2) as
+      pose proof (unnamed_helper_Casari_3 _ (a 0) H1 H2) as
         [t [H5 [H6 [H7 H8]]]].
       destruct H7 as [e1 H7].
       eapply support_CasariSuc_IES_other_direction with
