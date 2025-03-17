@@ -1063,6 +1063,7 @@ Module Casari_fails.
      properties for [CasariImpl IES]. The main result is
      [support_CasariImpl_IES_other_direction].
    *)
+
   Proposition support_CasariImpl_IES_other_direction :
     forall (s : state) (a : assignment),
       contains_all (? ~ even ?) s ->
@@ -1070,79 +1071,49 @@ Module Casari_fails.
       ~ (s, a |= CasariImpl IES).
   Proof.
     intros s a H1 H2 H3.
-    destruct (even (a 0)) eqn:H4.
+    pose proof (unnamed_helper_Casari_3 _ (a 0) H1 H2) as
+      [t [H5 [H6 [H7 H8]]]].
+    destruct H7 as [e1 H7].
+    eapply support_CasariSuc_IES_other_direction with
+      (e := e1).
     -
-      pose proof (unnamed_helper_Casari_3 _ (a 0) H1 H2) as
-        [t [H5 [H6 [H7 H8]]]].
-      destruct H7 as [e1 H7].
-      eapply support_CasariSuc_IES_other_direction with
-        (e := e1).
+      exact H6.
+    -
+      intros w H9.
+      destruct (even w) eqn:HA.
       +
-        exact H6.
+        specialize (H7 _ HA).
+        destruct (t w) eqn:HB; try reflexivity.
+        rewrite complement_true in H7.
+        specialize (H7 HB).
+        apply leb_le in H7.
+        apply ltb_lt in H9.
+        lia.
       +
-        intros w H9.
-        destruct (even w) eqn:HA.
-        *
-          specialize (H7 _ HA).
-          rewrite complement_true in H7.
-          rewrite leb_le in H7.
-          rewrite ltb_lt in H9.
-          destruct (t w); lia.
-        *
-          apply H6.
-          rewrite HA.
-          reflexivity.
-      +
-        unfold CasariImpl in H3.
-        rewrite support_Impl in H3.
-        apply H3.
-        *
-          exact H5.
-        *
-          apply support_IES_even.
-          --
-             exact H4.
-          --
-             destruct H8 as [e2 [H81 H82]].
-             exists e2.
-             split.
-             ++
-                rewrite H81.
-                apply orb_true_r.
-             ++
-                exact H82.
+        apply H6.
+        rewrite HA.
+        reflexivity.
     -
       unfold CasariImpl in H3.
       rewrite support_Impl in H3.
-
-      destruct H2 as [e H2].
-
-      eapply support_CasariSuc_IES_other_direction with
-        (e := e).
+      apply H3.
       +
-        exact H1.
+        exact H5.
       +
-        intros w H5.
-        apply ltb_lt in H5.
-        destruct (even w) eqn:H6.
+        destruct (even (a 0)) eqn:H9.
         *
-          destruct (s w) eqn:H7; try reflexivity.
-          specialize (H2 _ H6).
-          rewrite complement_true in H2.
-          specialize (H2 H7).
-          apply leb_le in H2.
-          lia.
-        *
-          apply H1.
-          rewrite H6.
-          reflexivity.
-      +
-        apply H3.
-        *
-          reflexivity.
+          apply support_IES_even.
+          --
+             exact H9.
+          --
+             destruct H8 as [e2 [H81 H82]].
+             exists e2.
+             rewrite H81,H82.
+             rewrite orb_true_r.
+             split; reflexivity.
         *
           apply support_IES_odd.
-          exact H4.
+          exact H9.
   Qed.
 
   Print Assumptions support_CasariImpl_IES_other_direction.
