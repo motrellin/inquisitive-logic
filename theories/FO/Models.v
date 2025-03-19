@@ -72,7 +72,7 @@ Class Model `{Signature} :=
       forall (f : FSymb),
         rigid f = true ->
         forall (w w' : World),
-          FInterpretation w f = FInterpretation w' f
+          FInterpretation w f == FInterpretation w' f
   }.
 
 
@@ -91,13 +91,7 @@ Next Obligation.
   decide equality.
 Qed.
 
-Next Obligation.
-  repeat intro; reflexivity.
-Qed.
-
-Next Obligation.
-  repeat intro; reflexivity.
-Qed.
+Solve All Obligations with (repeat intro; reflexivity).
 
 (** * Variable Assignments
 
