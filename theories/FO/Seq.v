@@ -646,14 +646,16 @@ Proof.
       reflexivity.
 Qed.
 
+Print Assumptions Seq_ex_1.
+
 Example Seq_ex_2 `{Signature} :
   forall ns phi psi,
     Seq
     ((pair ns <{iexists phi}>) :: nil)
     ((pair ns <{iexists ~ psi -> phi}>) :: nil).
 Proof with (
-  try (right; left; asimpl; reflexivity);
-  try (left; asimpl; reflexivity);
+  try (right; left; simpl; reflexivity);
+  try (left; simpl; reflexivity);
   try easy
 ).
   intros ns1 phi psi.
@@ -661,8 +663,25 @@ Proof with (
   eapply Seq_Iexists_r with (t := Var 0)...
   eapply Seq_Impl_r...
   intros ns' H1.
-  eapply Seq_persistency...
+  simpl.
+  eapply Seq_persistency.
+  {
+    apply InS_cons_I_tl.
+    apply InS_cons_I_hd.
+    reflexivity.
+  }
+  {
+    apply InS_cons_I_hd.
+    f_equiv.
+    rewrite hsubst_comp'.
+    rewrite <- hsubst_id' at 1.
+    apply hsubst_Proper; try reflexivity.
+    intros [|]; reflexivity.
+  }
+  exact H1.
 Qed.
+
+Print Assumptions Seq_ex_2.
 
 Example Seq_ex_3 `{Signature} :
   forall ns phi psi,
@@ -670,8 +689,8 @@ Example Seq_ex_3 `{Signature} :
     ((pair ns <{(forall phi) \\/ psi}>) :: nil)
     ((pair ns (Forall (Idisj phi psi.|[ren (+1)]))) :: nil).
 Proof with (
-  try (left; asimpl; reflexivity);
-  try (right; left; asimpl; reflexivity);
+  try (left; simpl; reflexivity);
+  try (right; left; simpl; reflexivity);
   try easy
 ).
   intros ns phi psi.
@@ -680,10 +699,29 @@ Proof with (
   all: eapply Seq_Idisj_r...
   -
     eapply Seq_Forall_l with (t := Var 0)...
-    eapply Seq_persistency...
+    eapply Seq_persistency.
+    {
+      apply InS_cons_I_hd.
+      reflexivity.
+    }
+    {
+      apply InS_cons_I_hd.
+      f_equiv.
+      rewrite <- hsubst_id' with
+        (phi := phi)
+        at 2.
+      rewrite hsubst_comp'.
+      apply hsubst_Proper; try reflexivity.
+      intros [|]; reflexivity.
+    }
+    {
+      reflexivity.
+    }
   -
     eapply Seq_persistency...
 Qed.
+
+Print Assumptions Seq_ex_3.
 
 (** * Corresponding semantic
 
