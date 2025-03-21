@@ -388,7 +388,10 @@ Qed.
 
 Print Assumptions Seq_Proper.
 
-Proposition prop_4_6 `{Signature} :
+(**
+   The following rule reflects [persistency].
+ *)
+Proposition Seq_persistency `{Signature} :
   forall ls rs ns1 ns2 phi,
   InS (pair ns1 phi) ls ->
   InS (pair ns2 phi) rs ->
@@ -570,7 +573,7 @@ Proof.
            exact H3.
 Qed.
 
-Print Assumptions prop_4_6.
+Print Assumptions Seq_persistency.
 
 (** ** Some example derivations *)
 
@@ -658,7 +661,7 @@ Proof with (
   eapply Seq_Iexists_r with (t := Var 0)...
   eapply Seq_Impl_r...
   intros ns' H1.
-  eapply prop_4_6...
+  eapply Seq_persistency...
 Qed.
 
 Example ex_4_8 `{Signature} :
@@ -677,9 +680,9 @@ Proof with (
   all: eapply Seq_Idisj_r...
   -
     eapply Seq_Forall_l with (t := Var 0)...
-    eapply prop_4_6...
+    eapply Seq_persistency...
   -
-    eapply prop_4_6...
+    eapply Seq_persistency...
 Qed.
 
 (** * Corresponding semantic
@@ -1532,7 +1535,7 @@ Proof.
   -
     reflexivity.
   -
-    eapply prop_4_6.
+    eapply Seq_persistency.
     +
       left; reflexivity.
     +
@@ -1706,7 +1709,7 @@ Proof.
     apply InS_cons_I_hd; reflexivity.
   }
   intros n H3.
-  eapply prop_4_6.
+  eapply Seq_persistency.
   {
     apply InS_cons_I_hd; reflexivity.
   }

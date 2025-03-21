@@ -1284,7 +1284,7 @@ Proof.
     intros ns' H2.
     destruct (InS_sublist_dec ns ns') as [H3|H3].
     +
-      eapply prop_4_6.
+      eapply Seq_persistency.
       {
         apply InS_cons_I_hd.
         reflexivity.
@@ -1365,7 +1365,7 @@ Proof.
     {
       exact I.
     }
-    eapply prop_4_6.
+    eapply Seq_persistency.
     {
       left; reflexivity.
     }
