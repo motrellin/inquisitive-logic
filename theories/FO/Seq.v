@@ -577,7 +577,7 @@ Print Assumptions Seq_persistency.
 
 (** ** Some example derivations *)
 
-Example ex_4_5 `{Signature} :
+Example Seq_ex_1 `{Signature} :
   forall ns n p args,
     InS n ns ->
     Seq ((pair ns <{~ ~ Pred p args}>) :: nil)
@@ -646,7 +646,7 @@ Proof.
       reflexivity.
 Qed.
 
-Example ex_4_7 `{Signature} :
+Example Seq_ex_2 `{Signature} :
   forall ns phi psi,
     Seq
     ((pair ns <{iexists phi}>) :: nil)
@@ -664,7 +664,7 @@ Proof with (
   eapply Seq_persistency...
 Qed.
 
-Example ex_4_8 `{Signature} :
+Example Seq_ex_3 `{Signature} :
   forall ns phi psi,
     Seq
     ((pair ns <{(forall phi) \\/ psi}>) :: nil)
