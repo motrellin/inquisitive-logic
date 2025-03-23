@@ -1,5 +1,25 @@
 # Changelog
 
+## inqlog-v0.16.2 (2025-03-23)
+
+### Changes
+
+* Renamed examples in Seq.v. [Max Ole Elliger]
+
+  - `ex_4_5` -> `Seq_ex_1`
+  - `ex_4_7` -> `Seq_ex_2`
+  - `ex_4_8` -> `Seq_ex_3`
+
+* Renamed `prop_4_6` -> `Seq_persistency` [Max Ole Elliger]
+
+### Fix
+
+* Removed occurences of functional extensionality. [Max Ole Elliger]
+
+  The examples in Seq.v still used it which is now fixed.
+
+* `rigidity` now uses `==` instead of `=` [Max Ole Elliger]
+
 ## inqlog-v0.16.1 (2025-03-17)
 
 ### Changes
