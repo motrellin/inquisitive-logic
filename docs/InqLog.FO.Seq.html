@@ -471,7 +471,14 @@
 <span class="id" title="keyword">Print</span> <span class="id" title="keyword">Assumptions</span> <a class="idref" href="InqLog.FO.Seq.html#Seq_Proper"><span class="id" title="instance">Seq_Proper</span></a>.<br/>
 
 <br/>
-<span class="id" title="keyword">Proposition</span> <a id="prop_4_6" class="idref" href="#prop_4_6"><span class="id" title="lemma">prop_4_6</span></a> `{<a id="H:111" class="idref" href="#H:111"><span class="id" title="binder">Signature</span></a>} :<br/>
+</div>
+
+<div class="doc">
+   The following rule reflects <span class="inlinecode"><a class="idref" href="InqLog.Prop.LP.html#persistency"><span class="id" title="lemma">persistency</span></a></span>.
+ 
+</div>
+<div class="code">
+<span class="id" title="keyword">Proposition</span> <a id="Seq_persistency" class="idref" href="#Seq_persistency"><span class="id" title="lemma">Seq_persistency</span></a> `{<a id="H:111" class="idref" href="#H:111"><span class="id" title="binder">Signature</span></a>} :<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="ls:112" class="idref" href="#ls:112"><span class="id" title="binder">ls</span></a> <a id="rs:113" class="idref" href="#rs:113"><span class="id" title="binder">rs</span></a> <a id="ns1:114" class="idref" href="#ns1:114"><span class="id" title="binder">ns1</span></a> <a id="ns2:115" class="idref" href="#ns2:115"><span class="id" title="binder">ns2</span></a> <a id="phi:116" class="idref" href="#phi:116"><span class="id" title="binder">phi</span></a>,<br/>
 &nbsp;&nbsp;<a class="idref" href="InqLog.ListLib.html#InS"><span class="id" title="definition">InS</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns1:114"><span class="id" title="variable">ns1</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:116"><span class="id" title="variable">phi</span></a>) <a class="idref" href="InqLog.FO.Seq.html#ls:112"><span class="id" title="variable">ls</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
 &nbsp;&nbsp;<a class="idref" href="InqLog.ListLib.html#InS"><span class="id" title="definition">InS</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns2:115"><span class="id" title="variable">ns2</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:116"><span class="id" title="variable">phi</span></a>) <a class="idref" href="InqLog.FO.Seq.html#rs:113"><span class="id" title="variable">rs</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
@@ -654,7 +661,7 @@
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Print</span> <span class="id" title="keyword">Assumptions</span> <a class="idref" href="InqLog.FO.Seq.html#prop_4_6"><span class="id" title="lemma">prop_4_6</span></a>.<br/>
+<span class="id" title="keyword">Print</span> <span class="id" title="keyword">Assumptions</span> <a class="idref" href="InqLog.FO.Seq.html#Seq_persistency"><span class="id" title="lemma">Seq_persistency</span></a>.<br/>
 
 <br/>
 </div>
@@ -666,7 +673,7 @@
 <div class="code">
 
 <br/>
-<span class="id" title="keyword">Example</span> <a id="ex_4_5" class="idref" href="#ex_4_5"><span class="id" title="definition">ex_4_5</span></a> `{<a id="H:117" class="idref" href="#H:117"><span class="id" title="binder">Signature</span></a>} :<br/>
+<span class="id" title="keyword">Example</span> <a id="Seq_ex_1" class="idref" href="#Seq_ex_1"><span class="id" title="definition">Seq_ex_1</span></a> `{<a id="H:117" class="idref" href="#H:117"><span class="id" title="binder">Signature</span></a>} :<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="ns:118" class="idref" href="#ns:118"><span class="id" title="binder">ns</span></a> <a id="n:119" class="idref" href="#n:119"><span class="id" title="binder">n</span></a> <a id="p:120" class="idref" href="#p:120"><span class="id" title="binder">p</span></a> <a id="args:121" class="idref" href="#args:121"><span class="id" title="binder">args</span></a>,<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.ListLib.html#InS"><span class="id" title="definition">InS</span></a> <a class="idref" href="InqLog.FO.Seq.html#n:119"><span class="id" title="variable">n</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns:118"><span class="id" title="variable">ns</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Seq.html#Seq"><span class="id" title="inductive">Seq</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">(</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns:118"><span class="id" title="variable">ns</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">&lt;{</span></a><a class="idref" href="InqLog.FO.Syntax.html#5e292632a11bcedd26dbba1b0fcafc93"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.Syntax.html#5e292632a11bcedd26dbba1b0fcafc93"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.Syntax.html#Pred"><span class="id" title="constructor">Pred</span></a> <a class="idref" href="InqLog.FO.Seq.html#p:120"><span class="id" title="variable">p</span></a> <a class="idref" href="InqLog.FO.Seq.html#args:121"><span class="id" title="variable">args</span></a><a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">}&gt;</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>)<br/>
@@ -736,14 +743,17 @@
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Example</span> <a id="ex_4_7" class="idref" href="#ex_4_7"><span class="id" title="definition">ex_4_7</span></a> `{<a id="H:122" class="idref" href="#H:122"><span class="id" title="binder">Signature</span></a>} :<br/>
+<span class="id" title="keyword">Print</span> <span class="id" title="keyword">Assumptions</span> <a class="idref" href="InqLog.FO.Seq.html#Seq_ex_1"><span class="id" title="definition">Seq_ex_1</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <a id="Seq_ex_2" class="idref" href="#Seq_ex_2"><span class="id" title="definition">Seq_ex_2</span></a> `{<a id="H:122" class="idref" href="#H:122"><span class="id" title="binder">Signature</span></a>} :<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="ns:123" class="idref" href="#ns:123"><span class="id" title="binder">ns</span></a> <a id="phi:124" class="idref" href="#phi:124"><span class="id" title="binder">phi</span></a> <a id="psi:125" class="idref" href="#psi:125"><span class="id" title="binder">psi</span></a>,<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Seq.html#Seq"><span class="id" title="inductive">Seq</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">(</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns:123"><span class="id" title="variable">ns</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">&lt;{</span></a><a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:'iexists'_x"><span class="id" title="notation">iexists</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:124"><span class="id" title="variable">phi</span></a><a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">}&gt;</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">(</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns:123"><span class="id" title="variable">ns</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">&lt;{</span></a><a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:'iexists'_x"><span class="id" title="notation">iexists</span></a> <a class="idref" href="InqLog.FO.Syntax.html#5e292632a11bcedd26dbba1b0fcafc93"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.Seq.html#psi:125"><span class="id" title="variable">psi</span></a> <a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:124"><span class="id" title="variable">phi</span></a><a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">}&gt;</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>).<br/>
 <span class="id" title="keyword">Proof</span> <span class="id" title="keyword">with</span> (<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">try</span> (<span class="id" title="tactic">right</span>; <span class="id" title="tactic">left</span>; <span class="id" title="var">asimpl</span>; <span class="id" title="tactic">reflexivity</span>);<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">try</span> (<span class="id" title="tactic">left</span>; <span class="id" title="var">asimpl</span>; <span class="id" title="tactic">reflexivity</span>);<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">try</span> (<span class="id" title="tactic">right</span>; <span class="id" title="tactic">left</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">reflexivity</span>);<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">try</span> (<span class="id" title="tactic">left</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">reflexivity</span>);<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="var">easy</span><br/>
 ).<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">ns1</span> <span class="id" title="var">phi</span> <span class="id" title="var">psi</span>.<br/>
@@ -751,18 +761,36 @@
 &nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Seq.html#Seq_Iexists_r"><span class="id" title="constructor">Seq_Iexists_r</span></a> <span class="id" title="keyword">with</span> (<span class="id" title="var">t</span> := <a class="idref" href="InqLog.FO.Syntax.html#Var"><span class="id" title="constructor">Var</span></a> 0)...<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Seq.html#Seq_Impl_r"><span class="id" title="constructor">Seq_Impl_r</span></a>...<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">ns'</span> <span class="id" title="var">H1</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Seq.html#prop_4_6"><span class="id" title="lemma">prop_4_6</span></a>...<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Seq.html#Seq_persistency"><span class="id" title="lemma">Seq_persistency</span></a>.<br/>
+&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_cons_I_tl"><span class="id" title="lemma">InS_cons_I_tl</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_cons_I_hd"><span class="id" title="lemma">InS_cons_I_hd</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_cons_I_hd"><span class="id" title="lemma">InS_cons_I_hd</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f_equiv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Syntax.html#hsubst_comp'"><span class="id" title="lemma">hsubst_comp'</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <a class="idref" href="InqLog.FO.Syntax.html#hsubst_id'"><span class="id" title="lemma">hsubst_id'</span></a> <span class="id" title="tactic">at</span> 1.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Syntax.html#hsubst_Proper"><span class="id" title="instance">hsubst_Proper</span></a>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [|]; <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H1</span>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Example</span> <a id="ex_4_8" class="idref" href="#ex_4_8"><span class="id" title="definition">ex_4_8</span></a> `{<a id="H:126" class="idref" href="#H:126"><span class="id" title="binder">Signature</span></a>} :<br/>
+<span class="id" title="keyword">Print</span> <span class="id" title="keyword">Assumptions</span> <a class="idref" href="InqLog.FO.Seq.html#Seq_ex_2"><span class="id" title="definition">Seq_ex_2</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <a id="Seq_ex_3" class="idref" href="#Seq_ex_3"><span class="id" title="definition">Seq_ex_3</span></a> `{<a id="H:126" class="idref" href="#H:126"><span class="id" title="binder">Signature</span></a>} :<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="ns:127" class="idref" href="#ns:127"><span class="id" title="binder">ns</span></a> <a id="phi:128" class="idref" href="#phi:128"><span class="id" title="binder">phi</span></a> <a id="psi:129" class="idref" href="#psi:129"><span class="id" title="binder">psi</span></a>,<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Seq.html#Seq"><span class="id" title="inductive">Seq</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">(</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns:127"><span class="id" title="variable">ns</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">&lt;{</span></a><a class="idref" href="InqLog.FO.Syntax.html#ccd20a8d62d2a7a8bdabffe68b63cfaf"><span class="id" title="notation">(</span></a><a class="idref" href="InqLog.FO.Syntax.html#:form:form_scope:'forall'_x"><span class="id" title="notation">forall</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:128"><span class="id" title="variable">phi</span></a><a class="idref" href="InqLog.FO.Syntax.html#ccd20a8d62d2a7a8bdabffe68b63cfaf"><span class="id" title="notation">)</span></a> <a class="idref" href="InqLog.FO.Syntax.html#b608da0d662b1e62470950ef7d243725"><span class="id" title="notation">\\/</span></a> <a class="idref" href="InqLog.FO.Seq.html#psi:129"><span class="id" title="variable">psi</span></a><a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">}&gt;</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">(</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#pair"><span class="id" title="constructor">pair</span></a> <a class="idref" href="InqLog.FO.Seq.html#ns:127"><span class="id" title="variable">ns</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Forall"><span class="id" title="constructor">Forall</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Idisj"><span class="id" title="constructor">Idisj</span></a> <a class="idref" href="InqLog.FO.Seq.html#phi:128"><span class="id" title="variable">phi</span></a> <a class="idref" href="InqLog.FO.Seq.html#psi:129"><span class="id" title="variable">psi</span></a><span class="id" title="notation">.|[</span><span class="id" title="definition">ren</span> <span class="id" title="notation">(+</span>1<span class="id" title="notation">)</span><span class="id" title="notation">]</span>))<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>).<br/>
 <span class="id" title="keyword">Proof</span> <span class="id" title="keyword">with</span> (<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">try</span> (<span class="id" title="tactic">left</span>; <span class="id" title="var">asimpl</span>; <span class="id" title="tactic">reflexivity</span>);<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">try</span> (<span class="id" title="tactic">right</span>; <span class="id" title="tactic">left</span>; <span class="id" title="var">asimpl</span>; <span class="id" title="tactic">reflexivity</span>);<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">try</span> (<span class="id" title="tactic">left</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">reflexivity</span>);<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">try</span> (<span class="id" title="tactic">right</span>; <span class="id" title="tactic">left</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">reflexivity</span>);<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="var">easy</span><br/>
 ).<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">ns</span> <span class="id" title="var">phi</span> <span class="id" title="var">psi</span>.<br/>
@@ -771,10 +799,30 @@
 &nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Seq.html#Seq_Idisj_r"><span class="id" title="constructor">Seq_Idisj_r</span></a>...<br/>
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Seq.html#Seq_Forall_l"><span class="id" title="constructor">Seq_Forall_l</span></a> <span class="id" title="keyword">with</span> (<span class="id" title="var">t</span> := <a class="idref" href="InqLog.FO.Syntax.html#Var"><span class="id" title="constructor">Var</span></a> 0)...<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Seq.html#prop_4_6"><span class="id" title="lemma">prop_4_6</span></a>...<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Seq.html#Seq_persistency"><span class="id" title="lemma">Seq_persistency</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_cons_I_hd"><span class="id" title="lemma">InS_cons_I_hd</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_cons_I_hd"><span class="id" title="lemma">InS_cons_I_hd</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f_equiv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <a class="idref" href="InqLog.FO.Syntax.html#hsubst_id'"><span class="id" title="lemma">hsubst_id'</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">phi</span> := <span class="id" title="var">phi</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">at</span> 2.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Syntax.html#hsubst_comp'"><span class="id" title="lemma">hsubst_comp'</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Syntax.html#hsubst_Proper"><span class="id" title="instance">hsubst_Proper</span></a>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [|]; <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
 &nbsp;&nbsp;-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Seq.html#prop_4_6"><span class="id" title="lemma">prop_4_6</span></a>...<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Seq.html#Seq_persistency"><span class="id" title="lemma">Seq_persistency</span></a>...<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Print</span> <span class="id" title="keyword">Assumptions</span> <a class="idref" href="InqLog.FO.Seq.html#Seq_ex_3"><span class="id" title="definition">Seq_ex_3</span></a>.<br/>
 
 <br/>
 </div>
@@ -1759,7 +1807,7 @@
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
 &nbsp;&nbsp;-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Seq.html#prop_4_6"><span class="id" title="lemma">prop_4_6</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Seq.html#Seq_persistency"><span class="id" title="lemma">Seq_persistency</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">left</span>; <span class="id" title="tactic">reflexivity</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
@@ -1939,7 +1987,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_cons_I_hd"><span class="id" title="lemma">InS_cons_I_hd</span></a>; <span class="id" title="tactic">reflexivity</span>.<br/>
 &nbsp;&nbsp;}<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span> <span class="id" title="var">H3</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Seq.html#prop_4_6"><span class="id" title="lemma">prop_4_6</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Seq.html#Seq_persistency"><span class="id" title="lemma">Seq_persistency</span></a>.<br/>
 &nbsp;&nbsp;{<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_cons_I_hd"><span class="id" title="lemma">InS_cons_I_hd</span></a>; <span class="id" title="tactic">reflexivity</span>.<br/>
 &nbsp;&nbsp;}<br/>

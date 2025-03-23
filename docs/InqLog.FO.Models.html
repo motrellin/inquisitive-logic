@@ -130,7 +130,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> (<a id="f:23" class="idref" href="#f:23"><span class="id" title="binder">f</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#FSymb"><span class="id" title="method">FSymb</span></a>),<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#rigid"><span class="id" title="method">rigid</span></a> <a class="idref" href="InqLog.FO.Models.html#f:23"><span class="id" title="variable">f</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> (<a id="w:24" class="idref" href="#w:24"><span class="id" title="binder">w</span></a> <a id="w':25" class="idref" href="#w':25"><span class="id" title="binder">w'</span></a> : <a class="idref" href="InqLog.FO.Models.html#World:3"><span class="id" title="method">World</span></a>),<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Models.html#FInterpretation:18"><span class="id" title="method">FInterpretation</span></a> <a class="idref" href="InqLog.FO.Models.html#w:24"><span class="id" title="variable">w</span></a> <a class="idref" href="InqLog.FO.Models.html#f:23"><span class="id" title="variable">f</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="InqLog.FO.Models.html#FInterpretation:18"><span class="id" title="method">FInterpretation</span></a> <a class="idref" href="InqLog.FO.Models.html#w':25"><span class="id" title="variable">w'</span></a> <a class="idref" href="InqLog.FO.Models.html#f:23"><span class="id" title="variable">f</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Models.html#FInterpretation:18"><span class="id" title="method">FInterpretation</span></a> <a class="idref" href="InqLog.FO.Models.html#w:24"><span class="id" title="variable">w</span></a> <a class="idref" href="InqLog.FO.Models.html#f:23"><span class="id" title="variable">f</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidClass.html#2596316c6f2ff161cb03e25fd8914390"><span class="id" title="notation">==</span></a> <a class="idref" href="InqLog.FO.Models.html#FInterpretation:18"><span class="id" title="method">FInterpretation</span></a> <a class="idref" href="InqLog.FO.Models.html#w':25"><span class="id" title="variable">w'</span></a> <a class="idref" href="InqLog.FO.Models.html#f:23"><span class="id" title="variable">f</span></a><br/>
 &nbsp;&nbsp;}.<br/>
 
 <br/>
@@ -152,14 +152,7 @@
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">reflexivity</span>.<br/>
-<span class="id" title="keyword">Qed</span>.<br/>
-
-<br/>
-<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">reflexivity</span>.<br/>
-<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Solve</span> <span class="id" title="keyword">All</span> <span class="id" title="keyword">Obligations</span> <span class="id" title="keyword">with</span> (<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">reflexivity</span>).<br/>
 
 <br/>
 </div>
