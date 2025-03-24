@@ -919,6 +919,12 @@ Example DNE `{Signature} (phi : form) : form :=
 Example Kuroda `{Signature} (phi : form) : form :=
   <{(forall (~ ~ phi)) -> ~ ~ forall phi}>.
 
+Example CD `{Signature} (phi psi : form) : form :=
+  <{
+    (Forall <{(hsubst (ren (+1)) phi) \\/ psi}>) ->
+    phi \\/(Forall psi)
+  }>.
+
 (** ** Classic formulas
 
    We want to introduce the notion of a _classical formula_.

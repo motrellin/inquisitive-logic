@@ -1052,3 +1052,33 @@ Proof.
       specialize (H7 _ (singleton_refl w1)).
       congruence.
 Qed.
+
+Example support_valid_CD `{Signature} :
+  forall phi psi,
+    support_valid (CD phi psi).
+Proof.
+  intros phi psi.
+  intros M s a.
+  intros t H1 H2.
+  destruct (
+    classic (
+      t,a |= phi
+    )
+  ) as [H3|H3].
+  -
+    left.
+    exact H3.
+  -
+    right.
+    intros i.
+    rewrite support_Forall in H2.
+    specialize (H2 i).
+    destruct H2 as [H2|H2].
+    +
+      exfalso.
+      apply H3.
+      apply support_hsubst_var in H2.
+      apply H2.
+    +
+      exact H2.
+Qed.
