@@ -685,3 +685,31 @@ Module not_support_valid_DNE.
   Qed.
 
 End not_support_valid_DNE.
+
+(** * Validity of [Kuroda] *)
+
+Example support_valid_Kuroda `{Signature} :
+  forall phi,
+    support_valid (Kuroda phi).
+Proof.
+  intros phi.
+  intros m s1 a.
+  intros s2 H1 H2.
+  apply truth_conditional_Neg.
+  intros w H3.
+  rewrite truth_Neg.
+  intros H4.
+  rewrite truth_Neg in H4.
+  apply H4.
+  rewrite truth_Forall.
+  intros i.
+  rewrite support_Forall in H2.
+  specialize (H2 i).
+  eapply truth_valid_DNE; try reflexivity.
+  fold support.
+  eapply persistency; try exact H2.
+  intros w' H5.
+  apply singleton_true in H5.
+  rewrite H5.
+  exact H3.
+Qed.
