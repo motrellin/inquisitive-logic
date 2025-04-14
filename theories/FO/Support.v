@@ -108,7 +108,7 @@ Qed.
 
 Print Assumptions referent_subst.
 
-Remark referent_subst_var `{Model} :
+Corollary referent_subst_var `{Model} :
   forall t w a sigma,
     referent t.[ren sigma] w a = referent t w (sigma >>> a).
 Proof.
@@ -789,7 +789,7 @@ Qed.
 
 Print Assumptions support_hsubst.
 
-Remark support_hsubst_var `{Model} :
+Corollary support_hsubst_var `{Model} :
   forall phi s a sigma,
     (s, (sigma >>> a) |= phi) <->
     (s, a |= phi.|[ren sigma]).
