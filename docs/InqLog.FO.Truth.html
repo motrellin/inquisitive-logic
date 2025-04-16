@@ -823,6 +823,42 @@
 
 <br/>
 <span class="id" title="keyword">End</span> <a class="idref" href="InqLog.FO.Truth.html#not_support_valid_DNE"><span class="id" title="module">not_support_valid_DNE</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab81"></a><h1 class="section">Validity of <span class="inlinecode"><a class="idref" href="InqLog.FO.Syntax.html#Kuroda"><span class="id" title="definition">Kuroda</span></a></span></h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Example</span> <a id="support_valid_Kuroda" class="idref" href="#support_valid_Kuroda"><span class="id" title="definition">support_valid_Kuroda</span></a> `{<a id="H:161" class="idref" href="#H:161"><span class="id" title="binder">Signature</span></a>} :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="phi:162" class="idref" href="#phi:162"><span class="id" title="binder">phi</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#support_valid"><span class="id" title="definition">support_valid</span></a> (<a class="idref" href="InqLog.FO.Syntax.html#Kuroda"><span class="id" title="definition">Kuroda</span></a> <a class="idref" href="InqLog.FO.Truth.html#phi:162"><span class="id" title="variable">phi</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">phi</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">m</span> <span class="id" title="var">s1</span> <span class="id" title="var">a</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">s2</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Truth.html#truth_conditional_Neg"><span class="id" title="lemma">truth_conditional_Neg</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span> <span class="id" title="var">H3</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Truth.html#truth_Neg"><span class="id" title="lemma">truth_Neg</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H4</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Truth.html#truth_Neg"><span class="id" title="lemma">truth_Neg</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H4</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H4</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Truth.html#truth_Forall"><span class="id" title="lemma">truth_Forall</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">i</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Support.html#support_Forall"><span class="id" title="lemma">support_Forall</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">H2</span> <span class="id" title="var">i</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Truth.html#truth_valid_DNE"><span class="id" title="lemma">truth_valid_DNE</span></a>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">fold</span> <a class="idref" href="InqLog.FO.Support.html#support"><span class="id" title="definition">support</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Support.html#persistency"><span class="id" title="lemma">persistency</span></a>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">exact</span> <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w'</span> <span class="id" title="var">H5</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#singleton_true"><span class="id" title="lemma">singleton_true</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H5</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H5</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H3</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
 </div>
 </div>
 <div id="footer">
