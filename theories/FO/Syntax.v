@@ -4,11 +4,11 @@ From InqLog.FO Require Export Signatures.
 (** * Terms
 
    Let's start by recursively defining _terms_ over a
-   signature. A term is either a _variable_ or an application
-   of a function symbol [f] to some terms, respecting
-   [FAri f]. This is done via a function [FAri f -> term].
+   signature. A term is either a _variable_ or an
+   application of a function symbol [f] to some terms,
+   respecting [FAri f]. This is done via a function [FAri f
+   -> term].
  *)
-
 Inductive term `{Signature} :=
   | Var : var -> term
   | Func : forall (f : FSymb), (FAri f -> term) -> term.

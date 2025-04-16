@@ -21,14 +21,14 @@ From InqLog Require Export SetoidLib.
    if its interpretation is independent from a concrete
    world.
 
-   This whole definition is taken from Ciardelli 2022.
+   This whole definition is based on Ciardelli's work.
  *)
 
 Class Signature :=
   {
     PSymb : Type;
     PSymb_EqDec :: EqDec (eq_setoid PSymb);
-    PAri : PSymb -> Type; (* TODO: Where comes this idea from? *)
+    PAri : PSymb -> Type;
     PAri_enum : forall p, list (PAri p);
     PAri_enum_charac : forall p a, In a (PAri_enum p);
     FSymb : Type;
@@ -36,7 +36,7 @@ Class Signature :=
     FAri : FSymb -> Type;
     FAri_enum : forall f, list (FAri f);
     FAri_enum_charac : forall f a, In a (FAri_enum f);
-    rigid : FSymb -> bool (* TODO: Add an explanation of rigidity. *)
+    rigid : FSymb -> bool
   }.
 
 (** * Examples *)
@@ -59,11 +59,12 @@ Module Signature_single_unary_predicate.
          predicate symbol, there is no need for a case
          distinction on [p].
        *)
-      PAri := fun p => unit;
+      PAri := fun _ => unit;
       PAri_enum := fun _ => tt :: nil;
       (**
          As there exists no function symbol, the type of
-         function symbols shall be the empty type [Empty_set].
+         function symbols shall be the empty type
+         [Empty_set].
        *)
       FSymb := Empty_set;
       (**
