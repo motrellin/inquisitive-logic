@@ -1,4 +1,4 @@
-From Coq Require Export RelationClasses Morphisms Setoid.
+From Stdlib Require Export RelationClasses Morphisms Setoid.
 
 (** * Models
 

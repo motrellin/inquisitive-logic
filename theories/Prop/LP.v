@@ -1,4 +1,4 @@
-From Coq Require Export Bool.
+From Stdlib Require Export Bool.
 From InqLog.Prop Require Export Models.
 
 (** * Syntax *)
@@ -244,8 +244,8 @@ Module ex_3_2_5.
 
   Import ex_Model_1.
 
-  Let f1 := idisj (atom 0) (atom 1).
-  Let f2 := iquest (atom 0).
+  Local Definition f1 := idisj (atom 0) (atom 1).
+  Local Definition f2 := iquest (atom 0).
 
   Definition s1 : state.
   Proof.
