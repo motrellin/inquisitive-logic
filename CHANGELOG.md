@@ -1,5 +1,13 @@
 # Changelog
 
+## inqlog-v0.16.3 (2025-04-21)
+
+### New
+
+* Proved validity of Kuroda. [Max Ole Elliger]
+
+* Proved validity of CD. [Max Ole Elliger]
+
 ## inqlog-v0.16.2 (2025-03-23)
 
 ### Changes
