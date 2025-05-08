@@ -893,7 +893,7 @@ Proof.
   intros M f a H2.
   eexists; split; try exact H1.
   simpl.
-  rewrite mapping_state_nil.
+  rewrite mapping_state_nil_state_eq_empty_state.
   apply empty_state_property.
 Qed.
 
@@ -926,6 +926,7 @@ Proof.
   intros M f a H3.
   apply H3 in H1 as H4.
   specialize (H4 (f n)).
+  apply not_true_is_false in H4.
   apply InS_iff_inbS_false in H4.
   contradict H4.
   apply InS_map_I.
@@ -986,8 +987,7 @@ Proof.
     destruct (f n == f n) as [H8|H8].
     all: try (exfalso; apply H8; reflexivity).
 
-    specialize (H2 eq_refl).
-    rewrite <- H2.
+    rewrite <- H2; try (apply contains_mapping_state_I; apply InS_cons_I_hd; reflexivity).
 
     assert (H9 : PInterpretation w = PInterpretation (f n))
       by (rewrite H6; reflexivity).
@@ -1089,7 +1089,7 @@ Proof.
   intros t H5.
   simpl in H5.
 
-  apply substate_mapping_state_iff in H5 as [ns2 [H6 H7]].
+  apply substate_mapping_state_E in H5 as [ns2 [H6 H7]].
   rewrite H6 in *; clear H6.
 
   rename H7 into H6.
@@ -1340,7 +1340,7 @@ Proof.
     destruct ns as [|n ns'].
     +
       simpl.
-      rewrite mapping_state_nil.
+      rewrite mapping_state_nil_state_eq_empty_state.
       apply empty_state_property.
     +
       asimpl.
@@ -1389,7 +1389,7 @@ Proof.
     +
       simpl.
       exists Individual_inh.
-      rewrite mapping_state_nil.
+      rewrite mapping_state_nil_state_eq_empty_state.
       apply empty_state_property.
     +
       exists (referent t (f n) a).

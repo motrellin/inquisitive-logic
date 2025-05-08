@@ -121,11 +121,9 @@ Lemma support_conseq_Bot_I `{Signature} :
     support_conseq cxt <{~ phi}> ->
     support_conseq cxt (Bot 0).
 Proof.
-  intros cxt phi H1 H2 M s a H3 w.
+  intros cxt phi H1 H2 M s a H3 w H4.
   specialize (H1 _ _ _ H3).
   specialize (H2 _ _ _ H3).
-  destruct (s w) eqn:H4; try reflexivity.
-  exfalso.
   rewrite support_Neg in H2.
   apply H2.
   exists s.
@@ -152,9 +150,10 @@ Proof.
     apply empty_state_property.
   }
   rewrite support_Bot in H1.
-  intros w.
-  rewrite H1.
-  reflexivity.
+  apply state_eq_empty_state_iff_not_consistent.
+  intros [w H3].
+  specialize (H1 w).
+  contradiction.
 Qed.
 
 Lemma support_conseq_Impl_I `{S : Signature} :
@@ -300,7 +299,7 @@ Proof.
       rewrite H5.
       exact H2.
   -
-    apply empty_state_not_consistent in H4.
+    apply state_eq_empty_state_iff_not_consistent in H4.
     rewrite H4.
     apply empty_state_property.
 Qed.
@@ -336,7 +335,7 @@ Proof.
     +
       intros [|x']; easy.
   -
-    apply empty_state_not_consistent in H4.
+    apply state_eq_empty_state_iff_not_consistent in H4.
     rewrite H4.
     apply empty_state_property.
 Qed.
@@ -448,7 +447,7 @@ Proof.
     +
       exact H3.
     +
-      apply singleton_substate.
+      apply singleton_substate_iff.
       exact H4.
 Qed.
 
@@ -508,7 +507,7 @@ Proof.
       exists i.
       exact H6.
   -
-    apply empty_state_not_consistent in H3.
+    apply state_eq_empty_state_iff_not_consistent in H3.
     rewrite H3.
     apply empty_state_property.
 Qed.
