@@ -17,10 +17,10 @@ jobs:
     strategy:
       matrix:
         image:
-          - 'coqorg/coq:8.19'
+          - 'rocq/rocq-prover:9.0'
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - uses: coq-community/docker-coq-action@v1
@@ -33,7 +33,7 @@ jobs:
             endGroup
 
             startGroup "Build _CoqProject"
-              sudo chown -R coq:coq .
+              sudo chown -R rocq:rocq .
               make _CoqProject
             endGroup
           after_script: |-

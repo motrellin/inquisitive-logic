@@ -20,7 +20,7 @@ A formalization of inquisitive logic in Coq, based on the work of
 build: [make "-j%{jobs}%" "all"]
 install: [make "install"]
 depends: [
-  "coq" { "8.19" }
+  "coq" { "9.0" }
   "coq-autosubst"
 ]
 
