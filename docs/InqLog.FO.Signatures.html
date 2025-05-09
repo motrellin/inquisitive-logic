@@ -34,7 +34,7 @@
 </div>
 
 <div class="doc">
-<a id="lab35"></a><h1 class="section">Definition</h1>
+<a id="lab55"></a><h1 class="section">Definition</h1>
 
    We start by defining the class of <span class="inlinecode"><a class="idref" href="InqLog.FO.Signatures.html#Signature"><span class="id" title="record">Signature</span></a></span>s
    A <i>Signature</i> consists of a set of <i>predicate symbols</i>
@@ -71,24 +71,24 @@
 <span class="id" title="keyword">Class</span> <a id="Signature" class="idref" href="#Signature"><span class="id" title="record">Signature</span></a> :=<br/>
 &nbsp;&nbsp;{<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a id="PSymb" class="idref" href="#PSymb"><span class="id" title="projection">PSymb</span></a> : <span class="id" title="keyword">Type</span>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a id="PSymb_EqDec" class="idref" href="#PSymb_EqDec"><span class="id" title="projection">PSymb_EqDec</span></a> :: <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidDec.html#EqDec"><span class="id" title="class">EqDec</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidDec.html#eq_setoid"><span class="id" title="instance">eq_setoid</span></a> <a class="idref" href="InqLog.FO.Signatures.html#PSymb:2"><span class="id" title="method">PSymb</span></a>);<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a id="PAri" class="idref" href="#PAri"><span class="id" title="projection">PAri</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#PSymb:2"><span class="id" title="method">PSymb</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Type</span>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a id="PAri_enum" class="idref" href="#PAri_enum"><span class="id" title="projection">PAri_enum</span></a> : <span class="id" title="keyword">forall</span> <a id="p:5" class="idref" href="#p:5"><span class="id" title="binder">p</span></a>, <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> (<a class="idref" href="InqLog.FO.Signatures.html#PAri:4"><span class="id" title="method">PAri</span></a> <a class="idref" href="InqLog.FO.Signatures.html#p:5"><span class="id" title="variable">p</span></a>);<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a id="PAri_enum_charac" class="idref" href="#PAri_enum_charac"><span class="id" title="projection">PAri_enum_charac</span></a> : <span class="id" title="keyword">forall</span> <a id="p:7" class="idref" href="#p:7"><span class="id" title="binder">p</span></a> <a id="a:8" class="idref" href="#a:8"><span class="id" title="binder">a</span></a>, <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Lists.List.html#In"><span class="id" title="definition">In</span></a> <a class="idref" href="InqLog.FO.Signatures.html#a:8"><span class="id" title="variable">a</span></a> (<a class="idref" href="InqLog.FO.Signatures.html#PAri_enum:6"><span class="id" title="method">PAri_enum</span></a> <a class="idref" href="InqLog.FO.Signatures.html#p:7"><span class="id" title="variable">p</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="PSymb_EqDec" class="idref" href="#PSymb_EqDec"><span class="id" title="projection">PSymb_EqDec</span></a> :: <span class="id" title="class">EqDec</span> (<span class="id" title="instance">eq_setoid</span> <a class="idref" href="InqLog.FO.Signatures.html#PSymb:2"><span class="id" title="method">PSymb</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="PAri" class="idref" href="#PAri"><span class="id" title="projection">PAri</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#PSymb:2"><span class="id" title="method">PSymb</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Type</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="PAri_enum" class="idref" href="#PAri_enum"><span class="id" title="projection">PAri_enum</span></a> : <span class="id" title="keyword">forall</span> <a id="p:5" class="idref" href="#p:5"><span class="id" title="binder">p</span></a>, <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> (<a class="idref" href="InqLog.FO.Signatures.html#PAri:4"><span class="id" title="method">PAri</span></a> <a class="idref" href="InqLog.FO.Signatures.html#p:5"><span class="id" title="variable">p</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="PAri_enum_charac" class="idref" href="#PAri_enum_charac"><span class="id" title="projection">PAri_enum_charac</span></a> : <span class="id" title="keyword">forall</span> <a id="p:7" class="idref" href="#p:7"><span class="id" title="binder">p</span></a> <a id="a:8" class="idref" href="#a:8"><span class="id" title="binder">a</span></a>, <span class="id" title="definition">In</span> <a class="idref" href="InqLog.FO.Signatures.html#a:8"><span class="id" title="variable">a</span></a> (<a class="idref" href="InqLog.FO.Signatures.html#PAri_enum:6"><span class="id" title="method">PAri_enum</span></a> <a class="idref" href="InqLog.FO.Signatures.html#p:7"><span class="id" title="variable">p</span></a>);<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a id="FSymb" class="idref" href="#FSymb"><span class="id" title="projection">FSymb</span></a> : <span class="id" title="keyword">Type</span>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a id="FSymb_EqDec" class="idref" href="#FSymb_EqDec"><span class="id" title="projection">FSymb_EqDec</span></a> :: <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidDec.html#EqDec"><span class="id" title="class">EqDec</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Classes.SetoidDec.html#eq_setoid"><span class="id" title="instance">eq_setoid</span></a> <a class="idref" href="InqLog.FO.Signatures.html#FSymb:10"><span class="id" title="method">FSymb</span></a>);<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a id="FAri" class="idref" href="#FAri"><span class="id" title="projection">FAri</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#FSymb:10"><span class="id" title="method">FSymb</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Type</span>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a id="FAri_enum" class="idref" href="#FAri_enum"><span class="id" title="projection">FAri_enum</span></a> : <span class="id" title="keyword">forall</span> <a id="f:13" class="idref" href="#f:13"><span class="id" title="binder">f</span></a>, <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> (<a class="idref" href="InqLog.FO.Signatures.html#FAri:12"><span class="id" title="method">FAri</span></a> <a class="idref" href="InqLog.FO.Signatures.html#f:13"><span class="id" title="variable">f</span></a>);<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a id="FAri_enum_charac" class="idref" href="#FAri_enum_charac"><span class="id" title="projection">FAri_enum_charac</span></a> : <span class="id" title="keyword">forall</span> <a id="f:15" class="idref" href="#f:15"><span class="id" title="binder">f</span></a> <a id="a:16" class="idref" href="#a:16"><span class="id" title="binder">a</span></a>, <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Lists.List.html#In"><span class="id" title="definition">In</span></a> <a class="idref" href="InqLog.FO.Signatures.html#a:16"><span class="id" title="variable">a</span></a> (<a class="idref" href="InqLog.FO.Signatures.html#FAri_enum:14"><span class="id" title="method">FAri_enum</span></a> <a class="idref" href="InqLog.FO.Signatures.html#f:15"><span class="id" title="variable">f</span></a>);<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a id="rigid" class="idref" href="#rigid"><span class="id" title="projection">rigid</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#FSymb:10"><span class="id" title="method">FSymb</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="FSymb_EqDec" class="idref" href="#FSymb_EqDec"><span class="id" title="projection">FSymb_EqDec</span></a> :: <span class="id" title="class">EqDec</span> (<span class="id" title="instance">eq_setoid</span> <a class="idref" href="InqLog.FO.Signatures.html#FSymb:10"><span class="id" title="method">FSymb</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="FAri" class="idref" href="#FAri"><span class="id" title="projection">FAri</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#FSymb:10"><span class="id" title="method">FSymb</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Type</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="FAri_enum" class="idref" href="#FAri_enum"><span class="id" title="projection">FAri_enum</span></a> : <span class="id" title="keyword">forall</span> <a id="f:13" class="idref" href="#f:13"><span class="id" title="binder">f</span></a>, <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> (<a class="idref" href="InqLog.FO.Signatures.html#FAri:12"><span class="id" title="method">FAri</span></a> <a class="idref" href="InqLog.FO.Signatures.html#f:13"><span class="id" title="variable">f</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="FAri_enum_charac" class="idref" href="#FAri_enum_charac"><span class="id" title="projection">FAri_enum_charac</span></a> : <span class="id" title="keyword">forall</span> <a id="f:15" class="idref" href="#f:15"><span class="id" title="binder">f</span></a> <a id="a:16" class="idref" href="#a:16"><span class="id" title="binder">a</span></a>, <span class="id" title="definition">In</span> <a class="idref" href="InqLog.FO.Signatures.html#a:16"><span class="id" title="variable">a</span></a> (<a class="idref" href="InqLog.FO.Signatures.html#FAri_enum:14"><span class="id" title="method">FAri_enum</span></a> <a class="idref" href="InqLog.FO.Signatures.html#f:15"><span class="id" title="variable">f</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="rigid" class="idref" href="#rigid"><span class="id" title="projection">rigid</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#FSymb:10"><span class="id" title="method">FSymb</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a><br/>
 &nbsp;&nbsp;}.<br/>
 
 <br/>
 </div>
 
 <div class="doc">
-<a id="lab36"></a><h1 class="section">Examples</h1>
-<a id="lab37"></a><h2 class="section">Single Unary Predicate Signature</h2>
+<a id="lab56"></a><h1 class="section">Examples</h1>
+<a id="lab57"></a><h2 class="section">Single Unary Predicate Signature</h2>
 
 </div>
 <div class="code">
@@ -104,45 +104,45 @@
 <div class="doc">
          As we only want one predicate symbol,
          we can define <span class="inlinecode"><a class="idref" href="InqLog.FO.Signatures.html#PSymb"><span class="id" title="projection">PSymb</span></a></span> to be the singleton type
-         <span class="inlinecode"><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a></span>.
+         <span class="inlinecode"><a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a></span>.
        
 </div>
 <div class="code">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PSymb"><span class="id" title="method">PSymb</span></a> := <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PSymb"><span class="id" title="method">PSymb</span></a> := <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
 
 <div class="doc">
          The only existing predicate symbol should be unary,
          so it needs arity 1. This is implemented by the
-         singleton arity type <span class="inlinecode"><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a></span>. As we only have one
+         singleton arity type <span class="inlinecode"><a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a></span>. As we only have one
          predicate symbol, there is no need for a case
          distinction on <span class="inlinecode"><span class="id" title="var">p</span></span>.
        
 </div>
 <div class="code">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PAri"><span class="id" title="method">PAri</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PAri_enum"><span class="id" title="method">PAri_enum</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#tt"><span class="id" title="constructor">tt</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PAri"><span class="id" title="method">PAri</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PAri_enum"><span class="id" title="method">PAri_enum</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#tt"><span class="id" title="constructor">tt</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
 
 <div class="doc">
          As there exists no function symbol, the type of
          function symbols shall be the empty type
-         <span class="inlinecode"><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#Empty_set"><span class="id" title="inductive">Empty_set</span></a></span>.
+         <span class="inlinecode"><a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#Empty_set"><span class="id" title="inductive">Empty_set</span></a></span>.
        
 </div>
 <div class="code">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#FSymb"><span class="id" title="method">FSymb</span></a> := <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#Empty_set"><span class="id" title="inductive">Empty_set</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#FSymb"><span class="id" title="method">FSymb</span></a> := <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#Empty_set"><span class="id" title="inductive">Empty_set</span></a>;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
 
 <div class="doc">
-         Destructing a <span class="inlinecode"><span class="id" title="var">f</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#Empty_set"><span class="id" title="inductive">Empty_set</span></a></span> gives us no object.
+         Destructing a <span class="inlinecode"><span class="id" title="var">f</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#Empty_set"><span class="id" title="inductive">Empty_set</span></a></span> gives us no object.
          Alternatively, one could also define any type to be
          <span class="inlinecode"><a class="idref" href="InqLog.FO.Signatures.html#FAri"><span class="id" title="projection">FAri</span></a></span> <span class="inlinecode"><span class="id" title="var">f</span></span>.
        
 </div>
 <div class="code">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#FAri"><span class="id" title="method">FAri</span></a> := <span class="id" title="keyword">fun</span> <a id="f:19" class="idref" href="#f:19"><span class="id" title="binder">f</span></a> =&gt; <span class="id" title="keyword">match</span> <a class="idref" href="InqLog.FO.Signatures.html#f:19"><span class="id" title="variable">f</span></a> <span class="id" title="keyword">with</span> <span class="id" title="keyword">end</span>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#FAri_enum"><span class="id" title="method">FAri_enum</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#FAri_enum"><span class="id" title="method">FAri_enum</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
 
 <div class="doc">
@@ -151,7 +151,7 @@
        
 </div>
 <div class="code">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#rigid"><span class="id" title="method">rigid</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#rigid"><span class="id" title="method">rigid</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
 
 <br/>
@@ -171,7 +171,7 @@
 </div>
 
 <div class="doc">
-<a id="lab38"></a><h2 class="section">Single Binary Predicate Signature</h2>
+<a id="lab58"></a><h2 class="section">Single Binary Predicate Signature</h2>
 
 </div>
 <div class="code">
@@ -182,22 +182,22 @@
 <br/>
 &nbsp;&nbsp;<span class="id" title="keyword">Program Instance</span> <a id="Signature_single_binary_predicate.signature" class="idref" href="#Signature_single_binary_predicate.signature"><span class="id" title="instance">signature</span></a> : <a class="idref" href="InqLog.FO.Signatures.html#Signature"><span class="id" title="class">Signature</span></a> :=<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PSymb"><span class="id" title="method">PSymb</span></a> := <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PSymb"><span class="id" title="method">PSymb</span></a> := <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
 
 <div class="doc">
          The only difference to the first example is the
          arity of the only predicate symbol which is now
-         represented by the Type <span class="inlinecode"><a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a></span> which
+         represented by the Type <span class="inlinecode"><a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a></span> which
          consists of exact two inhabitants.
        
 </div>
 <div class="code">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PAri"><span class="id" title="method">PAri</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PAri_enum"><span class="id" title="method">PAri_enum</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#FSymb"><span class="id" title="method">FSymb</span></a> := <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#Empty_set"><span class="id" title="inductive">Empty_set</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PAri"><span class="id" title="method">PAri</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#PAri_enum"><span class="id" title="method">PAri_enum</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#FSymb"><span class="id" title="method">FSymb</span></a> := <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#Empty_set"><span class="id" title="inductive">Empty_set</span></a>;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#FAri"><span class="id" title="method">FAri</span></a> := <span class="id" title="keyword">fun</span> <a id="f:21" class="idref" href="#f:21"><span class="id" title="binder">f</span></a> =&gt; <span class="id" title="keyword">match</span> <a class="idref" href="InqLog.FO.Signatures.html#f:21"><span class="id" title="variable">f</span></a> <span class="id" title="keyword">with</span> <span class="id" title="keyword">end</span>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#rigid"><span class="id" title="method">rigid</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V8.19.2/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Signatures.html#rigid"><span class="id" title="method">rigid</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
 
 <br/>
