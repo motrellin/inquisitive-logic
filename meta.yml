@@ -76,8 +76,8 @@ license:
   identifier: GPL-3.0-or-later
 
 supported_coq_versions:
-  text: Developed for 8.19.0
-  opam: '{ "8.19" }'
+  text: Developed for 9.0.0
+  opam: '{ "9.0" }'
 
 dependencies:
   - description: Autosubst
@@ -105,4 +105,4 @@ coqdoc_index: ./docs/toc.html
 opam-file-maintainer: ole.elliger@fau.de
 
 tested_coq_opam_versions:
-  - version: '8.19'
+  - version: '9.0'

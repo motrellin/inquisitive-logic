@@ -21,7 +21,7 @@ A formalization of inquisitive logic in Coq, based on the work of
 - Author(s):
   + Max Ole Elliger (initial)
 - License: [GNU General Public License v3.0 or later](LICENSE)
-- Compatible Coq versions: Developed for 8.19.0
+- Compatible Coq versions: Developed for 9.0.0
 - Additional dependencies:
   + Autosubst
 - Coq namespace: `InqLog`
