@@ -17,10 +17,10 @@ Proof.
   -
     intros H1.
     apply H1.
-    apply singleton_refl.
+    apply contains_singleton_refl.
   -
     intros H1 w' H2.
-    apply singleton_true in H2.
+    apply contains_singleton_iff in H2.
     rewrite <- H1.
     assert (H3 : PInterpretation w' = PInterpretation w).
     {
@@ -43,8 +43,8 @@ Proof.
   -
     intros H1.
     specialize (H1 w).
-    rewrite singleton_refl in H1.
-    discriminate.
+    apply H1.
+    apply contains_singleton_refl.
   -
     contradiction.
 Qed.
@@ -60,7 +60,7 @@ Proof.
     firstorder.
   -
     intros H1 t H2 H3.
-    apply substate_singleton in H2 as [H2|H2].
+    apply substate_singleton_E in H2 as [H2|H2].
     +
       rewrite H2.
       apply empty_state_property.
@@ -283,7 +283,7 @@ Qed.
 
 Definition truth_conditional `{S : Signature} (phi : form) : Prop :=
   forall `(M : @Model S) (s : state) (a : assignment),
-    (forall w, s w = true -> truth phi w a) ->
+    (forall w, contains s w -> truth phi w a) ->
     s, a |= phi.
 
 Remark truth_conditional_other_direction `{S : Signature} :
@@ -299,7 +299,7 @@ Proof.
     exact H1.
   -
     intros w' H3.
-    apply singleton_true in H3.
+    apply contains_singleton_iff in H3.
     rewrite H3.
     exact H2.
 Qed.
@@ -318,10 +318,10 @@ Lemma truth_conditional_Bot `{Signature} :
   forall x,
     truth_conditional (Bot x).
 Proof.
-  intros x M s a H1 w.
+  intros x M s a H1 w H2.
   specialize (H1 w).
   rewrite truth_Bot in H1.
-  destruct (s w); easy.
+  auto.
 Qed.
 
 Lemma truth_conditional_Impl `{Signature} :
@@ -621,10 +621,10 @@ Module not_support_valid_DNE.
     exists (singleton w).
     repeat split.
     -
-      apply singleton_consistent.
+      apply consistent_singleton_I.
     -
       intros w' H4.
-      apply singleton_true in H4.
+      apply contains_singleton_iff in H4.
       rewrite H4.
       exact H1.
     -
@@ -647,18 +647,18 @@ Module not_support_valid_DNE.
       simpl in H1.
       specialize (H1
         (singleton true)
-        (substate_most_inconsistent _)
+        (substate_most_inconsistent_I _)
       ).
       assert (H2 :
-        forall w, singleton true w = true -> w = true
+        forall w, contains (singleton true) w -> w = true
       ).
       {
         intros w H2.
-        apply singleton_true in H2.
+        apply contains_singleton_iff in H2.
         exact H2.
       }
       specialize (H1 H2 true).
-      apply singleton_false in H1.
+      apply not_contains_singleton_iff in H1.
       apply H1.
       reflexivity.
   Qed.
@@ -709,7 +709,7 @@ Proof.
   fold support.
   eapply persistency; try exact H2.
   intros w' H5.
-  apply singleton_true in H5.
+  apply contains_singleton_iff in H5.
   rewrite H5.
   exact H3.
 Qed.

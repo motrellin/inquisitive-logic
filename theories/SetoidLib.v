@@ -80,3 +80,63 @@ Program Canonical to_Morph {X} `{Setoid Y} (f : X -> Y) :
   {|
     morph := f
   |}.
+
+(** * Subset Types *)
+
+Definition sig_eq `{Setoid X} (P : Morph X Prop) : relation {x : X | P x} :=
+  fun x1 x2 =>
+  (proj1_sig x1 == proj1_sig x2)%type.
+
+Instance sig_eq_Equiv `{Setoid X} (P : Morph X Prop) :
+  Equivalence (sig_eq P).
+Proof.
+  unfold sig_eq.
+  constructor.
+  -
+    intros [].
+    reflexivity.
+  -
+    intros [] [] H1.
+    symmetry.
+    exact H1.
+  -
+    intros [] [] [] H1 H2.
+    etransitivity; eassumption.
+Qed.
+
+Instance sig_Setoid `{Setoid X} (P : Morph X Prop) : Setoid (sig P) :=
+  {|
+    equiv := sig_eq P;
+    setoid_equiv := sig_eq_Equiv P
+  |}.
+
+Instance sig_EqDec `{EqDec X} (P : Morph X Prop) :
+  EqDec (sig_Setoid P).
+Proof.
+  intros [x H1] [y H2].
+  destruct (x == y) as [H3|H3].
+  -
+    left.
+    exact H3.
+  -
+    right.
+    intros H4.
+    apply H3.
+    exact H4.
+Qed.
+
+Instance proj1_sig_Proper `{S : Setoid X} (P : Morph X Prop) :
+  Proper (sig_eq P ==> @equiv X S) (@proj1_sig X P).
+Proof.
+  intros x y H3.
+  exact H3.
+Qed.
+
+Lemma sig_eq_lifting `{S : Setoid X} (P : Morph X Prop) :
+  forall x y (C1 : P x) (C2 : P y),
+    x == y ->
+    sig_eq P (exist P x C1) (exist P y C2).
+Proof.
+  intros x y C1 C2 H1.
+  exact H1.
+Qed.

@@ -154,14 +154,14 @@ Fixpoint support `{Model} (phi : form) :
   | Pred p args =>
       fun s a =>
       forall (w : World),
-        s w = true ->
+        contains s w ->
         PInterpretation w p
         (fun arg => referent (args arg) w a) = true
 
   | Bot _ =>
       fun s a =>
       forall (w : World),
-        s w = false
+        ~ contains s w
 
   | Impl phi1 phi2 =>
       fun s a =>
@@ -217,7 +217,7 @@ Fact support_Pred `{Model} :
   forall p args s a,
     s, a |= <{Pred p args}> <->
     forall w,
-      s w = true ->
+      contains s w ->
       PInterpretation w p
       (fun arg => referent (args arg) w a) = true.
 Proof.
@@ -228,7 +228,7 @@ Fact support_Bot `{Model} :
   forall x s a,
     s, a |= <{Bot x}> <->
     forall w,
-      s w = false.
+      ~ contains s w.
 Proof.
   reflexivity.
 Qed.
@@ -396,11 +396,10 @@ Proof.
   -
     firstorder.
   -
-    intros w.
-    destruct (t w) eqn:H3; try reflexivity.
-    specialize (H1 w).
-    apply H2 in H3.
-    congruence.
+    intros w H3.
+    rewrite H2 in H3.
+    eapply H1.
+    exact H3.
   -
     firstorder.
   -
@@ -437,11 +436,12 @@ Proof.
     discriminate.
   -
     rewrite support_Bot.
-    reflexivity.
+    intros w H1.
+    now apply contains_empty_state_E in H1.
   -
     intros t H1 H2.
     eapply persistency.
-    apply substate_empty_state in H1.
+    apply substate_empty_state_E in H1.
     all: auto.
   -
     firstorder.
@@ -499,27 +499,27 @@ Proof.
   -
     split.
     +
-      intros H2 w.
-      apply andb_false_iff.
-      right.
-      rewrite H2.
-      reflexivity.
+      intros H2 w H3.
+      apply andb_true_iff in H3 as [H3 H4].
+      eapply H2.
+      exact H4.
     +
-      intros H2 w.
-      destruct (s2 w) eqn:H3; try reflexivity.
-      simpl in H2.
+      intros H2 w H3.
       apply H1 in H3 as H4.
-      specialize (H2 (exist _ _ H4)).
-      apply andb_false_iff in H2 as [H2|H2].
-      all: simpl in H2.
-      all: congruence.
+      apply H2 with (w := exist _ w H4).
+      apply andb_true_iff.
+      split.
+      *
+        exact H4.
+      *
+        exact H3.
   -
     split.
     all: intros H2 s3 H3 H4.
     all: rewrite support_Impl in H2.
     +
       apply unrestricted_substate in H3 as H5.
-      rewrite (unnamed_States_helper_3 s1 s3) in *.
+      rewrite (state_eq_restricted_state_unrestricted_state s1 s3) in *.
       eapply IH2.
       {
         etransitivity; eassumption.
@@ -615,9 +615,7 @@ Proof.
     rewrite support_Bot in H1.
     congruence.
   -
-    intros H1 t H2 H3 w.
-    destruct (t w) eqn:H5; try reflexivity.
-    exfalso.
+    intros H1 t H2 H3 w H4.
     apply H1.
     exists t.
     repeat split.
@@ -808,7 +806,7 @@ Proof.
     intros x.
     exact I.
   -
-    apply empty_state_not_consistent in H1.
+    apply state_eq_empty_state_iff_not_consistent in H1.
     rewrite H1.
     firstorder using empty_state_property.
 Qed.
@@ -1031,25 +1029,23 @@ Proof.
   exists (singleton w1).
   repeat split.
   -
-    exists w1.
-    apply singleton_true.
-    reflexivity.
+    apply consistent_singleton_I.
   -
     intros w2 H5.
-    apply singleton_true in H5.
+    apply contains_singleton_iff in H5.
     rewrite H5.
     exact H3.
   -
     rewrite support_Neg.
     intros [s3 [[w2 H5] [H6 H7]]].
-    apply substate_singleton in H6 as [H6|H6].
+    apply substate_singleton_E in H6 as [H6|H6].
     all: rewrite H6 in *; clear H6.
     +
       discriminate.
     +
-      apply singleton_true in H5.
+      apply contains_singleton_iff in H5.
       rewrite support_Pred in H7.
-      specialize (H7 _ (singleton_refl w1)).
+      specialize (H7 _ (contains_singleton_refl w1)).
       congruence.
 Qed.
 

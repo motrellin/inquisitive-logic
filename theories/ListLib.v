@@ -115,6 +115,77 @@ Proof.
         exact H1.
 Qed.
 
+(** ** Filtering **)
+
+Lemma InS_filter_I `{Setoid X} :
+  forall (f : Morph X bool) (xs : list X) (x : X),
+    f x = true ->
+    InS x xs ->
+    InS x (filter f xs).
+Proof.
+  induction xs as [|x1 xs' IH].
+  all: intros x H1 H2.
+  -
+    now apply InS_nil_E in H2.
+  -
+    simpl.
+    apply InS_cons_E in H2 as [H2|H2].
+    +
+      rewrite H2 in H1.
+      rewrite H1.
+      apply InS_cons_I_hd.
+      exact H2.
+    +
+      specialize (IH _ H1 H2).
+      destruct (f x1).
+      *
+        apply InS_cons_I_tl.
+        exact IH.
+      *
+        exact IH.
+Qed.
+
+Lemma InS_filter_E `{Setoid X} :
+  forall (f : Morph X bool) (xs : list X) (x : X),
+    InS x (filter f xs) ->
+    f x = true /\
+    InS x xs.
+Proof.
+  induction xs as [|x1 xs' IH].
+  all: intros x H1.
+  -
+    now apply InS_nil_E in H1.
+  -
+    simpl in H1.
+    destruct (f x1) eqn:eq1.
+    +
+      apply InS_cons_E in H1 as [H1|H1].
+      *
+        split.
+        --
+           rewrite H1.
+           exact eq1.
+        --
+           apply InS_cons_I_hd.
+           exact H1.
+      *
+        apply IH in H1 as [H1 H2].
+        split.
+        --
+           exact H1.
+        --
+           apply InS_cons_I_tl.
+           exact H2.
+    +
+      apply IH in H1 as [H1 H2].
+      split.
+      *
+        exact H1.
+      *
+        apply InS_cons_I_tl.
+        exact H2.
+Qed.
+
 (** ** Mapping **)
 
 Lemma InS_map_I `{Setoid X} `{Setoid Y} :
@@ -411,6 +482,17 @@ Proof.
   -
     apply InS_sublist_cons_I.
     exact H2.
+Qed.
+
+(** ** [filter] *)
+
+Lemma filter_InS_sublist_I `{Setoid X} :
+  forall (f : Morph X bool) xs,
+    InS_sublist (filter f xs) xs.
+Proof.
+  intros f xs x H1.
+  apply InS_filter_E in H1 as [H1 H2].
+  exact H2.
 Qed.
 
 (** ** [map] *)

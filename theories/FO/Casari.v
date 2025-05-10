@@ -274,6 +274,8 @@ Module Casari_fails.
 
   Import PeanoNat.Nat.
 
+  Local Arguments contains _ _ s w /.
+
   (** ** Signature and Syntax
 
      We will use our signature with a single binary
@@ -438,7 +440,7 @@ Module Casari_fails.
   Definition contains_all (p : nat -> bool) (s : state) : Prop :=
     forall w,
       p w = true ->
-      s w = true.
+      contains s w.
 
   Instance contains_all_Proper :
     forall p,
@@ -477,7 +479,7 @@ Module Casari_fails.
   Definition contains_any (p : nat -> bool) (s : state) : Prop :=
     exists w,
       p w = true /\
-      s w = true.
+      contains s w.
 
   Instance contains_any_Proper :
     forall p,
@@ -497,20 +499,18 @@ Module Casari_fails.
       split; assumption.
   Qed.
 
-  Lemma substate_contains_any :
-    forall p s t,
-      substate t s ->
-      contains_any p t ->
-      contains_any p s.
+  Instance contains_any_Proper_substate :
+    Proper (ext_eq ==> substate ==> impl) contains_any.
   Proof.
-    intros p s t H1 [w [H2 H3]].
+    intros p1 p2 H1 t s H2 [w [H3 H4]].
     exists w.
     split.
     -
-      exact H2.
-    -
-      apply H1.
+      rewrite <- H1.
       exact H3.
+    -
+      rewrite <-H2.
+      exact H4.
   Qed.
 
   Lemma not_contains_any_contains_all_complement :
@@ -519,7 +519,7 @@ Module Casari_fails.
       contains_all p (States.complement s).
   Proof.
     intros p s H1 w H2.
-    apply complement_true.
+    apply contains_complement_iff.
     unfold contains_any in H1.
     apply not_exists_forall_not with (x := w) in H1.
     destruct (p w), (s w).
@@ -539,7 +539,7 @@ Module Casari_fails.
 
     forall w,
       p w = true ->
-      s w = true ->
+      contains s w ->
       w <=? e = true.
 
   Definition finitely_many (p : nat -> bool) (s : state) : Prop :=
@@ -593,7 +593,7 @@ Module Casari_fails.
     (w e : nat) : Prop :=
 
     p e = true /\
-    s e = true /\
+    contains s e /\
     w <? e = true.
 
   Instance successor_Proper :
@@ -645,20 +645,19 @@ Module Casari_fails.
     unfold successor in H1.
     rewrite ltb_lt in H1.
     rewrite leb_le.
+    unfold contains in *.
     destruct (p w), (s w).
     all: lia.
   Qed.
 
-  Lemma substate_infinitely_many :
-    forall p s t,
-      substate t s ->
-      infinitely_many p t ->
-      infinitely_many p s.
+  Instance infinitely_many_Proper_substate :
+    Proper (ext_eq ==> substate ==> impl) infinitely_many.
   Proof.
-    intros p s t H1 H2 n.
-    destruct (H2 n) as [e [H3 [H4 H5]]].
+    intros p1 p2 H1 t s H2 H3 n.
+    destruct (H3 n) as [e [H4 [H5 H6]]].
     exists e.
     red.
+    rewrite H1 in H4.
     eauto using substate_contrapos.
   Qed.
 
@@ -670,29 +669,18 @@ Module Casari_fails.
     contains_any (? ~ even ?) (States.complement s) \/
     infinitely_many even (States.complement s).
 
-  Lemma substate_E :
-    forall s t,
-      substate t s ->
-      E s ->
-      E t.
+  Instance E_Proper_substate :
+    Proper (substate --> impl) E.
   Proof.
     intros s t H1 [H2|H2].
     -
       left.
-      eapply substate_contains_any.
-      +
-        apply substate_complement in H1.
-        exact H1.
-      +
-        exact H2.
+      rewrite <- H1.
+      exact H2.
     -
       right.
-      eapply substate_infinitely_many.
-      +
-        apply substate_complement in H1.
-        exact H1.
-      +
-        exact H2.
+      rewrite <- H1.
+      exact H2.
   Qed.
 
   Lemma not_E_contains_all :
@@ -703,7 +691,7 @@ Module Casari_fails.
     intros * H1.
     apply Decidable.not_or in H1 as [H1 _].
     apply not_contains_any_contains_all_complement in H1.
-    rewrite complement_complement in H1.
+    rewrite complement_involutive in H1.
     exact H1.
   Qed.
 
@@ -744,7 +732,7 @@ Module Casari_fails.
       contains_all (? ltb m ?) s ->
       forall w j,
         rel w m j = true ->
-        s j = true.
+        contains s j.
   Proof.
     intros s m H1 H2 H3 w j H4.
 
@@ -794,8 +782,8 @@ Module Casari_fails.
       +
         rewrite orb_false_r in H4.
         specialize (H2 _ H3).
-        destruct (s w) eqn:H5; try reflexivity.
-        rewrite complement_true in H2.
+        destruct (contains_dec s w) as [H5|H5]; try assumption.
+        rewrite contains_complement_iff in H2.
         specialize (H2 H5).
         apply leb_le in H2.
         apply ltb_lt in H4.
@@ -812,7 +800,8 @@ Module Casari_fails.
     -
       exists (S (S (max n e))).
       intros w H3 H4.
-      rewrite complement_true in H4.
+      rewrite contains_complement_iff in H4.
+      apply not_true_is_false in H4.
       apply orb_false_iff in H4 as [H4 H5].
       apply ltb_nlt in H4.
       apply leb_le.
@@ -829,7 +818,8 @@ Module Casari_fails.
         all: apply ltb_lt.
         all: lia.
       +
-        rewrite complement_true.
+        rewrite contains_complement_iff.
+        apply not_true_iff_false.
         apply orb_false_iff.
         split.
         *
@@ -894,7 +884,7 @@ Module Casari_fails.
        For preparation, just remove the notion of a
        complement.
      *)
-    apply complement_true in H3.
+    apply contains_complement_iff in H3.
 
     simpl.
     (**
@@ -1083,8 +1073,8 @@ Module Casari_fails.
       destruct (even w) eqn:HA.
       +
         specialize (H7 _ HA).
-        destruct (t w) eqn:HB; try reflexivity.
-        rewrite complement_true in H7.
+        destruct (contains_dec t w) as [HB|HB]; try assumption.
+        rewrite contains_complement_iff in H7.
         specialize (H7 HB).
         apply leb_le in H7.
         apply ltb_lt in H9.
@@ -1108,6 +1098,7 @@ Module Casari_fails.
           --
              destruct H8 as [e2 [H81 H82]].
              exists e2.
+             simpl in *.
              rewrite H81,H82.
              rewrite orb_true_r.
              split; reflexivity.
