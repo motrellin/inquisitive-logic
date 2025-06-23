@@ -142,6 +142,79 @@
 &nbsp;&nbsp;{|<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.SetoidLib.html#morph"><span class="id" title="projection">morph</span></a> := <a class="idref" href="InqLog.SetoidLib.html#f:35"><span class="id" title="variable">f</span></a><br/>
 &nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab3"></a><h1 class="section">Subset Types</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="sig_eq" class="idref" href="#sig_eq"><span class="id" title="definition">sig_eq</span></a> `{<a id="H:37" class="idref" href="#H:37"><span class="id" title="binder">Setoid</span></a> <a id="X:36" class="idref" href="#X:36"><span class="id" title="binder"><span id="H:37" class="id">X</span></span></a>} (<a id="P:38" class="idref" href="#P:38"><span class="id" title="binder">P</span></a> : <a class="idref" href="InqLog.SetoidLib.html#Morph"><span class="id" title="record">Morph</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:36"><span class="id" title="variable">X</span></a> <span class="id" title="keyword">Prop</span>) : <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Relations.Relation_Definitions.html#relation"><span class="id" title="definition">relation</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Specif.html#6556914db359db999889decec6a4a562"><span class="id" title="notation">{</span></a><a id="x:39" class="idref" href="#x:39"><span class="id" title="binder">x</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Specif.html#6556914db359db999889decec6a4a562"><span class="id" title="notation">:</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:36"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Specif.html#6556914db359db999889decec6a4a562"><span class="id" title="notation">|</span></a> <a class="idref" href="InqLog.SetoidLib.html#P:38"><span class="id" title="variable">P</span></a> <a class="idref" href="InqLog.SetoidLib.html#x:39"><span class="id" title="variable">x</span></a><a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Specif.html#6556914db359db999889decec6a4a562"><span class="id" title="notation">}</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <a id="x1:40" class="idref" href="#x1:40"><span class="id" title="binder">x1</span></a> <a id="x2:41" class="idref" href="#x2:41"><span class="id" title="binder">x2</span></a> =&gt;<br/>
+&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Specif.html#proj1_sig"><span class="id" title="definition">proj1_sig</span></a> <a class="idref" href="InqLog.SetoidLib.html#x1:40"><span class="id" title="variable">x1</span></a> <span class="id" title="notation">==</span> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Specif.html#proj1_sig"><span class="id" title="definition">proj1_sig</span></a> <a class="idref" href="InqLog.SetoidLib.html#x2:41"><span class="id" title="variable">x2</span></a>)%<span class="id" title="keyword">type</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="sig_eq_Equiv" class="idref" href="#sig_eq_Equiv"><span class="id" title="instance">sig_eq_Equiv</span></a> `{<a id="H:43" class="idref" href="#H:43"><span class="id" title="binder">Setoid</span></a> <a id="X:42" class="idref" href="#X:42"><span class="id" title="binder"><span id="H:43" class="id">X</span></span></a>} (<a id="P:44" class="idref" href="#P:44"><span class="id" title="binder">P</span></a> : <a class="idref" href="InqLog.SetoidLib.html#Morph"><span class="id" title="record">Morph</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:42"><span class="id" title="variable">X</span></a> <span class="id" title="keyword">Prop</span>) :<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Classes.RelationClasses.html#Equivalence"><span class="id" title="class">Equivalence</span></a> (<a class="idref" href="InqLog.SetoidLib.html#sig_eq"><span class="id" title="definition">sig_eq</span></a> <a class="idref" href="InqLog.SetoidLib.html#P:44"><span class="id" title="variable">P</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="InqLog.SetoidLib.html#sig_eq"><span class="id" title="definition">sig_eq</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [] [] <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">symmetry</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [] [] [] <span class="id" title="var">H1</span> <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etransitivity</span>; <span class="id" title="var">eassumption</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="sig_Setoid" class="idref" href="#sig_Setoid"><span class="id" title="instance">sig_Setoid</span></a> `{<a id="H:46" class="idref" href="#H:46"><span class="id" title="binder">Setoid</span></a> <a id="X:45" class="idref" href="#X:45"><span class="id" title="binder"><span id="H:46" class="id">X</span></span></a>} (<a id="P:47" class="idref" href="#P:47"><span class="id" title="binder">P</span></a> : <a class="idref" href="InqLog.SetoidLib.html#Morph"><span class="id" title="record">Morph</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:45"><span class="id" title="variable">X</span></a> <span class="id" title="keyword">Prop</span>) : <span class="id" title="class">Setoid</span> (<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Specif.html#sig"><span class="id" title="inductive">sig</span></a> <a class="idref" href="InqLog.SetoidLib.html#P:47"><span class="id" title="variable">P</span></a>) :=<br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="method">equiv</span> := <a class="idref" href="InqLog.SetoidLib.html#sig_eq"><span class="id" title="definition">sig_eq</span></a> <span class="id" title="var">P</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="method">setoid_equiv</span> := <a class="idref" href="InqLog.SetoidLib.html#sig_eq_Equiv"><span class="id" title="instance">sig_eq_Equiv</span></a> <span class="id" title="var">P</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="sig_EqDec" class="idref" href="#sig_EqDec"><span class="id" title="instance">sig_EqDec</span></a> `{<a id="H:50" class="idref" href="#H:50"><span class="id" title="binder">EqDec</span></a> <a id="X:48" class="idref" href="#X:48"><span class="id" title="binder"><span id="H:50" class="id">X</span></span></a>} (<a id="P:51" class="idref" href="#P:51"><span class="id" title="binder">P</span></a> : <a class="idref" href="InqLog.SetoidLib.html#Morph"><span class="id" title="record">Morph</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:48"><span class="id" title="variable">X</span></a> <span class="id" title="keyword">Prop</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="class">EqDec</span> (<a class="idref" href="InqLog.SetoidLib.html#sig_Setoid"><span class="id" title="instance">sig_Setoid</span></a> <a class="idref" href="InqLog.SetoidLib.html#P:51"><span class="id" title="variable">P</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">x</span> <span class="id" title="var">H1</span>] [<span class="id" title="var">y</span> <span class="id" title="var">H2</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<span class="id" title="var">x</span> <span class="id" title="notation">==</span> <span class="id" title="var">y</span>) <span class="id" title="keyword">as</span> [<span class="id" title="var">H3</span>|<span class="id" title="var">H3</span>].<br/>
+&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H3</span>.<br/>
+&nbsp;&nbsp;-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H4</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H4</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a id="proj1_sig_Proper" class="idref" href="#proj1_sig_Proper"><span class="id" title="instance">proj1_sig_Proper</span></a> `{<a id="S:53" class="idref" href="#S:53"><span class="id" title="binder">S</span></a> : <span class="id" title="class">Setoid</span> <a id="X:52" class="idref" href="#X:52"><span class="id" title="binder">X</span></a>} (<a id="P:54" class="idref" href="#P:54"><span class="id" title="binder">P</span></a> : <a class="idref" href="InqLog.SetoidLib.html#Morph"><span class="id" title="record">Morph</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:52"><span class="id" title="variable">X</span></a> <span class="id" title="keyword">Prop</span>) :<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Classes.Morphisms.html#Proper"><span class="id" title="class">Proper</span></a> (<a class="idref" href="InqLog.SetoidLib.html#sig_eq"><span class="id" title="definition">sig_eq</span></a> <a class="idref" href="InqLog.SetoidLib.html#P:54"><span class="id" title="variable">P</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> @<span class="id" title="method">equiv</span> <a class="idref" href="InqLog.SetoidLib.html#X:52"><span class="id" title="variable">X</span></a> <a class="idref" href="InqLog.SetoidLib.html#S:53"><span class="id" title="variable">S</span></a>) (@<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Specif.html#proj1_sig"><span class="id" title="definition">proj1_sig</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:52"><span class="id" title="variable">X</span></a> <a class="idref" href="InqLog.SetoidLib.html#P:54"><span class="id" title="variable">P</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">H3</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H3</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="sig_eq_lifting" class="idref" href="#sig_eq_lifting"><span class="id" title="lemma">sig_eq_lifting</span></a> `{<a id="S:56" class="idref" href="#S:56"><span class="id" title="binder">S</span></a> : <span class="id" title="class">Setoid</span> <a id="X:55" class="idref" href="#X:55"><span class="id" title="binder">X</span></a>} (<a id="P:57" class="idref" href="#P:57"><span class="id" title="binder">P</span></a> : <a class="idref" href="InqLog.SetoidLib.html#Morph"><span class="id" title="record">Morph</span></a> <a class="idref" href="InqLog.SetoidLib.html#X:55"><span class="id" title="variable">X</span></a> <span class="id" title="keyword">Prop</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="x:58" class="idref" href="#x:58"><span class="id" title="binder">x</span></a> <a id="y:59" class="idref" href="#y:59"><span class="id" title="binder">y</span></a> (<a id="C1:60" class="idref" href="#C1:60"><span class="id" title="binder">C1</span></a> : <a class="idref" href="InqLog.SetoidLib.html#P:57"><span class="id" title="variable">P</span></a> <a class="idref" href="InqLog.SetoidLib.html#x:58"><span class="id" title="variable">x</span></a>) (<a id="C2:61" class="idref" href="#C2:61"><span class="id" title="binder">C2</span></a> : <a class="idref" href="InqLog.SetoidLib.html#P:57"><span class="id" title="variable">P</span></a> <a class="idref" href="InqLog.SetoidLib.html#y:59"><span class="id" title="variable">y</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.SetoidLib.html#x:58"><span class="id" title="variable">x</span></a> <span class="id" title="notation">==</span> <a class="idref" href="InqLog.SetoidLib.html#y:59"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.SetoidLib.html#sig_eq"><span class="id" title="definition">sig_eq</span></a> <a class="idref" href="InqLog.SetoidLib.html#P:57"><span class="id" title="variable">P</span></a> (<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Specif.html#exist"><span class="id" title="constructor">exist</span></a> <a class="idref" href="InqLog.SetoidLib.html#P:57"><span class="id" title="variable">P</span></a> <a class="idref" href="InqLog.SetoidLib.html#x:58"><span class="id" title="variable">x</span></a> <a class="idref" href="InqLog.SetoidLib.html#C1:60"><span class="id" title="variable">C1</span></a>) (<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Specif.html#exist"><span class="id" title="constructor">exist</span></a> <a class="idref" href="InqLog.SetoidLib.html#P:57"><span class="id" title="variable">P</span></a> <a class="idref" href="InqLog.SetoidLib.html#y:59"><span class="id" title="variable">y</span></a> <a class="idref" href="InqLog.SetoidLib.html#C2:61"><span class="id" title="variable">C2</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">C1</span> <span class="id" title="var">C2</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H1</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
 </div>
 </div>
 <div id="footer">

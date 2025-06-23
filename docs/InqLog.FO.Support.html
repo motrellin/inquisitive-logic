@@ -34,7 +34,7 @@
 </div>
 
 <div class="doc">
-<a id="lab84"></a><h1 class="section">Referent of a term</h1>
+<a id="lab89"></a><h1 class="section">Referent of a term</h1>
 
 
 <div class="paragraph"> </div>
@@ -195,7 +195,7 @@
 </div>
 
 <div class="doc">
-<a id="lab85"></a><h1 class="section">Support satisfaction</h1>
+<a id="lab90"></a><h1 class="section">Support satisfaction</h1>
 
 
 <div class="paragraph"> </div>
@@ -215,14 +215,14 @@
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Pred"><span class="id" title="constructor">Pred</span></a> <span class="id" title="var">p</span> <span class="id" title="var">args</span> =&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <a id="s:50" class="idref" href="#s:50"><span class="id" title="binder">s</span></a> <a id="a:51" class="idref" href="#a:51"><span class="id" title="binder">a</span></a> =&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> (<a id="w:52" class="idref" href="#w:52"><span class="id" title="binder">w</span></a> : <a class="idref" href="InqLog.FO.Models.html#World"><span class="id" title="method">World</span></a>),<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#s:50"><span class="id" title="variable">s</span></a> <a class="idref" href="InqLog.FO.Support.html#w:52"><span class="id" title="variable">w</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.States.html#contains"><span class="id" title="definition">contains</span></a> <a class="idref" href="InqLog.FO.Support.html#s:50"><span class="id" title="variable">s</span></a> <a class="idref" href="InqLog.FO.Support.html#w:52"><span class="id" title="variable">w</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Models.html#PInterpretation"><span class="id" title="method">PInterpretation</span></a> <a class="idref" href="InqLog.FO.Support.html#w:52"><span class="id" title="variable">w</span></a> <span class="id" title="var">p</span><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">fun</span> <a id="arg:53" class="idref" href="#arg:53"><span class="id" title="binder">arg</span></a> =&gt; <a class="idref" href="InqLog.FO.Support.html#referent"><span class="id" title="definition">referent</span></a> (<span class="id" title="var">args</span> <a class="idref" href="InqLog.FO.Support.html#arg:53"><span class="id" title="variable">arg</span></a>) <a class="idref" href="InqLog.FO.Support.html#w:52"><span class="id" title="variable">w</span></a> <a class="idref" href="InqLog.FO.Support.html#a:51"><span class="id" title="variable">a</span></a>) <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
 <br/>
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Bot"><span class="id" title="constructor">Bot</span></a> <span class="id" title="var">_</span> =&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <a id="s:54" class="idref" href="#s:54"><span class="id" title="binder">s</span></a> <a id="a:55" class="idref" href="#a:55"><span class="id" title="binder">a</span></a> =&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> (<a id="w:56" class="idref" href="#w:56"><span class="id" title="binder">w</span></a> : <a class="idref" href="InqLog.FO.Models.html#World"><span class="id" title="method">World</span></a>),<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#s:54"><span class="id" title="variable">s</span></a> <a class="idref" href="InqLog.FO.Support.html#w:56"><span class="id" title="variable">w</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.States.html#contains"><span class="id" title="definition">contains</span></a> <a class="idref" href="InqLog.FO.Support.html#s:54"><span class="id" title="variable">s</span></a> <a class="idref" href="InqLog.FO.Support.html#w:56"><span class="id" title="variable">w</span></a><br/>
 <br/>
 &nbsp;&nbsp;| <a class="idref" href="InqLog.FO.Syntax.html#Impl"><span class="id" title="constructor">Impl</span></a> <span class="id" title="var">phi1</span> <span class="id" title="var">phi2</span> =&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <a id="s:57" class="idref" href="#s:57"><span class="id" title="binder">s</span></a> <a id="a:58" class="idref" href="#a:58"><span class="id" title="binder">a</span></a> =&gt;<br/>
@@ -291,7 +291,7 @@
 &nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="p:72" class="idref" href="#p:72"><span class="id" title="binder">p</span></a> <a id="args:73" class="idref" href="#args:73"><span class="id" title="binder">args</span></a> <a id="s:74" class="idref" href="#s:74"><span class="id" title="binder">s</span></a> <a id="a:75" class="idref" href="#a:75"><span class="id" title="binder">a</span></a>,<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#s:74"><span class="id" title="variable">s</span></a><a class="idref" href="InqLog.FO.Support.html#f08f7d8f31d0cbd25c5e74692d2f400c"><span class="id" title="notation">,</span></a> <a class="idref" href="InqLog.FO.Support.html#a:75"><span class="id" title="variable">a</span></a> <a class="idref" href="InqLog.FO.Support.html#f08f7d8f31d0cbd25c5e74692d2f400c"><span class="id" title="notation">|=</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">&lt;{</span></a><a class="idref" href="InqLog.FO.Syntax.html#Pred"><span class="id" title="constructor">Pred</span></a> <a class="idref" href="InqLog.FO.Support.html#p:72"><span class="id" title="variable">p</span></a> <a class="idref" href="InqLog.FO.Support.html#args:73"><span class="id" title="variable">args</span></a><a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">}&gt;</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'&lt;-&gt;'_x"><span class="id" title="notation">&lt;-&gt;</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="w:76" class="idref" href="#w:76"><span class="id" title="binder">w</span></a>,<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#s:74"><span class="id" title="variable">s</span></a> <a class="idref" href="InqLog.FO.Support.html#w:76"><span class="id" title="variable">w</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.States.html#contains"><span class="id" title="definition">contains</span></a> <a class="idref" href="InqLog.FO.Support.html#s:74"><span class="id" title="variable">s</span></a> <a class="idref" href="InqLog.FO.Support.html#w:76"><span class="id" title="variable">w</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Models.html#PInterpretation"><span class="id" title="method">PInterpretation</span></a> <a class="idref" href="InqLog.FO.Support.html#w:76"><span class="id" title="variable">w</span></a> <a class="idref" href="InqLog.FO.Support.html#p:72"><span class="id" title="variable">p</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">fun</span> <a id="arg:77" class="idref" href="#arg:77"><span class="id" title="binder">arg</span></a> =&gt; <a class="idref" href="InqLog.FO.Support.html#referent"><span class="id" title="definition">referent</span></a> (<a class="idref" href="InqLog.FO.Support.html#args:73"><span class="id" title="variable">args</span></a> <a class="idref" href="InqLog.FO.Support.html#arg:77"><span class="id" title="variable">arg</span></a>) <a class="idref" href="InqLog.FO.Support.html#w:76"><span class="id" title="variable">w</span></a> <a class="idref" href="InqLog.FO.Support.html#a:75"><span class="id" title="variable">a</span></a>) <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>.<br/>
 <span class="id" title="keyword">Proof</span>.<br/>
@@ -303,7 +303,7 @@
 &nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="x:80" class="idref" href="#x:80"><span class="id" title="binder">x</span></a> <a id="s:81" class="idref" href="#s:81"><span class="id" title="binder">s</span></a> <a id="a:82" class="idref" href="#a:82"><span class="id" title="binder">a</span></a>,<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#s:81"><span class="id" title="variable">s</span></a><a class="idref" href="InqLog.FO.Support.html#f08f7d8f31d0cbd25c5e74692d2f400c"><span class="id" title="notation">,</span></a> <a class="idref" href="InqLog.FO.Support.html#a:82"><span class="id" title="variable">a</span></a> <a class="idref" href="InqLog.FO.Support.html#f08f7d8f31d0cbd25c5e74692d2f400c"><span class="id" title="notation">|=</span></a> <a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">&lt;{</span></a><a class="idref" href="InqLog.FO.Syntax.html#Bot"><span class="id" title="constructor">Bot</span></a> <a class="idref" href="InqLog.FO.Support.html#x:80"><span class="id" title="variable">x</span></a><a class="idref" href="InqLog.FO.Syntax.html#ae9500d5d3f4e6599e4c62e124b3cbc0"><span class="id" title="notation">}&gt;</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#::type_scope:x_'&lt;-&gt;'_x"><span class="id" title="notation">&lt;-&gt;</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <a id="w:83" class="idref" href="#w:83"><span class="id" title="binder">w</span></a>,<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="InqLog.FO.Support.html#s:81"><span class="id" title="variable">s</span></a> <a class="idref" href="InqLog.FO.Support.html#w:83"><span class="id" title="variable">w</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">~</span></a> <a class="idref" href="InqLog.FO.States.html#contains"><span class="id" title="definition">contains</span></a> <a class="idref" href="InqLog.FO.Support.html#s:81"><span class="id" title="variable">s</span></a> <a class="idref" href="InqLog.FO.Support.html#w:83"><span class="id" title="variable">w</span></a>.<br/>
 <span class="id" title="keyword">Proof</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
@@ -463,7 +463,7 @@
 </div>
 
 <div class="doc">
-<a id="lab86"></a><h2 class="section">Basic properties</h2>
+<a id="lab91"></a><h2 class="section">Basic properties</h2>
 
 </div>
 <div class="code">
@@ -491,11 +491,10 @@
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">firstorder</span>.<br/>
 &nbsp;&nbsp;-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<span class="id" title="var">t</span> <span class="id" title="var">w</span>) <span class="id" title="var">eqn</span>:<span class="id" title="var">H3</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">H1</span> <span class="id" title="var">w</span>).<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H2</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H3</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">congruence</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span> <span class="id" title="var">H3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H2</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H3</span>.<br/>
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">firstorder</span>.<br/>
 &nbsp;&nbsp;-<br/>
@@ -535,11 +534,12 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">discriminate</span>.<br/>
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Support.html#support_Bot"><span class="id" title="lemma">support_Bot</span></a>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#contains_empty_state_E"><span class="id" title="lemma">contains_empty_state_E</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">t</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="InqLog.FO.Support.html#persistency"><span class="id" title="lemma">persistency</span></a>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#substate_empty_state"><span class="id" title="lemma">substate_empty_state</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#substate_empty_state_E"><span class="id" title="lemma">substate_empty_state_E</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">auto</span>.<br/>
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">firstorder</span>.<br/>
@@ -602,27 +602,27 @@
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H2</span> <span class="id" title="var">w</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="lemma">andb_false_iff</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">right</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H2</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H2</span> <span class="id" title="var">w</span> <span class="id" title="var">H3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="lemma">andb_true_iff</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H3</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">H3</span> <span class="id" title="var">H4</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H4</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H2</span> <span class="id" title="var">w</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<span class="id" title="var">s2</span> <span class="id" title="var">w</span>) <span class="id" title="var">eqn</span>:<span class="id" title="var">H3</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H2</span> <span class="id" title="var">w</span> <span class="id" title="var">H3</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H1</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H3</span> <span class="id" title="keyword">as</span> <span class="id" title="var">H4</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">H2</span> (<a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Specif.html#exist"><span class="id" title="constructor">exist</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H4</span>)).<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="lemma">andb_false_iff</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H2</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">H2</span>|<span class="id" title="var">H2</span>].<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H2</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">congruence</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H2</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">w</span> := <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Specif.html#exist"><span class="id" title="constructor">exist</span></a> <span class="id" title="var">_</span> <span class="id" title="var">w</span> <span class="id" title="var">H4</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="lemma">andb_true_iff</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H4</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H3</span>.<br/>
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">intros</span> <span class="id" title="var">H2</span> <span class="id" title="var">s3</span> <span class="id" title="var">H3</span> <span class="id" title="var">H4</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Support.html#support_Impl"><span class="id" title="lemma">support_Impl</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H2</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#unrestricted_substate"><span class="id" title="lemma">unrestricted_substate</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H3</span> <span class="id" title="keyword">as</span> <span class="id" title="var">H5</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<a class="idref" href="InqLog.FO.States.html#unnamed_States_helper_3"><span class="id" title="lemma">unnamed_States_helper_3</span></a> <span class="id" title="var">s1</span> <span class="id" title="var">s3</span>) <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<a class="idref" href="InqLog.FO.States.html#state_eq_restricted_state_unrestricted_state"><span class="id" title="lemma">state_eq_restricted_state_unrestricted_state</span></a> <span class="id" title="var">s1</span> <span class="id" title="var">s3</span>) <span class="id" title="tactic">in</span> *.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">IH2</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etransitivity</span>; <span class="id" title="var">eassumption</span>.<br/>
@@ -688,7 +688,7 @@
 </div>
 
 <div class="doc">
-<a id="lab87"></a><h2 class="section">Ruling out a formula</h2>
+<a id="lab92"></a><h2 class="section">Ruling out a formula</h2>
 
 </div>
 <div class="code">
@@ -717,7 +717,7 @@
 </div>
 
 <div class="doc">
-<a id="lab88"></a><h2 class="section">Support conditions for defined connectives</h2>
+<a id="lab93"></a><h2 class="section">Support conditions for defined connectives</h2>
 
 </div>
 <div class="code">
@@ -738,9 +738,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Support.html#support_Bot"><span class="id" title="lemma">support_Bot</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">congruence</span>.<br/>
 &nbsp;&nbsp;-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H1</span> <span class="id" title="var">t</span> <span class="id" title="var">H2</span> <span class="id" title="var">H3</span> <span class="id" title="var">w</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<span class="id" title="var">t</span> <span class="id" title="var">w</span>) <span class="id" title="var">eqn</span>:<span class="id" title="var">H5</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">exfalso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H1</span> <span class="id" title="var">t</span> <span class="id" title="var">H2</span> <span class="id" title="var">H3</span> <span class="id" title="var">w</span> <span class="id" title="var">H4</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">t</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>.<br/>
@@ -807,7 +805,7 @@
 </div>
 
 <div class="doc">
-<a id="lab89"></a><h2 class="section">Support for lifted formulas</h2>
+<a id="lab94"></a><h2 class="section">Support for lifted formulas</h2>
 
 </div>
 <div class="code">
@@ -944,7 +942,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#I"><span class="id" title="constructor">I</span></a>.<br/>
 &nbsp;&nbsp;-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#empty_state_not_consistent"><span class="id" title="lemma">empty_state_not_consistent</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#state_eq_empty_state_iff_not_consistent"><span class="id" title="lemma">state_eq_empty_state_iff_not_consistent</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">firstorder</span> <span class="id" title="keyword">using</span> <span class="id" title="var">empty_state_property</span>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
@@ -953,7 +951,7 @@
 </div>
 
 <div class="doc">
-<a id="lab90"></a><h2 class="section">Support for multiple formulas</h2>
+<a id="lab95"></a><h2 class="section">Support for multiple formulas</h2>
 
 </div>
 <div class="code">
@@ -1049,7 +1047,7 @@
 </div>
 
 <div class="doc">
-<a id="lab91"></a><h2 class="section">Support for some formulas</h2>
+<a id="lab96"></a><h2 class="section">Support for some formulas</h2>
 
 </div>
 <div class="code">
@@ -1141,7 +1139,7 @@
 </div>
 
 <div class="doc">
-<a id="lab92"></a><h1 class="section">Support validity</h1>
+<a id="lab97"></a><h1 class="section">Support validity</h1>
 
 </div>
 <div class="code">
@@ -1208,25 +1206,23 @@
 &nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<a class="idref" href="InqLog.FO.States.html#singleton"><span class="id" title="definition">singleton</span></a> <span class="id" title="var">w1</span>).<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>.<br/>
 &nbsp;&nbsp;-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">w1</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#singleton_true"><span class="id" title="lemma">singleton_true</span></a>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#consistent_singleton_I"><span class="id" title="lemma">consistent_singleton_I</span></a>.<br/>
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w2</span> <span class="id" title="var">H5</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#singleton_true"><span class="id" title="lemma">singleton_true</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H5</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#contains_singleton_iff"><span class="id" title="lemma">contains_singleton_iff</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H5</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H5</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H3</span>.<br/>
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Support.html#support_Neg"><span class="id" title="lemma">support_Neg</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">s3</span> [[<span class="id" title="var">w2</span> <span class="id" title="var">H5</span>] [<span class="id" title="var">H6</span> <span class="id" title="var">H7</span>]]].<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#substate_singleton"><span class="id" title="lemma">substate_singleton</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H6</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">H6</span>|<span class="id" title="var">H6</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#substate_singleton_E"><span class="id" title="lemma">substate_singleton_E</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H6</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">H6</span>|<span class="id" title="var">H6</span>].<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H6</span> <span class="id" title="tactic">in</span> *; <span class="id" title="tactic">clear</span> <span class="id" title="var">H6</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">discriminate</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#singleton_true"><span class="id" title="lemma">singleton_true</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H5</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#contains_singleton_iff"><span class="id" title="lemma">contains_singleton_iff</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H5</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.Support.html#support_Pred"><span class="id" title="lemma">support_Pred</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H7</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">H7</span> <span class="id" title="var">_</span> (<a class="idref" href="InqLog.FO.States.html#singleton_refl"><span class="id" title="lemma">singleton_refl</span></a> <span class="id" title="var">w1</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">H7</span> <span class="id" title="var">_</span> (<a class="idref" href="InqLog.FO.States.html#contains_singleton_refl"><span class="id" title="lemma">contains_singleton_refl</span></a> <span class="id" title="var">w1</span>)).<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">congruence</span>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
 

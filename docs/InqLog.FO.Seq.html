@@ -37,7 +37,7 @@
 </div>
 
 <div class="doc">
-<a id="lab102"></a><h1 class="section">Defining the Sequent Calculus</h1>
+<a id="lab107"></a><h1 class="section">Defining the Sequent Calculus</h1>
 
 
 <div class="paragraph"> </div>
@@ -321,7 +321,7 @@
 </div>
 
 <div class="doc">
-<a id="lab103"></a><h2 class="section">Properties of <span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#Seq"><span class="id" title="inductive">Seq</span></a></span></h2>
+<a id="lab108"></a><h2 class="section">Properties of <span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#Seq"><span class="id" title="inductive">Seq</span></a></span></h2>
 
 </div>
 <div class="code">
@@ -667,7 +667,7 @@
 </div>
 
 <div class="doc">
-<a id="lab104"></a><h2 class="section">Some example derivations</h2>
+<a id="lab109"></a><h2 class="section">Some example derivations</h2>
 
 </div>
 <div class="code">
@@ -828,7 +828,7 @@
 </div>
 
 <div class="doc">
-<a id="lab105"></a><h1 class="section">Corresponding semantic</h1>
+<a id="lab110"></a><h1 class="section">Corresponding semantic</h1>
 
 
 <div class="paragraph"> </div>
@@ -909,7 +909,7 @@
 </div>
 
 <div class="doc">
-<a id="lab106"></a><h2 class="section"><span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#satisfaction_mult"><span class="id" title="definition">satisfaction_mult</span></a></span></h2>
+<a id="lab111"></a><h2 class="section"><span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#satisfaction_mult"><span class="id" title="definition">satisfaction_mult</span></a></span></h2>
 
 </div>
 <div class="code">
@@ -961,7 +961,7 @@
 </div>
 
 <div class="doc">
-<a id="lab107"></a><h2 class="section"><span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#satisfaction_some"><span class="id" title="definition">satisfaction_some</span></a></span></h2>
+<a id="lab112"></a><h2 class="section"><span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#satisfaction_some"><span class="id" title="definition">satisfaction_some</span></a></span></h2>
 
 </div>
 <div class="code">
@@ -1018,7 +1018,7 @@
 </div>
 
 <div class="doc">
-<a id="lab108"></a><h1 class="section"><span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#satisfaction_conseq"><span class="id" title="definition">satisfaction_conseq</span></a></span></h1>
+<a id="lab113"></a><h1 class="section"><span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#satisfaction_conseq"><span class="id" title="definition">satisfaction_conseq</span></a></span></h1>
 
 </div>
 <div class="code">
@@ -1035,7 +1035,7 @@
 </div>
 
 <div class="doc">
-<a id="lab109"></a><h2 class="section">Soundness lemmata for <span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#Seq"><span class="id" title="inductive">Seq</span></a></span></h2>
+<a id="lab114"></a><h2 class="section">Soundness lemmata for <span class="inlinecode"><a class="idref" href="InqLog.FO.Seq.html#Seq"><span class="id" title="inductive">Seq</span></a></span></h2>
 
 </div>
 <div class="code">
@@ -1050,7 +1050,7 @@
 &nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">M</span> <span class="id" title="var">f</span> <span class="id" title="var">a</span> <span class="id" title="var">H2</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">eexists</span>; <span class="id" title="tactic">split</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">exact</span> <span class="id" title="var">H1</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.States.html#mapping_state_nil"><span class="id" title="lemma">mapping_state_nil</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.States.html#mapping_state_nil_state_eq_empty_state"><span class="id" title="lemma">mapping_state_nil_state_eq_empty_state</span></a>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#empty_state_property"><span class="id" title="lemma">empty_state_property</span></a>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
 
@@ -1087,6 +1087,7 @@
 &nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">M</span> <span class="id" title="var">f</span> <span class="id" title="var">a</span> <span class="id" title="var">H3</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H3</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H1</span> <span class="id" title="keyword">as</span> <span class="id" title="var">H4</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">H4</span> (<span class="id" title="var">f</span> <span class="id" title="var">n</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="lemma">not_true_is_false</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H4</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_iff_inbS_false"><span class="id" title="lemma">InS_iff_inbS_false</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H4</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="var">contradict</span> <span class="id" title="var">H4</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_map_I"><span class="id" title="lemma">InS_map_I</span></a>.<br/>
@@ -1162,8 +1163,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">try</span> (<span class="id" title="var">exfalso</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">H8</span>; <span class="id" title="tactic">reflexivity</span>).<br/>
 
 <br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">H2</span> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a>).<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H2</span>; <span class="id" title="tactic">try</span> (<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#contains_mapping_state_I"><span class="id" title="lemma">contains_mapping_state_I</span></a>; <span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.ListLib.html#InS_cons_I_hd"><span class="id" title="lemma">InS_cons_I_hd</span></a>; <span class="id" title="tactic">reflexivity</span>).<br/>
 
 <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H9</span> : <a class="idref" href="InqLog.FO.Models.html#PInterpretation"><span class="id" title="method">PInterpretation</span></a> <span class="id" title="var">w</span> <a class="idref" href="http://coq.inria.fr/doc/V9.0.0/stdlib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="InqLog.FO.Models.html#PInterpretation"><span class="id" title="method">PInterpretation</span></a> (<span class="id" title="var">f</span> <span class="id" title="var">n</span>))<br/>
@@ -1275,7 +1275,7 @@
 &nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H5</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#substate_mapping_state_iff"><span class="id" title="lemma">substate_mapping_state_iff</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H5</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">ns2</span> [<span class="id" title="var">H6</span> <span class="id" title="var">H7</span>]].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.States.html#substate_mapping_state_E"><span class="id" title="lemma">substate_mapping_state_E</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">H5</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">ns2</span> [<span class="id" title="var">H6</span> <span class="id" title="var">H7</span>]].<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H6</span> <span class="id" title="tactic">in</span> *; <span class="id" title="tactic">clear</span> <span class="id" title="var">H6</span>.<br/>
 
 <br/>
@@ -1546,7 +1546,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">ns</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span> <span class="id" title="var">ns'</span>].<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.States.html#mapping_state_nil"><span class="id" title="lemma">mapping_state_nil</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.States.html#mapping_state_nil_state_eq_empty_state"><span class="id" title="lemma">mapping_state_nil_state_eq_empty_state</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#empty_state_property"><span class="id" title="lemma">empty_state_property</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">asimpl</span>.<br/>
@@ -1598,7 +1598,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <a class="idref" href="InqLog.FO.Models.html#Individual_inh"><span class="id" title="method">Individual_inh</span></a>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.States.html#mapping_state_nil"><span class="id" title="lemma">mapping_state_nil</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="InqLog.FO.States.html#mapping_state_nil_state_eq_empty_state"><span class="id" title="lemma">mapping_state_nil_state_eq_empty_state</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="InqLog.FO.Support.html#empty_state_property"><span class="id" title="lemma">empty_state_property</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<a class="idref" href="InqLog.FO.Support.html#referent"><span class="id" title="definition">referent</span></a> <span class="id" title="var">t</span> (<span class="id" title="var">f</span> <span class="id" title="var">n</span>) <span class="id" title="var">a</span>).<br/>
@@ -1720,7 +1720,7 @@
 </div>
 
 <div class="doc">
-<a id="lab110"></a><h2 class="section">Soundness</h2>
+<a id="lab115"></a><h2 class="section">Soundness</h2>
 
 </div>
 <div class="code">
@@ -1774,7 +1774,7 @@
 </div>
 
 <div class="doc">
-<a id="lab111"></a><h1 class="section">More derivable rules</h1>
+<a id="lab116"></a><h1 class="section">More derivable rules</h1>
 
 </div>
 <div class="code">
