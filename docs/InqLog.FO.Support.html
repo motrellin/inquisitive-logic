@@ -34,7 +34,7 @@
 </div>
 
 <div class="doc">
-<a id="lab89"></a><h1 class="section">Referent of a term</h1>
+<a id="lab90"></a><h1 class="section">Referent of a term</h1>
 
 
 <div class="paragraph"> </div>
@@ -195,7 +195,7 @@
 </div>
 
 <div class="doc">
-<a id="lab90"></a><h1 class="section">Support satisfaction</h1>
+<a id="lab91"></a><h1 class="section">Support satisfaction</h1>
 
 
 <div class="paragraph"> </div>
@@ -443,27 +443,23 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">specialize</span> (<span class="id" title="var">H4</span> <span class="id" title="var">i</span>).<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">eapply</span> <span class="id" title="var">IH1</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">try</span> <span class="id" title="var">eassumption</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">(*&nbsp;TODO:&nbsp;This&nbsp;could&nbsp;be&nbsp;extracted.&nbsp;*)</span><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">intros</span> [|<span class="id" title="var">x'</span>].<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">apply</span> <span class="id" title="var">H3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="var">f_equiv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">exact</span> <span class="id" title="var">H3</span>.<br/>
 &nbsp;&nbsp;-<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">intros</span> [<span class="id" title="var">i</span> <span class="id" title="var">H4</span>].<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">exists</span> <span class="id" title="var">i</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">eapply</span> <span class="id" title="var">IH1</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">try</span> <span class="id" title="var">eassumption</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">(*&nbsp;TODO:&nbsp;This&nbsp;could&nbsp;be&nbsp;extracted.&nbsp;*)</span><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">intros</span> [|<span class="id" title="var">x'</span>].<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">apply</span> <span class="id" title="var">H3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="var">f_equiv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">all</span>: <span class="id" title="tactic">exact</span> <span class="id" title="var">H3</span>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
 </div>
 
 <div class="doc">
-<a id="lab91"></a><h2 class="section">Basic properties</h2>
+<a id="lab92"></a><h2 class="section">Basic properties</h2>
 
 </div>
 <div class="code">
@@ -688,7 +684,7 @@
 </div>
 
 <div class="doc">
-<a id="lab92"></a><h2 class="section">Ruling out a formula</h2>
+<a id="lab93"></a><h2 class="section">Ruling out a formula</h2>
 
 </div>
 <div class="code">
@@ -717,7 +713,7 @@
 </div>
 
 <div class="doc">
-<a id="lab93"></a><h2 class="section">Support conditions for defined connectives</h2>
+<a id="lab94"></a><h2 class="section">Support conditions for defined connectives</h2>
 
 </div>
 <div class="code">
@@ -805,7 +801,7 @@
 </div>
 
 <div class="doc">
-<a id="lab94"></a><h2 class="section">Support for lifted formulas</h2>
+<a id="lab95"></a><h2 class="section">Support for lifted formulas</h2>
 
 </div>
 <div class="code">
@@ -951,7 +947,7 @@
 </div>
 
 <div class="doc">
-<a id="lab95"></a><h2 class="section">Support for multiple formulas</h2>
+<a id="lab96"></a><h2 class="section">Support for multiple formulas</h2>
 
 </div>
 <div class="code">
@@ -1047,7 +1043,7 @@
 </div>
 
 <div class="doc">
-<a id="lab96"></a><h2 class="section">Support for some formulas</h2>
+<a id="lab97"></a><h2 class="section">Support for some formulas</h2>
 
 </div>
 <div class="code">
@@ -1139,7 +1135,7 @@
 </div>
 
 <div class="doc">
-<a id="lab97"></a><h1 class="section">Support validity</h1>
+<a id="lab98"></a><h1 class="section">Support validity</h1>
 
 </div>
 <div class="code">
