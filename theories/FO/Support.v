@@ -357,20 +357,16 @@ Proof with (try contradiction).
     all: specialize (H4 i).
     all: eapply IH1.
     all: try eassumption.
-    (* TODO: This could be extracted. *)
-    all: intros [|x'].
-    all: try reflexivity.
-    all: apply H3.
+    all: f_equiv.
+    all: exact H3.
   -
     split.
     all: intros [i H4].
     all: exists i.
     all: eapply IH1.
     all: try eassumption.
-    (* TODO: This could be extracted. *)
-    all: intros [|x'].
-    all: try reflexivity.
-    all: apply H3.
+    all: f_equiv.
+    all: exact H3.
 Qed.
 
 (** ** Basic properties *)

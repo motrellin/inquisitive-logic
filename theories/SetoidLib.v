@@ -140,3 +140,16 @@ Proof.
   intros x y C1 C2 H1.
   exact H1.
 Qed.
+
+(** * Regarding Autosubst *)
+
+Instance scons_Proper `{Setoid X} :
+  Proper (equiv ==> ext_eq ==> ext_eq) (@scons X).
+Proof.
+  intros x1 x2 H1 f1 f2 H2 [|x'].
+  all: simpl.
+  -
+    exact H1.
+  -
+    apply H2.
+Qed.
