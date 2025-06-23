@@ -726,6 +726,37 @@ Qed.
 
 Definition length_order_ind {X} := well_founded_ind (@length_order_wf X).
 
+Lemma length_order_filter `{Setoid X} :
+  forall (f : Morph X bool) (xs : list X) x,
+    f x = false ->
+    InS x xs ->
+    length_order (filter f xs) xs.
+Proof.
+  intros f.
+  unfold length_order.
+  induction xs as [|x1 xs' IH].
+  all: intros x2 H1 H2.
+  -
+    now eapply InS_nil_E in H2.
+  -
+    simpl.
+    destruct (f x1) eqn:H3.
+    +
+      apply InS_cons_E in H2 as [H2|H2].
+      *
+        rewrite H2 in H1.
+        congruence.
+      *
+        simpl.
+        specialize (IH _ H1 H2).
+        lia.
+    +
+      assert (H4 : length (filter f xs') <= length xs') by apply filter_length_le.
+      assert (H5 : length xs' < length (x1 :: xs')) by constructor.
+      red.
+      lia.
+Qed.
+
 (** ** [InS_sublist_order] *)
 
 Definition InS_sublist_order `{Setoid X} : relation (@list X) :=
@@ -735,113 +766,69 @@ Definition InS_sublist_order `{Setoid X} : relation (@list X) :=
     InS x xs2 /\
     ~ InS x xs1.
 
+Program Definition nequiv_decb_Morph `{EqDec X} (x : X) : Morph X bool :=
+  {|
+    morph := nequiv_decb x
+  |}.
+
+Next Obligation.
+  intros x1 x2 H1.
+  unfold "<>b".
+  unfold "==b".
+  destruct (x == x1) as [H2|H2], (x == x2) as [H3|H3].
+  all: rewrite H1 in H2.
+  all: easy.
+Qed.
+
+Lemma nequiv_decb_Morph_irreflexive `{EqDec X} :
+  forall x,
+    nequiv_decb_Morph x x = false.
+Proof.
+  intros x.
+  simpl.
+  unfold "<>b".
+  unfold "==b".
+  destruct (x == x) as [H1|H1].
+  -
+    reflexivity.
+  -
+    exfalso.
+    apply H1.
+    reflexivity.
+Qed.
+
 Lemma InS_sublist_order_Acc `{EqDec X} :
   forall xs1 xs2,
     InS_sublist xs2 xs1 ->
     Acc InS_sublist_order xs2.
 Proof.
   induction xs1 as [xs1 IH] using (well_founded_ind length_order_wf).
-  intros xs2 H2.
+  intros xs2 H1.
   constructor.
-  intros xs3 [H3 H4].
-  destruct H4 as [x1 [H4 H5]].
+  intros xs3 [H2 H3].
+  destruct H3 as [x1 [H3 H4]].
   eapply IH with
-    (y := filter (nequiv_decb x1) xs1).
+    (y := filter (nequiv_decb_Morph x1) xs1).
   -
-    apply H2 in H4 as H6.
-    clear dependent xs3.
-    clear dependent xs2.
-    clear IH.
-    rename H6 into H2.
-    (* TODO extract? *)
-    induction xs1 as [|x2 xs1' IH].
+    apply H1 in H3 as H5.
+    apply length_order_filter with (x := x1).
     +
-      easy.
+      apply nequiv_decb_Morph_irreflexive.
     +
-      unfold length_order in *.
-      unfold "_ <>b _" in *.
-      unfold "_ ==b _" in *.
-      simpl in *.
-      apply InS_cons_E in H2 as [H2|H2].
-      *
-        destruct (InS_dec x1 xs1') as [H3|H3].
-        --
-           specialize (IH H3).
-           destruct (x1 == x2) as [_|H4]; try contradiction.
-           simpl.
-           lia.
-        --
-           clear IH.
-           destruct (x1 == x2) as [_|H4]; try contradiction.
-           simpl.
-           (* TODO extract? *)
-           assert (H4 :
-            filter
-            (fun y : X => negb (if x1 == y then true else false))
-            xs1' =
-            xs1'
-          ).
-          {
-            clear dependent x2.
-            rename xs1' into xs1.
-            (* TODO extract? *)
-            induction xs1 as [|x2 xs1' IH].
-            -
-              reflexivity.
-            -
-              simpl.
-              destruct (x1 == x2) as [H4|H4].
-              +
-                simpl.
-                exfalso.
-                apply H3.
-                left.
-                exact H4.
-              +
-                simpl.
-                f_equal.
-                apply IH.
-                intros H5.
-                apply H3.
-                right.
-                exact H5.
-          }
-          rewrite H4.
-          lia.
-      *
-        specialize (IH H2).
-        destruct (x1 == x2) as [H3|H3].
-        --
-           simpl.
-           lia.
-        --
-           simpl.
-           lia.
+      exact H5.
   -
-    intros x2 H6.
-    apply filter_InA.
-    {
-      intros x3 x4 H7.
-      unfold "_ <>b _".
-      unfold "_ ==b _".
-      destruct (x1 == x3) as [H8|H8].
-      all: destruct (x1 == x4) as [H9|H9].
-      all: reflexivity + rewrite H7 in H8; contradiction.
-    }
-    split.
+    intros x2 H5.
+    apply InS_filter_I.
     +
+      simpl.
+      unfold "<>b".
+      unfold "==b".
+      destruct (x1 == x2) as [H6|H6]; try reflexivity.
+      now rewrite H6 in H4.
+    +
+      apply H1.
       apply H2.
-      apply H3.
-      exact H6.
-    +
-      unfold "_ <>b _".
-      unfold "_ ==b _".
-      destruct (x1 == x2) as [H7|H7].
-      *
-        rewrite H7 in H5.
-        contradiction.
-      *
-        reflexivity.
+      exact H5.
 Qed.
 
 Proposition InS_sublist_order_wf `{EqDec X} :
