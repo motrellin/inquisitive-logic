@@ -4,6 +4,15 @@ From InqLog.FO Require Import DNE.
 Definition Kuroda `{Signature} (phi : form) : form :=
   <{(forall (~ ~ phi)) -> ~ ~ forall phi}>.
 
+Lemma truth_conditional_Kuroda `{Signature} :
+  forall phi,
+    truth_conditional (Kuroda phi).
+Proof.
+  intros phi.
+  apply truth_conditional_Impl.
+  apply truth_conditional_Neg.
+Qed.
+
 (** * Validity of [Kuroda] *)
 
 Theorem support_valid_Kuroda `{Signature} :
@@ -11,25 +20,19 @@ Theorem support_valid_Kuroda `{Signature} :
     support_valid (Kuroda phi).
 Proof.
   intros phi.
-  intros m s1 a.
-  intros s2 H1 H2.
-  apply truth_conditional_Neg.
-  intros w H3.
-  rewrite truth_Neg.
-  intros H4.
-  rewrite truth_Neg in H4.
-  apply H4.
-  rewrite truth_Forall.
+  intros M s a.
+  apply truth_conditional_Kuroda.
+  intros w H1.
+  unfold Kuroda.
+  rewrite truth_Impl.
+  do 2 rewrite truth_Neg.
+  do 2 rewrite truth_Forall.
+  intros H2 H3.
+  apply H3.
   intros i.
-  rewrite support_Forall in H2.
   specialize (H2 i).
-  eapply truth_valid_DNE; try reflexivity.
-  fold support.
-  eapply persistency; try exact H2.
-  intros w' H5.
-  apply contains_singleton_iff in H5.
-  rewrite H5.
-  exact H3.
+  do 2 rewrite truth_Neg in H2.
+  now apply NNPP.
 Qed.
 
 Theorem Seq_Kuroda `{Signature} :
