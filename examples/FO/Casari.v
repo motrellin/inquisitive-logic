@@ -1,4 +1,4 @@
-From InqLog.FO Require Import Consequence Seq.
+From InqLog.FO Require Import Seq.
 From InqLog.FO Require Import DNE.
 From InqLog.FO Require SingleUnaryPredicate SingleBinaryPredicate.
 
@@ -16,16 +16,15 @@ Definition CasariAnt `{Signature} (phi : form) : form :=
 Definition Casari `{Signature} (phi : form) : form :=
   <{ CasariAnt phi -> CasariSuc phi }>.
 
-Remark Casari_truth_conditional `{Signature} :
+Lemma truth_conditional_Casari `{Signature} :
   forall phi,
-    classical phi = true ->
+    truth_conditional phi ->
     truth_conditional (Casari phi).
 Proof.
   intros phi H1.
-  apply classical_truth_conditional.
-  simpl.
-  rewrite H1.
-  reflexivity.
+  apply truth_conditional_Impl.
+  apply truth_conditional_Forall.
+  exact H1.
 Qed.
 
 (** * Some Casari Instances with atomic predicates *)
@@ -44,7 +43,7 @@ Module Casari_with_atoms.
     (
       forall x,
         (
-          (P x)
+          (~ ~ P x)
           ->
           (forall x, ~ ~ P x)
         )
@@ -59,204 +58,55 @@ Module Casari_with_atoms.
     firstorder.
   Qed.
 
-  Theorem support_valid_Casari_DNA :
-    support_valid (Casari DNA).
-  Proof.
-    apply support_valid_charac_support_conseq.
-    apply support_conseq_Impl_I.
-    apply support_conseq_Forall_I.
-    apply support_conseq_Impl_I.
-    apply support_conseq_Bot_I with
-      (phi := <{~ (Pred' (Var 0))}>).
-    -
-      apply support_conseq_weakening_cons_hd.
-    -
-      assert (eq1 :
-        <{~ ~ (Pred' (Var 0))}> =
-        <{~ ~ (Pred' (Var 0))}>.|[Var 0/]
-      ). reflexivity.
-      rewrite eq1.
-      apply support_conseq_Forall_E_rigid; try easy.
-      apply support_conseq_Impl_E with
-        (phi := CasariImpl DNA).
-      +
-        apply support_conseq_Impl_I.
-        apply support_conseq_Bot_E.
-        apply support_conseq_Bot_I with
-          (phi := <{~ Pred' (Var 0)}>).
-        *
-          apply support_conseq_weakening_cons_tl.
-          apply support_conseq_weakening_cons_hd.
-        *
-          apply support_conseq_weakening_cons_hd.
-      +
-        assert (eq2 :
-          <{ (CasariImpl DNA) -> (Forall <{ ~ ~ (Pred' (Var 0)) }>) }> =
-          <{ (CasariImpl DNA) -> (Forall <{ ~ ~ (Pred' (Var 0)) }>) }>.|[Var 0/]
-        ). reflexivity.
-        rewrite eq2.
-        apply support_conseq_Forall_E_rigid; try easy.
-        apply support_conseq_weakening_cons_tl.
-        apply support_conseq_weakening_cons_hd.
-  Qed.
-
-  Proposition support_conseq_CasariSuc_DNA_CasariSuc_Atomic :
-    support_conseq (CasariSuc DNA :: nil) (CasariSuc Atomic).
-  Proof.
-    apply support_conseq_Forall_I.
-    eapply support_conseq_Impl_E with
-      (phi := DNA).
-    -
-      apply support_conseq_Impl_I.
-      apply support_conseq_Bot_I with
-        (phi := <{~ Pred' (Var 0)}>).
-      +
-        apply support_conseq_weakening_cons_hd.
-      +
-        apply support_conseq_weakening_cons_tl.
-        apply support_conseq_Impl_I.
-        eapply support_conseq_Impl_E.
-        *
-          apply support_conseq_weakening_cons_hd.
-        *
-          apply support_conseq_weakening_cons_tl.
-          unfold CasariSuc.
-          unfold DNA.
-          assert (eq1 :
-            <{~ (Pred' (Var 0)) -> (Bot 0)}> =
-            <{~ (Pred' (Var 0)) -> (Bot 0)}>.|[Var 0/]
-          ). reflexivity.
-          rewrite eq1.
-          apply support_conseq_Forall_E_rigid; try exact I.
-          apply support_conseq_refl.
-    -
-      rewrite <- app_nil_l with
-        (l := map (fun psi => psi.|[ren (+1)]) (CasariSuc DNA :: nil)).
-      eapply support_conseq_weakening_1.
-      apply support_valid_charac_support_conseq.
-      apply support_valid_DNE_Pred.
-  Qed.
-
-  Print Assumptions support_conseq_CasariSuc_DNA_CasariSuc_Atomic.
-
-  Proposition support_conseq_CasariSuc_Atomic_CasariSuc_DNA :
-    support_conseq (CasariSuc Atomic :: nil) (CasariSuc DNA).
-  Proof.
-    apply support_conseq_Forall_I.
-    apply support_conseq_Impl_I.
-    apply support_conseq_Bot_I with
-      (phi := Pred' (Var 0)).
-    -
-      apply support_conseq_weakening_cons_tl.
-      assert (eq1 :
-        Pred' (Var 0) = (Pred' (Var 0)).|[Var 0/]
-      ). reflexivity.
-      rewrite eq1.
-      apply support_conseq_Forall_E_rigid; try exact I.
-      apply support_conseq_refl.
-    -
-      apply support_conseq_weakening_cons_hd.
-  Qed.
-
-  Print Assumptions support_conseq_CasariSuc_Atomic_CasariSuc_DNA.
-
-  Proposition support_conseq_CasariAnt_Atomic_CasariAnt_DNA :
-    support_conseq (CasariAnt Atomic :: nil) (CasariAnt DNA).
-  Proof.
-    apply support_conseq_Forall_I.
-    apply support_conseq_Impl_I.
-    apply support_conseq_trans with
-      (cxt2 := CasariSuc Atomic :: nil).
-    -
-      intros psi [H3|H3]; try easy.
-      subst psi.
-      apply support_conseq_Impl_E with
-        (phi := CasariImpl Atomic).
-      +
-        apply support_conseq_Impl_I.
-        apply support_conseq_trans with
-          (cxt2 := CasariSuc DNA :: nil).
-        *
-          intros psi [H3|H3]; try easy.
-          subst psi.
-          apply support_conseq_Impl_E with
-            (phi := DNA).
-          --
-             apply support_conseq_Impl_I.
-             apply support_conseq_Bot_I with (phi := Atomic).
-             ++
-                apply support_conseq_weakening_cons_tl.
-                apply support_conseq_weakening_cons_hd.
-             ++
-                apply support_conseq_weakening_cons_hd.
-          --
-             apply support_conseq_in.
-             right.
-             left.
-             reflexivity.
-        *
-          exact support_conseq_CasariSuc_DNA_CasariSuc_Atomic.
-      +
-        assert (eq1 :
-          <{ (CasariImpl Atomic) -> (CasariSuc Atomic) }> =
-          <{ (CasariImpl Atomic) -> (CasariSuc Atomic) }>.|[Var 0/]
-        ). reflexivity.
-        rewrite eq1.
-        apply support_conseq_Forall_E_rigid; try exact I.
-        apply support_conseq_in.
-        right.
-        left.
-        reflexivity.
-    -
-      exact support_conseq_CasariSuc_Atomic_CasariSuc_DNA.
-  Qed.
-
-  Print Assumptions support_conseq_CasariAnt_Atomic_CasariAnt_DNA.
-
-  Proposition support_conseq_Casari_DNA_Casari_Atomic :
-    support_conseq (Casari DNA :: nil) (Casari Atomic).
-  Proof.
-    apply support_conseq_Impl_I.
-    apply support_conseq_trans with
-      (cxt2 := CasariSuc DNA :: nil).
-    -
-      intros psi [H4|H4]; try easy.
-      subst psi.
-      apply support_conseq_Impl_E with
-        (phi := CasariAnt DNA).
-      +
-        apply support_conseq_trans with
-          (cxt2 := CasariAnt Atomic :: nil).
-        *
-          intros psi [H4|H4]; try easy.
-          subst psi.
-          apply support_conseq_weakening_cons_hd.
-        *
-          exact support_conseq_CasariAnt_Atomic_CasariAnt_DNA.
-      +
-        apply support_conseq_in.
-        right.
-        left.
-        reflexivity.
-    -
-      exact support_conseq_CasariSuc_DNA_CasariSuc_Atomic.
-  Qed.
-
-  Print Assumptions support_conseq_Casari_DNA_Casari_Atomic.
-
   Corollary support_valid_Casari_Atomic :
     support_valid (Casari Atomic).
   Proof.
-    apply support_valid_charac_support_conseq.
-    apply support_conseq_trans with
-      (cxt2 := Casari DNA :: nil).
+    intros M s1 a.
+    apply truth_conditional_Casari.
+    {
+      apply truth_conditional_Pred.
+    }
+    intros w H1.
+
+    unfold Casari.
+    rewrite truth_Impl.
+    intros H2.
+
+    destruct (classic (exists i, ~ truth Atomic w (i .: a))) as [[i H3]|H3].
     -
-      intros psi [H1|H1]; try easy.
-      subst psi.
-      apply support_valid_charac_support_conseq.
-      exact support_valid_Casari_DNA.
+      exfalso.
+
+      unfold CasariAnt in H2.
+      rewrite truth_Forall in H2.
+      specialize (H2 i).
+      rewrite truth_Impl in H2.
+
+      assert (H4 : truth (CasariImpl Atomic) w (i .: a)).
+      {
+        unfold CasariImpl.
+        rewrite truth_Impl.
+        easy.
+      }
+      specialize (H2 H4).
+      unfold CasariSuc in H2.
+      rewrite truth_Forall in H2.
+      specialize (H2 i).
+      apply H3.
+      unfold Atomic, Pred'.
+      rewrite truth_Pred.
+      simpl.
+      apply H2.
+      apply contains_singleton_iff.
+      reflexivity.
     -
-      exact support_conseq_Casari_DNA_Casari_Atomic.
+      unfold CasariSuc.
+      rewrite truth_Forall.
+      intros i.
+      apply NNPP.
+      intros H4.
+      apply H3.
+      exists i.
+      exact H4.
   Qed.
 
   Print Assumptions support_valid_Casari_Atomic.
