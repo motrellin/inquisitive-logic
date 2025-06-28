@@ -900,31 +900,6 @@ Notation "? phi" := (Iquest phi)
   (in custom form at level 76, right associativity)
   : form_scope.
 
-(** ** Example formulas
-
-   We can now use our new syntax notation to define some
-   example formulas for illustration purpose.
-
- *)
-
-Example iquest_p `{Signature} (p : PSymb) (args : PAri p -> term) : form :=
-  <{ ? Pred p args }>.
-
-Example EM `{Signature} (phi : form) : form :=
-  <{phi \/ ~ phi}>.
-
-Example DNE `{Signature} (phi : form) : form :=
-  <{ (~ (~ phi)) -> phi }>.
-
-Example Kuroda `{Signature} (phi : form) : form :=
-  <{(forall (~ ~ phi)) -> ~ ~ forall phi}>.
-
-Example CD `{Signature} (phi psi : form) : form :=
-  <{
-    (Forall <{(hsubst (ren (+1)) phi) \\/ psi}>) ->
-    phi \\/(Forall psi)
-  }>.
-
 (** ** Classic formulas
 
    We want to introduce the notion of a _classical formula_.
@@ -1075,35 +1050,6 @@ Proof.
   reflexivity.
 Qed.
 
-Example iquest_p_not_classical `{Signature} :
-  forall p args,
-    classical (iquest_p p args) = false.
-Proof.
-  reflexivity.
-Qed.
-
-Example EM_classical `{Signature} :
-  forall phi,
-    classical (EM phi) = classical phi.
-Proof.
-  intros phi.
-  unfold EM.
-  rewrite classical_Disj.
-  rewrite classical_Neg.
-  apply andb_diag.
-Qed.
-
-Example DNE_classical `{Signature} :
-  forall phi,
-    classical (DNE phi) = classical phi.
-Proof.
-  intros phi.
-  unfold DNE.
-  rewrite classical_Impl.
-  do 2 rewrite classical_Neg.
-  apply andb_diag.
-Qed.
-
 Lemma classical_hsubst `{Signature} :
   forall phi sigma,
     classical (phi.|[sigma]) = classical phi.
@@ -1203,55 +1149,3 @@ Definition highest_occ_free_var `{Signature}
         sigma1 y == sigma2 y
     ) ->
     phi.|[sigma1] == phi.|[sigma2].
-
-(** * Syntax for the Unary Predicate Symbol Signature *)
-
-Module Syntax_single_unary_predicate.
-
-  Export Signature_single_unary_predicate.
-
-  (**
-     First, we introduce some nice notation for the unary
-     predicate symbol and show certain properties about it.
-   *)
-  Definition Pred' (t : term) :=
-    Pred tt (fun arg => t).
-
-  Lemma hsubst_Pred' :
-    forall t sigma,
-      (Pred' t).|[sigma] == Pred' t.[sigma].
-  Proof.
-    intros t sigma.
-    simpl.
-    red.
-    rewrite <- eq_rect_eq_dec; try exact PSymb_EqDec.
-    reflexivity.
-  Qed.
-
-End Syntax_single_unary_predicate.
-
-(** * Syntax for the Binary Predicate Symbol Signature *)
-
-Module Syntax_single_binary_predicate.
-
-  Export Signature_single_binary_predicate.
-
-  (**
-     Same procedure for this signature.
-   *)
-  Definition Pred' (t1 t2 : term) :=
-    Pred tt (fun arg => if arg then t1 else t2).
-
-  Lemma hsubst_Pred' :
-    forall t1 t2 sigma,
-      (Pred' t1 t2).|[sigma] == Pred' t1.[sigma] t2.[sigma].
-  Proof.
-    intros t1 t2 sigma.
-    simpl.
-    red.
-    rewrite <- eq_rect_eq_dec; try exact PSymb_EqDec.
-    intros [|].
-    all: reflexivity.
-  Qed.
-
-End Syntax_single_binary_predicate.

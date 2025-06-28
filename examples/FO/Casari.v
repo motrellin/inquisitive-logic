@@ -1,4 +1,6 @@
-From InqLog.FO Require Export Consequence Seq.
+From InqLog.FO Require Import Consequence Seq.
+From InqLog.FO Require Import DNE.
+From InqLog.FO Require SingleUnaryPredicate SingleBinaryPredicate.
 
 (** * The Casari Scheme *)
 
@@ -30,7 +32,7 @@ Qed.
 
 Module Casari_with_atoms.
 
-  Import Syntax_single_unary_predicate.
+  Import SingleUnaryPredicate.
 
   Definition Atomic : form :=
     <{ Pred' (Var 0) }>.
@@ -281,7 +283,7 @@ Module Casari_fails.
      We will use our signature with a single binary
      predicate symbol for the counter example.
    *)
-  Import Syntax_single_binary_predicate.
+  Import SingleBinaryPredicate.
 
   (**
      The following formula will serve as our instance for
