@@ -14,4 +14,3 @@ Makefile.coq.conf
 .Makefile.coq.d
 .coq-html.mk
 html/*
-_CoqProject
