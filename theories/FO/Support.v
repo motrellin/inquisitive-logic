@@ -412,6 +412,18 @@ Qed.
 
 Print Assumptions persistency.
 
+Instance support_Proper_substate `{Model} :
+  Proper (form_eq ==> substate --> ext_eq ==> impl) support.
+Proof.
+  intros phi1 phi2 H1 s1 s2 H2 a1 a2 H3 H4.
+  eapply persistency.
+  -
+    rewrite H1,H3 in H4.
+    exact H4.
+  -
+    exact H2.
+Qed.
+
 Proposition empty_state_property `{Model} :
   forall (a : assignment) (phi : form),
     empty_state, a |= phi.
@@ -436,9 +448,8 @@ Proof.
     now apply contains_empty_state_E in H1.
   -
     intros t H1 H2.
-    eapply persistency.
-    apply substate_empty_state_E in H1.
-    all: auto.
+    rewrite H1.
+    apply IH2.
   -
     firstorder.
   -
@@ -884,7 +895,8 @@ Proof.
     apply Forall_cons_iff in H1 as [H1 H2].
     constructor.
     +
-      eapply persistency; eassumption.
+      rewrite H3.
+      exact H1.
     +
       eapply IH; eassumption.
 Qed.
@@ -963,7 +975,8 @@ Proof.
     apply Exists_cons in H1 as [H1|H1].
     +
       left.
-      eapply persistency; eassumption.
+      rewrite H2.
+      exact H1.
     +
       right.
       apply IH; assumption.
