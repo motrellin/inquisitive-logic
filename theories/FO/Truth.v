@@ -290,18 +290,14 @@ Remark truth_conditional_other_direction `{S : Signature} :
   forall phi `(M : @Model S) s a,
     s, a |= phi ->
     forall w,
-      s w = true ->
+      contains s w ->
       truth phi w a.
 Proof.
   intros phi M s a H1 w H2.
-  eapply persistency.
-  -
-    exact H1.
-  -
-    intros w' H3.
-    apply contains_singleton_iff in H3.
-    rewrite H3.
-    exact H2.
+  red.
+  eapply persistency; try eassumption.
+  apply singleton_substate_iff.
+  exact H2.
 Qed.
 
 Lemma truth_conditional_Pred `{Signature} :
