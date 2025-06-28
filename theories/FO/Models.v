@@ -33,21 +33,17 @@ Class Model `{Signature} :=
        relations on the set of individuals, we need a function
        of type [PAri p -> Individual] to reflect this
        intuition.
-
-       One should also note the codomain of [PInterpretation]
-       which is [bool]. By this, we ensure decidability of
-       [PInterpretation w] in every world [w].
      *)
     PInterpretation :
       World ->
       forall (p : PSymb),
         (PAri p -> Individual) ->
-        bool;
+        Prop;
     PInterpretation_Proper_outer ::
       Proper (equiv ==> eq) PInterpretation;
     PInterpretation_Proper_inner ::
       forall w p,
-        Proper (ext_eq ==> eq) (PInterpretation w p);
+        Proper (ext_eq ==> iff) (PInterpretation w p);
 
     (**
        We proceed the same way for function symbols.
@@ -83,7 +79,7 @@ Program Definition two_Worlds_Model `{Signature} : Model :=
     World := bool;
     Individual := unit;
     Individual_inh := tt;
-    PInterpretation := fun w _ _ => w;
+    PInterpretation := fun w _ _ => if w then True else False;
     FInterpretation := fun _ _ _ => tt
   |}.
 

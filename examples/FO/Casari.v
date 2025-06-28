@@ -170,17 +170,17 @@ Module Casari_fails.
      [PInterpretation] becomes a ternary relation which we
      define before:
    *)
-  Definition rel (w m j : nat) : bool :=
+  Definition rel (w m j : nat) : Prop :=
     (
-      negb (even m) &&
-      (m =? j)
-    ) ||
+      (even m = false) /\
+      (m = j)
+    ) \/
     (
-      even m &&
-      negb (j =? w) &&
+      even m = true /\
+      (j <> w) /\
       (
-        negb (even j) ||
-        (m <? j)
+        (even j = false) \/
+        (m < j)
       )
     ).
 
@@ -566,13 +566,12 @@ Module Casari_fails.
   Lemma unnamed_helper_Casari_1 :
     forall w m,
       even m = true ->
-      rel w m w = false.
+      ~ rel w m w.
   Proof.
     intros w m H1.
     unfold rel.
     rewrite H1.
-    rewrite eqb_refl.
-    reflexivity.
+    lia.
   Qed.
 
   Print Assumptions unnamed_helper_Casari_1.
@@ -583,7 +582,7 @@ Module Casari_fails.
       contains_all (? ~ even ?) s ->
       contains_all (? ltb m ?) s ->
       forall w j,
-        rel w m j = true ->
+        rel w m j ->
         contains s j.
   Proof.
     intros s m H1 H2 H3 w j H4.
@@ -591,10 +590,15 @@ Module Casari_fails.
     unfold rel in H4.
     rewrite H1 in H4.
     simpl in H4.
-    destruct (j =? w) eqn:H6; try discriminate.
-    simpl in H4.
-    apply orb_true_iff in H4 as [H4|H4].
-    all: auto.
+    destruct H4 as [[H4 H5]|[H4 [H5 [H6|H6]]]]; try discriminate.
+    -
+      apply H2.
+      rewrite H6.
+      reflexivity.
+    -
+      apply H3.
+      apply ltb_lt.
+      exact H6.
   Qed.
 
   Print Assumptions unnamed_helper_Casari_2.
@@ -714,8 +718,7 @@ Module Casari_fails.
     unfold rel.
 
     rewrite H1.
-    rewrite eqb_refl.
-    reflexivity.
+    left; split; reflexivity.
   Qed.
 
   Print Assumptions support_IES_odd.
@@ -749,23 +752,20 @@ Module Casari_fails.
     unfold rel.
     rewrite H1.
     simpl.
-    rewrite andb_true_iff.
-    split.
+    right.
+    repeat split.
     -
-      destruct (n =? w) eqn:H5; try reflexivity.
-      apply eqb_eq in H5.
+      intros H5.
       subst w.
-      Fail congruence.
-      simpl in H3. (* Why is this needed? *)
-      congruence.
+      contradiction.
     -
       apply orb_true_iff in H2 as [H2|H2].
       +
-        rewrite H2.
-        reflexivity.
+        left.
+        now destruct (even n).
       +
-        rewrite H2.
-        apply orb_true_r.
+        right.
+        now apply ltb_lt.
   Qed.
 
   Print Assumptions support_IES_even.

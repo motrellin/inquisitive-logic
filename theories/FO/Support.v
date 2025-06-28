@@ -156,7 +156,7 @@ Fixpoint support `{Model} (phi : form) :
       forall (w : World),
         contains s w ->
         PInterpretation w p
-        (fun arg => referent (args arg) w a) = true
+        (fun arg => referent (args arg) w a)
 
   | Bot _ =>
       fun s a =>
@@ -219,7 +219,7 @@ Fact support_Pred `{Model} :
     forall w,
       contains s w ->
       PInterpretation w p
-      (fun arg => referent (args arg) w a) = true.
+      (fun arg => referent (args arg) w a).
 Proof.
   reflexivity.
 Qed.
@@ -316,14 +316,12 @@ Proof with (try contradiction).
     all: intros H4 w H5.
     all: rewrite H2 in H5 + rewrite <- H2 in H5.
     all: apply H4 in H5.
-    all: red in H1.
-    all: rewrite <- H5.
-    all: f_equiv.
-    all: intros arg.
     all: simpl in H1.
-    all: rewrite H3.
-    all: rewrite <- H1.
-    all: reflexivity.
+    all: eapply PInterpretation_Proper_inner.
+    all: try exact H5.
+    all: intros arg.
+    all: f_equiv.
+    all: try easy.
   -
     simpl.
     firstorder.
@@ -485,8 +483,7 @@ Proof.
       apply andb_true_iff in H3 as [_ H3].
       apply H2 in H3.
       simpl.
-      rewrite <- H3.
-      eapply PInterpretation_Proper_inner.
+      eapply PInterpretation_Proper_inner; try exact H3.
       intros arg.
       apply restricted_referent.
     +
@@ -494,15 +491,13 @@ Proof.
       apply H1 in H3 as H4.
 
       specialize (H2 (exist _ _ H4)).
-      rewrite <- H2.
-
-      f_equiv.
-      intros arg.
-      rewrite restricted_referent.
-      reflexivity.
-
-      simpl.
-      apply andb_true_iff; split; assumption.
+      eapply PInterpretation_Proper_inner; try apply H2.
+      *
+        intros arg.
+        rewrite restricted_referent.
+        reflexivity.
+      *
+        apply andb_true_iff; split; assumption.
   -
     split.
     +
@@ -703,8 +698,7 @@ Proof.
     split.
     all: intros H2 w' H3.
     all: specialize (H2 w' H3).
-    all: rewrite <- H2.
-    all: f_equiv.
+    all: eapply PInterpretation_Proper_inner; try exact H2.
     all: intros arg.
     +
       etransitivity.

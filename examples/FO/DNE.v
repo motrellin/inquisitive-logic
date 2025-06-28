@@ -6,55 +6,41 @@ From InqLog.FO Require SingleUnaryPredicate.
 Definition DNE `{Signature} (phi : form) : form :=
   <{ (~ (~ phi)) -> phi }>.
 
-Example DNE_classical `{Signature} :
+Lemma truth_conditional_DNE `{Signature} :
   forall phi,
-    classical (DNE phi) = classical phi.
+    truth_conditional phi ->
+    truth_conditional (DNE phi).
 Proof.
-  intros phi.
-  unfold DNE.
-  rewrite classical_Impl.
-  do 2 rewrite classical_Neg.
-  apply andb_diag.
+  intros phi H1.
+  apply truth_conditional_Impl.
+  exact H1.
 Qed.
 
-(**
-   By defining [PInterpretation] as a boolean predicate, we
-   obtain double negation elimination of atoms.
- *)
-Example support_valid_DNE_Pred `{Signature} :
+Lemma truth_valid_DNE `{Model} :
+  forall phi w a,
+    truth (DNE phi) w a.
+Proof.
+  intros phi w a.
+  unfold DNE.
+  rewrite truth_Impl.
+  intros H1.
+  do 2 rewrite truth_Neg in H1.
+  apply NNPP.
+  exact H1.
+Qed.
+
+Theorem support_valid_DNE_Pred `{Signature} :
   forall p args,
     support_valid <{DNE (Pred p args)}>.
 Proof.
-  intros p args M s1 a s2 H1 H2 w1 H3.
-  rewrite support_Neg in H2.
-
-  destruct (
-    PInterpretation w1 p (fun arg : PAri p => referent (args arg) w1 a)
-  ) eqn:H4; try reflexivity.
-
-  exfalso.
-  apply H2.
-  exists (singleton w1).
-  repeat split.
-  -
-    apply consistent_singleton_I.
-  -
-    intros w2 H5.
-    apply contains_singleton_iff in H5.
-    rewrite H5.
-    exact H3.
-  -
-    rewrite support_Neg.
-    intros [s3 [[w2 H5] [H6 H7]]].
-    apply substate_singleton_E in H6 as [H6|H6].
-    all: rewrite H6 in *; clear H6.
-    +
-      discriminate.
-    +
-      apply contains_singleton_iff in H5.
-      rewrite support_Pred in H7.
-      specialize (H7 _ (contains_singleton_refl w1)).
-      congruence.
+  intros p args.
+  intros M s a.
+  apply truth_conditional_DNE.
+  {
+    apply truth_conditional_Pred.
+  }
+  intros w H1.
+  apply truth_valid_DNE.
 Qed.
 
 (** * Validiy of [DNE]
@@ -99,19 +85,6 @@ Proof.
       *
         Fail apply H6.
 Abort.
-
-Lemma truth_valid_DNE `{Model} :
-  forall phi w a,
-    truth (DNE phi) w a.
-Proof.
-  intros phi w a.
-  unfold DNE.
-  rewrite truth_Impl.
-  intros H1.
-  do 2 rewrite truth_Neg in H1.
-  apply NNPP.
-  exact H1.
-Qed.
 
 Theorem support_valid_DNE_classical `{Signature} :
   forall phi,
@@ -165,8 +138,7 @@ Module not_support_valid_DNE.
     intros [H1|H1].
     -
       simpl in H1.
-      specialize (H1 false eq_refl).
-      discriminate.
+      now specialize (H1 false eq_refl).
     -
       simpl in H1.
       specialize (H1
@@ -174,12 +146,12 @@ Module not_support_valid_DNE.
         (substate_most_inconsistent_I _)
       ).
       assert (H2 :
-        forall w, contains (singleton true) w -> w = true
+        forall w, contains (singleton true) w -> if w then True else False
       ).
       {
         intros w H2.
         apply contains_singleton_iff in H2.
-        exact H2.
+        now rewrite H2.
       }
       specialize (H1 H2 true).
       apply not_contains_singleton_iff in H1.

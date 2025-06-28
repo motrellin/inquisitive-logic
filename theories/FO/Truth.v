@@ -10,9 +10,9 @@ Definition truth `{Model} (phi : form) (w : World) (a : assignment) : Prop :=
 Lemma truth_Pred `{Model} :
   forall p args w a,
     truth <{Pred p args}> w a <->
-    PInterpretation w p (fun arg => referent (args arg) w a) = true.
+    PInterpretation w p (fun arg => referent (args arg) w a).
 Proof.
-  intros p ari w a.
+  intros p args w a.
   split.
   -
     intros H1.
@@ -21,14 +21,8 @@ Proof.
   -
     intros H1 w' H2.
     apply contains_singleton_iff in H2.
-    rewrite <- H1.
-    assert (H3 : PInterpretation w' = PInterpretation w).
-    {
-      rewrite H2.
-      reflexivity.
-    }
-    rewrite H3.
-    f_equiv.
+    erewrite PInterpretation_Proper_outer; try exact H2.
+    eapply PInterpretation_Proper_inner; try exact H1.
     intros arg.
     rewrite H2.
     reflexivity.
@@ -464,8 +458,7 @@ Proof.
     all: intros H1.
     all: apply truth_Pred.
     all: apply truth_Pred in H1.
-    all: rewrite <- H1.
-    all: f_equiv.
+    all: eapply PInterpretation_Proper_inner; try exact H1.
     all: intros arg.
     +
       apply referent_subst.

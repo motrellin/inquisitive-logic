@@ -839,15 +839,20 @@ Proof.
     destruct (f n == f n) as [H8|H8].
     all: try (exfalso; apply H8; reflexivity).
 
-    rewrite <- H2; try (apply contains_mapping_state_I; apply InS_cons_I_hd; reflexivity).
-
-    assert (H9 : PInterpretation w = PInterpretation (f n))
-      by (rewrite H6; reflexivity).
-    rewrite H9.
-    f_equiv.
-    intros arg.
-    rewrite H6.
-    reflexivity.
+    erewrite PInterpretation_Proper_outer.
+    +
+      eapply PInterpretation_Proper_inner; try apply H2.
+      *
+        intros arg.
+        rewrite H6.
+        reflexivity.
+      *
+        apply contains_mapping_state_I.
+        apply InS_cons_I_hd.
+        reflexivity.
+    +
+      symmetry.
+      exact H6.
   -
     destruct H2 as [psi [H21 H22]].
     destruct (psi == pair ns (Pred p args)) as [HA|HA].
@@ -855,21 +860,20 @@ Proof.
       simpl in H5.
       rewrite HA in H22.
       specialize (H22 (f n)).
-      rewrite <- H22.
 
-      assert (HB : PInterpretation w = PInterpretation (f n))
-        by (rewrite H6; reflexivity).
-
-      rewrite HB.
-      f_equiv.
-      intros arg.
-      rewrite H6.
-      reflexivity.
-
-      simpl.
-      apply InS_iff_inbS_true.
-      apply InS_map_I.
-      exact H7.
+      erewrite PInterpretation_Proper_outer.
+      *
+        eapply PInterpretation_Proper_inner; try apply H22.
+        --
+           intros arg.
+           rewrite H6.
+           reflexivity.
+        --
+           apply contains_mapping_state_I.
+           exact H7.
+      *
+        symmetry.
+        exact H6.
     +
       exfalso.
       apply H4.
