@@ -1,65 +1,27 @@
-fullname: Inquisivite Logic
-shortname: inqlog
+fullname: Inquisitive Logic
+shortname: inquisitive-logic
 branch: main
+opam_name: coq-inqlog
 organization: motrellin
 
+travis: false
 action: true
-action_appendix: |2-
-            before_install: |-
-              startGroup "Print opam config"
-                opam config list; opam repo list; opam list
-              endGroup
-
-              startGroup "Build _CoqProject"
-                sudo chown -R rocq:rocq .
-                make _CoqProject
-              endGroup
-            after_script: |-
-              make coqdoc
-              mkdir public
-              cp -r html public/docs
-              cp resources/index.md public/index.md
-        - name: Upload Artifact
-          uses: actions/upload-artifact@v4
-          with:
-            name: html-output
-            path: public
-        - name: Revert Coq user permissions
-          # to avoid a warning at cleanup time
-          if: ${{ always() }}
-          run: sudo chown -R 1001:116 .
-    deploy:
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      runs-on: ubuntu-latest
-      needs: build
-      permissions:
-        contents: write
-
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
-
-        - name: Download artifact
-          uses: actions/download-artifact@v4
-          with:
-            name: html-output
-            path: ./out
-
-        - name: Deploy to GitHub Pages
-          uses: peaceiris/actions-gh-pages@v4
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: ./out
-            publish_branch: gh-pages
-            enable_jekyll: true
+circlecli: false
+nix: false
+ci_test_dependants: false
+ci_extra_dev: false
+#action_appendix:
 
 community: false
 coqdoc: true
 submodule: true #At least for coqdocjs
-synopsis: A formalization of inquisitive logic
+
+dune: false
+
+#doi:
+synopsis: A Formalization of Inquisitive Logic
 description: |
-  A formalization of inquisitive logic in Coq, based on the work of
-  [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
+  A formalization of inquisitive logic in Rocq, based on the work of e.g. [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
 
 #chat:
 
@@ -67,43 +29,65 @@ authors:
   - name: Max Ole Elliger
     initial: true
     email: ole.elliger@fau.de
+#after_authors:
 maintainers:
   - name: Max Ole Elliger
     nickname: motrellin
 
-license:
-  fullname: GNU General Public License v3.0 or later
-  identifier: GPL-3.0-or-later
+#license: TODO
+  #fullname: GNU General Public License v3.0 or later
+  #identifier: GPL-3.0-or-later
 
 supported_coq_versions:
-  text: Developed for 9.0.0
+  text: Developed for 9.0
   opam: '{ "9.0" }'
+
+#supported_ocaml_versions:
 
 dependencies:
   - description: Autosubst
     opam:
       name: coq-autosubst
 
+#categories:
+#keywords:
+#date:
+
 namespace: InqLog
 
-make_target: all
+#publications:
 
+#build:
+make_target: all
+#test_target:
+#install_flag:
+#extracted:
+
+#TODO
 documentation: |-
   ## Documentation
 
-  This project tries to formalize inquisitive logic in Coq. The formalization
-  is based on the work of [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
+  This project tries to formalize inquisitive logic in Rocq. The formalization
+  is based on the work of e.g. [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
 
   ### Contributing
 
   You can find information on how to contribute in the [CONTRIBUTING.md](.github/CONTRIBUTING.md) file.
 
+#TODO
 #index_documentation:
 
-coqdoc_index: ./docs/toc.html
+coqdoc_index: ./html/toc.html
 
 opam-file-maintainer: ole.elliger@fau.de
+#opam-file-version:
 
-tested_coq_opam_versions:
+#tested_coq_nix_versions:
+#tested_coq_opam_versions:
+tested_rocq_opam_versions:
   - version: '9.0'
-    repo: 'rocq/rocq-prover'
+    #repo: 'rocq/rocq-prover'
+
+#ci_cron_schedule:
+#cachix:
+#circleci_after_script:

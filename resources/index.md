@@ -1,7 +1,7 @@
 ---
 # This file was generated from `meta.yml`, please do not edit manually.
 # Follow the instructions on https://github.com/coq-community/templates to regenerate.
-title: Inquisivite Logic
+title: Inquisitive Logic
 lang: en
 header-includes:
   - |
@@ -13,31 +13,28 @@ header-includes:
 ---
 
 <div style="text-align:left"><img src="https://gist.github.com/johan/1007813/raw/a25829510f049194b6404a8f98d22978e8744a6f/octocat.svg" height="25" style="border:0px">
-<a href="https://github.com/motrellin/inqlog">View the project on GitHub</a>
+<a href="https://github.com/motrellin/inquisitive-logic">View the project on GitHub</a>
 <img src="https://gist.github.com/johan/1007813/raw/a25829510f049194b6404a8f98d22978e8744a6f/octocat.svg" height="25" style="border:0px"></div>
 
 ## About
 
-Welcome to the Inquisivite Logic project website!
+Welcome to the Inquisitive Logic project website!
 
-A formalization of inquisitive logic in Coq, based on the work of
-[Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
-
-This is an open source project, licensed under the GNU General Public License v3.0 or later.
+A formalization of inquisitive logic in Rocq, based on the work of e.g. [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
 
 ## Get the code
 
-The current stable release of Inquisivite Logic can be [downloaded from GitHub](https://github.com/motrellin/inqlog/releases).
+The current stable release of Inquisitive Logic can be [downloaded from GitHub](https://github.com/motrellin/inquisitive-logic/releases).
 
 ## Documentation
 
-The coqdoc presentation of the source files can be browsed [here](./docs/toc.html)
+The coqdoc presentation of the source files can be browsed [here](./html/toc.html)
 
 Related publications, if any, are listed below.
 
 ## Help and contact
 
-- Report issues on [GitHub](https://github.com/motrellin/inqlog/issues)
+- Report issues on [GitHub](https://github.com/motrellin/inquisitive-logic/issues)
 
 ## Authors and contributors
 
