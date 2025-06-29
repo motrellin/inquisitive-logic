@@ -280,8 +280,9 @@ Proof.
   reflexivity.
 Qed.
 
-(**
-   Next, we observe, that [state_eq] is a congruence with
+(** ** Basic properties
+
+   First, we observe that [state_eq] is a congruence with
    respect to [support].
  *)
 
@@ -367,7 +368,19 @@ Proof with (try contradiction).
     all: exact H3.
 Qed.
 
-(** ** Basic properties *)
+(**
+   Therefore, we can see [support] as a morphism.
+ *)
+
+Program Definition support_Morph `{Model} (s : state) (a : assignment) : Morph form Prop :=
+  {|
+    morph phi := s,a |= phi
+  |}.
+
+Next Obligation.
+  intros phi1 phi2 H1.
+  now rewrite H1.
+Qed.
 
 Proposition persistency `{Model} :
   forall s t a phi,
@@ -814,33 +827,13 @@ Qed.
 
 (** ** Support for multiple formulas *)
 
-(* TODO Adapt to ListLib? *)
 Definition support_mult
   `{Model}
   (s : state)
   (a : assignment) :
   list form -> Prop :=
 
-  List.Forall (fun phi => s,a |= phi).
-
-Fact support_mult_support `{Model} :
-  forall phi s a,
-    support_mult s a (phi :: nil) <->
-    (s, a |= phi).
-Proof.
-  intros phi s a.
-  split.
-  -
-    intros H1.
-    eapply Forall_forall in H1.
-    +
-      exact H1.
-    +
-      left; reflexivity.
-  -
-    intros H1.
-    repeat constructor + assumption.
-Qed.
+  mult (support_Morph s a).
 
 Lemma support_mult_hsubst_var `{Model} :
   forall Phi s a sigma,
@@ -852,13 +845,15 @@ Proof.
   -
     split.
     all: intro.
-    all: constructor.
+    all: apply mult_nil_I.
   -
     split.
     all: intros H1.
-    all: apply Forall_cons_iff in H1 as [H1 H2].
+    all: apply mult_cons_E_tl in H1 as H2.
+    all: apply mult_cons_E_hd in H1.
     +
-      constructor.
+      simpl.
+      apply mult_cons_I.
       *
         apply support_hsubst_var in H1.
         exact H1.
@@ -866,7 +861,7 @@ Proof.
         apply IH.
         exact H2.
     +
-      constructor.
+      apply mult_cons_I.
       *
         apply support_hsubst_var.
         exact H1.
@@ -883,14 +878,17 @@ Proposition persistency_support_mult `{Model} :
 Proof.
   induction Phi as [|phi Phi' IH].
   -
-    intros; constructor.
+    intros H1 H2.
+    apply mult_nil_I.
   -
-    intros H1 H3.
-    apply Forall_cons_iff in H1 as [H1 H2].
-    constructor.
+    intros H1 H2.
+    apply mult_cons_E_hd in H1 as H3.
+    apply mult_cons_E_tl in H1 as H4.
+    apply mult_cons_I.
     +
-      rewrite H3.
-      exact H1.
+      simpl.
+      rewrite H2.
+      exact H3.
     +
       eapply IH; eassumption.
 Qed.
@@ -905,21 +903,7 @@ Definition support_some
   (a : assignment) :
   list form -> Prop :=
 
-  List.Exists (fun phi => s,a |= phi).
-
-Fact support_some_support `{Model} :
-  forall phi s a,
-    support_some s a (phi :: nil) <->
-    (s, a |= phi).
-Proof.
-  split.
-  all: intros H1.
-  -
-    apply Exists_cons in H1 as [H1|H1]; easy.
-  -
-    constructor.
-    exact H1.
-Qed.
+  some (support_Morph s a).
 
 Lemma support_some_hsubst_var `{Model} :
   forall Phi s a sigma,
@@ -930,27 +914,27 @@ Proof.
   all: intros s a sigma.
   -
     split.
-    all: inversion 1.
+    all: intros H1.
+    all: now apply some_nil_E in H1.
   -
     split.
     all: simpl.
     all: intros H1.
-    all: apply Exists_cons.
-    all: apply Exists_cons in H1 as [H1|H1].
+    all: apply some_cons_E in H1 as [H1|H1].
     +
-      left.
+      apply some_cons_I_hd.
       apply support_hsubst_var in H1.
       exact H1.
     +
-      right.
+      apply some_cons_I_tl.
       apply IH.
       exact H1.
     +
-      left.
+      apply some_cons_I_hd.
       apply support_hsubst_var.
       exact H1.
     +
-      right.
+      apply some_cons_I_tl.
       apply IH.
       exact H1.
 Qed.
@@ -964,15 +948,16 @@ Proof.
   induction Phi as [|phi Phi' IH].
   all: intros H1 H2.
   -
-    inversion H1.
+    now apply some_nil_E in H1.
   -
-    apply Exists_cons in H1 as [H1|H1].
+    apply some_cons_E in H1 as [H1|H1].
     +
-      left.
+      apply some_cons_I_hd.
+      simpl.
       rewrite H2.
       exact H1.
     +
-      right.
+      apply some_cons_I_tl.
       apply IH; assumption.
 Qed.
 
@@ -983,31 +968,3 @@ Print Assumptions persistency_support_some.
 Definition support_valid `{S : Signature} (phi : form) :=
   forall `(M : @Model S) s a,
     s, a |= phi.
-
-Definition support_valid_mult `{Signature} :
-  list form -> Prop :=
-
-  List.Forall support_valid.
-
-Remark support_valid_mult_charac `{S : Signature} :
-  forall Phi,
-    (forall `(M : @Model S) s a, support_mult s a Phi) <->
-    support_valid_mult Phi.
-Proof.
-  intros Phi.
-  split.
-  -
-    intros H1.
-    apply Forall_forall.
-    intros phi H2 M s a.
-    eapply Forall_forall in H1; eassumption.
-  -
-    intros H1 M s a.
-    apply Forall_forall.
-    intros phi H2.
-    eapply Forall_forall in H1.
-    +
-      apply H1.
-    +
-      exact H2.
-Qed.

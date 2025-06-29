@@ -98,6 +98,26 @@ Proof.
   firstorder.
 Qed.
 
+(** ** Basic Properties *)
+
+Instance truth_Proper `{M : Model} :
+  Proper (form_eq ==> equiv ==> ext_eq ==> iff) truth.
+Proof.
+  intros phi1 phi2 H1 w1 w2 H2 a1 a2 H3.
+  unfold truth.
+  now rewrite H1,H2,H3.
+Qed.
+
+Program Definition truth_Morph `{M : Model} (w : World) (a : assignment) : Morph form Prop :=
+  {|
+    morph phi := truth phi w a
+  |}.
+
+Next Obligation.
+  intros phi1 phi2 H1.
+  now rewrite H1.
+Qed.
+
 (** ** Truth satisfaction for defined connectives *)
 
 Lemma truth_Neg `{Model} :
@@ -245,13 +265,14 @@ Definition truth_mult
   (a : assignment) :
   list form -> Prop :=
 
-  List.Forall (fun phi => truth phi w a).
+  mult (truth_Morph w a).
 
 Remark truth_mult_support_mult `{Model} :
   forall Phi w a,
     truth_mult w a Phi <->
     support_mult (singleton w) a Phi.
 Proof.
+  intros Phi w a.
   firstorder.
 Qed.
 
@@ -263,7 +284,7 @@ Definition truth_some
   (a : assignment) :
   list form -> Prop :=
 
-  List.Exists (fun phi => truth phi w a).
+  some (truth_Morph w a).
 
 Remark truth_some_support_some `{Model} :
   forall Phi w a,
