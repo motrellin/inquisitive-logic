@@ -1,5 +1,103 @@
 # Changelog
 
+## inqlog-v0.17.0 (2025-06-29)
+
+### New
+
+* Proved `support_Proper_substate` [Max Ole Elliger]
+
+  This is a direct consequence of `persistency` in order to allow
+  rewriting by substate relation instances.
+
+* Proved `scons_Proper` [Max Ole Elliger]
+
+  This simplifies some proofs.
+
+### Changes
+
+* Merged files `FO/Models.v` and `FO/States.v` [Max Ole Elliger]
+
+* `support_mult` and `support_some` via ListLib. [Max Ole Elliger]
+
+  We updated the definitions of `support_mult` and `support_some` by using
+  our `ListLib.v`.
+  This enforces some proof updates.
+  In addition, we added a morphism characterization of `support` and
+  `truth` for this purpose.
+
+* Restructured SetoidLib.v. [Max Ole Elliger]
+
+* Codomain of `PInterpretation` is now `Prop` [Max Ole Elliger]
+
+  In an earlier version, we used `bool` for some now outdated reasons.
+
+* Cleaned up examples/FO/CD.v. [Max Ole Elliger]
+
+* Simplified proof of `support_valid_Kuroda` [Max Ole Elliger]
+
+* Simplified proof of `Casari Atomic` [Max Ole Elliger]
+
+* Extracted various instances and examples. [Max Ole Elliger]
+
+  This restructures the whole repository by using three separate folders:
+  - `theories/`: Basic theory
+  - `instances/`: Concrete instances of type classes and derived
+    definitions
+  - `examples/`: Demonstrations of the project.
+
+* Removed `theories/Prop` [Max Ole Elliger]
+
+  This part of the repository contained old experimental code and was
+  therefore removed from it.
+
+* Updated meta.yml. [Max Ole Elliger]
+
+  Updated various meta data and simplified github action.
+
+* Updated Makefile and Build process. [Max Ole Elliger]
+
+  We now use an easier variant of the Makefile and added an explicit
+  _CoqProject file.
+
+* Simplified proof of `InS_sublist_order_Acc` [Max Ole Elliger]
+
+  This was possible thanks to extracting various subproofs and using
+  generalization.
+
+### Fix
+
+* Corrected an occurence of `s w = true` [Max Ole Elliger]
+
+  This should be replaced by `contains s w` which was done by now.
+
+## inqlog-v0.16.4 (2025-06-20)
+
+### New
+
+* Setoid of Subset Types. [Max Ole Elliger]
+
+* Added `filter`-lemmas to `ListLib` [Max Ole Elliger]
+
+### Changes
+
+* Restructured States.v. [Max Ole Elliger]
+
+  - Added a predicate `contains`, mainly to improve readability and
+    potential refactoring
+  - Reordered the whole file
+  - Updated proofs in other files
+  - Improved names of lemmas
+
+* Updated meta.yml for Rocq version 9.0.0. [Max Ole Elliger]
+
+### Fix
+
+* Migrating to rocq-v9.0.0. [Max Ole Elliger]
+
+  This involves:
+  - Replacing `Let` by `Local Definition`
+  - Replacing `From Coq` by `From Stdlib`
+
 ## inqlog-v0.16.3 (2025-04-21)
 
 ### New
