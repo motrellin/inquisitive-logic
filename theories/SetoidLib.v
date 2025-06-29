@@ -2,26 +2,6 @@ From InqLog Require Export Prelude.
 
 Generalizable Variables X Y.
 
-(** * Morphisms
-
-   We want to have morphisms between arbitrary setoids.
-   Such morphisms are functions which respect the carried
-   equivalence relations by the setoids.
- *)
-
-Record Morph (X Y : Type) `{Setoid X} `{Setoid Y} :=
-  {
-    morph : X -> Y;
-    morph_Proper :: Proper (equiv ==> equiv) morph
-  }.
-
-(**
-   We define the projection [morph] to be a [Coercion]. By
-   this, it get's easier to use morphisms as standard
-   functions.
- *)
-Coercion morph : Morph >-> Funclass.
-
 (** * Extensional Equality
 
    We often need function to be extensional equal. This
@@ -51,6 +31,30 @@ Qed.
 Program Instance ext_eq_Setoid {X} `{Setoid Y} :
   Setoid (X -> Y).
 
+(** * Morphisms
+
+   We want to have morphisms between arbitrary setoids.
+   Such morphisms are functions which respect the carried
+   equivalence relations by the setoids.
+ *)
+
+Record Morph `{Setoid X} `{Setoid Y} :=
+  {
+    morph : X -> Y;
+    morph_Proper :: Proper (equiv ==> equiv) morph
+  }.
+
+Arguments Morph X {_} Y {_}.
+Arguments morph {X} {_} {Y} {_}.
+Arguments morph_Proper {X} {_} {Y} {_}.
+
+(**
+   We define the projection [morph] to be a [Coercion]. By
+   this, it get's easier to use morphisms as standard
+   functions.
+ *)
+Coercion morph : Morph >-> Funclass.
+
 Definition Morph_eq `{Setoid X} `{Setoid Y} :
   relation (Morph X Y) :=
 
@@ -74,12 +78,26 @@ Qed.
 Program Instance Morph_Setoid `{Setoid X} `{Setoid Y} :
   Setoid (Morph X Y).
 
+Instance morph_Proper_outer `{Setoid X} `{Setoid Y} :
+  Proper (Morph_eq ==> ext_eq) morph.
+Proof.
+  intros f g H1.
+  exact H1.
+Qed.
+
 Program Canonical to_Morph {X} `{Setoid Y} (f : X -> Y) :
-  @Morph X Y (eq_setoid _) _ :=
+  Morph X Y :=
 
   {|
     morph := f
   |}.
+
+Instance to_Morph_Proper {X} `{Setoid Y} :
+  Proper (ext_eq ==> Morph_eq) (@to_Morph X Y _).
+Proof.
+  intros f g H1.
+  exact H1.
+Qed.
 
 (** * Subset Types *)
 
