@@ -203,9 +203,6 @@ Notation "M , s , a |= phi" := (@support _ M phi s a)
 Notation "s , a |= phi" := (support phi s a)
     (at level 95)
     : form_scope.
-(* TODO:
-   Why can't I increase the level to anything higher?
- *)
 
 (**
    In order to make future proofs more readable, we restate
@@ -602,8 +599,6 @@ Definition ruling_out `{Model} (s : state) (phi : form) (a : assignment) :=
     consistent t /\
     substate t s /\
     (t, a |= phi).
-
-(* TODO: Rewrite lemmas for [ruling_out] *)
 
 Notation "M , s , a _||_ phi" := (@ruling_out _ M s phi a)
   (at level 95)
