@@ -368,7 +368,7 @@ Module Casari_fails.
   Lemma not_contains_any_contains_all_complement :
     forall p s,
       ~ contains_any p s ->
-      contains_all p (States.complement s).
+      contains_all p (Models.complement s).
   Proof.
     intros p s H1 w H2.
     apply contains_complement_iff.
@@ -518,8 +518,8 @@ Module Casari_fails.
      later.
    *)
   Local Definition E (s : state) : Prop :=
-    contains_any (? ~ even ?) (States.complement s) \/
-    infinitely_many even (States.complement s).
+    contains_any (? ~ even ?) (Models.complement s) \/
+    infinitely_many even (Models.complement s).
 
   Instance E_Proper_substate :
     Proper (substate --> impl) E.
@@ -550,7 +550,7 @@ Module Casari_fails.
   Lemma not_E_finitely_many_complement :
     forall s,
       ~ E s ->
-      finitely_many even (States.complement s).
+      finitely_many even (Models.complement s).
   Proof.
     intros * H1.
     apply Decidable.not_or in H1 as [_ H1].
@@ -615,12 +615,12 @@ Module Casari_fails.
   Lemma unnamed_helper_Casari_3 :
     forall (s : state) (n : nat),
       contains_all (? ~ even ?) s ->
-      finitely_many (? even ?) (States.complement s) ->
+      finitely_many (? even ?) (Models.complement s) ->
       exists t,
         substate t s /\
         contains_all (? ~ even ?) t /\
-        finitely_many (? even ?) (States.complement t) /\
-        contains_any (? ltb n ?) (States.complement t).
+        finitely_many (? even ?) (Models.complement t) /\
+        contains_any (? ltb n ?) (Models.complement t).
   Proof.
     intros s n H1 [e H2].
     (**
@@ -730,7 +730,7 @@ Module Casari_fails.
   Proposition support_IES_even :
     forall (s : state) (a : assignment),
       even (a 0) = true ->
-      contains_any (? (~ even) || ltb (a 0) ?) (States.complement s) ->
+      contains_any (? (~ even) || ltb (a 0) ?) (Models.complement s) ->
       s, a |= IES.
   Proof.
     intros s a H1 [n [H2 H3]].
@@ -909,7 +909,7 @@ Module Casari_fails.
   Proposition support_CasariImpl_IES_other_direction :
     forall (s : state) (a : assignment),
       contains_all (? ~ even ?) s ->
-      finitely_many even (States.complement s) ->
+      finitely_many even (Models.complement s) ->
       ~ (s, a |= CasariImpl IES).
   Proof.
     intros s a H1 H2 H3.

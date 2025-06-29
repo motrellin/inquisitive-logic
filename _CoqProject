@@ -5,7 +5,6 @@ theories/ListLib.v
 theories/FO/Signatures.v
 theories/FO/Syntax.v
 theories/FO/Models.v
-theories/FO/States.v
 theories/FO/Support.v
 theories/FO/Truth.v
 theories/FO/Consequence.v
@@ -14,6 +13,7 @@ theories/FO/Seq.v
 -R instances InqLog
 instances/FO/SingleUnaryPredicate.v
 instances/FO/SingleBinaryPredicate.v
+instances/FO/GenericModels.v
 
 -R examples InqLog
 examples/FO/DNE.v

@@ -1,5 +1,5 @@
 From InqLog.FO Require Import Truth.
-From InqLog.FO Require SingleUnaryPredicate.
+From InqLog.FO Require SingleUnaryPredicate GenericModels.
 
 (** * Double Negation Elimination *)
 
@@ -105,6 +105,7 @@ Qed.
 Module not_support_valid_DNE.
 
   Import SingleUnaryPredicate.
+  Import GenericModels.
   Existing Instance two_Worlds_Model.
 
   Lemma DNE_counterex_part_1 :

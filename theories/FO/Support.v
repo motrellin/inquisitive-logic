@@ -1,4 +1,4 @@
-From InqLog.FO Require Export States Syntax.
+From InqLog.FO Require Export Models Syntax.
 
 (** * Referent of a term
 
