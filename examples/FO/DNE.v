@@ -16,7 +16,9 @@ Proof.
   exact H1.
 Qed.
 
-Lemma truth_valid_DNE `{Model} :
+(** * Schematic Truth Validity of [DNE] *)
+
+Theorem truth_valid_DNE `{Model} :
   forall phi w a,
     truth (DNE phi) w a.
 Proof.
@@ -29,34 +31,44 @@ Proof.
   exact H1.
 Qed.
 
+(** * Atomic Validity of [DNE] *)
+
+Lemma truth_conditional_support_valid_DNE_iff `{Signature} :
+  forall phi,
+    truth_conditional phi <->
+    support_valid (DNE phi).
+Proof.
+  intros phi.
+  split.
+  -
+    intros H1.
+    intros M s a.
+    apply truth_conditional_Impl; try exact H1.
+    intros w H2.
+    apply truth_valid_DNE.
+  -
+    intros H1.
+    intros M s a H2.
+    specialize (H1 M s a).
+    unfold DNE in H1.
+    rewrite support_Impl in H1.
+    apply H1; try reflexivity.
+    apply truth_conditional_Neg.
+    intros w H3.
+    do 2 rewrite truth_Neg.
+    auto.
+Qed.
+
 Theorem support_valid_DNE_Pred `{Signature} :
   forall p args,
     support_valid <{DNE (Pred p args)}>.
 Proof.
   intros p args.
-  intros M s a.
-  apply truth_conditional_DNE.
-  {
-    apply truth_conditional_Pred.
-  }
-  intros w H1.
-  apply truth_valid_DNE.
+  apply truth_conditional_support_valid_DNE_iff.
+  apply truth_conditional_Pred.
 Qed.
 
-(** * Validiy of [DNE]
-
-   In this section, we want to point out that [DNE] is not
-   schematically support-valid.
-
-   For this, we will first try to prove this property to
-   see, where the proof fails.
-
-   After this, we will point out that [DNE] is at least
-   valid for [classical] formulas.
-
-   Last, we will present a counterexample with a
-   non-classical formula.
- *)
+(** * Schematic Validiy of [DNE] *)
 
 Theorem support_valid_DNE `{Signature} :
   forall phi,
@@ -85,22 +97,6 @@ Proof.
       *
         Fail apply H6.
 Abort.
-
-Theorem support_valid_DNE_classical `{Signature} :
-  forall phi,
-    classical phi = true ->
-    support_valid (DNE phi).
-Proof.
-  intros phi H1 M s a.
-  apply classical_truth_conditional.
-  {
-    simpl.
-    rewrite H1.
-    reflexivity.
-  }
-  intros w H2.
-  apply truth_valid_DNE.
-Qed.
 
 Module not_support_valid_DNE.
 

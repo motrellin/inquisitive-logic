@@ -10,29 +10,23 @@ From InqLog.FO Require Export Signatures.
 Class Model `{Signature} :=
   {
     (**
-       First of all, we need a set of _worlds_ with _decidable
-       equality_.
+       First of all, we need a set of _worlds_ with _decidable equality_.
      *)
     World : Type;
     World_Setoid :: Setoid World;
     World_Setoid_EqDec :: EqDec World_Setoid;
 
     (**
-       Second, a _non-empty_ set of _individuals_ with
-       decidable equality is need.
+       Second, a _non-empty_ set of _individuals_ with decidable equality is need.
      *)
     Individual : Type;
     Individual_inh : Individual;
     Individual_EqDec :: EqDec (eq_setoid Individual);
 
     (**
-       Next, we need to interpret predicate symbols [p] in
-       every possible world. Remember, [PAri p] is the arity
-       type of [p], per intuition the number of arguments of
-       [p]. As one typically interprets predicate symbols with
-       relations on the set of individuals, we need a function
-       of type [PAri p -> Individual] to reflect this
-       intuition.
+       Next, we need to interpret predicate symbols [p] in every possible world.
+       Remember, [PAri p] is the arity type of [p], per intuition the number of arguments of [p].
+       As one typically interprets predicate symbols with relations on the set of individuals, we need a function of type [PAri p -> Individual] to reflect this intuition.
      *)
     PInterpretation :
       World ->
@@ -60,9 +54,8 @@ Class Model `{Signature} :=
         Proper (ext_eq ==> eq) (FInterpretation w f);
 
     (**
-       Lastly, a model needs to ensure [rigidity]. This means,
-       that the interpretation of a rigid function symbols
-       remains the same in every world.
+       Lastly, a model needs to ensure [rigidity].
+       This means that the interpretation of a rigid function symbols remains the same in every world.
      *)
     rigidity :
       forall (f : FSymb),
@@ -478,8 +471,7 @@ Proof.
 Qed.
 
 (**
-   If a state is substate of a [singleton] state then it
-   must be the singleton state itself or the empty state.
+   If a state is substate of a [singleton] state then it must be the singleton state itself or the empty state.
  *)
 Lemma substate_singleton_E `{Model} :
   forall w t,
@@ -491,8 +483,7 @@ Lemma substate_singleton_E `{Model} :
 Proof.
   intros w t H1.
   (**
-     Case distinction whether the world [w] is part of [t]
-     or not.
+     Case distinction whether the world [w] is part of [t] or not.
    *)
   destruct (contains_dec t w) as [H2|H2].
   -
@@ -589,8 +580,7 @@ Proof.
 Qed.
 
 (**
-   The [substate] relation turns around for [complement]
-   states.
+   The [substate] relation turns around for [complement] states.
  *)
 Lemma complement_substate_complement_iff `{Model} :
   forall s t,
@@ -630,8 +620,7 @@ Qed.
 
 (** *** Excluding states
 
-   Excluding states implement the idea that we want to be
-   able to exclude a world from a state.
+   Excluding states implement the idea that we want to be able to exclude a world from a state.
  *)
 
 Program Definition excluding_state `{Model} (s : state) (w : World) : state :=
@@ -695,8 +684,7 @@ Proof.
 Qed.
 
 (**
-   An excluding state is always a substate of its original
-   state.
+   An excluding state is always a substate of its original state.
  *)
 Lemma excluding_state_substate_I `{Model} :
   forall s w,
@@ -708,8 +696,7 @@ Proof.
 Qed.
 
 (**
-   If the original state [s] does not contain a World [w],
-   then excluding [w] from [s] has no effect.
+   If the original state [s] does not contain a World [w], then excluding [w] from [s] has no effect.
  *)
 Lemma excluding_state_irrelevance `{Model} :
   forall (s : state) w,
@@ -895,8 +882,7 @@ Program Definition restricted_Model `{M : Model} (s : state) : Model :=
 
 Next Obligation.
   (**
-     [PInterpretation] has to respect the defined equality
-     for worlds.
+     [PInterpretation] has to respect the defined equality for worlds.
    *)
   repeat intro.
   apply PInterpretation_Proper_outer.
@@ -905,8 +891,7 @@ Qed.
 
 Next Obligation.
   (**
-     [FInterpretation] has to respect the defined equality
-     for worlds.
+     [FInterpretation] has to respect the defined equality for worlds.
    *)
   repeat intro.
   apply FInterpretation_Proper_outer.
@@ -922,8 +907,8 @@ Next Obligation.
 Qed.
 
 (**
-   Next step: We define how we can translate states from the
-   original model to our defined restricted model.
+   Next step:
+   We define how we can translate states from the original model to our defined restricted model.
  *)
 Program Definition restricted_state
   `{Model}
@@ -1067,8 +1052,7 @@ Qed.
 
 (** * Variable Assignments
 
-   We refer to a variable assignment function by the short
-   name [assignment].
+   We refer to a variable assignment function by the short name [assignment].
  *)
 
 Definition assignment `{Model} : Type :=

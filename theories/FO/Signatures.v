@@ -1,25 +1,15 @@
 From InqLog Require Export SetoidLib.
 
-(** * Definition
-   We start by defining the class of [Signature]s
-   A _Signature_ consists of a set of _predicate symbols_
-   (captured by the type [PSymb]) and a set of _function
-   symbols_ (captured by the type [FSymb]). Each symbol has
-   an finite _arity_ (type), which is assigned by the
-   functions [PAri] and [FAri]. The finiteness is captured by
-   enumerations [PAri_enum] and [FAri_enum] whose
-   characterization are captured by [PAri_enum_charac] and
-   [FAri_enum_charac].
+(**
+   We start by defining the class of [Signature]s.
+   A _signature_ consists of a set of _predicate symbols_ (captured by the type [PSymb]) and a set of _function symbols_ (captured by the type [FSymb]).
+   Each symbol has an finite _arity_ (type), which is assigned by the functions [PAri] and [FAri].
+   The finiteness is captured by enumerations [PAri_enum] and [FAri_enum] whose characterization are captured by [PAri_enum_charac] and [FAri_enum_charac].
 
-   We also want to have decidable (standard) equality for
-   both [PSymb] and [FSymb] which is captured by
-   [PSymb_EqDec] and [FSymb_EqDec].
+   We also want to have decidable (standard) equality for both [PSymb] and [FSymb] which is captured by [PSymb_EqDec] and [FSymb_EqDec].
 
-   In addition, we need a boolean predicate [rigid]
-   which tells us for every function symbol whether it is
-   [rigid] or not. A function symbol shall be called [rigid]
-   if its interpretation is independent from a concrete
-   world.
+   In addition, we need a boolean predicate [rigid] which tells us for every function symbol whether it is [rigid] or not.
+   A function symbol shall be called [rigid] if its interpretation is independent from a concrete world.
 
    This whole definition is based on Ciardelli's work.
  *)

@@ -2,8 +2,7 @@ From InqLog.FO Require Export Models Syntax.
 
 (** * Referent of a term
 
-   To interpret a term, we define the [referent] of a term
-   in a world which is an [Individual].
+   To interpret a term, we define the [referent] of a term in a world which is an [Individual].
  *)
 
 Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
@@ -88,7 +87,7 @@ Proof.
     apply H2.
 Qed.
 
-Print Assumptions rigidity_referent.
+Print Assumptions rigidity_referent. (* Closed under the global context *)
 
 Lemma referent_subst `{Model} :
   forall t w a sigma,
@@ -106,7 +105,7 @@ Proof.
     apply IH.
 Qed.
 
-Print Assumptions referent_subst.
+Print Assumptions referent_subst. (* Closed under the global context *)
 
 Corollary referent_subst_var `{Model} :
   forall t w a sigma,
@@ -117,7 +116,7 @@ Proof.
   reflexivity.
 Qed.
 
-Print Assumptions referent_subst.
+Print Assumptions referent_subst_var. (* Closed under the global context *)
 
 Lemma unnamed_helper_Support_24 `{Model} :
   forall w a i sigma,
@@ -138,13 +137,11 @@ Proof.
     apply referent_subst_var.
 Qed.
 
-Print Assumptions unnamed_helper_Support_24.
+Print Assumptions unnamed_helper_Support_24. (* Closed under the global context *)
 
 (** * Support satisfaction
 
-   We will now introduce the notion of a state
-   _supporting_ a formula (with respect to a variable
-   assignment function).
+   We will now introduce the notion of a [state] _supporting_ a [form]ula (with respect to a variable [assignment] function).
  *)
 
 Fixpoint support `{Model} (phi : form) :
@@ -205,9 +202,8 @@ Notation "s , a |= phi" := (support phi s a)
     : form_scope.
 
 (**
-   In order to make future proofs more readable, we restate
-   the defining cases of [support] as various [Fact]s. They
-   can be used for the [rewrite]-tactic.
+   In order to make future proofs more readable, we restate the defining cases of [support] as various [Fact]s.
+   They can be used for the [rewrite]-tactic.
  *)
 
 Fact support_Pred `{Model} :
@@ -279,8 +275,7 @@ Qed.
 
 (** ** Basic properties
 
-   First, we observe that [state_eq] is a congruence with
-   respect to [support].
+   First, we observe that [state_eq] is a congruence with respect to [support].
  *)
 
 Instance support_Proper `{M : Model} :
@@ -418,7 +413,7 @@ Proof.
     eauto.
 Qed.
 
-Print Assumptions persistency.
+Print Assumptions persistency. (* Closed under the global context *)
 
 Instance support_Proper_substate `{Model} :
   Proper (form_eq ==> substate --> ext_eq ==> impl) support.
@@ -469,7 +464,7 @@ Proof.
     exact Individual_inh.
 Qed.
 
-Print Assumptions empty_state_property.
+Print Assumptions empty_state_property. (* Closed under the global context *)
 
 Proposition locality `{M : Model} :
   forall phi s a t,
@@ -590,7 +585,7 @@ Proof.
       eapply IH1; eauto.
 Qed.
 
-Print Assumptions locality.
+Print Assumptions locality. (* Closed under the global context *)
 
 (** ** Ruling out a formula *)
 
@@ -794,7 +789,7 @@ Proof.
         exact H1.
 Qed.
 
-Print Assumptions support_hsubst.
+Print Assumptions support_hsubst. (* Closed under the global context *)
 
 Corollary support_hsubst_var `{Model} :
   forall phi s a sigma,
@@ -888,7 +883,7 @@ Proof.
       eapply IH; eassumption.
 Qed.
 
-Print Assumptions persistency_support_mult.
+Print Assumptions persistency_support_mult. (* Closed under the global context *)
 
 (** ** Support for some formulas *)
 
@@ -956,7 +951,7 @@ Proof.
       apply IH; assumption.
 Qed.
 
-Print Assumptions persistency_support_some.
+Print Assumptions persistency_support_some. (* Closed under the global context *)
 
 (** * Support validity *)
 

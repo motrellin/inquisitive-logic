@@ -4,14 +4,12 @@ From InqLog.FO Require Export Truth.
 
 (** * Defining the Sequent Calculus
 
-   For the sequent calculus introduced by Litak/Sano, we
-   first the define the notion of _labelled formulas_. A
-   labelled formel is a pair consisting of a list of
-   natural numbers and a formula.
+   For the sequent calculus introduced by Litak/Sano, we first the define the notion of _labelled formulas_.
+   A labelled formel is a pair consisting of a list of natural numbers and a formula.
 
-   We will frequently use the notions of [InS_eq] and
-   [InS_sublist], as the original paper uses sets to define
-   labels.
+   We will frequently use the notions of [InS_eq] and [InS_sublist] as the original paper uses sets to define labels.
+
+   Note that we allow empty labels contrary to Litak/Sano.
  *)
 
 Definition label : Type := list nat.
@@ -102,28 +100,23 @@ Next Obligation.
 Qed.
 
 (**
-   Now, we are in a position to define the rules of the
-   Sequent Calculus in Coq. For this, we define [Seq] as a
-   [relation] on [list]s of labelled forms.
+   Now, we are in a position to define the rules of the Sequent Calculus in Rocq.
+   For this, we define [Seq] as a [relation] on [list]s of labelled forms.
  *)
 
 Inductive Seq `{Signature} :
   relation (list lb_form) :=
   (**
-     As we allow arbitrary lists of natural numbers as
-     labels, we add an extra rule to capture this:
-     [Seq_empty]. By intuition, these labels correspondent
-     to states, e.g. the empty list [nil] corresponds to the
-     empty state. By this, we want to be in a position to
-     derive a formula with an empty label.
+     As we allow arbitrary lists of natural numbers as labels, we add an extra rule to capture this: [Seq_empty].
+     By intuition, these labels correspondent to states, e.g. the empty list [nil] corresponds to the empty state.
+     Consequently, we want to be in a position to derive a formula with an empty label.
    *)
   | Seq_empty :
       forall ls rs phi,
         InS (pair nil phi) rs ->
         Seq ls rs
   (**
-     The following rules correspond to the original sequent
-     calculus.
+     The following rules correspond to the original sequence calculus.
    *)
   | Seq_id :
       forall ls rs ns1 ns2 p args,
@@ -235,8 +228,7 @@ Inductive Seq `{Signature} :
         ) ->
         Seq ls rs
   (**
-     InS addition, we add the cut elimination rule to our
-     calculus, which is shown to be admissible by Litak/Sano.
+     In addition, we add the cut elimination rule to our calculus, which is shown to be admissible by Litak/Sano.
    *)
   | Seq_cut :
       forall ls1 ls2 ls rs1 rs2 rs ns phi,
@@ -374,7 +366,7 @@ Proof with eauto.
     all: eassumption.
 Qed.
 
-Print Assumptions Seq_weakening.
+Print Assumptions Seq_weakening. (* Closed under the global context *)
 
 Instance Seq_Proper `{Signature} :
   Proper (InS_eq ==> InS_eq ==> iff) Seq.
@@ -386,7 +378,7 @@ Proof.
   all: eassumption.
 Qed.
 
-Print Assumptions Seq_Proper.
+Print Assumptions Seq_Proper. (* Closed under the global context *)
 
 (**
    The following rule reflects [persistency].
@@ -573,16 +565,14 @@ Proof.
            exact H3.
 Qed.
 
-Print Assumptions Seq_persistency.
+Print Assumptions Seq_persistency. (* Closed under the global context *)
 
 (** * Corresponding semantic
 
-   We need a notion of [satisfaction] in order to
-   understand the sequent calculus. We want to interpret
-   a labelled formula in a Model by a _mapping function_ [f]
-   and a variable assignment [a].
+   We need a notion of [satisfaction] in order to understand the sequent calculus.
+   We want to interpret a labelled formula in a Model by a _mapping function_ [f] and a variable assignment [a].
 
-   Note, that we used a different argument order as for the
+   Note that we used a different argument order as for the
    [support] relation. By this, we can use some notions of
    the standard library more readable.
  *)
@@ -802,8 +792,7 @@ Proof.
   intros * H1 H2.
   intros M f a H3.
   (**
-     The key idea of this proof is a case distinction
-     whether another formula in [rs] is satisfied or not.
+     The key idea of this proof is a case distinction whether another formula in [rs] is satisfied or not.
      For this, we use classical logic.
    *)
   destruct (
@@ -822,8 +811,7 @@ Proof.
     split; assumption.
   }
   (**
-     In the other case, we know that [(ns, Pred p args)] is
-     the only formula that can be satisfied here.
+     In the other case, we know that [(ns, Pred p args)] is the only formula that can be satisfied here.
    *)
   eexists; split; try exact H1.
   intros w H5.
@@ -881,6 +869,10 @@ Proof.
 Qed.
 
 Print Assumptions satisfaction_conseq_Pred_r.
+(*
+Axioms:
+classic : forall P : Prop, P \/ ~ P
+ *)
 
 Lemma satisfaction_conseq_Pred_l `{Signature} :
   forall ls rs ns1 ns2 p args,
@@ -909,7 +901,7 @@ Proof.
     exact H5.
 Qed.
 
-Print Assumptions satisfaction_conseq_Pred_l.
+Print Assumptions satisfaction_conseq_Pred_l. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Impl_r `{Signature} :
   forall ls rs ns phi psi, InS (pair ns <{phi -> psi}>) rs ->
@@ -990,6 +982,10 @@ Proof.
 Qed.
 
 Print Assumptions satisfaction_conseq_Impl_r.
+(*
+Axioms:
+classic : forall P : Prop, P \/ ~ P
+ *)
 
 Lemma satisfaction_conseq_Impl_l `{Signature} :
   forall ls rs ns1 ns2 phi psi,
@@ -1022,7 +1018,7 @@ Proof.
     exact H3.
 Qed.
 
-Print Assumptions satisfaction_conseq_Impl_l.
+Print Assumptions satisfaction_conseq_Impl_l. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Conj_r `{Signature} :
   forall ls rs ns phi psi,
@@ -1047,7 +1043,7 @@ Proof.
     exact H5.
 Qed.
 
-Print Assumptions satisfaction_conseq_Conj_r.
+Print Assumptions satisfaction_conseq_Conj_r. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Conj_l `{Signature} :
   forall ls rs ns phi psi,
@@ -1067,7 +1063,7 @@ Proof.
   all: assumption.
 Qed.
 
-Print Assumptions satisfaction_conseq_Conj_l.
+Print Assumptions satisfaction_conseq_Conj_l. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Idisj_r `{Signature} :
   forall ls rs ns phi psi,
@@ -1094,7 +1090,7 @@ Proof.
     exact H4.
 Qed.
 
-Print Assumptions satisfaction_conseq_Idisj_r.
+Print Assumptions satisfaction_conseq_Idisj_r. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Idisj_l `{Signature} :
   forall ls rs ns phi psi,
@@ -1115,7 +1111,7 @@ Proof.
     apply mult_cons_I; assumption.
 Qed.
 
-Print Assumptions satisfaction_conseq_Idisj_l.
+Print Assumptions satisfaction_conseq_Idisj_l. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Forall_r `{Signature} :
   forall ls rs ns phi,
@@ -1172,6 +1168,10 @@ Proof.
 Qed.
 
 Print Assumptions satisfaction_conseq_Forall_r.
+(*
+Axioms:
+classic : forall P : Prop, P \/ ~ P
+ *)
 
 Lemma satisfaction_conseq_Forall_l `{Signature} :
   forall ls rs ns phi t,
@@ -1222,7 +1222,7 @@ Proof.
     apply H4.
 Qed.
 
-Print Assumptions satisfaction_conseq_Forall_l.
+Print Assumptions satisfaction_conseq_Forall_l. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Iexists_r `{Signature} :
   forall ls rs ns phi t,
@@ -1270,7 +1270,7 @@ Proof.
     exact H5.
 Qed.
 
-Print Assumptions satisfaction_conseq_Iexists_r.
+Print Assumptions satisfaction_conseq_Iexists_r. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Iexists_l `{Signature} :
   forall ls rs ns phi,
@@ -1304,6 +1304,10 @@ Proof.
 Qed.
 
 Print Assumptions satisfaction_conseq_Iexists_l.
+(*
+Axioms:
+classic : forall P : Prop, P \/ ~ P
+ *)
 
 Lemma satisfaction_conseq_cut `{Signature} :
   forall ls1 ls2 ls rs1 rs2 rs ns phi,
@@ -1354,6 +1358,10 @@ Proof.
 Qed.
 
 Print Assumptions satisfaction_conseq_cut.
+(*
+Axioms:
+classic : forall P : Prop, P \/ ~ P
+ *)
 
 (** ** Soundness *)
 
@@ -1399,6 +1407,10 @@ Proof.
 Qed.
 
 Print Assumptions soundness.
+(*
+Axioms:
+classic : forall P : Prop, P \/ ~ P
+ *)
 
 (** * More derivable rules *)
 
@@ -1440,7 +1452,7 @@ Proof.
     exact H3.
 Qed.
 
-Print Assumptions Seq_mon.
+Print Assumptions Seq_mon. (* Closed under the global context *)
 
 Proposition Seq_Neg_r `{Signature} :
   forall ls rs ns phi,
@@ -1512,7 +1524,7 @@ Proof.
     exact H2.
 Qed.
 
-Print Assumptions Seq_Neg_r.
+Print Assumptions Seq_Neg_r. (* Closed under the global context *)
 
 Proposition Seq_Neg_l `{Signature} :
   forall ls rs ns1 ns2 n phi,
@@ -1538,4 +1550,4 @@ Proof.
       exact H3.
 Qed.
 
-Print Assumptions Seq_Neg_l.
+Print Assumptions Seq_Neg_l. (* Closed under the global context *)

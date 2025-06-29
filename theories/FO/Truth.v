@@ -458,7 +458,7 @@ Proof.
     discriminate.
 Qed.
 
-Print Assumptions classical_truth_conditional.
+Print Assumptions classical_truth_conditional. (* Closed under the global context *)
 
 Lemma truth_hsubst `{Model} :
   forall phi w a sigma,
