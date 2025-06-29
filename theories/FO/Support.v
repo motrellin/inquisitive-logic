@@ -1,9 +1,8 @@
-From InqLog.FO Require Export States Syntax.
+From InqLog.FO Require Export Models Syntax.
 
 (** * Referent of a term
 
-   To interpret a term, we define the [referent] of a term
-   in a world which is an [Individual].
+   To interpret a term, we define the [referent] of a term in a world which is an [Individual].
  *)
 
 Fixpoint referent `{Model} (t : term) : World -> assignment -> Individual :=
@@ -88,7 +87,7 @@ Proof.
     apply H2.
 Qed.
 
-Print Assumptions rigidity_referent.
+Print Assumptions rigidity_referent. (* Closed under the global context *)
 
 Lemma referent_subst `{Model} :
   forall t w a sigma,
@@ -106,7 +105,7 @@ Proof.
     apply IH.
 Qed.
 
-Print Assumptions referent_subst.
+Print Assumptions referent_subst. (* Closed under the global context *)
 
 Corollary referent_subst_var `{Model} :
   forall t w a sigma,
@@ -117,7 +116,7 @@ Proof.
   reflexivity.
 Qed.
 
-Print Assumptions referent_subst.
+Print Assumptions referent_subst_var. (* Closed under the global context *)
 
 Lemma unnamed_helper_Support_24 `{Model} :
   forall w a i sigma,
@@ -138,13 +137,11 @@ Proof.
     apply referent_subst_var.
 Qed.
 
-Print Assumptions unnamed_helper_Support_24.
+Print Assumptions unnamed_helper_Support_24. (* Closed under the global context *)
 
 (** * Support satisfaction
 
-   We will now introduce the notion of a state
-   _supporting_ a formula (with respect to a variable
-   assignment function).
+   We will now introduce the notion of a [state] _supporting_ a [form]ula (with respect to a variable [assignment] function).
  *)
 
 Fixpoint support `{Model} (phi : form) :
@@ -156,7 +153,7 @@ Fixpoint support `{Model} (phi : form) :
       forall (w : World),
         contains s w ->
         PInterpretation w p
-        (fun arg => referent (args arg) w a) = true
+        (fun arg => referent (args arg) w a)
 
   | Bot _ =>
       fun s a =>
@@ -203,14 +200,10 @@ Notation "M , s , a |= phi" := (@support _ M phi s a)
 Notation "s , a |= phi" := (support phi s a)
     (at level 95)
     : form_scope.
-(* TODO:
-   Why can't I increase the level to anything higher?
- *)
 
 (**
-   In order to make future proofs more readable, we restate
-   the defining cases of [support] as various [Fact]s. They
-   can be used for the [rewrite]-tactic.
+   In order to make future proofs more readable, we restate the defining cases of [support] as various [Fact]s.
+   They can be used for the [rewrite]-tactic.
  *)
 
 Fact support_Pred `{Model} :
@@ -219,7 +212,7 @@ Fact support_Pred `{Model} :
     forall w,
       contains s w ->
       PInterpretation w p
-      (fun arg => referent (args arg) w a) = true.
+      (fun arg => referent (args arg) w a).
 Proof.
   reflexivity.
 Qed.
@@ -280,9 +273,9 @@ Proof.
   reflexivity.
 Qed.
 
-(**
-   Next, we observe, that [state_eq] is a congruence with
-   respect to [support].
+(** ** Basic properties
+
+   First, we observe that [state_eq] is a congruence with respect to [support].
  *)
 
 Instance support_Proper `{M : Model} :
@@ -316,14 +309,12 @@ Proof with (try contradiction).
     all: intros H4 w H5.
     all: rewrite H2 in H5 + rewrite <- H2 in H5.
     all: apply H4 in H5.
-    all: red in H1.
-    all: rewrite <- H5.
-    all: f_equiv.
-    all: intros arg.
     all: simpl in H1.
-    all: rewrite H3.
-    all: rewrite <- H1.
-    all: reflexivity.
+    all: eapply PInterpretation_Proper_inner.
+    all: try exact H5.
+    all: intros arg.
+    all: f_equiv.
+    all: try easy.
   -
     simpl.
     firstorder.
@@ -369,7 +360,19 @@ Proof with (try contradiction).
     all: exact H3.
 Qed.
 
-(** ** Basic properties *)
+(**
+   Therefore, we can see [support] as a morphism.
+ *)
+
+Program Definition support_Morph `{Model} (s : state) (a : assignment) : Morph form Prop :=
+  {|
+    morph phi := s,a |= phi
+  |}.
+
+Next Obligation.
+  intros phi1 phi2 H1.
+  now rewrite H1.
+Qed.
 
 Proposition persistency `{Model} :
   forall s t a phi,
@@ -410,7 +413,19 @@ Proof.
     eauto.
 Qed.
 
-Print Assumptions persistency.
+Print Assumptions persistency. (* Closed under the global context *)
+
+Instance support_Proper_substate `{Model} :
+  Proper (form_eq ==> substate --> ext_eq ==> impl) support.
+Proof.
+  intros phi1 phi2 H1 s1 s2 H2 a1 a2 H3 H4.
+  eapply persistency.
+  -
+    rewrite H1,H3 in H4.
+    exact H4.
+  -
+    exact H2.
+Qed.
 
 Proposition empty_state_property `{Model} :
   forall (a : assignment) (phi : form),
@@ -436,9 +451,8 @@ Proof.
     now apply contains_empty_state_E in H1.
   -
     intros t H1 H2.
-    eapply persistency.
-    apply substate_empty_state_E in H1.
-    all: auto.
+    rewrite H1.
+    apply IH2.
   -
     firstorder.
   -
@@ -450,7 +464,7 @@ Proof.
     exact Individual_inh.
 Qed.
 
-Print Assumptions empty_state_property.
+Print Assumptions empty_state_property. (* Closed under the global context *)
 
 Proposition locality `{M : Model} :
   forall phi s a t,
@@ -474,8 +488,7 @@ Proof.
       apply andb_true_iff in H3 as [_ H3].
       apply H2 in H3.
       simpl.
-      rewrite <- H3.
-      eapply PInterpretation_Proper_inner.
+      eapply PInterpretation_Proper_inner; try exact H3.
       intros arg.
       apply restricted_referent.
     +
@@ -483,15 +496,13 @@ Proof.
       apply H1 in H3 as H4.
 
       specialize (H2 (exist _ _ H4)).
-      rewrite <- H2.
-
-      f_equiv.
-      intros arg.
-      rewrite restricted_referent.
-      reflexivity.
-
-      simpl.
-      apply andb_true_iff; split; assumption.
+      eapply PInterpretation_Proper_inner; try apply H2.
+      *
+        intros arg.
+        rewrite restricted_referent.
+        reflexivity.
+      *
+        apply andb_true_iff; split; assumption.
   -
     split.
     +
@@ -574,7 +585,7 @@ Proof.
       eapply IH1; eauto.
 Qed.
 
-Print Assumptions locality.
+Print Assumptions locality. (* Closed under the global context *)
 
 (** ** Ruling out a formula *)
 
@@ -583,8 +594,6 @@ Definition ruling_out `{Model} (s : state) (phi : form) (a : assignment) :=
     consistent t /\
     substate t s /\
     (t, a |= phi).
-
-(* TODO: Rewrite lemmas for [ruling_out] *)
 
 Notation "M , s , a _||_ phi" := (@ruling_out _ M s phi a)
   (at level 95)
@@ -692,8 +701,7 @@ Proof.
     split.
     all: intros H2 w' H3.
     all: specialize (H2 w' H3).
-    all: rewrite <- H2.
-    all: f_equiv.
+    all: eapply PInterpretation_Proper_inner; try exact H2.
     all: intros arg.
     +
       etransitivity.
@@ -781,7 +789,7 @@ Proof.
         exact H1.
 Qed.
 
-Print Assumptions support_hsubst.
+Print Assumptions support_hsubst. (* Closed under the global context *)
 
 Corollary support_hsubst_var `{Model} :
   forall phi s a sigma,
@@ -809,33 +817,13 @@ Qed.
 
 (** ** Support for multiple formulas *)
 
-(* TODO Adapt to ListLib? *)
 Definition support_mult
   `{Model}
   (s : state)
   (a : assignment) :
   list form -> Prop :=
 
-  List.Forall (fun phi => s,a |= phi).
-
-Fact support_mult_support `{Model} :
-  forall phi s a,
-    support_mult s a (phi :: nil) <->
-    (s, a |= phi).
-Proof.
-  intros phi s a.
-  split.
-  -
-    intros H1.
-    eapply Forall_forall in H1.
-    +
-      exact H1.
-    +
-      left; reflexivity.
-  -
-    intros H1.
-    repeat constructor + assumption.
-Qed.
+  mult (support_Morph s a).
 
 Lemma support_mult_hsubst_var `{Model} :
   forall Phi s a sigma,
@@ -847,13 +835,15 @@ Proof.
   -
     split.
     all: intro.
-    all: constructor.
+    all: apply mult_nil_I.
   -
     split.
     all: intros H1.
-    all: apply Forall_cons_iff in H1 as [H1 H2].
+    all: apply mult_cons_E_tl in H1 as H2.
+    all: apply mult_cons_E_hd in H1.
     +
-      constructor.
+      simpl.
+      apply mult_cons_I.
       *
         apply support_hsubst_var in H1.
         exact H1.
@@ -861,7 +851,7 @@ Proof.
         apply IH.
         exact H2.
     +
-      constructor.
+      apply mult_cons_I.
       *
         apply support_hsubst_var.
         exact H1.
@@ -878,18 +868,22 @@ Proposition persistency_support_mult `{Model} :
 Proof.
   induction Phi as [|phi Phi' IH].
   -
-    intros; constructor.
+    intros H1 H2.
+    apply mult_nil_I.
   -
-    intros H1 H3.
-    apply Forall_cons_iff in H1 as [H1 H2].
-    constructor.
+    intros H1 H2.
+    apply mult_cons_E_hd in H1 as H3.
+    apply mult_cons_E_tl in H1 as H4.
+    apply mult_cons_I.
     +
-      eapply persistency; eassumption.
+      simpl.
+      rewrite H2.
+      exact H3.
     +
       eapply IH; eassumption.
 Qed.
 
-Print Assumptions persistency_support_mult.
+Print Assumptions persistency_support_mult. (* Closed under the global context *)
 
 (** ** Support for some formulas *)
 
@@ -899,21 +893,7 @@ Definition support_some
   (a : assignment) :
   list form -> Prop :=
 
-  List.Exists (fun phi => s,a |= phi).
-
-Fact support_some_support `{Model} :
-  forall phi s a,
-    support_some s a (phi :: nil) <->
-    (s, a |= phi).
-Proof.
-  split.
-  all: intros H1.
-  -
-    apply Exists_cons in H1 as [H1|H1]; easy.
-  -
-    constructor.
-    exact H1.
-Qed.
+  some (support_Morph s a).
 
 Lemma support_some_hsubst_var `{Model} :
   forall Phi s a sigma,
@@ -924,27 +904,27 @@ Proof.
   all: intros s a sigma.
   -
     split.
-    all: inversion 1.
+    all: intros H1.
+    all: now apply some_nil_E in H1.
   -
     split.
     all: simpl.
     all: intros H1.
-    all: apply Exists_cons.
-    all: apply Exists_cons in H1 as [H1|H1].
+    all: apply some_cons_E in H1 as [H1|H1].
     +
-      left.
+      apply some_cons_I_hd.
       apply support_hsubst_var in H1.
       exact H1.
     +
-      right.
+      apply some_cons_I_tl.
       apply IH.
       exact H1.
     +
-      left.
+      apply some_cons_I_hd.
       apply support_hsubst_var.
       exact H1.
     +
-      right.
+      apply some_cons_I_tl.
       apply IH.
       exact H1.
 Qed.
@@ -958,119 +938,23 @@ Proof.
   induction Phi as [|phi Phi' IH].
   all: intros H1 H2.
   -
-    inversion H1.
+    now apply some_nil_E in H1.
   -
-    apply Exists_cons in H1 as [H1|H1].
+    apply some_cons_E in H1 as [H1|H1].
     +
-      left.
-      eapply persistency; eassumption.
+      apply some_cons_I_hd.
+      simpl.
+      rewrite H2.
+      exact H1.
     +
-      right.
+      apply some_cons_I_tl.
       apply IH; assumption.
 Qed.
 
-Print Assumptions persistency_support_some.
+Print Assumptions persistency_support_some. (* Closed under the global context *)
 
 (** * Support validity *)
 
 Definition support_valid `{S : Signature} (phi : form) :=
   forall `(M : @Model S) s a,
     s, a |= phi.
-
-Definition support_valid_mult `{Signature} :
-  list form -> Prop :=
-
-  List.Forall support_valid.
-
-Remark support_valid_mult_charac `{S : Signature} :
-  forall Phi,
-    (forall `(M : @Model S) s a, support_mult s a Phi) <->
-    support_valid_mult Phi.
-Proof.
-  intros Phi.
-  split.
-  -
-    intros H1.
-    apply Forall_forall.
-    intros phi H2 M s a.
-    eapply Forall_forall in H1; eassumption.
-  -
-    intros H1 M s a.
-    apply Forall_forall.
-    intros phi H2.
-    eapply Forall_forall in H1.
-    +
-      apply H1.
-    +
-      exact H2.
-Qed.
-
-(**
-   By defining [PInterpretation] as a boolean predicate, we
-   obtain double negation elimination of atoms.
- *)
-Example support_valid_DNE_Pred `{Signature} :
-  forall p args,
-    support_valid <{DNE (Pred p args)}>.
-Proof.
-  intros p args M s1 a s2 H1 H2 w1 H3.
-  rewrite support_Neg in H2.
-
-  destruct (
-    PInterpretation w1 p (fun arg : PAri p => referent (args arg) w1 a)
-  ) eqn:H4; try reflexivity.
-
-  exfalso.
-  apply H2.
-  exists (singleton w1).
-  repeat split.
-  -
-    apply consistent_singleton_I.
-  -
-    intros w2 H5.
-    apply contains_singleton_iff in H5.
-    rewrite H5.
-    exact H3.
-  -
-    rewrite support_Neg.
-    intros [s3 [[w2 H5] [H6 H7]]].
-    apply substate_singleton_E in H6 as [H6|H6].
-    all: rewrite H6 in *; clear H6.
-    +
-      discriminate.
-    +
-      apply contains_singleton_iff in H5.
-      rewrite support_Pred in H7.
-      specialize (H7 _ (contains_singleton_refl w1)).
-      congruence.
-Qed.
-
-Example support_valid_CD `{Signature} :
-  forall phi psi,
-    support_valid (CD phi psi).
-Proof.
-  intros phi psi.
-  intros M s a.
-  intros t H1 H2.
-  destruct (
-    classic (
-      t,a |= phi
-    )
-  ) as [H3|H3].
-  -
-    left.
-    exact H3.
-  -
-    right.
-    intros i.
-    rewrite support_Forall in H2.
-    specialize (H2 i).
-    destruct H2 as [H2|H2].
-    +
-      exfalso.
-      apply H3.
-      apply support_hsubst_var in H2.
-      apply H2.
-    +
-      exact H2.
-Qed.

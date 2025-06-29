@@ -1,4 +1,6 @@
-From InqLog.FO Require Export Consequence Seq.
+From InqLog.FO Require Import Seq.
+From InqLog.FO Require Import DNE.
+From InqLog.FO Require SingleUnaryPredicate SingleBinaryPredicate.
 
 (** * The Casari Scheme *)
 
@@ -14,23 +16,22 @@ Definition CasariAnt `{Signature} (phi : form) : form :=
 Definition Casari `{Signature} (phi : form) : form :=
   <{ CasariAnt phi -> CasariSuc phi }>.
 
-Remark Casari_truth_conditional `{Signature} :
+Lemma truth_conditional_Casari `{Signature} :
   forall phi,
-    classical phi = true ->
+    truth_conditional phi ->
     truth_conditional (Casari phi).
 Proof.
   intros phi H1.
-  apply classical_truth_conditional.
-  simpl.
-  rewrite H1.
-  reflexivity.
+  apply truth_conditional_Impl.
+  apply truth_conditional_Forall.
+  exact H1.
 Qed.
 
-(** * Some Casari Instances with atomic predicates *)
+(** * Atomic Support Validity of the Casari Scheme *)
 
 Module Casari_with_atoms.
 
-  Import Syntax_single_unary_predicate.
+  Import SingleUnaryPredicate.
 
   Definition Atomic : form :=
     <{ Pred' (Var 0) }>.
@@ -42,7 +43,7 @@ Module Casari_with_atoms.
     (
       forall x,
         (
-          (P x)
+          (~ ~ P x)
           ->
           (forall x, ~ ~ P x)
         )
@@ -57,204 +58,55 @@ Module Casari_with_atoms.
     firstorder.
   Qed.
 
-  Theorem support_valid_Casari_DNA :
-    support_valid (Casari DNA).
-  Proof.
-    apply support_valid_charac_support_conseq.
-    apply support_conseq_Impl_I.
-    apply support_conseq_Forall_I.
-    apply support_conseq_Impl_I.
-    apply support_conseq_Bot_I with
-      (phi := <{~ (Pred' (Var 0))}>).
-    -
-      apply support_conseq_weakening_cons_hd.
-    -
-      assert (eq1 :
-        <{~ ~ (Pred' (Var 0))}> =
-        <{~ ~ (Pred' (Var 0))}>.|[Var 0/]
-      ). reflexivity.
-      rewrite eq1.
-      apply support_conseq_Forall_E_rigid; try easy.
-      apply support_conseq_Impl_E with
-        (phi := CasariImpl DNA).
-      +
-        apply support_conseq_Impl_I.
-        apply support_conseq_Bot_E.
-        apply support_conseq_Bot_I with
-          (phi := <{~ Pred' (Var 0)}>).
-        *
-          apply support_conseq_weakening_cons_tl.
-          apply support_conseq_weakening_cons_hd.
-        *
-          apply support_conseq_weakening_cons_hd.
-      +
-        assert (eq2 :
-          <{ (CasariImpl DNA) -> (Forall <{ ~ ~ (Pred' (Var 0)) }>) }> =
-          <{ (CasariImpl DNA) -> (Forall <{ ~ ~ (Pred' (Var 0)) }>) }>.|[Var 0/]
-        ). reflexivity.
-        rewrite eq2.
-        apply support_conseq_Forall_E_rigid; try easy.
-        apply support_conseq_weakening_cons_tl.
-        apply support_conseq_weakening_cons_hd.
-  Qed.
-
-  Proposition support_conseq_CasariSuc_DNA_CasariSuc_Atomic :
-    support_conseq (CasariSuc DNA :: nil) (CasariSuc Atomic).
-  Proof.
-    apply support_conseq_Forall_I.
-    eapply support_conseq_Impl_E with
-      (phi := DNA).
-    -
-      apply support_conseq_Impl_I.
-      apply support_conseq_Bot_I with
-        (phi := <{~ Pred' (Var 0)}>).
-      +
-        apply support_conseq_weakening_cons_hd.
-      +
-        apply support_conseq_weakening_cons_tl.
-        apply support_conseq_Impl_I.
-        eapply support_conseq_Impl_E.
-        *
-          apply support_conseq_weakening_cons_hd.
-        *
-          apply support_conseq_weakening_cons_tl.
-          unfold CasariSuc.
-          unfold DNA.
-          assert (eq1 :
-            <{~ (Pred' (Var 0)) -> (Bot 0)}> =
-            <{~ (Pred' (Var 0)) -> (Bot 0)}>.|[Var 0/]
-          ). reflexivity.
-          rewrite eq1.
-          apply support_conseq_Forall_E_rigid; try exact I.
-          apply support_conseq_refl.
-    -
-      rewrite <- app_nil_l with
-        (l := map (fun psi => psi.|[ren (+1)]) (CasariSuc DNA :: nil)).
-      eapply support_conseq_weakening_1.
-      apply support_valid_charac_support_conseq.
-      apply support_valid_DNE_Pred.
-  Qed.
-
-  Print Assumptions support_conseq_CasariSuc_DNA_CasariSuc_Atomic.
-
-  Proposition support_conseq_CasariSuc_Atomic_CasariSuc_DNA :
-    support_conseq (CasariSuc Atomic :: nil) (CasariSuc DNA).
-  Proof.
-    apply support_conseq_Forall_I.
-    apply support_conseq_Impl_I.
-    apply support_conseq_Bot_I with
-      (phi := Pred' (Var 0)).
-    -
-      apply support_conseq_weakening_cons_tl.
-      assert (eq1 :
-        Pred' (Var 0) = (Pred' (Var 0)).|[Var 0/]
-      ). reflexivity.
-      rewrite eq1.
-      apply support_conseq_Forall_E_rigid; try exact I.
-      apply support_conseq_refl.
-    -
-      apply support_conseq_weakening_cons_hd.
-  Qed.
-
-  Print Assumptions support_conseq_CasariSuc_Atomic_CasariSuc_DNA.
-
-  Proposition support_conseq_CasariAnt_Atomic_CasariAnt_DNA :
-    support_conseq (CasariAnt Atomic :: nil) (CasariAnt DNA).
-  Proof.
-    apply support_conseq_Forall_I.
-    apply support_conseq_Impl_I.
-    apply support_conseq_trans with
-      (cxt2 := CasariSuc Atomic :: nil).
-    -
-      intros psi [H3|H3]; try easy.
-      subst psi.
-      apply support_conseq_Impl_E with
-        (phi := CasariImpl Atomic).
-      +
-        apply support_conseq_Impl_I.
-        apply support_conseq_trans with
-          (cxt2 := CasariSuc DNA :: nil).
-        *
-          intros psi [H3|H3]; try easy.
-          subst psi.
-          apply support_conseq_Impl_E with
-            (phi := DNA).
-          --
-             apply support_conseq_Impl_I.
-             apply support_conseq_Bot_I with (phi := Atomic).
-             ++
-                apply support_conseq_weakening_cons_tl.
-                apply support_conseq_weakening_cons_hd.
-             ++
-                apply support_conseq_weakening_cons_hd.
-          --
-             apply support_conseq_in.
-             right.
-             left.
-             reflexivity.
-        *
-          exact support_conseq_CasariSuc_DNA_CasariSuc_Atomic.
-      +
-        assert (eq1 :
-          <{ (CasariImpl Atomic) -> (CasariSuc Atomic) }> =
-          <{ (CasariImpl Atomic) -> (CasariSuc Atomic) }>.|[Var 0/]
-        ). reflexivity.
-        rewrite eq1.
-        apply support_conseq_Forall_E_rigid; try exact I.
-        apply support_conseq_in.
-        right.
-        left.
-        reflexivity.
-    -
-      exact support_conseq_CasariSuc_Atomic_CasariSuc_DNA.
-  Qed.
-
-  Print Assumptions support_conseq_CasariAnt_Atomic_CasariAnt_DNA.
-
-  Proposition support_conseq_Casari_DNA_Casari_Atomic :
-    support_conseq (Casari DNA :: nil) (Casari Atomic).
-  Proof.
-    apply support_conseq_Impl_I.
-    apply support_conseq_trans with
-      (cxt2 := CasariSuc DNA :: nil).
-    -
-      intros psi [H4|H4]; try easy.
-      subst psi.
-      apply support_conseq_Impl_E with
-        (phi := CasariAnt DNA).
-      +
-        apply support_conseq_trans with
-          (cxt2 := CasariAnt Atomic :: nil).
-        *
-          intros psi [H4|H4]; try easy.
-          subst psi.
-          apply support_conseq_weakening_cons_hd.
-        *
-          exact support_conseq_CasariAnt_Atomic_CasariAnt_DNA.
-      +
-        apply support_conseq_in.
-        right.
-        left.
-        reflexivity.
-    -
-      exact support_conseq_CasariSuc_DNA_CasariSuc_Atomic.
-  Qed.
-
-  Print Assumptions support_conseq_Casari_DNA_Casari_Atomic.
-
   Corollary support_valid_Casari_Atomic :
     support_valid (Casari Atomic).
   Proof.
-    apply support_valid_charac_support_conseq.
-    apply support_conseq_trans with
-      (cxt2 := Casari DNA :: nil).
+    intros M s1 a.
+    apply truth_conditional_Casari.
+    {
+      apply truth_conditional_Pred.
+    }
+    intros w H1.
+
+    unfold Casari.
+    rewrite truth_Impl.
+    intros H2.
+
+    destruct (classic (exists i, ~ truth Atomic w (i .: a))) as [[i H3]|H3].
     -
-      intros psi [H1|H1]; try easy.
-      subst psi.
-      apply support_valid_charac_support_conseq.
-      exact support_valid_Casari_DNA.
+      exfalso.
+
+      unfold CasariAnt in H2.
+      rewrite truth_Forall in H2.
+      specialize (H2 i).
+      rewrite truth_Impl in H2.
+
+      assert (H4 : truth (CasariImpl Atomic) w (i .: a)).
+      {
+        unfold CasariImpl.
+        rewrite truth_Impl.
+        easy.
+      }
+      specialize (H2 H4).
+      unfold CasariSuc in H2.
+      rewrite truth_Forall in H2.
+      specialize (H2 i).
+      apply H3.
+      unfold Atomic, Pred'.
+      rewrite truth_Pred.
+      simpl.
+      apply H2.
+      apply contains_singleton_iff.
+      reflexivity.
     -
-      exact support_conseq_Casari_DNA_Casari_Atomic.
+      unfold CasariSuc.
+      rewrite truth_Forall.
+      intros i.
+      apply NNPP.
+      intros H4.
+      apply H3.
+      exists i.
+      exact H4.
   Qed.
 
   Print Assumptions support_valid_Casari_Atomic.
@@ -263,12 +115,8 @@ End Casari_with_atoms.
 
 (** * The Casari "counter-example"
 
-   We will now provide a counter-example to show that the
-   Casari Scheme isn't schematically valid. For this, we
-   need a concrete signature, a concret instance of the
-   scheme via a formula [phi], a suitable model [M], a state
-   [s] and a variable assignment [a] s.t. [M], [s] and [a]
-   do not support [phi].
+   We will now provide a counter-example to show that the Casari Scheme isn't schematically valid.
+   For this, we need a concrete signature, a concret instance of the scheme via a formula [phi], a suitable model [M], a state [s] and a variable assignment [a] s.t. [M], [s] and [a] do not support [phi].
  *)
 Module Casari_fails.
 
@@ -278,14 +126,12 @@ Module Casari_fails.
 
   (** ** Signature and Syntax
 
-     We will use our signature with a single binary
-     predicate symbol for the counter example.
+     We will use our signature with a single binary predicate symbol for the counter example.
    *)
-  Import Syntax_single_binary_predicate.
+  Import SingleBinaryPredicate.
 
   (**
-     The following formula will serve as our instance for
-     the Casari Scheme:
+     The following formula will serve as our instance for the Casari Scheme:
    *)
   Definition IES : form :=
     <{iexists (Pred' (Var 1) (Var 0))}>.
@@ -313,22 +159,20 @@ Module Casari_fails.
 
   (** ** The Model
 
-     For our model, we decide on natural numbers to serve as
-     our type of Worlds and Individuals. By this,
-     [PInterpretation] becomes a ternary relation which we
-     define before:
+     For our model, we decide on natural numbers to serve as our type of Worlds and Individuals.
+     [PInterpretation] therefore becomes a ternary relation which we define before:
    *)
-  Definition rel (w m j : nat) : bool :=
+  Definition rel (w m j : nat) : Prop :=
     (
-      negb (even m) &&
-      (m =? j)
-    ) ||
+      (even m = false) /\
+      (m = j)
+    ) \/
     (
-      even m &&
-      negb (j =? w) &&
+      even m = true /\
+      (j <> w) /\
       (
-        negb (even j) ||
-        (m <? j)
+        (even j = false) \/
+        (m < j)
       )
     ).
 
@@ -391,8 +235,7 @@ Module Casari_fails.
 
   (** ** Some state properties
 
-     We start by defining some notation for state
-     properties.
+     We start by defining some notation for state properties.
    *)
 
   Declare Custom Entry boolpred.
@@ -431,10 +274,8 @@ Module Casari_fails.
     : form_scope.
 
   (**
-     We define [contains_all p] to say that s contains all
-     worlds with property [p]. Note that this is in fact a
-     duplicate of [substate] which is intended to
-     distinguish between properties of worlds and states.
+     We define [contains_all p] to say that s contains all worlds with property [p].
+     Note that this is in fact a duplicate of [substate] which is intended to distinguish between properties of worlds and states.
    *)
 
   Definition contains_all (p : nat -> bool) (s : state) : Prop :=
@@ -473,8 +314,7 @@ Module Casari_fails.
   Qed.
 
   (**
-     Next, we implement the notion that a state contains at
-     least one world with property [p].
+     Next, we implement the notion that a state contains at least one world with property [p].
    *)
   Definition contains_any (p : nat -> bool) (s : state) : Prop :=
     exists w,
@@ -516,7 +356,7 @@ Module Casari_fails.
   Lemma not_contains_any_contains_all_complement :
     forall p s,
       ~ contains_any p s ->
-      contains_all p (States.complement s).
+      contains_all p (Models.complement s).
   Proof.
     intros p s H1 w H2.
     apply contains_complement_iff.
@@ -527,9 +367,8 @@ Module Casari_fails.
   Qed.
 
   (**
-     We also define the property to have at most finitely
-     many worlds with property [p]. We do this by stating
-     that there exists a maximal world with property [p].
+     We also define the property to have at most finitely many worlds with property [p].
+     We do this by stating that there exists a maximal world with property [p].
    *)
 
   Definition is_border
@@ -583,8 +422,7 @@ Module Casari_fails.
   Qed.
 
   (**
-     We also implement the converse notion of having
-     infinitely many worlds with property [p].
+     We also implement the converse notion of having infinitely many worlds with property [p].
    *)
 
   Definition successor
@@ -627,9 +465,7 @@ Module Casari_fails.
   Qed.
 
   (**
-     It is worth to note that we need classic logic to show
-     the we conclude finiteness from missing infiniteness
-     and infiniteness from missing finiteness.
+     It is worth to note that we need classic logic to show that we conclude finiteness from missing infiniteness and infiniteness from missing finiteness.
    *)
 
   Lemma not_infinitely_many_finitely_many :
@@ -662,12 +498,11 @@ Module Casari_fails.
   Qed.
 
   (**
-     Last, we define a state property which will be needed
-     later.
+     Last, we define a state property which will be needed later.
    *)
   Local Definition E (s : state) : Prop :=
-    contains_any (? ~ even ?) (States.complement s) \/
-    infinitely_many even (States.complement s).
+    contains_any (? ~ even ?) (Models.complement s) \/
+    infinitely_many even (Models.complement s).
 
   Instance E_Proper_substate :
     Proper (substate --> impl) E.
@@ -698,7 +533,7 @@ Module Casari_fails.
   Lemma not_E_finitely_many_complement :
     forall s,
       ~ E s ->
-      finitely_many even (States.complement s).
+      finitely_many even (Models.complement s).
   Proof.
     intros * H1.
     apply Decidable.not_or in H1 as [_ H1].
@@ -707,20 +542,18 @@ Module Casari_fails.
   Qed.
 
   (**
-     We prove some helper lemmas which do not have any
-     meaningful names yet.
+     We prove some helper lemmas which do not have any meaningful names yet.
    *)
 
   Lemma unnamed_helper_Casari_1 :
     forall w m,
       even m = true ->
-      rel w m w = false.
+      ~ rel w m w.
   Proof.
     intros w m H1.
     unfold rel.
     rewrite H1.
-    rewrite eqb_refl.
-    reflexivity.
+    lia.
   Qed.
 
   Print Assumptions unnamed_helper_Casari_1.
@@ -731,7 +564,7 @@ Module Casari_fails.
       contains_all (? ~ even ?) s ->
       contains_all (? ltb m ?) s ->
       forall w j,
-        rel w m j = true ->
+        rel w m j ->
         contains s j.
   Proof.
     intros s m H1 H2 H3 w j H4.
@@ -739,10 +572,15 @@ Module Casari_fails.
     unfold rel in H4.
     rewrite H1 in H4.
     simpl in H4.
-    destruct (j =? w) eqn:H6; try discriminate.
-    simpl in H4.
-    apply orb_true_iff in H4 as [H4|H4].
-    all: auto.
+    destruct H4 as [[H4 H5]|[H4 [H5 [H6|H6]]]]; try discriminate.
+    -
+      apply H2.
+      rewrite H6.
+      reflexivity.
+    -
+      apply H3.
+      apply ltb_lt.
+      exact H6.
   Qed.
 
   Print Assumptions unnamed_helper_Casari_2.
@@ -759,19 +597,17 @@ Module Casari_fails.
   Lemma unnamed_helper_Casari_3 :
     forall (s : state) (n : nat),
       contains_all (? ~ even ?) s ->
-      finitely_many (? even ?) (States.complement s) ->
+      finitely_many (? even ?) (Models.complement s) ->
       exists t,
         substate t s /\
         contains_all (? ~ even ?) t /\
-        finitely_many (? even ?) (States.complement t) /\
-        contains_any (? ltb n ?) (States.complement t).
+        finitely_many (? even ?) (Models.complement t) /\
+        contains_any (? ltb n ?) (Models.complement t).
   Proof.
     intros s n H1 [e H2].
     (**
        [e] is the greatest even number not in [s].
-       We're looking for a [substate] [t] of [s], s.t.
-       there also exists a greatest even number not in [t] and
-       with one even number contained greater than [a x].
+       We're looking for a [substate] [t] of [s], s.t. there also exists a greatest even number not in [t] and with one even number contained greater than [a x].
      *)
     exists (unnamed_helper_Casari_3_state n e).
     repeat split.
@@ -862,34 +698,30 @@ Module Casari_fails.
     unfold rel.
 
     rewrite H1.
-    rewrite eqb_refl.
-    reflexivity.
+    left; split; reflexivity.
   Qed.
 
   Print Assumptions support_IES_odd.
 
   (**
-     [support_IES_even] and
-     [support_IES_even_other_direction] represent Claim 3.8.
+     [support_IES_even] and [support_IES_even_other_direction] represent Claim 3.8.
    *)
   Proposition support_IES_even :
     forall (s : state) (a : assignment),
       even (a 0) = true ->
-      contains_any (? (~ even) || ltb (a 0) ?) (States.complement s) ->
+      contains_any (? (~ even) || ltb (a 0) ?) (Models.complement s) ->
       s, a |= IES.
   Proof.
     intros s a H1 [n [H2 H3]].
 
     (**
-       For preparation, just remove the notion of a
-       complement.
+       For preparation, just remove the notion of a complement.
      *)
     apply contains_complement_iff in H3.
 
     simpl.
     (**
-       The obvious candidate is n which can be easily
-       observed by the definition of [rel].
+       The obvious candidate is n which can be easily observed by the definition of [rel].
      *)
     exists n.
     intros w H4.
@@ -897,23 +729,20 @@ Module Casari_fails.
     unfold rel.
     rewrite H1.
     simpl.
-    rewrite andb_true_iff.
-    split.
+    right.
+    repeat split.
     -
-      destruct (n =? w) eqn:H5; try reflexivity.
-      apply eqb_eq in H5.
+      intros H5.
       subst w.
-      Fail congruence.
-      simpl in H3. (* Why is this needed? *)
-      congruence.
+      contradiction.
     -
       apply orb_true_iff in H2 as [H2|H2].
       +
-        rewrite H2.
-        reflexivity.
+        left.
+        now destruct (even n).
       +
-        rewrite H2.
-        apply orb_true_r.
+        right.
+        now apply ltb_lt.
   Qed.
 
   Print Assumptions support_IES_even.
@@ -945,10 +774,9 @@ Module Casari_fails.
   (** ** Support for [CasariSuc IES]
 
      We will now prove helpful support properties for
-     [CasariSuc IES]. In fact, we get
-     [E s <-> s, a |= <{CasariSuc IES}>]. The two directions
-     are proven in [support_CasariSuc_IES] and
-     [support_CasariSuc_IES_other_direction].
+     [CasariSuc IES].
+     In fact, we get [E s <-> s, a |= <{CasariSuc IES}>].
+     The two directions are proven in [support_CasariSuc_IES] and [support_CasariSuc_IES_other_direction].
    *)
 
   Proposition support_CasariSuc_IES :
@@ -963,9 +791,7 @@ Module Casari_fails.
     destruct (even i) eqn:H2.
     -
       (**
-         For the first case, we just destruct the property
-         of [s] being a member of [E], as it is a
-         disjunctive property.
+         For the first case, we just destruct the property of [s] being a member of [E], as it is a disjunctive property.
        *)
       destruct H1 as [[n [H11 H12]]|H1].
       +
@@ -998,8 +824,7 @@ Module Casari_fails.
   Print Assumptions support_CasariSuc_IES.
 
   (**
-     For the other direction, we prove a version which can
-     be gained by contraposition.
+     For the other direction, we prove a version which can be gained by contraposition.
    *)
   Proposition support_CasariSuc_IES_other_direction :
     forall (s : state) (a : assignment) (e : nat),
@@ -1013,9 +838,8 @@ Module Casari_fails.
     rewrite support_Forall in H3.
 
     (**
-       Note the chosen [a] for applying
-       [support_IES_even_other_direction]. By this, [a 0]
-       is for sure even.
+       Note the chosen [a] for applying [support_IES_even_other_direction].
+       By this, [a 0] is for sure even.
      *)
     eapply support_IES_even_other_direction with
       (a := (if even e then e else S e) .: a).
@@ -1049,15 +873,14 @@ Module Casari_fails.
 
   (** ** Support for [CasariImpl IES]
 
-     In this section, we will prove needed support
-     properties for [CasariImpl IES]. The main result is
-     [support_CasariImpl_IES_other_direction].
+     In this section, we will prove needed support properties for [CasariImpl IES].
+     The main result is [support_CasariImpl_IES_other_direction].
    *)
 
   Proposition support_CasariImpl_IES_other_direction :
     forall (s : state) (a : assignment),
       contains_all (? ~ even ?) s ->
-      finitely_many even (States.complement s) ->
+      finitely_many even (Models.complement s) ->
       ~ (s, a |= CasariImpl IES).
   Proof.
     intros s a H1 H2 H3.
@@ -1111,14 +934,12 @@ Module Casari_fails.
 
   (** ** Support for [CasariAnt IES]
 
-     Now, we can stick our previously proved propositions
-     together. By this, we get that [CasariAnt IES] is
-     valid in our instantiated model [M].
+     Now, we can stick our previously proved propositions together.
+     We get that [CasariAnt IES] is valid in our instantiated model [M].
 
-     For this, we use classical logic in two points:
+     For its proof, we use classical logic in two points:
      - In order to apply contraposition via [NNPP] and
-     - when we are applying
-       [not_E_finitely_many_complement].
+     - when we are applying [not_E_finitely_many_complement].
    *)
   Proposition support_CasariAnt_IES :
     forall (s : state) (a : assignment),
@@ -1144,16 +965,12 @@ Module Casari_fails.
 
   (** ** Support for [Casari IES]
 
-     We now conclude that we have indeed found a suitable
-     counter-example. For this, we still need to define a
-     suitable state. We would also need a concrete
-     [assignment] but this can be done one the fly.
+     We now conclude that we have indeed found a suitable counter-example.
+     For this, we still need to define a suitable state.
+     We would also need a concrete [assignment] but this can be done one the fly.
 
-     [counter_state e] is a state that contains every odd
-     number and every (even) number greater than [e]. By
-     this, it contains at least one odd number and its
-     complement can only contain infinitely many even
-     numbers.
+     [counter_state e] is a state that contains every odd number and every (even) number greater than [e].
+     By this, it contains at least one odd number and its complement can only contain infinitely many even numbers.
    *)
   Local Program Definition counter_state (e : nat) : state :=
     {|
@@ -1188,8 +1005,7 @@ Module Casari_fails.
     intros H1.
 
     (**
-       As [Casari IES] is an implication with conclusion
-       [CasariSuc IES], we try to falsify this.
+       As [Casari IES] is an implication with conclusion [CasariSuc IES], we try to falsify this.
      *)
     eapply support_CasariSuc_IES_other_direction.
     -
@@ -1205,8 +1021,7 @@ Module Casari_fails.
         apply support_CasariAnt_IES.
 
     (**
-       We still need to instantiate some existential
-       variables.
+       We still need to instantiate some existential variables.
      *)
     Unshelve.
     exact (fun _ => 25). (* any variable [assignment] *)
@@ -1223,10 +1038,8 @@ End Casari_fails.
 
 (** * Bounded Casari
 
-   We will now prove that the Casari Scheme is valid for
-   every formula with the property that the highest occuring
-   free variable is at most 0. We will proceed by providing
-   a derivation using [Seq] and its [soundness].
+   We will now prove that the Casari Scheme is valid for every formula with the property that the highest occuring free variable is at most 0.
+   We will proceed by providing a derivation using [Seq] and its [soundness].
  *)
 
 Theorem Seq_CasariAnt_CasariSuc `{Signature} :

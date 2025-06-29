@@ -4,14 +4,12 @@ From InqLog.FO Require Export Truth.
 
 (** * Defining the Sequent Calculus
 
-   For the sequent calculus introduced by Litak/Sano, we
-   first the define the notion of _labelled formulas_. A
-   labelled formel is a pair consisting of a list of
-   natural numbers and a formula.
+   For the sequent calculus introduced by Litak/Sano, we first the define the notion of _labelled formulas_.
+   A labelled formel is a pair consisting of a list of natural numbers and a formula.
 
-   We will frequently use the notions of [InS_eq] and
-   [InS_sublist], as the original paper uses sets to define
-   labels.
+   We will frequently use the notions of [InS_eq] and [InS_sublist] as the original paper uses sets to define labels.
+
+   Note that we allow empty labels contrary to Litak/Sano.
  *)
 
 Definition label : Type := list nat.
@@ -102,28 +100,23 @@ Next Obligation.
 Qed.
 
 (**
-   Now, we are in a position to define the rules of the
-   Sequent Calculus in Coq. For this, we define [Seq] as a
-   [relation] on [list]s of labelled forms.
+   Now, we are in a position to define the rules of the Sequent Calculus in Rocq.
+   For this, we define [Seq] as a [relation] on [list]s of labelled forms.
  *)
 
 Inductive Seq `{Signature} :
   relation (list lb_form) :=
   (**
-     As we allow arbitrary lists of natural numbers as
-     labels, we add an extra rule to capture this:
-     [Seq_empty]. By intuition, these labels correspondent
-     to states, e.g. the empty list [nil] corresponds to the
-     empty state. By this, we want to be in a position to
-     derive a formula with an empty label.
+     As we allow arbitrary lists of natural numbers as labels, we add an extra rule to capture this: [Seq_empty].
+     By intuition, these labels correspondent to states, e.g. the empty list [nil] corresponds to the empty state.
+     Consequently, we want to be in a position to derive a formula with an empty label.
    *)
   | Seq_empty :
       forall ls rs phi,
         InS (pair nil phi) rs ->
         Seq ls rs
   (**
-     The following rules correspond to the original sequent
-     calculus.
+     The following rules correspond to the original sequence calculus.
    *)
   | Seq_id :
       forall ls rs ns1 ns2 p args,
@@ -235,8 +228,7 @@ Inductive Seq `{Signature} :
         ) ->
         Seq ls rs
   (**
-     InS addition, we add the cut elimination rule to our
-     calculus, which is shown to be admissible by Litak/Sano.
+     In addition, we add the cut elimination rule to our calculus, which is shown to be admissible by Litak/Sano.
    *)
   | Seq_cut :
       forall ls1 ls2 ls rs1 rs2 rs ns phi,
@@ -374,7 +366,7 @@ Proof with eauto.
     all: eassumption.
 Qed.
 
-Print Assumptions Seq_weakening.
+Print Assumptions Seq_weakening. (* Closed under the global context *)
 
 Instance Seq_Proper `{Signature} :
   Proper (InS_eq ==> InS_eq ==> iff) Seq.
@@ -386,7 +378,7 @@ Proof.
   all: eassumption.
 Qed.
 
-Print Assumptions Seq_Proper.
+Print Assumptions Seq_Proper. (* Closed under the global context *)
 
 (**
    The following rule reflects [persistency].
@@ -573,164 +565,14 @@ Proof.
            exact H3.
 Qed.
 
-Print Assumptions Seq_persistency.
-
-(** ** Some example derivations *)
-
-Example Seq_ex_1 `{Signature} :
-  forall ns n p args,
-    InS n ns ->
-    Seq ((pair ns <{~ ~ Pred p args}>) :: nil)
-    ((pair (n :: nil) <{Pred p args}>) :: nil).
-Proof.
-  intros ns1 n1 p args H1.
-  apply Seq_Impl_l with
-    (ns1 := ns1)
-    (ns2 := n1 :: nil)
-    (phi := <{~ Pred p args}>)
-    (psi := Bot 0).
-  -
-    apply InS_cons_I_hd.
-    reflexivity.
-  -
-    intros n2 H2.
-    apply InS_cons_E in H2 as [H2|H2].
-    +
-      congruence.
-    +
-      contradict H2.
-      apply InS_nil_E.
-  -
-    apply Seq_Impl_r with
-      (ns := n1 :: nil)
-      (phi := Pred p args)
-      (psi := Bot 0).
-    +
-      apply InS_cons_I_hd.
-      reflexivity.
-    +
-      intros ns2 H2.
-      apply InS_sublist_singleton_E in H2 as [H2|H2].
-      *
-        apply Seq_id with
-          (ns1 := ns2)
-          (ns2 := n1 :: nil)
-          (p := p)
-          (args := args).
-        --
-           apply InS_cons_I_hd.
-           reflexivity.
-        --
-           do 2 apply InS_cons_I_tl.
-           apply InS_cons_I_hd.
-           reflexivity.
-        --
-           exact H2.
-      *
-        apply InS_eq_nil in H2.
-        subst ns2.
-        apply Seq_empty with
-          (phi := Bot 0).
-        apply InS_cons_I_hd.
-        reflexivity.
-  -
-    apply Seq_Bot_l with
-      (n := n1)
-      (ns := n1 :: nil)
-      (x := 0).
-    +
-      apply InS_cons_I_hd.
-      reflexivity.
-    +
-      apply InS_cons_I_hd.
-      reflexivity.
-Qed.
-
-Print Assumptions Seq_ex_1.
-
-Example Seq_ex_2 `{Signature} :
-  forall ns phi psi,
-    Seq
-    ((pair ns <{iexists phi}>) :: nil)
-    ((pair ns <{iexists ~ psi -> phi}>) :: nil).
-Proof with (
-  try (right; left; simpl; reflexivity);
-  try (left; simpl; reflexivity);
-  try easy
-).
-  intros ns1 phi psi.
-  eapply Seq_Iexists_l...
-  eapply Seq_Iexists_r with (t := Var 0)...
-  eapply Seq_Impl_r...
-  intros ns' H1.
-  simpl.
-  eapply Seq_persistency.
-  {
-    apply InS_cons_I_tl.
-    apply InS_cons_I_hd.
-    reflexivity.
-  }
-  {
-    apply InS_cons_I_hd.
-    f_equiv.
-    rewrite hsubst_comp'.
-    rewrite <- hsubst_id' at 1.
-    apply hsubst_Proper; try reflexivity.
-    intros [|]; reflexivity.
-  }
-  exact H1.
-Qed.
-
-Print Assumptions Seq_ex_2.
-
-Example Seq_ex_3 `{Signature} :
-  forall ns phi psi,
-    Seq
-    ((pair ns <{(forall phi) \\/ psi}>) :: nil)
-    ((pair ns (Forall (Idisj phi psi.|[ren (+1)]))) :: nil).
-Proof with (
-  try (left; simpl; reflexivity);
-  try (right; left; simpl; reflexivity);
-  try easy
-).
-  intros ns phi psi.
-  eapply Seq_Forall_r...
-  eapply Seq_Idisj_l...
-  all: eapply Seq_Idisj_r...
-  -
-    eapply Seq_Forall_l with (t := Var 0)...
-    eapply Seq_persistency.
-    {
-      apply InS_cons_I_hd.
-      reflexivity.
-    }
-    {
-      apply InS_cons_I_hd.
-      f_equiv.
-      rewrite <- hsubst_id' with
-        (phi := phi)
-        at 2.
-      rewrite hsubst_comp'.
-      apply hsubst_Proper; try reflexivity.
-      intros [|]; reflexivity.
-    }
-    {
-      reflexivity.
-    }
-  -
-    eapply Seq_persistency...
-Qed.
-
-Print Assumptions Seq_ex_3.
+Print Assumptions Seq_persistency. (* Closed under the global context *)
 
 (** * Corresponding semantic
 
-   We need a notion of [satisfaction] in order to
-   understand the sequent calculus. We want to interpret
-   a labelled formula in a Model by a _mapping function_ [f]
-   and a variable assignment [a].
+   We need a notion of [satisfaction] in order to understand the sequent calculus.
+   We want to interpret a labelled formula in a Model by a _mapping function_ [f] and a variable assignment [a].
 
-   Note, that we used a different argument order as for the
+   Note that we used a different argument order as for the
    [support] relation. By this, we can use some notions of
    the standard library more readable.
  *)
@@ -950,8 +792,7 @@ Proof.
   intros * H1 H2.
   intros M f a H3.
   (**
-     The key idea of this proof is a case distinction
-     whether another formula in [rs] is satisfied or not.
+     The key idea of this proof is a case distinction whether another formula in [rs] is satisfied or not.
      For this, we use classical logic.
    *)
   destruct (
@@ -970,8 +811,7 @@ Proof.
     split; assumption.
   }
   (**
-     In the other case, we know that [(ns, Pred p args)] is
-     the only formula that can be satisfied here.
+     In the other case, we know that [(ns, Pred p args)] is the only formula that can be satisfied here.
    *)
   eexists; split; try exact H1.
   intros w H5.
@@ -987,15 +827,20 @@ Proof.
     destruct (f n == f n) as [H8|H8].
     all: try (exfalso; apply H8; reflexivity).
 
-    rewrite <- H2; try (apply contains_mapping_state_I; apply InS_cons_I_hd; reflexivity).
-
-    assert (H9 : PInterpretation w = PInterpretation (f n))
-      by (rewrite H6; reflexivity).
-    rewrite H9.
-    f_equiv.
-    intros arg.
-    rewrite H6.
-    reflexivity.
+    erewrite PInterpretation_Proper_outer.
+    +
+      eapply PInterpretation_Proper_inner; try apply H2.
+      *
+        intros arg.
+        rewrite H6.
+        reflexivity.
+      *
+        apply contains_mapping_state_I.
+        apply InS_cons_I_hd.
+        reflexivity.
+    +
+      symmetry.
+      exact H6.
   -
     destruct H2 as [psi [H21 H22]].
     destruct (psi == pair ns (Pred p args)) as [HA|HA].
@@ -1003,21 +848,20 @@ Proof.
       simpl in H5.
       rewrite HA in H22.
       specialize (H22 (f n)).
-      rewrite <- H22.
 
-      assert (HB : PInterpretation w = PInterpretation (f n))
-        by (rewrite H6; reflexivity).
-
-      rewrite HB.
-      f_equiv.
-      intros arg.
-      rewrite H6.
-      reflexivity.
-
-      simpl.
-      apply InS_iff_inbS_true.
-      apply InS_map_I.
-      exact H7.
+      erewrite PInterpretation_Proper_outer.
+      *
+        eapply PInterpretation_Proper_inner; try apply H22.
+        --
+           intros arg.
+           rewrite H6.
+           reflexivity.
+        --
+           apply contains_mapping_state_I.
+           exact H7.
+      *
+        symmetry.
+        exact H6.
     +
       exfalso.
       apply H4.
@@ -1025,6 +869,10 @@ Proof.
 Qed.
 
 Print Assumptions satisfaction_conseq_Pred_r.
+(*
+Axioms:
+classic : forall P : Prop, P \/ ~ P
+ *)
 
 Lemma satisfaction_conseq_Pred_l `{Signature} :
   forall ls rs ns1 ns2 p args,
@@ -1053,7 +901,7 @@ Proof.
     exact H5.
 Qed.
 
-Print Assumptions satisfaction_conseq_Pred_l.
+Print Assumptions satisfaction_conseq_Pred_l. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Impl_r `{Signature} :
   forall ls rs ns phi psi, InS (pair ns <{phi -> psi}>) rs ->
@@ -1134,6 +982,10 @@ Proof.
 Qed.
 
 Print Assumptions satisfaction_conseq_Impl_r.
+(*
+Axioms:
+classic : forall P : Prop, P \/ ~ P
+ *)
 
 Lemma satisfaction_conseq_Impl_l `{Signature} :
   forall ls rs ns1 ns2 phi psi,
@@ -1166,7 +1018,7 @@ Proof.
     exact H3.
 Qed.
 
-Print Assumptions satisfaction_conseq_Impl_l.
+Print Assumptions satisfaction_conseq_Impl_l. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Conj_r `{Signature} :
   forall ls rs ns phi psi,
@@ -1191,7 +1043,7 @@ Proof.
     exact H5.
 Qed.
 
-Print Assumptions satisfaction_conseq_Conj_r.
+Print Assumptions satisfaction_conseq_Conj_r. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Conj_l `{Signature} :
   forall ls rs ns phi psi,
@@ -1211,7 +1063,7 @@ Proof.
   all: assumption.
 Qed.
 
-Print Assumptions satisfaction_conseq_Conj_l.
+Print Assumptions satisfaction_conseq_Conj_l. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Idisj_r `{Signature} :
   forall ls rs ns phi psi,
@@ -1238,7 +1090,7 @@ Proof.
     exact H4.
 Qed.
 
-Print Assumptions satisfaction_conseq_Idisj_r.
+Print Assumptions satisfaction_conseq_Idisj_r. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Idisj_l `{Signature} :
   forall ls rs ns phi psi,
@@ -1259,7 +1111,7 @@ Proof.
     apply mult_cons_I; assumption.
 Qed.
 
-Print Assumptions satisfaction_conseq_Idisj_l.
+Print Assumptions satisfaction_conseq_Idisj_l. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Forall_r `{Signature} :
   forall ls rs ns phi,
@@ -1316,6 +1168,10 @@ Proof.
 Qed.
 
 Print Assumptions satisfaction_conseq_Forall_r.
+(*
+Axioms:
+classic : forall P : Prop, P \/ ~ P
+ *)
 
 Lemma satisfaction_conseq_Forall_l `{Signature} :
   forall ls rs ns phi t,
@@ -1366,7 +1222,7 @@ Proof.
     apply H4.
 Qed.
 
-Print Assumptions satisfaction_conseq_Forall_l.
+Print Assumptions satisfaction_conseq_Forall_l. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Iexists_r `{Signature} :
   forall ls rs ns phi t,
@@ -1414,7 +1270,7 @@ Proof.
     exact H5.
 Qed.
 
-Print Assumptions satisfaction_conseq_Iexists_r.
+Print Assumptions satisfaction_conseq_Iexists_r. (* Closed under the global context *)
 
 Lemma satisfaction_conseq_Iexists_l `{Signature} :
   forall ls rs ns phi,
@@ -1448,6 +1304,10 @@ Proof.
 Qed.
 
 Print Assumptions satisfaction_conseq_Iexists_l.
+(*
+Axioms:
+classic : forall P : Prop, P \/ ~ P
+ *)
 
 Lemma satisfaction_conseq_cut `{Signature} :
   forall ls1 ls2 ls rs1 rs2 rs ns phi,
@@ -1498,6 +1358,10 @@ Proof.
 Qed.
 
 Print Assumptions satisfaction_conseq_cut.
+(*
+Axioms:
+classic : forall P : Prop, P \/ ~ P
+ *)
 
 (** ** Soundness *)
 
@@ -1543,6 +1407,10 @@ Proof.
 Qed.
 
 Print Assumptions soundness.
+(*
+Axioms:
+classic : forall P : Prop, P \/ ~ P
+ *)
 
 (** * More derivable rules *)
 
@@ -1584,7 +1452,7 @@ Proof.
     exact H3.
 Qed.
 
-Print Assumptions Seq_mon.
+Print Assumptions Seq_mon. (* Closed under the global context *)
 
 Proposition Seq_Neg_r `{Signature} :
   forall ls rs ns phi,
@@ -1656,7 +1524,7 @@ Proof.
     exact H2.
 Qed.
 
-Print Assumptions Seq_Neg_r.
+Print Assumptions Seq_Neg_r. (* Closed under the global context *)
 
 Proposition Seq_Neg_l `{Signature} :
   forall ls rs ns1 ns2 n phi,
@@ -1682,92 +1550,4 @@ Proof.
       exact H3.
 Qed.
 
-Print Assumptions Seq_Neg_l.
-
-Example Seq_Kuroda `{Signature} :
-  forall ns phi,
-    Seq nil ((pair ns (Kuroda phi)) :: nil).
-Proof.
-  intros ns1 phi.
-  unfold Kuroda.
-  eapply Seq_Impl_r.
-  {
-    apply InS_cons_I_hd; reflexivity.
-  }
-  intros ns2 H1.
-  eapply Seq_Neg_r.
-  {
-    apply InS_cons_I_hd; reflexivity.
-  }
-  intros n1 H2.
-  eapply Seq_Neg_l.
-  {
-    apply InS_cons_I_hd; reflexivity.
-  }
-  {
-    reflexivity.
-  }
-  {
-    apply InS_cons_I_hd; reflexivity.
-  }
-  eapply Seq_Forall_r.
-  {
-    apply InS_cons_I_hd; reflexivity.
-  }
-  eapply Seq_Forall_l with
-    (t := Var 0).
-  {
-    apply InS_cons_I_tl.
-    simpl.
-    apply InS_cons_I_hd; reflexivity.
-  }
-  {
-    exact I.
-  }
-  eapply Seq_Neg_l with
-    (ns2 := n1 :: nil).
-  {
-    unfold Neg at 1.
-    simpl.
-    apply InS_cons_I_hd; reflexivity.
-  }
-  {
-    apply cons_InS_sublist_I.
-    -
-      exact H2.
-    -
-      apply nil_InS_sublist_I.
-  }
-  {
-    apply InS_cons_I_hd; reflexivity.
-  }
-  eapply Seq_Neg_r.
-  {
-    unfold Neg at 1.
-    apply InS_cons_I_hd; reflexivity.
-  }
-  intros n H3.
-  eapply Seq_persistency.
-  {
-    apply InS_cons_I_hd; reflexivity.
-  }
-  {
-    simpl.
-    apply InS_cons_I_tl.
-    apply InS_cons_I_hd.
-    f_equiv.
-    rewrite hsubst_comp'.
-    rewrite <- hsubst_id' with
-      (phi := phi)
-      at 2.
-    apply hsubst_Proper; try reflexivity.
-    intros [|x']; reflexivity.
-  }
-  apply InS_cons_E in H3 as [H3|H3].
-  -
-    rewrite H3.
-    reflexivity.
-  -
-    apply InS_nil_E in H3.
-    contradiction.
-Qed.
+Print Assumptions Seq_Neg_l. (* Closed under the global context *)

@@ -3,11 +3,9 @@ From InqLog.FO Require Export Signatures.
 
 (** * Terms
 
-   Let's start by recursively defining _terms_ over a
-   signature. A term is either a _variable_ or an
-   application of a function symbol [f] to some terms,
-   respecting [FAri f]. This is done via a function [FAri f
-   -> term].
+   Let's start by recursively defining _terms_ over a signature.
+   A term is either a _variable_ or an application of a function symbol [f] to some terms, respecting [FAri f].
+   This is done via a function [FAri f -> term].
  *)
 Inductive term `{Signature} :=
   | Var : var -> term
@@ -15,21 +13,20 @@ Inductive term `{Signature} :=
 
 (** ** Decidable Equality
 
-   As [Func] has a dependent type, it is problematic to use
-   standard equality to syntactically compare [term]s.
-   That's why we define a suitable decidable equivalence
-   relation on terms to which we will refer as equality on
-   terms. The definition of this relation [term_eq] is
-   rather complex so we split its definition up in
-   two parts.
+   As [Func] has a dependent type, it is problematic to use standard equality to syntactically compare [term]s.
+   That's why we define a suitable decidable equivalence relation on terms to which we will refer as equality on terms.
+   The definition of this relation [term_eq] is rather complex so we split its definition up in two parts.
 
-   For the helper definition [term_eq_Func_Func_EqDec], the
-   recursion principle [eq_rect] on [eq] is used. As [f1] and
-   [f2] are equal (with respect to [eq]), we can "translate"
-   the type of [args1] from [FAri f1 -> term] to
-   [FAri f2 -> term]. This can be done using [eq_rect]:
+   For the helper definition [term_eq_Func_Func_EqDec], the recursion principle [eq_rect] on [eq] is used.
+   As [f1] and [f2] are equal (with respect to [eq]), we can "translate" the type of [args1] from [FAri f1 -> term] to [FAri f2 -> term].
+   This can be done using [eq_rect]:
  *)
 Check eq_rect.
+(*
+[eq_rect
+     : forall (A : Type) (x : A) (P : A -> Type),
+       P x -> forall y : A, x = y -> P y]
+ *)
 
 Definition term_eq_Func_Func_EqDec
   `{S : Signature}
@@ -52,8 +49,7 @@ Definition term_eq_Func_Func_EqDec
   args2.
 
 (**
-   With this, the main definition [term_eq] can be defined
-   straightforward.
+   With this, the main definition [term_eq] can be defined straightforward.
  *)
 Fixpoint term_eq `{S : Signature} (t : term) : term -> Prop :=
   match t with
@@ -86,18 +82,15 @@ Proof with (try (now firstorder) + congruence + exact FSymb_EqDec).
     intros t.
     induction t as [x|f args IH]...
     (**
-       Note, that some simple proofs are solved
-       automatically, e.g. the case [t = Var x].
-
+       Note, that some simple proofs are solved automatically, e.g. the case [t = Var x].
        This will be done more often in the following proofs.
      *)
 
     simpl.
     destruct (f == f)...
     (**
-       Here, it comes in play, that we enforced [FSymb] to
-       have decidable equality ([FSymb_EqDec]). Otherwise,
-       Axiom K must be stated.
+       Here, it comes in play, that we enforced [FSymb] to have decidable equality ([FSymb_EqDec]).
+       Otherwise, Axiom K must be stated.
      *)
     rewrite UIP_dec with (p2 := eq_refl)...
   -
@@ -127,8 +120,7 @@ Print Assumptions term_eq_Equiv.
 Program Instance term_Setoid `{Signature} : Setoid term.
 
 (**
-   [term_eq] is indeed decidable, so we state that [term] has
-   a decidable equality.
+   [term_eq] is indeed decidable, so we state that [term] has a decidable equality.
  *)
 Instance term_EqDec `{Signature} : EqDec term_Setoid.
 Proof with (try (right; easy)).
@@ -149,17 +141,16 @@ Proof with (try (right; easy)).
     all: apply FAri_enum_charac + apply IH.
 Qed.
 
-Print Assumptions term_EqDec.
+Print Assumptions term_EqDec. (* Closed under the global context *)
 
 (** ** Variables and Substitutions *)
 
-Print var.
-(**
-   [var] is defined as [nat] via [Autosubst] which is a
-   framework for binders in terms using de Bruijn indices.
+Print var. (* var = nat : Set *)
 
-   To use Autosubst efficiently, we need to define some
-   instances.
+(**
+   [var] is defined as [nat] via [Autosubst] which is a framework for binders in terms using de Bruijn indices.
+
+   To use Autosubst efficiently, we need to define some instances.
  *)
 
 Instance Ids_term `{Signature} : Ids term.
@@ -169,8 +160,7 @@ Instance Rename_term `{Signature} : Rename term.
 Proof. derive. Defined.
 
 (**
-   It is worth to check, whether [rename] respects our
-   equality on terms.
+   It is worth to check whether [rename] respects our equality on terms.
 *)
 Instance rename_Proper `{Signature} :
   Proper (ext_eq ==> term_eq ==> term_eq) rename.
@@ -199,14 +189,13 @@ Proof.
       apply H2.
 Qed.
 
-Print Assumptions rename.
+Print Assumptions rename_Proper. (* Closed under the global context *)
 
 Instance Subst_term `{Signature} : Subst term.
 Proof. derive. Defined.
 
 (**
-   It is worth to check, whether [subst] respects our
-   equality on terms.
+   It is worth to check whether [subst] respects our equality on terms.
 *)
 Instance subst_Proper `{Signature} :
   Proper (ext_eq ==> term_eq ==> term_eq) subst.
@@ -234,7 +223,7 @@ Proof.
       apply H2.
 Qed.
 
-Print Assumptions subst_Proper.
+Print Assumptions subst_Proper. (* Closed under the global context *)
 
 Instance up_Proper `{Signature} :
   Proper (ext_eq ==> ext_eq) up.
@@ -250,7 +239,7 @@ Proof.
     reflexivity.
 Qed.
 
-Print Assumptions up_Proper.
+Print Assumptions up_Proper. (* Closed under the global context *)
 
 Instance SubstLemmas_term `{Signature} : SubstLemmas term.
 Proof. derive. Qed.
@@ -320,7 +309,7 @@ Proof.
       reflexivity.
 Qed.
 
-Print Assumptions subst_comp'.
+Print Assumptions subst_comp'. (* Closed under the global context *)
 
 Local Fixpoint repeater {A} (op : A -> A) (n : nat) : A -> A :=
   match n with
@@ -341,7 +330,7 @@ Proof.
     intros [|x']; reflexivity.
 Qed.
 
-Print Assumptions repeater_up_ids.
+Print Assumptions repeater_up_ids. (* Closed under the global context *)
 
 Lemma scomp_up `{Signature} :
   forall sigma1 sigma2,
@@ -369,7 +358,7 @@ Qed.
 
 (** ** Rigidity
 
-   Next, we extend the definition of rigidity to terms.
+   We extend the definition of rigidity to terms.
  *)
 Fixpoint term_rigid `{Signature} (t : term) : Prop :=
   match t with
@@ -438,35 +427,33 @@ Proof.
 Qed.
 
 (** * Formulas
-   Next step is to recursively define _formulas_ over a
-   signature. A [form]ula is either
-   - an application of a predicate symbol [p] to some terms,
-     respecting [PAri p], which is done via a function
-     [PAri p -> term],
-   - Falsum, which is represented by [Bot],
-   - an _Implication_, Conjunction or Inquisivite Disjunction,
-   - an universal quantified formula or
-   - an inquisivite existential quantified formula.
+   Next step is to recursively define _formulae_ over a signature.
+   A [form]ula is either
+   - an application of a predicate symbol [p] to some terms, respecting [PAri p], which is done via a function [PAri p -> term],
+   - _Falsum_ which is represented by [Bot],
+   - an _implication_ [Impl],
+   - an _conjunction_ [Conj],
+   - an _inquisitive disjunction_ [Idisj],
+   - an _universal quantified_ [Forall] or
+   - an _inquisitive existential quantified_ [Iexists].
 
-   Note, that binding is realised by De Bruijn indices,
-   implemented via the libary [Autosubst]. For example,
-   we will just write [Forall phi] (for a [form]ula [phi])
-   where the variable [0] is bounded inside of [phi].
+   Note, that binding is realised by De Bruijn indices, implemented via the libary [Autosubst].
+   For example, we will just write [Forall phi] (for a [form]ula [phi]) where the variable [0] is bounded inside of [phi].
 
    For technical reasons, we also define [Bot : var -> form].
  *)
 
 Inductive form `{Signature} :=
-  (* predicate symbols *)
+  (* Predicates *)
   | Pred : forall (p : PSymb), (PAri p -> term) -> form
 
-  (* propositional connectives *)
+  (* Propositional Connectives *)
   | Bot : var -> form
   | Impl : form -> form -> form
   | Conj : form -> form -> form
   | Idisj : form -> form -> form
 
-  (* first-order connectives *)
+  (* First-Order Connectives *)
   | Forall : {bind term in form} -> form
   | Iexists : {bind term in form} -> form.
 
@@ -616,9 +603,9 @@ Qed.
 Print Assumptions form_EqDec.
 
 (** ** Notation
-   Let us introduce some notation. It is not necessary to
-   understand the technical details. For more information,
-   please refer to the Coq documentation.
+   Let us introduce some notation.
+   It is not necessary to understand the technical details.
+   For more information, please refer to the Rocq documentation.
  *)
 
 Declare Custom Entry form.
@@ -755,8 +742,7 @@ Instance HSubstLemmas_form `{Signature} : HSubstLemmas term form.
 Proof. derive. Qed.
 
 (**
-   We provide lemmas similar lemmas for our defined
-   equality [form_eq].
+   We provide similar lemmas for our defined equality [form_eq].
  *)
 Lemma hsubst_id' `{Signature} :
   forall phi,
@@ -858,8 +844,7 @@ Proof. derive. Qed.
 
 (** ** Defined connectives
 
-   We define some typical connectives via our definition
-   of [form], as typical. We also add some notation for them.
+   We define some typical connectives via our definition of [form] and add some notation for them.
  *)
 
 Definition Neg `{Signature} (phi : form) :=
@@ -900,37 +885,10 @@ Notation "? phi" := (Iquest phi)
   (in custom form at level 76, right associativity)
   : form_scope.
 
-(** ** Example formulas
-
-   We can now use our new syntax notation to define some
-   example formulas for illustration purpose.
-
- *)
-
-Example iquest_p `{Signature} (p : PSymb) (args : PAri p -> term) : form :=
-  <{ ? Pred p args }>.
-
-Example EM `{Signature} (phi : form) : form :=
-  <{phi \/ ~ phi}>.
-
-Example DNE `{Signature} (phi : form) : form :=
-  <{ (~ (~ phi)) -> phi }>.
-
-Example Kuroda `{Signature} (phi : form) : form :=
-  <{(forall (~ ~ phi)) -> ~ ~ forall phi}>.
-
-Example CD `{Signature} (phi psi : form) : form :=
-  <{
-    (Forall <{(hsubst (ren (+1)) phi) \\/ psi}>) ->
-    phi \\/(Forall psi)
-  }>.
-
 (** ** Classic formulas
 
    We want to introduce the notion of a _classical formula_.
-   A formula is called _classical_, iff it doesn't contain
-   inquisitive disjunction or inquisitive existential
-   quantifiers.
+   A formula is called _classical_, iff it doesn't contain inquisitive disjunction or inquisitive existential quantifiers.
  *)
 
 Fixpoint classical `{Signature} (phi : form) : bool :=
@@ -1075,35 +1033,6 @@ Proof.
   reflexivity.
 Qed.
 
-Example iquest_p_not_classical `{Signature} :
-  forall p args,
-    classical (iquest_p p args) = false.
-Proof.
-  reflexivity.
-Qed.
-
-Example EM_classical `{Signature} :
-  forall phi,
-    classical (EM phi) = classical phi.
-Proof.
-  intros phi.
-  unfold EM.
-  rewrite classical_Disj.
-  rewrite classical_Neg.
-  apply andb_diag.
-Qed.
-
-Example DNE_classical `{Signature} :
-  forall phi,
-    classical (DNE phi) = classical phi.
-Proof.
-  intros phi.
-  unfold DNE.
-  rewrite classical_Impl.
-  do 2 rewrite classical_Neg.
-  apply andb_diag.
-Qed.
-
 Lemma classical_hsubst `{Signature} :
   forall phi sigma,
     classical (phi.|[sigma]) = classical phi.
@@ -1124,9 +1053,7 @@ Proof.
 Qed.
 
 (**
-   For every formula, we can construct a [classical] variant
-   of it by replacing inquisitive connectives by their
-   standard variant.
+   For every formula, we can construct a [classical] variant of it by replacing inquisitive connectives by their standard variant.
  *)
 Fixpoint classical_variant `{Signature} (phi : form) : form :=
   match phi with
@@ -1154,8 +1081,7 @@ Fixpoint classical_variant `{Signature} (phi : form) : form :=
   end.
 
 (**
-   We can verify [classical_variant] by the following
-   proposition.
+   We can verify [classical_variant] by the following proposition.
  *)
 
 Proposition classical_variant_is_classical `{Signature} :
@@ -1180,12 +1106,7 @@ Print Assumptions classical_variant_is_classical.
 
 (** ** Free Variables
 
-   For later purposes, we need a predicate to indicate the
-   highest occuring free variable in a formula. For this, we
-   use substitutions as characteristic property.
-
-   Is is worth to note that standard [eq]uality is used here
-   which is of course stronger than [form_eq].
+   We define a predicate to indicate the highest occuring free variable in a formula if it exists.
  *)
 
 Definition highest_occ_free_var `{Signature}
@@ -1203,55 +1124,3 @@ Definition highest_occ_free_var `{Signature}
         sigma1 y == sigma2 y
     ) ->
     phi.|[sigma1] == phi.|[sigma2].
-
-(** * Syntax for the Unary Predicate Symbol Signature *)
-
-Module Syntax_single_unary_predicate.
-
-  Export Signature_single_unary_predicate.
-
-  (**
-     First, we introduce some nice notation for the unary
-     predicate symbol and show certain properties about it.
-   *)
-  Definition Pred' (t : term) :=
-    Pred tt (fun arg => t).
-
-  Lemma hsubst_Pred' :
-    forall t sigma,
-      (Pred' t).|[sigma] == Pred' t.[sigma].
-  Proof.
-    intros t sigma.
-    simpl.
-    red.
-    rewrite <- eq_rect_eq_dec; try exact PSymb_EqDec.
-    reflexivity.
-  Qed.
-
-End Syntax_single_unary_predicate.
-
-(** * Syntax for the Binary Predicate Symbol Signature *)
-
-Module Syntax_single_binary_predicate.
-
-  Export Signature_single_binary_predicate.
-
-  (**
-     Same procedure for this signature.
-   *)
-  Definition Pred' (t1 t2 : term) :=
-    Pred tt (fun arg => if arg then t1 else t2).
-
-  Lemma hsubst_Pred' :
-    forall t1 t2 sigma,
-      (Pred' t1 t2).|[sigma] == Pred' t1.[sigma] t2.[sigma].
-  Proof.
-    intros t1 t2 sigma.
-    simpl.
-    red.
-    rewrite <- eq_rect_eq_dec; try exact PSymb_EqDec.
-    intros [|].
-    all: reflexivity.
-  Qed.
-
-End Syntax_single_binary_predicate.

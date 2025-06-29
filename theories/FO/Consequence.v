@@ -21,7 +21,7 @@ Proof.
   -
     intros H1 M s a.
     apply H1.
-    constructor.
+    apply mult_nil_I.
   -
     intros H1 M s a H2.
     apply H1.
@@ -29,11 +29,12 @@ Qed.
 
 Lemma support_conseq_in `{Signature} :
   forall cxt phi,
-    In phi cxt ->
+    InS phi cxt ->
     support_conseq cxt phi.
 Proof.
   intros cxt phi H1 M s a H2.
-  eapply Forall_forall in H2; eassumption.
+  apply H2.
+  exact H1.
 Qed.
 
 Lemma support_conseq_refl `{S : Signature} :
@@ -48,13 +49,12 @@ Qed.
 
 Lemma support_conseq_trans `{Signature} :
   forall cxt1 cxt2 phi,
-    (forall psi, In psi cxt2 -> support_conseq cxt1 psi) ->
+    (forall psi, InS psi cxt2 -> support_conseq cxt1 psi) ->
     support_conseq cxt2 phi ->
     support_conseq cxt1 phi.
 Proof.
   intros cxt1 cxt2 phi H1 H2 M s a H3.
   apply H2.
-  eapply Forall_forall.
   intros psi H4.
   apply H1.
   -
@@ -70,7 +70,7 @@ Lemma support_conseq_weakening_nil `{Signature} :
 Proof.
   intros cxt phi H1 M s a H2.
   apply H1.
-  constructor.
+  apply mult_nil_I.
 Qed.
 
 Lemma support_conseq_weakening_cons_hd `{Signature} :
@@ -90,7 +90,8 @@ Lemma support_conseq_weakening_cons_tl `{Signature} :
 Proof.
   intros cxt phi psi H1 M s a H3.
   apply H1.
-  inversion H3; assumption.
+  apply mult_cons_E_tl in H3.
+  exact H3.
 Qed.
 
 Lemma support_conseq_weakening_1 `{S : Signature} :
@@ -99,8 +100,8 @@ Lemma support_conseq_weakening_1 `{S : Signature} :
     support_conseq (cxt1 ++ cxt2) phi.
 Proof.
   intros cxt1 cxt2 phi H1 M s a H2.
-  apply Forall_app in H2 as [H2 _].
   apply H1.
+  eapply mult_app_E_1.
   exact H2.
 Qed.
 
@@ -110,8 +111,8 @@ Lemma support_conseq_weakening_2 `{S : Signature} :
     support_conseq (cxt1 ++ cxt2) phi.
 Proof.
   intros cxt1 cxt2 phi H1 M s a H2.
-  apply Forall_app in H2 as [_ H2].
   apply H1.
+  eapply mult_app_E_2.
   exact H2.
 Qed.
 
@@ -164,7 +165,7 @@ Proof.
   intros cxt phi psi H1 M s a H2.
   intros t H3 H4.
   apply H1.
-  constructor.
+  apply mult_cons_I.
   -
     exact H4.
   -
@@ -243,14 +244,14 @@ Proof.
   destruct H1 as [H1|H1].
   -
     apply H2.
-    constructor.
+    apply mult_cons_I.
     +
       exact H1.
     +
       exact H4.
   -
     apply H3.
-    constructor.
+    apply mult_cons_I.
     +
       exact H1.
     +
@@ -354,7 +355,7 @@ Proof.
     exact H6.
   }
   apply H2.
-  constructor.
+  apply mult_cons_I.
   -
     exact H4.
   -
@@ -439,7 +440,7 @@ Proof.
     exact H6.
   }
   apply H2.
-  constructor.
+  apply mult_cons_I.
   -
     exact H5.
   -

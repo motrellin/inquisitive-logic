@@ -115,7 +115,7 @@ Proof.
         exact H1.
 Qed.
 
-(** ** Filtering **)
+(** ** [filter] **)
 
 Lemma InS_filter_I `{Setoid X} :
   forall (f : Morph X bool) (xs : list X) (x : X),
@@ -186,7 +186,7 @@ Proof.
         exact H2.
 Qed.
 
-(** ** Mapping **)
+(** ** [map] **)
 
 Lemma InS_map_I `{Setoid X} `{Setoid Y} :
   forall (f : Morph X Y) (xs : list X) (x : X),
