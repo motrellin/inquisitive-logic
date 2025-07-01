@@ -14,7 +14,7 @@ From InqLog.FO Require Export Truth.
 
 Definition label : Type := list nat.
 
-Definition lb_form `{Signature} : Type := (list nat)*form.
+Definition lb_form `{Signature} : Type := label*form.
 
 Inductive lb_form_eq `{Signature} : relation lb_form :=
   | lb_form_eq_1 :
