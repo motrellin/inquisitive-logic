@@ -387,7 +387,25 @@ Lemma support_conseq_KF `{S : Signature} :
     support_conseq cxt <{forall ~ ~ phi}> ->
     support_conseq cxt <{~ ~ forall phi}>.
 Proof.
-Admitted.
+  intros cxt phi H1.
+  intros M s a H2.
+  specialize (H1 _ _ _ H2).
+  apply truth_conditional_Neg.
+  intros w H3.
+  do 2 rewrite truth_Neg.
+  intros H4.
+  apply H4.
+  rewrite truth_Forall.
+  intros i.
+  enough (H5 : truth <{~ ~ phi}> w (i .: a)).
+  {
+    do 2 rewrite truth_Neg in H5.
+    now apply NNPP.
+  }
+  eapply persistency.
+  2: apply singleton_substate_iff; exact H3.
+  apply H1.
+Qed.
 
 Lemma support_conseq_Forall_E_classical `{S : Signature} :
   forall cxt phi t,
