@@ -20,7 +20,11 @@ header-includes:
 
 Welcome to the Inquisitive Logic project website!
 
-A formalization of inquisitive logic in Rocq, based on the work of e.g. [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
+This project formalizes inquisitive logic in Rocq, based on the work of e.g. [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
+The current focus lies on (bounded) inquisitive first-order logic, therefore providing a formalization of the basic syntax (using arity types), support and truth semantics, followed by the formalization of a sequent calculus by Litak/Sano whose corresponding paper (Bounded inquistive logics: Sequent calculi and schematic validity) got accepted for [TABLEAUX 2025](https://icetcs.github.io/frocos-itp-tableaux25/tableaux/).
+The theory is located under `theories/`.
+Some concrete instances of type classes (e.g. signatures) are located under `instances/`.
+We also provide some examples (`examples/`) in order to demonstrate the implemented theory.
 
 ## Get the code
 
@@ -31,6 +35,10 @@ The current stable release of Inquisitive Logic can be [downloaded from GitHub](
 The coqdoc presentation of the source files can be browsed [here](./html/toc.html)
 
 Related publications, if any, are listed below.
+
+- [Inquisitive Logic: Consequence and Inference in the Realm of Questions](https://link.springer.com/book/10.1007/978-3-031-09706-5) doi:[10.1007/978-3-031-09706-5](https://doi.org/10.1007/978-3-031-09706-5)
+- [Coherence in inquisitive first-order logic](https://www.sciencedirect.com/science/article/pii/S0168007222000707) doi:[10.1016/j.apal.2022.103155](https://doi.org/10.1016/j.apal.2022.103155)
+- [Bounded inquisitive logic: Sequent calculi and schematic validity](https://icetcs.github.io/frocos-itp-tableaux25/tableaux/)
 
 ## Help and contact
 

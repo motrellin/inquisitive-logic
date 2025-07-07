@@ -13,7 +13,11 @@ doc: "https://motrellin.github.io/inquisitive-logic/"
 
 synopsis: "A Formalization of Inquisitive Logic"
 description: """
-A formalization of inquisitive logic in Rocq, based on the work of e.g. [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
+This project formalizes inquisitive logic in Rocq, based on the work of e.g. [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
+The current focus lies on (bounded) inquisitive first-order logic, therefore providing a formalization of the basic syntax (using arity types), support and truth semantics, followed by the formalization of a sequent calculus by Litak/Sano whose corresponding paper (Bounded inquistive logics: Sequent calculi and schematic validity) got accepted for [TABLEAUX 2025](https://icetcs.github.io/frocos-itp-tableaux25/tableaux/).
+The theory is located under `theories/`.
+Some concrete instances of type classes (e.g. signatures) are located under `instances/`.
+We also provide some examples (`examples/`) in order to demonstrate the implemented theory.
 """
 
 build: [make "-j%{jobs}%" "all"]
