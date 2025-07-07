@@ -365,22 +365,64 @@ Qed.
 
 Lemma support_conseq_Idisj_split `{S : Signature} :
   forall cxt phi psi chi,
+    (forall phi `(M : @Model S) s a,
+      classical phi = true ->
+      exists t,
+        substate t s /\
+        (t,a |= phi) /\
+        forall t',
+          substate t' s ->
+          (t',a |= phi) ->
+          t' == t
+    ) -> (* TODO Can this precondition be proven? *)
     classical phi = true ->
     support_conseq cxt <{phi -> psi \\/ chi}> ->
     support_conseq cxt <{(phi -> psi) \\/ (phi -> chi)}>.
 Proof.
-Admitted.
+  intros * max_support_state H1 H2.
+  intros M s1 a H3.
+  specialize (H2 _ _ _ H3).
+  rewrite support_Impl in H2.
+  destruct (max_support_state phi M s1 a H1) as [s2 [H4 [H5 H6]]].
+  specialize (H2 s2 H4 H5).
+  rewrite support_Idisj in H2.
+  destruct H2 as [H2|H2]; [left|right].
+  all: intros s3 H7 H8.
+  all: rewrite H6.
+  all: assumption.
+Qed.
 
 Lemma support_conseq_Iexists_split `{S : Signature} :
   forall cxt phi psi,
+    (forall phi `(M : @Model S) s a,
+      classical phi = true ->
+      exists t,
+        substate t s /\
+        (t,a |= phi) /\
+        forall t',
+          substate t' s ->
+          (t',a |= phi) ->
+          t' == t
+    ) -> (* TODO Can this precondition be proven? *)
     classical phi = true ->
     support_conseq cxt <{phi -> iexists psi}> ->
-    let phi' :=
-      phi.|[ren (+1)]
-    in
-    support_conseq cxt <{iexists phi' -> psi}>.
+    support_conseq cxt <{iexists (hsubst (ren (+1)) phi) -> psi}>.
 Proof.
-Admitted.
+  intros * max_support_state H1 H2.
+  simpl.
+  intros M s1 a H3.
+  specialize (H2 _ _ _ H3).
+  rewrite support_Impl in H2.
+  destruct (max_support_state phi M s1 a H1) as [s2 [H4 [H5 H6]]].
+  specialize (H2 s2 H4 H5).
+  rewrite support_Iexists in H2.
+  destruct H2 as [i H2].
+  exists i.
+  all: intros s3 H7 H8.
+  all: rewrite H6; try assumption.
+  apply support_hsubst_var in H8.
+  exact H8.
+Qed.
 
 Lemma support_conseq_KF `{S : Signature} :
   forall cxt phi,
