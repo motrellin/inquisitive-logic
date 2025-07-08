@@ -1,5 +1,27 @@
 # Changelog
 
+## inqlog-v1.0.0 (2025-07-08)
+
+### New
+
+* Created LICENSE. [Max Ole Elliger]
+
+* Proved `support_conseq_KF` [Max Ole Elliger]
+
+### Changes
+
+* Updated project description. [Max Ole Elliger]
+
+* `theories/FO/Consequence.v` -> `draft/FO/Consequence.v` [Max Ole Elliger]
+
+  This part is still more or less experimental, we therefore exclude from
+  installation.
+
+* Proved the split consequence rules under extra predconditions. [Max Ole Elliger]
+
+  If we assume for every classical phi, M, s, a that there exists a maximal substate
+  that supports phi, we can prove the split rules.
+
 ## inqlog-v0.17.0 (2025-06-29)
 
 ### New
