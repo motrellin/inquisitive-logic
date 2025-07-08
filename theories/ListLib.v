@@ -497,7 +497,7 @@ Qed.
 
 (** ** [map] *)
 
-Instance map_Proper_In_sublist `{Setoid X} `{Setoid Y} :
+Instance map_Proper_InS_sublist `{Setoid X} `{Setoid Y} :
   forall (f : Morph X Y),
     Proper (InS_sublist ==> InS_sublist) (map f).
 Proof.
@@ -585,7 +585,7 @@ Proof.
   all: reflexivity.
 Qed.
 
-Lemma In_eq_cons_cons `{Setoid X} :
+Lemma InS_eq_cons_cons `{Setoid X} :
   forall (x1 x2 : X) xs,
     InS_eq (x1 :: x2 :: xs) (x2 :: x1 :: xs).
 Proof.
@@ -610,7 +610,7 @@ Proof.
   all: apply InS_app_I_1 + apply InS_app_I_2; exact H3.
 Qed.
 
-Lemma In_eq_app_comm `{Setoid X} :
+Lemma InS_eq_app_comm `{Setoid X} :
   forall (xs1 xs2 : list X),
     InS_eq (xs1 ++ xs2) (xs2 ++ xs1).
 Proof.
@@ -623,7 +623,7 @@ Qed.
 
 (** ** [map] *)
 
-Instance map_Proper_In_eq `{Setoid X} `{Setoid Y} :
+Instance map_Proper_InS_eq `{Setoid X} `{Setoid Y} :
   forall (f : Morph X Y),
     Proper (InS_eq ==> InS_eq) (map f).
 Proof.
