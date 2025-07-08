@@ -27,7 +27,7 @@ Proof.
   exact H1.
 Qed.
 
-(** * Atomic Support Validity of the Casari Scheme *)
+(** * Atomic Support Validity *)
 
 Module Casari_with_atoms.
 
@@ -35,28 +35,6 @@ Module Casari_with_atoms.
 
   Definition Atomic : form :=
     <{ Pred' (Var 0) }>.
-
-  Definition DNA : form :=
-    <{ ~ ~ (Pred' (Var 0)) }>.
-
-  Remark Casari_DNA_Prop (P : var -> Prop) :
-    (
-      forall x,
-        (
-          (~ ~ P x)
-          ->
-          (forall x, ~ ~ P x)
-        )
-        ->
-        (forall x, ~ ~ P x)
-    )
-    ->
-    (
-      forall x, ~ ~ P x
-    ).
-  Proof.
-    firstorder.
-  Qed.
 
   Corollary support_valid_Casari_Atomic :
     support_valid (Casari Atomic).
@@ -113,7 +91,215 @@ Module Casari_with_atoms.
 
 End Casari_with_atoms.
 
-(** * The Casari "counter-example"
+(** * Schematic Bounded Support Validity
+
+   We will now prove that the Casari Scheme is valid for every formula with the property that the highest occuring free variable is at most 0.
+   We will proceed by providing a derivation using [Seq] and its [soundness].
+ *)
+
+Theorem Seq_CasariAnt_CasariSuc `{Signature} :
+  forall ns (phi : form) sigma,
+    highest_occ_free_var phi (Some 0) ->
+    Seq
+    ((pair ns (CasariAnt phi).|[sigma]) :: nil)
+    ((pair ns (CasariSuc phi).|[sigma]) :: nil).
+Proof.
+  (**
+     Proof by induction on the size of the label [ns].
+   *)
+  induction ns as [ns IH] using
+    (well_founded_ind InS_sublist_order_wf).
+  intros phi sigma H1.
+  eapply Seq_Forall_r.
+  {
+    apply InS_cons_I_hd.
+    simpl.
+    reflexivity.
+  }
+  eapply Seq_Forall_l with (t := Var 0).
+  {
+    apply InS_cons_I_hd.
+    simpl.
+    reflexivity.
+  }
+  {
+    exact I.
+  }
+  eapply Seq_Impl_l.
+  {
+    apply InS_cons_I_hd.
+    simpl.
+    reflexivity.
+  }
+  {
+    reflexivity.
+  }
+  -
+    eapply Seq_Impl_r.
+    {
+      apply InS_cons_I_hd.
+      reflexivity.
+    }
+    intros ns' H2.
+    destruct (InS_sublist_dec ns ns') as [H3|H3].
+    +
+      eapply Seq_persistency.
+      {
+        apply InS_cons_I_hd.
+        reflexivity.
+      }
+      {
+        apply InS_cons_I_tl.
+        apply InS_cons_I_tl.
+        apply InS_cons_I_hd.
+        split.
+        -
+          reflexivity.
+        -
+          repeat rewrite hsubst_comp'.
+          apply H1.
+          inversion 1; reflexivity.
+      }
+      exact H3.
+    +
+      apply Seq_weakening with
+        (ls1 := (pair ns (CasariAnt phi).|[sigma].|[ren (+1)]) :: nil)
+        (rs1 := (pair ns' (CasariSuc phi).|[sigma].|[ren (+1)]) :: nil).
+      {
+        intros psi H4.
+        apply InS_cons_E in H4 as [H4|H4].
+        -
+          apply InS_cons_I_tl.
+          apply InS_cons_I_tl.
+          apply InS_cons_I_hd.
+          rewrite H4.
+          reflexivity.
+        -
+          now apply InS_nil_E in H4.
+      }
+      {
+        intros psi H4.
+        apply InS_cons_E in H4 as [H4|H4].
+        -
+          apply InS_cons_I_hd.
+          rewrite H4.
+          f_equiv.
+          simpl.
+          repeat rewrite hsubst_comp'.
+          apply H1.
+          inversion 1; reflexivity.
+        -
+          now apply InS_nil_E in H4.
+      }
+      eapply Seq_mon.
+      {
+        apply InS_cons_I_hd.
+        reflexivity.
+      }
+      {
+        exact H2.
+      }
+      eapply Seq_weakening with
+        (ls1 := (pair ns' (CasariAnt phi).|[sigma].|[ren (+1)]) :: nil).
+      {
+        apply cons_InS_sublist_I.
+        -
+          apply InS_cons_I_hd.
+          reflexivity.
+        -
+          apply nil_InS_sublist_I.
+      }
+      {
+        reflexivity.
+      }
+      do 2 rewrite hsubst_comp'.
+      eapply IH; try assumption.
+      split; assumption.
+  -
+    eapply Seq_Forall_l with (t := Var 0).
+    {
+      apply InS_cons_I_hd.
+      reflexivity.
+    }
+    {
+      exact I.
+    }
+    eapply Seq_persistency.
+    {
+      left; reflexivity.
+    }
+    {
+      left.
+      f_equiv.
+      repeat rewrite hsubst_comp'.
+      apply H1.
+      inversion 1; reflexivity.
+    }
+    reflexivity.
+Qed.
+
+Print Assumptions Seq_CasariAnt_CasariSuc.
+
+Corollary Seq_Casari `{Signature} :
+  forall phi ns,
+    highest_occ_free_var phi (Some 0) ->
+    Seq nil ((pair ns (Casari phi)) :: nil).
+Proof.
+  intros phi ns H1.
+  eapply Seq_Impl_r.
+  {
+    apply InS_cons_I_hd.
+    f_equiv.
+    split; reflexivity.
+  }
+  intros ns' H2.
+  eapply Seq_weakening with
+    (ls1 := (pair ns' (CasariAnt phi).|[ids] :: nil))
+    (rs1 := (pair ns' (CasariSuc phi).|[ids] :: nil)).
+  {
+    apply cons_InS_sublist_I.
+    -
+      apply InS_cons_I_hd.
+      rewrite hsubst_id'.
+      reflexivity.
+    -
+      apply nil_InS_sublist_I.
+  }
+  {
+    apply cons_InS_sublist_I.
+    -
+      apply InS_cons_I_hd.
+      rewrite hsubst_id'.
+      reflexivity.
+    -
+      apply nil_InS_sublist_I.
+  }
+  eapply Seq_CasariAnt_CasariSuc.
+  exact H1.
+Qed.
+
+Print Assumptions Seq_Casari.
+
+Corollary support_valid_Casari_bd `{S : Signature} :
+  forall phi ns,
+    highest_occ_free_var phi (Some 0) ->
+    forall (M : @Model S) f a,
+      mapping_state f ns, a |= Casari phi.
+Proof.
+  intros phi ns H1 M f a.
+  pose proof (Seq_Casari phi ns H1) as H2.
+  apply soundness in H2.
+  specialize (H2 _ f a (mult_nil_I _)).
+  apply some_cons_E in H2 as [H2|H2].
+  -
+    exact H2.
+  -
+    now apply some_nil_E in H2.
+Qed.
+
+Print Assumptions support_valid_Casari_bd.
+
+(** * Failure of Schematic Support Validity of the Casari Schemes
 
    We will now provide a counter-example to show that the Casari Scheme isn't schematically valid.
    For this, we need a concrete signature, a concret instance of the scheme via a formula [phi], a suitable model [M], a state [s] and a variable assignment [a] s.t. [M], [s] and [a] do not support [phi].
@@ -1035,211 +1221,3 @@ Module Casari_fails.
    *)
 
 End Casari_fails.
-
-(** * Bounded Casari
-
-   We will now prove that the Casari Scheme is valid for every formula with the property that the highest occuring free variable is at most 0.
-   We will proceed by providing a derivation using [Seq] and its [soundness].
- *)
-
-Theorem Seq_CasariAnt_CasariSuc `{Signature} :
-  forall ns (phi : form) sigma,
-    highest_occ_free_var phi (Some 0) ->
-    Seq
-    ((pair ns (CasariAnt phi).|[sigma]) :: nil)
-    ((pair ns (CasariSuc phi).|[sigma]) :: nil).
-Proof.
-  (**
-     Proof by induction on the size of the label [ns].
-   *)
-  induction ns as [ns IH] using
-    (well_founded_ind InS_sublist_order_wf).
-  intros phi sigma H1.
-  eapply Seq_Forall_r.
-  {
-    apply InS_cons_I_hd.
-    simpl.
-    reflexivity.
-  }
-  eapply Seq_Forall_l with (t := Var 0).
-  {
-    apply InS_cons_I_hd.
-    simpl.
-    reflexivity.
-  }
-  {
-    exact I.
-  }
-  eapply Seq_Impl_l.
-  {
-    apply InS_cons_I_hd.
-    simpl.
-    reflexivity.
-  }
-  {
-    reflexivity.
-  }
-  -
-    eapply Seq_Impl_r.
-    {
-      apply InS_cons_I_hd.
-      reflexivity.
-    }
-    intros ns' H2.
-    destruct (InS_sublist_dec ns ns') as [H3|H3].
-    +
-      eapply Seq_persistency.
-      {
-        apply InS_cons_I_hd.
-        reflexivity.
-      }
-      {
-        apply InS_cons_I_tl.
-        apply InS_cons_I_tl.
-        apply InS_cons_I_hd.
-        split.
-        -
-          reflexivity.
-        -
-          repeat rewrite hsubst_comp'.
-          apply H1.
-          inversion 1; reflexivity.
-      }
-      exact H3.
-    +
-      apply Seq_weakening with
-        (ls1 := (pair ns (CasariAnt phi).|[sigma].|[ren (+1)]) :: nil)
-        (rs1 := (pair ns' (CasariSuc phi).|[sigma].|[ren (+1)]) :: nil).
-      {
-        intros psi H4.
-        apply InS_cons_E in H4 as [H4|H4].
-        -
-          apply InS_cons_I_tl.
-          apply InS_cons_I_tl.
-          apply InS_cons_I_hd.
-          rewrite H4.
-          reflexivity.
-        -
-          now apply InS_nil_E in H4.
-      }
-      {
-        intros psi H4.
-        apply InS_cons_E in H4 as [H4|H4].
-        -
-          apply InS_cons_I_hd.
-          rewrite H4.
-          f_equiv.
-          simpl.
-          repeat rewrite hsubst_comp'.
-          apply H1.
-          inversion 1; reflexivity.
-        -
-          now apply InS_nil_E in H4.
-      }
-      eapply Seq_mon.
-      {
-        apply InS_cons_I_hd.
-        reflexivity.
-      }
-      {
-        exact H2.
-      }
-      eapply Seq_weakening with
-        (ls1 := (pair ns' (CasariAnt phi).|[sigma].|[ren (+1)]) :: nil).
-      {
-        apply cons_InS_sublist_I.
-        -
-          apply InS_cons_I_hd.
-          reflexivity.
-        -
-          apply nil_InS_sublist_I.
-      }
-      {
-        reflexivity.
-      }
-      do 2 rewrite hsubst_comp'.
-      eapply IH; try assumption.
-      split; assumption.
-  -
-    eapply Seq_Forall_l with (t := Var 0).
-    {
-      apply InS_cons_I_hd.
-      reflexivity.
-    }
-    {
-      exact I.
-    }
-    eapply Seq_persistency.
-    {
-      left; reflexivity.
-    }
-    {
-      left.
-      f_equiv.
-      repeat rewrite hsubst_comp'.
-      apply H1.
-      inversion 1; reflexivity.
-    }
-    reflexivity.
-Qed.
-
-Print Assumptions Seq_CasariAnt_CasariSuc.
-
-Corollary Seq_Casari `{Signature} :
-  forall phi ns,
-    highest_occ_free_var phi (Some 0) ->
-    Seq nil ((pair ns (Casari phi)) :: nil).
-Proof.
-  intros phi ns H1.
-  eapply Seq_Impl_r.
-  {
-    apply InS_cons_I_hd.
-    f_equiv.
-    split; reflexivity.
-  }
-  intros ns' H2.
-  eapply Seq_weakening with
-    (ls1 := (pair ns' (CasariAnt phi).|[ids] :: nil))
-    (rs1 := (pair ns' (CasariSuc phi).|[ids] :: nil)).
-  {
-    apply cons_InS_sublist_I.
-    -
-      apply InS_cons_I_hd.
-      rewrite hsubst_id'.
-      reflexivity.
-    -
-      apply nil_InS_sublist_I.
-  }
-  {
-    apply cons_InS_sublist_I.
-    -
-      apply InS_cons_I_hd.
-      rewrite hsubst_id'.
-      reflexivity.
-    -
-      apply nil_InS_sublist_I.
-  }
-  eapply Seq_CasariAnt_CasariSuc.
-  exact H1.
-Qed.
-
-Print Assumptions Seq_Casari.
-
-Corollary support_valid_Casari_bd `{S : Signature} :
-  forall phi ns,
-    highest_occ_free_var phi (Some 0) ->
-    forall (M : @Model S) f a,
-      mapping_state f ns, a |= Casari phi.
-Proof.
-  intros phi ns H1 M f a.
-  pose proof (Seq_Casari phi ns H1) as H2.
-  apply soundness in H2.
-  specialize (H2 _ f a (mult_nil_I _)).
-  apply some_cons_E in H2 as [H2|H2].
-  -
-    exact H2.
-  -
-    now apply some_nil_E in H2.
-Qed.
-
-Print Assumptions support_valid_Casari_bd.
