@@ -11,9 +11,10 @@ Follow the instructions on https://github.com/coq-community/templates to regener
 [docker-action-link]: https://github.com/motrellin/inquisitive-logic/actions/workflows/docker-action.yml
 
 [coqdoc-shield]: https://img.shields.io/badge/docs-coqdoc-blue.svg
-[coqdoc-link]: https://motrellin.github.io/inquisitive-logic/./html/toc.html
+<!--- The following line was edited manually! --->
+[coqdoc-link]: https://motrellin.github.io/rocq-docs-inquisitive-logic/./latest/toc.html
 
-This project formalizes inquisitive logic in Rocq, based on the work of e.g. [Ivano Ciardelli](doi.org/10.1007/978-3-031-09706-5).
+This project formalizes inquisitive logic in Rocq, based on the work of e.g. [Ivano Ciardelli](https://doi.org/10.1007/978-3-031-09706-5).
 The current focus lies on (bounded) inquisitive first-order logic, therefore providing a formalization of the basic syntax (using arity types), support and truth semantics, followed by the formalization of a sequent calculus by Litak/Sano whose corresponding paper (Bounded inquistive logics: Sequent calculi and schematic validity) got accepted for [TABLEAUX 2025](https://icetcs.github.io/frocos-itp-tableaux25/tableaux/).
 The theory is located under `theories/`.
 Some concrete instances of type classes (e.g. signatures) are located under `instances/`.
@@ -63,6 +64,10 @@ The current focus lies on (bounded) inquisitive first-order logic, therefore pro
   + `theories/FO` focuses on inquisitive first-order logic.
 - `instances/` provides some concrete of type classes (e.g. signatures).
 - `examples/` demonstrates some ongoing examples.
+
+### HTML Documentation
+
+The HTML documentation can be found [here](https://motrellin.github.io/rocq-docs-inquisitive-logic/).
 
 ### Contributing
 

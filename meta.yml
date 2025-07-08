@@ -88,13 +88,21 @@ documentation: |-
   - `instances/` provides some concrete of type classes (e.g. signatures).
   - `examples/` demonstrates some ongoing examples.
 
+  ### HTML Documentation
+
+  The HTML documentation can be found [here](https://motrellin.github.io/rocq-docs-inquisitive-logic/).
+
   ### Contributing
 
   You can find information on how to contribute in the [CONTRIBUTING.md](.github/CONTRIBUTING.md) file.
 
-#index_documentation:
+index_documentation: |
+  ## Other versions
 
-coqdoc_index: ./html/toc.html
+  Other versions stored here are listed in the following:
+  - [v1.0.0](v1.0.0/toc.html)
+
+coqdoc_index: ./latest/toc.html
 
 opam-file-maintainer: ole.elliger@fau.de
 #opam-file-version:

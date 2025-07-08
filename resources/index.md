@@ -34,7 +34,7 @@ The current stable release of Inquisitive Logic can be [downloaded from GitHub](
 
 ## Documentation
 
-The coqdoc presentation of the source files can be browsed [here](./html/toc.html)
+The coqdoc presentation of the source files can be browsed [here](./latest/toc.html)
 
 Related publications, if any, are listed below.
 
@@ -49,3 +49,9 @@ Related publications, if any, are listed below.
 ## Authors and contributors
 
 - Max Ole Elliger (initial)
+
+## Other versions
+
+Other versions stored here are listed in the following:
+
+- [v1.0.0](v1.0.0/toc.html)
