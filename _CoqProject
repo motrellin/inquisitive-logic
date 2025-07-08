@@ -7,7 +7,6 @@ theories/FO/Syntax.v
 theories/FO/Models.v
 theories/FO/Support.v
 theories/FO/Truth.v
-theories/FO/Consequence.v
 theories/FO/Seq.v
 
 -R instances InqLog
