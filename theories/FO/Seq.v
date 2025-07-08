@@ -2,7 +2,7 @@ From InqLog.FO Require Export Truth.
 
 (* whole section from inqbq_aiml *)
 
-(** * Defining the Sequent Calculus
+(** * Labelled Formulae
 
    For the sequent calculus introduced by Litak/Sano, we first the define the notion of _labelled formulas_.
    A labelled formel is a pair consisting of a list of natural numbers and a formula.
@@ -99,7 +99,8 @@ Next Obligation.
     reflexivity.
 Qed.
 
-(**
+(** * A Sequent Calculus for Bounded Inquisitive First-Order Logic
+
    Now, we are in a position to define the rules of the Sequent Calculus in Rocq.
    For this, we define [Seq] as a [relation] on [list]s of labelled forms.
  *)
@@ -238,7 +239,9 @@ Inductive Seq `{Signature} :
         Seq ((pair ns phi) :: ls2) rs2 ->
         Seq ls rs.
 
-(** ** Properties of [Seq] *)
+(**
+   We prove certain basic properties of [Seq].
+ *)
 
 Proposition Seq_weakening `{Signature} :
   forall ls1 ls2,
@@ -567,7 +570,8 @@ Qed.
 
 Print Assumptions Seq_persistency. (* Closed under the global context *)
 
-(** * Corresponding semantic
+(** * Corresponding semantic *)
+(** ** Semantics of Labelled Formulae
 
    We need a notion of [satisfaction] in order to understand the sequent calculus.
    We want to interpret a labelled formula in a Model by a _mapping function_ [f] and a variable assignment [a].
@@ -715,7 +719,7 @@ Proof.
     all: apply some_cons_I_hd + apply some_cons_I_tl; assumption.
 Qed.
 
-(** * [satisfaction_conseq] *)
+(** ** [satisfaction_conseq] *)
 
 Definition satisfaction_conseq `{S : Signature} :
   relation (list lb_form) :=
@@ -724,7 +728,7 @@ Definition satisfaction_conseq `{S : Signature} :
     satisfaction_mult Phi f a ->
     satisfaction_some Psi f a.
 
-(** ** Soundness lemmata for [Seq] *)
+(** ** Soundness *)
 
 Lemma satisfaction_conseq_empty `{Signature} :
   forall ls rs phi,
@@ -1362,8 +1366,6 @@ Print Assumptions satisfaction_conseq_cut.
 Axioms:
 classic : forall P : Prop, P \/ ~ P
  *)
-
-(** ** Soundness *)
 
 Theorem soundness `{Signature} :
   forall Phi Psi,
